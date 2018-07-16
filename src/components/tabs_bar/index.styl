@@ -1,0 +1,85 @@
+@require '../../vars'
+
+.z-tabs-bar
+  height: 48px
+  width: 100%
+  z-index: $zIndexTabs
+  position: relative
+  user-select: none
+
+  &.is-fixed
+    position: fixed
+    top: 0
+    left: 0
+    background-position: 0
+
+  &:not(.is-flat)
+    shadow-1()
+    z-index: 2
+
+
+  &.is-full-width
+    > .g-grid
+      display: block
+
+      > .bar
+        > .tab
+          flex: 1
+
+
+  > .g-grid
+    height: 100%
+
+    > .bar
+      height: 100%
+      display: flex
+      position: relative
+      // top: -14px // why? related to inline-block
+
+      > .selector
+        transition: transform 0.25s
+        height: 2px
+        background: getColor('$primary500')
+        position: absolute
+        bottom: 0
+
+      > .tab
+        font-button()
+        color: getColor('$tabUnselected')
+        padding: 0 8px
+        text-align: center
+        line-height: 48px
+        text-transform: uppercase
+        display: flex
+        min-width: 0 // don't expand past 100% width
+        align-items: center
+        justify-content: center
+        cursor: pointer
+
+        > .text
+          white-space: nowrap
+          overflow: hidden
+          text-overflow: ellipsis
+
+        &.is-selected
+          color: getColor('$tabSelected')
+
+        &.has-icon
+          > .text
+            display: none
+
+
+  @media (min-width: $breakPointMedium)
+    height: 64px
+    background-position: 0 -64px
+
+    > .g-grid > .bar
+      > .tab
+        &.has-icon
+          > .icon
+            margin-right: 16px
+
+        &.has-text
+          > .text
+            display: block
+            white-space: nowrap

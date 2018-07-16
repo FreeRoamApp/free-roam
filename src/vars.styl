@@ -1,0 +1,217 @@
+use('./stylus_get_color.js')
+use('./stylus_get_cdn_url.js')
+use('./stylus_get_value.js')
+
+$zIndexAppBar = 99
+$zIndexTabs = 100
+$zIndexShareAnyModal = 200
+$zIndexHeadsUp = 10000
+$zIndexInstallOverlay = 300
+$zIndexNotificationsOverlay = 1000
+$zIndexSheet = 300
+
+// TODO: move to vars.json, allow js to use (cardList)
+$breakPointSmall = 340px
+$breakPointMedium = 768px
+$breakPointLarge = 840px
+
+$contentMaxWidth = 1280px
+
+$inputMaxWidth = 600px
+
+$cdnUrl = getCdnUrl()
+
+clearfix()
+  zoom: 1
+
+  &:before, &:after
+    content: ''
+    display: table
+
+  &:after
+    clear: both
+
+shadow-1()
+  transition: box-shadow 0.25s
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37)
+
+shadow-2()
+  transition: box-shadow 0.25s
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.3)
+
+shadow-3()
+  transition: box-shadow 0.25s
+  box-shadow: 0 11px 7px 0 rgba(0, 0, 0, 0.19), 0 13px 25px 0 rgba(0, 0, 0, 0.3)
+
+shadow-4()
+  transition: box-shadow 0.25s
+  box-shadow: 0 14px 12px 0 rgba(0, 0, 0, 0.17), 0 20px 40px 0 rgba(0, 0, 0, 0.3)
+
+shadow-5()
+  transition: box-shadow 0.25s
+  box-shadow: 0 17px 17px 0 rgba(0, 0, 0, 0.15), 0 27px 55px 0 rgba(0, 0, 0, 0.3)
+
+font-h1(scale = yes)
+  font-family: Rubik
+  color: getColor('$tertiary900Text')
+  font-weight: 500
+  font-size: 20px
+  letter-spacing: 1px
+  text-transform: uppercase
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 24px
+
+font-h2(scale = yes)
+  font-family: Rubik
+  color: getColor('$tertiary900Text')
+  font-weight: 500
+  font-size: 18px
+  letter-spacing: 1px
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 20px
+
+font-title(scale = yes)
+  font-family: Rubik
+  color: getColor('$tertiary900Text')
+  font-weight: 500
+  font-size: 14px
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 16px
+
+font-subhead(scale = yes)
+  font-title()
+  font-weight: 700
+  text-transform: uppercase
+
+font-button(scale = yes)
+  font-family: Rubik
+  font-weight: 500
+  color: getColor('$tertiary900Text')
+  line-height: 16px
+  font-size: 14px
+  text-transform: uppercase
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 16px
+
+font-button-small(scale = yes)
+  font-button(scale)
+  font-size: 12px
+
+font-body1(scale = yes)
+  font-family: Rubik
+  font-weight: 400
+  color: getColor('$tertiary900Text')
+  line-height: 20px
+  font-size: 14px
+  if scale
+    @media (min-width: $breakPointLarge)
+      font-size: 16px
+
+font-body2(scale = yes)
+  font-body1()
+  color: getColor('$tertiary300')
+
+font-input(scale = yes)
+  font-body()
+  font-size: 16px
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 16px
+
+font-caption1(scale = yes)
+  font-family: Rubik
+  color: getColor('$tertiary900Text')
+  font-weight: 400
+  font-size: 12px
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 14px
+
+font-caption2(scale = yes)
+  font-caption1(scale)
+  color: getColor('$tertiary300')
+
+font-micro(scale = yes)
+  font-size: 8px
+  font-family: Rubik
+  color: getColor('$tertiary300')
+  text-transform: uppercase
+  font-weight: 400
+  line-height: 1.25
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 10px
+
+cssVariableFallbacks(property, args)
+  string = join(' ', args)
+  variable = match('var\((.*?)\)', string)
+  if variable and variable[1]
+    {property}: convert(replace('var\(' + variable[1] + '\)', getValue(variable[1]), string)) // fallback chrome < 49
+  {property}: args
+
+background()
+  cssVariableFallbacks('background', arguments)
+
+background-color()
+  cssVariableFallbacks('background-color', arguments)
+
+color()
+  cssVariableFallbacks('color', arguments)
+
+box-shadow()
+  cssVariableFallbacks('box-shadow', arguments)
+
+border()
+  cssVariableFallbacks('border', arguments)
+
+
+@keyframes z-ripple-animation-css-only
+  from
+    transform: scale(7)
+    opacity: 0.25
+  to
+    transform: scale(20)
+    opacity: 0
+
+ripple(color)
+  position: relative
+  outline: none
+  overflow: hidden
+
+  &:after // ripple
+    content: ''
+    position: absolute
+    border-radius: 50%
+    width: 5%
+    padding-bottom: 5%
+    left: 47.5%
+    top: 50%
+    transform: scale(1)
+    transform-origin: 50%
+    // margin-top: -50%
+    background: color
+    opacity: 0
+    pointer-events: none
+
+  // hover seems to be the fastest way to get the animation to start in android.
+  // :focus has a couple hundred ms delay, i think active might too.
+  // ios and desktop look bad on hover
+  .is-android &:hover::after {
+    will-change: transform
+    animation: z-ripple-animation-css-only 0.3s ease-out
+    opacity: 0
+  }
+  &:focus:not(:active)::after {
+    will-change: transform
+    animation: z-ripple-animation-css-only 0.3s ease-out
+    opacity: 0
+  }

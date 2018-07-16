@@ -1,0 +1,50 @@
+@require '../../vars'
+
+.z-tabs
+  flex: 1
+  display: flex
+  flex-direction: column
+  // prevents iscroll screwups
+  overflow-x: hidden
+  overflow-y: auto
+  -webkit-overflow-scrolling: touch
+  -webkit-tap-highlight-color: transparent
+  position: relative
+  z-index: 1
+
+  &.is-child-overflow-auto
+    > .content
+      > .top
+        > .info
+          display: none
+
+  > .content
+    flex: 1
+    display: flex
+    flex-direction: column
+
+    > .tabs-bar
+      height: 48px
+
+      @media (min-width: $breakPointMedium)
+        height: 64px
+
+    > .tabs-scroller
+      flex: 1
+      display: flex
+      overflow: hidden
+      touch-action: none
+
+      > .tabs
+        display: flex
+        // flex: 1
+        // Fixes weird graphics glitch where artifacts would remain if
+        // dom changed, then tried to swipe
+        // -webkit-backface-visibility: hidden
+
+        > .tab
+          display: flex
+          flex: 1
+          overflow-y: auto
+          -webkit-overflow-scrolling: touch
+          // -webkit-backface-visibility: hidden

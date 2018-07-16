@@ -1,0 +1,45 @@
+@require '../../vars'
+
+.z-icon
+  text-align: center
+  display: flex
+  -webkit-tap-highlight-color: transparent
+  margin: auto
+  outline: none
+
+  > svg
+    vertical-align: middle
+    margin: auto
+    -webkit-tap-highlight-color: transparent
+
+  &.has-ripple
+    ripple(getColor('$white'))
+
+  &.is-clickable
+    cursor: pointer
+
+    &.is-aligned-top
+      margin-top: -12px // touch target offset
+
+      > svg
+        margin-top: 12px
+
+    &.is-aligned-left
+      margin-left: -12px // touch target offset
+
+      > svg
+        margin-left: 12px
+
+    &.is-aligned-right
+      margin-left: auto
+      margin-right: -12px // touch target offset
+
+      > svg
+        margin-right: 12px
+
+    &.is-aligned-bottom
+      margin-left: auto
+      margin-bottom: -12px // touch target offset
+
+      > svg
+        margin-bottom: 12px

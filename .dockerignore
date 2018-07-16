@@ -1,0 +1,7 @@
+./.git
+./node_modules
+./build
+./coverage
+./test
+./sc-4.3.8-linux
+./npm-debug.log

@@ -1,0 +1,52 @@
+@require '../../vars'
+
+$zIndexUploadOverlay = 1
+
+.z-edit-profile
+
+  > .section
+    padding: 16px
+    max-width: $inputMaxWidth
+    margin: 0 auto
+
+    > .title
+      font-title()
+      text-transform: uppercase
+      color: getColor('$primary500')
+      padding: 14px 0
+
+    > .connect-twitch
+      cursor: pointer
+
+    > .input
+      margin: 16px 0
+
+    > .player
+      display: flex
+      align-items: center
+
+      > .game
+        min-width: 90px
+
+      > .id
+        margin-left: 16px
+
+      > .remove
+        margin-left: auto
+
+    > .flex
+      display: flex
+      align-items: center
+
+      > .button
+        height: 44px
+        margin-left: 16px
+        position: relative
+
+        > .upload-overlay
+          position: absolute
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+          z-index: $zIndexUploadOverlay

@@ -1,0 +1,82 @@
+
+
+@require '../../vars'
+
+.z-profile-dialog
+  display: none
+
+  &.is-visible
+    display: block
+
+.z-profile-dialog_dialog
+  background: getColor('$tertiary700')
+  border-radius: 2px
+  display: flex
+  flex-direction: column
+
+  > .header
+    padding: 24px 16px 16px 16px
+    background: getColor('$tertiary900')
+    border-top-left-radius: 2px
+    border-top-right-radius: 2px
+    position: relative
+    // text-align: center
+    display: flex
+
+    > .close
+      position: absolute
+      top: 8px
+      right: 8px
+
+    > .avatar
+      width: 72px
+      // margin: 0 auto
+
+    > .about
+      // margin-top: 8px
+      margin-left: 16px
+
+      > .name
+        font-title()
+        color: getColor('$tertiary900Text')
+        margin-bottom: 4px
+
+      > .roles
+        font-caption2()
+        min-height: 20px
+
+  .menu
+    list-style-type: none
+    margin: 0
+    padding: 8px 0
+    flex: 1
+    overflow-y: auto
+    -webkit-overflow-scrolling: touch
+
+    > .divider
+      background: getColor('$tertiary900Text12')
+      height: 1px
+      width: 100%
+      margin: 8px 0
+
+    > .menu-item
+      margin: 0
+
+      > .menu-item-link
+        cursor: pointer
+        display: flex
+        padding: 8px 16px
+        box-sizing: border-box
+
+        > .icon
+          margin-right: 16px
+
+        > .chevron
+          margin-left: auto
+
+        > .text
+          font-caption2()
+
+      > .menu
+        margin-left: 16px
+        padding: 0

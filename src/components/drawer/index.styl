@@ -1,0 +1,96 @@
+@require '../../vars'
+
+$zIndexDrawer = 300
+
+.z-drawer
+  position: fixed
+  z-index: $zIndexDrawer
+  // width: 0
+  height: 100%
+  // display: none breaks the animation
+  top: 0
+  left: 0
+  box-sizing: border-box
+  // border-right: 1px solid getColor('$black')
+  overflow: hidden
+  pointer-events: none // not supported in ie9/10 (ie our entire app breaks)
+
+  // &::-webkit-scrollbar
+  //   width: 0
+  //   background: transparent
+
+  &.is-open
+    > .drawer-wrapper
+      > .drawer-tab
+        background: rgba(0, 0, 0, 0.5)
+
+      > .overlay-tab
+        pointer-events: all
+        opacity: 0.5
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  &.is-right
+    > .drawer-wrapper
+      transform: translate(0px, 0px)
+
+      > .overlay-tab > .grip
+        right: 0
+
+
+  // &.has-ad
+  //   > .drawer-wrapper > .drawer-tab > .drawer > .content
+  //     padding-bottom: 300px
+
+  > .drawer-wrapper
+    height: 100%
+    display: flex
+    touch-action: none
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+    transform: translate(-336px, 0px)
+
+    > .tabs
+      overflow: hidden
+
+    > .overlay-tab
+      pointer-events: none
+      // width: 10px
+      background: rgba(0, 0, 0, 1)
+      opacity: 0
+      height: 100%
+      flex: 1
+      display: flex
+      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+      position: relative
+
+      > .grip
+        pointer-events: all
+        width: 16px
+        height: 100%
+        position: absolute
+
+    > .drawer-tab
+      pointer-events: all
+      height: 100%
+
+      > .drawer
+        // width and transform translate set in js
+        height: 100%
+        // top: 0
+        // position: fixed
+        // transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+        display: flex
+        flex-direction: column
+        background: getColor('$tertiary700')
+        // prevents flicker glitch http://stackoverflow.com/a/3921870
+        backface-visibility: hidden
+
+  @media (min-width: $contentMaxWidth)
+    position: relative
+    z-index: 1
+    pointer-events: all // not supported in ie9/10 (ie our entire app breaks)
+
+    > .drawer-wrapper
+      transform: translate(0, 0) !important
+
+      > .overlay-tab
+        display: none

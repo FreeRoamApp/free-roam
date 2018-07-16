@@ -1,0 +1,49 @@
+@require '../../vars'
+
+.z-step-bar
+  width: 100%
+  box-sizing: border-box
+  background: getColor('$tertiary900Text12')
+  display: flex
+  align-items: center
+  justify-content: center
+  margin-top: auto
+
+  > .g-grid
+    flex: 1
+    display: flex
+    align-items: center
+    justify-content: center
+
+    > .previous, > .next
+      font-body1()
+      text-transform: uppercase
+      color: getColor('$primary500')
+      -webkit-tap-highlight-color: transparent
+      width: 60px
+      padding: 16px
+      box-sizing: content-box
+      cursor: pointer
+
+    > .next
+      display: flex
+      align-items: center
+      color: getColor('$grey500')
+
+      &.can-continue
+        color: getColor('$primary500')
+
+
+    > .step-counter
+      display: flex
+      margin: 0 auto
+
+      > .step-dot
+        width: 6px
+        height: 6px
+        border-radius: 50%
+        margin-right: 4px
+        background: getColor('$tertiary900')
+
+        &.is-active
+          background: getColor('$tertiary900Text')

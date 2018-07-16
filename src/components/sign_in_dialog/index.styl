@@ -1,0 +1,53 @@
+@require '../../vars'
+
+.z-sign-in-dialog_dialog
+  > .header
+    background: getColor('$primary500')
+    padding: 12px 8px 12px 16px
+    display: flex
+    align-items: center
+
+    > .title
+      font-button()
+      color: getColor('$primary500Text')
+
+    > .button
+      font-button()
+      margin-left: auto
+      padding: 8px
+      background: getColor('$primary700')
+      color: getColor('$primary500Text')
+      cursor: pointer
+
+  > .content
+    padding: 8px 16px 4px 16px
+    background: getColor('$tertiary700')
+
+    > .input
+      margin: 16px 0
+
+    > .social-logins
+
+      > .login-twitch
+        margin-top: 8px
+
+      > .or
+        font-caption1()
+        margin-top: 8px
+        text-align: center
+
+    > .terms
+      font-caption2()
+      margin-top: 8px
+
+      a
+        color: getColor('$primary500')
+
+    > .actions
+      margin-top: 16px
+
+.z-sign-in-dialog_button
+  display: flex
+
+  > .icon
+    margin-right: 8px

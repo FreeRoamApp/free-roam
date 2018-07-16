@@ -1,0 +1,70 @@
+@require '../../vars'
+
+.zp-dropdown
+  font-input()
+  color: getColor('$tertiary900Text')
+  min-height: 48px
+  display: block
+  outline: none
+  text-align: inherit
+  position: relative
+  max-width: 360px
+
+  // arrow
+  &:not(.is-disabled)&:after
+    content: ''
+    position: absolute
+    bottom: (36 / 2)px
+    right: 4px
+    width: 0
+    height: 0
+    border-left: 5px solid transparent
+    border-right: 5px solid transparent
+    border-top: 5px solid getColor('$primary500')
+
+  > .select
+    padding: 8px 24px 8px 0
+    width: 100%
+    height: 48px
+    box-sizing: border-box
+    -webkit-appearance: none
+    font: inherit
+    color: inherit
+    background-color: transparent
+    border: none
+    outline: none
+    -webkit-tap-highlight-color: transparent
+    cursor: pointer
+
+    &:active, &:hover
+      outline-color: getColor('$tertiary500')
+
+    > .option
+      background: getColor('$tertiary700')
+
+  > .underline
+    position: absolute
+    height: 1px
+    width: 100%
+    background: getColor('$grey600')
+
+  > .error
+    font-caption()
+    color: getColor('$red500')
+    margin-top: 8px
+    position: absolute
+    pointer-events: none
+    background: transparent
+
+  &.is-focused
+    > .underline
+      height: 2px
+
+  &.is-error
+    > .underline
+      background: getColor('$red500')
+
+  &.is-disabled
+    > .underline
+      background: none
+      border-bottom: 1px dashed getColor('$grey600')

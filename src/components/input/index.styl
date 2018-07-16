@@ -1,0 +1,106 @@
+
+
+@require '../../vars'
+
+.z-input
+  font-input()
+  min-height: 48px
+  display: block
+  outline: none
+  text-align: inherit
+  position: relative
+  border-radius: 4px
+
+  > .hint
+    pointer-events: none
+    position: absolute
+    background: transparent
+    transform: translate(0, 16px)
+    color: getColor('$tertiary300')
+    width: 100%
+
+    transform-origin: 0% 0%
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                font-size 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  > .input
+    padding: 8px 0 8px 0
+    width: 100%
+    height: 48px
+    box-sizing: border-box
+
+    font: inherit
+    color: inherit
+    background-color: transparent
+    border: none
+    outline: none
+    -webkit-tap-highlight-color: transparent
+
+  > .underline-wrapper
+    position: absolute
+    bottom: 0
+    height: 2px
+    width: 100%
+    box-sizing: border-box
+
+    > .underline
+      width: 100%
+      height: 2px
+      background: getColor('$tertiary300')
+
+  > .error
+    font-caption1()
+    color: getColor('$red500')
+    margin-top: -3px
+    position: absolute
+    pointer-events: none
+    background: transparent
+    width: 100%
+
+  &.is-centered
+    > .input
+      text-align: center
+
+  &.is-centered&.is-floating&.is-focused, &.is-centered&.is-floating&.has-value
+    > .hint
+      transform: translate(0, 8px)
+
+  &.is-dark
+    color: getColor('$tertiary900Text')
+
+  &.is-floating
+    min-height: 56px
+
+    > .hint
+      transform: translate(16px, 20px)
+      font-size: 16px
+
+    > .input
+      padding: 20px 16px 0 16px
+      height: 56px
+
+    > .underline-wrapper
+      padding: 0 1px
+
+  &.is-floating&.is-focused, &.is-floating&.has-value
+    > .hint
+      font-size: 12px
+      transform: translate(16px, 6px)
+      display: block
+
+  &:not(.is-floating)&.has-value
+    > .hint
+      display: none
+
+  &.is-focused
+    > .underline-wrapper > .underline
+      background: getColor('$primary500')
+
+  &.is-error
+    > .underline-wrapper > .underline
+      background: getColor('$red500')
+
+  &.is-disabled
+    > .underline-wrapper > .underline
+      background: none
+      border-bottom: 1px dashed getColor('$grey600')

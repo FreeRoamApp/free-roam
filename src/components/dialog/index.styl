@@ -1,0 +1,59 @@
+@require '../../vars'
+
+.z-dialog
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 1000000
+
+  &.is-vanilla
+    > .dialog
+      background: getColor('$tertiary700')
+      max-width: 280px
+      border-radius: 2px
+
+      > .content
+        font-body1()
+        color: getColor('$tertiary700Text')
+        padding: 28px 24px 20px 24px
+
+        > .title
+          font-h1()
+          margin-bottom: 20px
+
+      > .actions
+        display: flex
+        justify-content: flex-end
+        padding: 8px 16px
+
+        > .action
+          &.is-full-width
+            width: 100%
+
+  &.is-wide
+    > .dialog
+      max-width: 320px
+
+  > .backdrop
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    background: getColor('$black54')
+    z-index: 1000000
+
+  > .dialog
+    shadow-3()
+    z-index: 1000003
+    position: relative
+    min-width: 280px
+    max-height: 100%
+    overflow-y: auto
+    overflow-x: hidden
+    -webkit-overflow-scrolling: touch

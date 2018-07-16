@@ -1,0 +1,31 @@
+@require '../../vars'
+
+$zIndexSheet = 1000
+
+.z-share-sheet_sheet
+  padding-bottom: 16px
+
+  > .title
+    font-subhead()
+    padding: 0 16px 8px 16px
+    color: getColor('$primary500')
+
+  > .item
+    display: flex
+    padding: 16px
+    align-items: center
+    -webkit-tap-highlight-color: $transparent
+    cursor: pointer
+
+    // &.is-highlighted
+    //   background: getColor('$messengerBlue500')
+    //
+    //   > .text
+    //     color: getColor('$messengerBlue500Text')
+
+    > .icon
+      display: flex
+      margin-right: 24px
+
+    > .text
+      font-title()

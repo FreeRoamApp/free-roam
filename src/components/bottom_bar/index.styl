@@ -1,0 +1,57 @@
+@require '../../vars'
+
+.z-bottom-bar
+  display: flex
+  background: getColor('$tertiary700')
+  // box-shadow: 0 -2px 4px getColor('$tertiary900Text12')
+  border-top: 1px solid getColor('$tertiary900Text12')
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  // hard-coded in pages/group_chat
+  @media (min-width: $contentMaxWidth)
+    display: none
+
+  &.is-loaded
+    > .menu-item
+      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+      opacity: 1
+
+  &.is-hidden
+    transform: translateY(64px)
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  > .menu-item
+    ripple(getColor('$primary500'))
+    opacity: 0
+    flex: 1
+    text-align: center
+    padding: 8px 0
+    cursor: pointer
+    user-select: none
+    position: relative
+
+    &.is-selected
+      > .text
+        color: getColor('$primary500')
+
+    &.has-notification
+      > .icon
+        position: relative
+
+        &:after
+          content: ''
+          width: 4px
+          height: 4px
+          border-radius: 50%
+          position: absolute
+          z-index: 1
+          left: 50%
+          top: 50%
+          margin-top: -2px
+          margin-left: 16px
+          background: getColor('$primary500')
+
+    > .text
+      font-caption1()
+      color: getColor('$tertiary300')
+      margin-top: 2px

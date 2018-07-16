@@ -1,0 +1,20 @@
+@require '../../vars'
+
+.z-ui-card
+  font-body1()
+  padding: 16px 16px 8px 16px
+  border-radius: 2px
+  background: getColor('$tertiary700')
+  position: relative
+
+  &.is-highlighted
+    background: getColor('$primary500')
+
+  > .title
+    font-subhead()
+    color: getColor('$primary500')
+    margin-bottom: 8px
+
+  > .buttons
+    display: flex
+    justify-content: flex-end

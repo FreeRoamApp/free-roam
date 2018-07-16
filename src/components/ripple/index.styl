@@ -1,0 +1,56 @@
+@require '../../vars'
+
+@keyframes z-ripple-animation
+  from
+    transform: scale(0.1)
+    opacity: 0.25
+  to
+    transform: scale(1)
+    opacity: 0
+
+@keyframes z-ripple-animation-fade-in
+  from
+    transform: scale(0.1)
+    opacity: 0.25
+  to
+    transform: scale(1)
+    opacity: 1
+
+.z-ripple
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+  overflow: hidden
+  // opacity: 0.5
+  cursor: pointer
+
+  > .wave
+    position: absolute
+    border-radius: 50%
+    width: 200%
+    padding-bottom: 200%
+    // width: 50px
+    // height: 50px
+    margin-left: -100%
+    margin-top: -100%
+    background: getColor('$white')
+    opacity: 0
+    pointer-events: none
+    visibility: hidden
+
+    &.is-visible
+      visibility: visible
+
+      &.fade-in
+        animation: z-ripple-animation-fade-in 0.5s
+
+      &:not(.fade-in)
+        animation: z-ripple-animation 0.5s
+
+
+  &.is-circle
+    // fix chrome border-radius clipping
+    transform: translate3d(0, 0, 0)
+    border-radius: 50%
