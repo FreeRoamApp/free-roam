@@ -1,0 +1,46 @@
+@require '../../vars'
+
+.z-markdown-editor
+  flex: 1
+  display: flex
+  flex-direction: column
+
+  > .panel
+    background: getColor('$tertiary700')
+
+    > .icon
+      display: inline-block
+      position: relative
+
+      > .upload-overlay
+        position: absolute
+        left: 0
+        top: 0
+        width: 100%
+        height: 100%
+        z-index: 1
+        cursor: pointer
+
+  > .textarea
+    width: 100%
+    display: flex
+    flex: 1
+    // background: getColor('$tertiary900')
+    // padding: 16px
+    // outline: none
+    // border: none
+    // box-sizing: border-box
+
+    &::placeholder
+      font-body1()
+      color: getColor('$tertiary900Text54')
+
+
+.desktop
+  .z-markdown-editor
+    > .textarea
+      max-width: 560px
+      margin: 0 auto
+      background: getColor('$tertiary700')
+      box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.5)
+      padding: 24px

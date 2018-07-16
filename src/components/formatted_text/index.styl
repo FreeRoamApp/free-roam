@@ -1,0 +1,77 @@
+@require '../../vars'
+
+.z-formatted-text
+  max-width: 700px
+
+  &.is-full-width
+    max-width: none
+
+  a
+    &.is-mention
+      font-title()
+      display: inline-block
+      text-decoration: none !important
+      padding: 2px 4px
+      background: getColor('$tertiary500')
+      color: getColor('$primary500')
+      border-radius: 2px
+
+      &:hover
+        background: getColor('$tertiary400')
+
+  ul
+    margin: 4px 0
+
+  p
+    &:first-child
+      margin-top: 0
+
+    &:last-child
+      margin-bottom: 0
+
+  .image-wrapper
+    display: block
+
+    img
+      padding: 8px
+      background: getColor('$tertiary500')
+      box-sizing: content-box
+      border-radius: 2px
+      box-sizing: border-box
+
+  img
+    max-width: 100%
+    // easy fix for too tall of images in chat, etc...
+    max-height: 800px
+
+    &.is-sticker
+      display: inline-block
+      vertical-align: middle
+
+  h1
+    font-subhead()
+    margin: 0
+
+  h2
+    font-title()
+    margin: 0
+
+  h3
+    font-body1()
+    margin: 0
+
+  blockquote
+    margin: 0
+    padding: 16px
+    background: getColor('$tertiary500')
+
+  ul
+    padding: 0 0 0 16px
+
+    li
+      margin-bottom: 8px
+
+  hr
+    border: none
+    height: 1px
+    background: getColor('$tertiary900Text12')

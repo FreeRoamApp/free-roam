@@ -1,0 +1,97 @@
+@require '../../vars'
+
+.z-button
+  min-height: 36px
+  min-width: 48px
+  max-width: 100%
+  box-sizing: border-box
+  display: inline-block
+  position: relative
+  background: transparent
+  text-align: center
+  outline: none
+  user-select: none
+  cursor: pointer
+  padding: 4px
+  -webkit-tap-highlight-color: transparent
+
+  > .button
+    font-button()
+    display: inline-block
+    position: relative
+    box-sizing: border-box
+    vertical-align: middle
+    padding: 0 8px
+    min-height: 36px
+    min-width: 64px
+    max-width: 100%
+    line-height: 36px
+    background: transparent
+    text-align: center
+    outline: none
+    border-radius: 2px
+    user-select: none
+    cursor: pointer
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap
+    border: none
+    -webkit-tap-highlight-color: transparent
+
+  &.is-disabled
+    cursor: default
+    pointer-events: none
+
+    > .button
+      cursor: default
+      pointer-events: none
+
+    &.allow-disabled-click
+      pointer-events: all
+
+      > .button
+        pointer-events: all
+
+  &.is-raised
+    > .button
+      shadow-1()
+
+      &:active
+        shadow-2()
+
+  &.is-raised&.is-dark
+    > .button
+      color: getColor('$primary500Text')
+
+  &.is-raised&.is-disabled
+    > .button
+      box-shadow: none
+      background: getColor('$tertiary90054')
+      color: getColor('$tertiary900Text')
+
+  &.is-raised&.is-dark&.is-disabled
+    > .button
+        background: getColor('$tertiary90054')
+        color: getColor('$tertiary500Text')
+
+  &.is-full-width
+    width: 100%
+
+    > .button
+      width: 100%
+
+  &.is-short
+    > .button
+      min-width: 48px
+
+  &.is-flat&.is-dark
+    > .button
+      color: getColor('$tertiary900Text')
+
+  &.is-flat&.is-disabled
+    > .button
+      color: getColor('$tertiary500Text')
+
+  &.is-flat&.is-dark&.is-disabled
+    > .button
+      color: getColor('$tertiary500Text')

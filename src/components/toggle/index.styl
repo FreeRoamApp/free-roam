@@ -1,0 +1,55 @@
+@require '../../vars'
+
+$knobRadius = 20px
+$trackWidth = 34px
+$wideTrackWidth = 48px
+
+.z-toggle
+  position: relative
+  cursor: pointer
+
+  > .track
+    width: $trackWidth
+    height: 14px
+    background: getColor('$tertiary900Text54')
+    border-radius: 17px
+
+  > .knob
+    shadow-1()
+    position: absolute
+    left: 0
+    top: -3px
+    width: $knobRadius
+    height: $knobRadius
+    background: getColor('$grey100')
+    border-radius: 50%
+    transform: translate(0, 0)
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)
+
+  &.with-text
+    > .track
+      width: $wideTrackWidth
+      font-button-small(false)
+      color: getColor('$black')
+      box-sizing: border-box
+      text-align: right
+      padding-right: 6px
+
+    &.is-selected
+      > .track
+        padding-left: 3px
+        text-align: left
+        color: getColor('$primary500Text')
+
+      > .knob
+        transform: translate($wideTrackWidth - $knobRadius, 0)
+
+
+  &.is-selected
+    > .track
+      background: getColor('$primary200')
+
+    > .knob
+      background: getColor('$primary500')
+      transform: translate($trackWidth - $knobRadius, 0)
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)

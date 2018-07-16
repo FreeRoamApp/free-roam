@@ -1,0 +1,55 @@
+@require '../../vars'
+
+.z-app-bar
+  shadow-1()
+  position: relative
+  z-index: $zIndexAppBar
+  height: 56px
+  user-select: none
+
+  &.is-flat
+    box-shadow: none
+
+  > .bar
+    padding: 16px
+    width: 100%
+    height: 56px
+    box-sizing: border-box
+    display: flex
+    flex-direction: column
+    background-size: 84px auto
+    padding: 0 16px
+
+    > .wrapper
+      width: 100%
+
+      > .top
+        width: 100%
+        height: 56px
+        display: flex
+        align-items: center
+
+        > .top-left-button
+          margin-right: 24px
+
+        > .top-right-button
+          margin-left: auto
+
+        > .title
+          font-h1()
+          text-transform: uppercase
+          white-space: nowrap
+          text-overflow: ellipsis
+          overflow: hidden
+          padding-right: 8px
+
+
+  @media (min-width: $breakPointMedium)
+    height: 64px
+
+    > .bar
+      height: 64px
+
+      > .wrapper
+        > .top
+          height: 64px

@@ -1,0 +1,33 @@
+
+
+@require '../../vars'
+
+.z-fab
+  shadow-1()
+  height: 56px
+  width: 56px
+  display: inline-block
+  position: relative
+  background: transparent
+  outline: none
+  user-select: none
+  cursor: pointer
+  border-radius: 50%
+  overflow: hidden
+  -webkit-tap-highlight-color: transparent
+  z-index: 1 // req to mask the ripple
+
+  > .icon-container
+    width: 24px
+    height: 24px
+    margin: 16px auto
+
+  &:active
+    shadow-2()
+
+  &.is-mini
+    height: 40px
+    width: 40px
+
+    > .icon-container
+      margin: 8px auto

@@ -1,0 +1,127 @@
+@require '../../vars'
+
+.z-textarea
+  font-input()
+  min-height: 48px
+  display: block
+  outline: none
+  text-align: inherit
+  position: relative
+  border-radius: 4px
+
+  > .hint
+    pointer-events: none
+    position: absolute
+    background: transparent
+    transform: translate(0, 16px)
+    color: getColor('$tertiary300')
+    width: 100%
+
+    transform-origin: 0% 0%
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                font-size 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  > .textarea
+    padding: 8px 0 8px 0
+    width: 100%
+    height: 48px
+    box-sizing: border-box
+
+    font: inherit
+    color: inherit
+    background-color: transparent
+    border: none
+    outline: none
+    -webkit-tap-highlight-color: transparent
+
+  > .underline-wrapper
+    position: absolute
+    bottom: 0
+    height: 2px
+    width: 100%
+    box-sizing: border-box
+
+    > .underline
+      width: 100%
+      height: 2px
+      background: getColor('$tertiary300')
+
+  > .error
+    font-caption1()
+    color: getColor('$red500')
+    margin-top: 8px
+    position: absolute
+    pointer-events: none
+    background: transparent
+    width: 100%
+
+  &.is-centered
+    > .textarea
+      text-align: center
+
+  &.is-centered&.is-floating&.is-focused, &.is-centered&.is-floating&.has-value
+    > .hint
+      transform: translate(0, 8px)
+
+  &.is-dark
+    color: getColor('$white')
+
+  &.is-floating
+    min-height: 56px
+
+    > .hint
+      transform: translate(16px, 20px)
+      font-size: 16px
+
+    > .textarea
+      padding: 24px 16px 0 16px
+      height: 72px
+      box-sizing: border-box
+
+    > .underline-wrapper
+      padding: 0 1px
+
+  &.is-floating&.is-focused, &.is-floating&.has-value
+    > .hint
+      font-size: 12px
+      transform: translate(16px, 6px)
+      display: block
+
+  &:not(.is-floating)&.has-value
+    > .hint
+      display: none
+
+  &.is-focused
+    > .underline-wrapper > .underline
+      background: getColor('$primary500')
+
+  &.is-error
+    > .underline-wrapper > .underline
+      background: getColor('$red500')
+
+  &.is-disabled
+    > .underline-wrapper > .underline
+      background: none
+      border-bottom: 1px dashed getColor('$tertiary300')
+
+  &.is-full // for markdown-editor
+    font-body1()
+    background-color: transparent !important
+    width: 100%
+    height: 100%
+
+    &.is-focused
+      > .hint
+        color: getColor('$tertiary300') !important
+
+    > .hint
+      left: 16px
+
+    > .textarea
+      width: 100%
+      height: 100%
+      padding: 16px
+      box-sizing: border-box
+
+    > .underline-wrapper
+      display: none

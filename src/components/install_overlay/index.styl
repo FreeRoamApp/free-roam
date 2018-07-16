@@ -1,0 +1,49 @@
+@require '../../vars'
+
+.z-install-overlay
+  background: getColor('$primary50096')
+  position: fixed
+  width: 100%
+  height: 100%
+  top: 0
+  left: 0
+  display: flex
+  flex-direction: column
+  z-index: $zIndexInstallOverlay
+
+  > .container
+    padding: 16px
+    display: flex
+
+    > .content
+      width: 184px
+      margin-left: auto
+      padding-top: 42px
+
+      > .title
+        font-title()
+        color: getColor('$white')
+
+      > .action
+        font-body1()
+        color: getColor('$white')
+        margin-top: 16px
+        display: flex
+
+        > .icon
+          margin-left: 8px
+
+      > .instructions
+        font-body1()
+        color: getColor('$white')
+        margin-top: 16px
+
+      > .button
+        margin-top: 32px
+
+    > .arrow
+      width: 96px
+      height: 53px
+      background: url($cdnUrl + '/add_home_arrow.svg') no-repeat
+      background-size: 100%
+      margin-left: 16px

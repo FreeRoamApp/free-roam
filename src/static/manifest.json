@@ -1,0 +1,18 @@
+{
+  "short_name": "FreeRoam",
+  "name": "FreeRoam",
+  "version": "1.0.0",
+  "icons": [
+    {
+      "src": "https://fdn.uno/d/images/android-chrome-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ],
+  "background_color": "#1a1a1a",
+  "theme_color": "#fc373e",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": ".",
+  "gcm_sender_id": "103953800507"
+}

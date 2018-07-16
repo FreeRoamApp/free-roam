@@ -1,0 +1,50 @@
+
+
+@require '../../vars'
+
+.z-policies
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 16px
+  display: flex
+  flex-direction: column
+
+  > .title
+    font-h1()
+    text-transform: uppercase
+    margin: 32px 0
+    text-align: center
+
+  > .description
+    font-body1()
+    margin-bottom: 32px
+
+  > .dropdown
+    padding: 16px
+
+    > .block
+      display: flex
+      cursor: pointer
+
+      > .title
+        font-subhead()
+        text-transform: uppercase
+
+      > .icon
+        margin-left: auto
+
+    > .content
+      display: none
+
+      &.is-visible
+        display: block
+
+  > .divider
+    width: 100%
+    height: 1px
+    background: getColor('$white12')
+    margin: 0
+
+  > .continue-button
+    margin-top: auto

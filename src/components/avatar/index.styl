@@ -1,0 +1,29 @@
+@require '../../vars'
+
+.z-avatar
+  position: relative
+  border-radius: 50%
+  box-sizing: border-box
+  border: 2px solid getColor('$white54')
+
+  > .image
+    width: 100%
+    height: 100%
+    background-size: 100%
+    border-radius: 50%
+
+  > .level
+    font-micro()
+    font-size: 9px
+    font-weight: 600
+    background: getColor('$primary500')
+    border: 1px solid getColor('$white30')
+    color: getColor('$black')
+    min-width: 14px
+    height: 14px
+    line-height 14px
+    text-align: center
+    position: absolute
+    right: -2px
+    bottom: -2px
+    border-radius: 50%
