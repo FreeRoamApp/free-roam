@@ -20,7 +20,8 @@ UglifyJSPlugin = require 'uglifyjs-webpack-plugin'
 MiniCssExtractPlugin = require 'mini-css-extract-plugin'
 Visualizer = require('webpack-visualizer-plugin')
 BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
-s3Upload = require 'gulp-s3-upload'
+gcPub = require 'gulp-gcloud-publish'
+gzip = require 'gulp-gzip'
 argv = require('yargs').argv
 
 config = require './src/config'
@@ -38,18 +39,13 @@ webpackBase =
     filename: 'bundle.js'
     publicPath: '/'
 
-s3 = s3Upload {
-  accessKeyId: process.env.RADIOACTIVE_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.RADIOACTIVE_AWS_SECRET_ACCESS_KEY
-}
-
 gulp.task 'dev', ['dev:webpack-server', 'watch:dev:server']
 # TODO: 'dist:manifest' - appcache
 gulp.task 'dist', gulpSequence(
   'dist:clean'
   ['dist:scripts', 'dist:static']
   'dist:concat'
-  'dist:s3'
+  'dist:gc'
 )
 
 gulp.task 'watch', ->
@@ -243,13 +239,19 @@ gulp.task 'dist:concat', ->
       lang + bundle
     , 'utf-8')
 
-gulp.task 'dist:s3', ->
+gulp.task 'dist:gc', ->
   gulp.src("#{__dirname}/#{paths.dist}/bundle*")
-  .pipe s3 {
-    Bucket: 'fdn.uno'
-    ACL: 'public-read'
-    keyTransform: (relativeFilename) ->
-      "d/scripts/#{relativeFilename}"
+  .pipe gzip()
+  .pipe gcPub {
+    bucket: 'fdn.uno'
+    keyFilename: '../padlock/free-roam-google-cloud-storage-creds.json'
+    projectId: 'free-roam-app'
+    base: '/d/scripts'
+    public: true
+    transformDestination: (path) ->
+      return path
+    metadata:
+      cacheControl: 'max-age=315360000, no-transform, public'
   }
 
 gulp.task 'dist:manifest', ['dist:static', 'dist:scripts'], ->

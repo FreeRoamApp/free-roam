@@ -15,7 +15,6 @@ UploadOverlay = require '../upload_overlay'
 PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
 PrimaryInput = require '../primary_input'
-AdsenseAd = require '../adsense_ad'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -43,7 +42,6 @@ module.exports = class EditProfile
       valueStreams: @usernameValueStreams
       error: @usernameError
 
-    @$adsenseAd = new AdsenseAd {@model, group}
 
     @state = z.state
       me: me
@@ -145,13 +143,6 @@ module.exports = class EditProfile
           else
             @model.l.get 'general.connect'
 
-
-
-      if Environment.isMobile() and not Environment.isNativeApp('freeroam')
-        z '.ad',
-          z @$adsenseAd, {
-            slot: 'mobile300x250'
-          }
 
       z '.section',
         z '.title', @model.l.get 'editProfile.changeAvatar'

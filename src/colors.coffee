@@ -5,46 +5,76 @@ materialColors = require './material_colors'
 
 colors = _defaults {
   default:
-    '--header-500': '#171a1c' # t700
-    '--header-500-text': materialColors.$white
-    '--header-500-text-54': materialColors.$white54
-    '--header-500-icon': '#ff8a00' # p500
+    '--header-500': '#FAF3E5' # t500
+    '--header-500-text': materialColors.$black
+    '--header-500-text-54': materialColors.$black54
+    '--header-500-icon': '#D25A00' # p500
 
-    '--primary-100': materialColors.$orange100
-    '--primary-200': materialColors.$orange200
-    '--primary-300': materialColors.$orange300
-    '--primary-400': materialColors.$orange300
-    '--primary-500': '#ff8a00'
-    '--primary-50096': 'rgba(255, 138, 0, 0.96)'
-    '--primary-600': materialColors.$orange600
-    '--primary-700': '#e86f00'
-    '--primary-800': materialColors.$orange800
-    '--primary-900': materialColors.$orange900
+    '--primary-50': '#FAEBE0'
+    '--primary-100': '#F2CEB3'
+    '--primary-200': '#E9AD80'
+    '--primary-300': '#E08C4D'
+    '--primary-400': '#D97326'
+    '--primary-500': '#D25A00'
+    '--primary-50096': 'rgba(210, 90, 0, 0.96)'
+    '--primary-600': '#CD5200'
+    '--primary-700': '#C74800'
+    '--primary-800': '#C13F00'
+    '--primary-900': '#B62E00'
+    '--primary-100-text': materialColors.$white
+    '--primary-200-text': materialColors.$white
+    '--primary-300-text': materialColors.$white
+    '--primary-400-text': materialColors.$white
     '--primary-500-text': materialColors.$white
+    '--primary-600-text': materialColors.$white
+    '--primary-700-text': materialColors.$white
+    '--primary-800-text': materialColors.$white
+    '--primary-900-text': materialColors.$white
 
-    '--tertiary-100': materialColors.$grey100
-    '--tertiary-200': materialColors.$grey200
-    '--tertiary-300': '#84898a'
-    '--tertiary-400': '#3e4447'
-    '--tertiary-500': '#202527'
-    '--tertiary-600': '#1d2226'
-    '--tertiary-700': '#171a1c'
-    '--tertiary-800': materialColors.$grey800
-    '--tertiary-900': '#0e1011'
-    '--tertiary-90012': 'rgba(0, 0, 0, 0.12)'
-    '--tertiary-90054': 'rgba(0, 0, 0, 0.54)'
-    '--tertiary-100-text': materialColors.$white
-    '--tertiary-200-text': materialColors.$white
-    '--tertiary-300-text': materialColors.$white
-    '--tertiary-400-text': materialColors.$white
-    '--tertiary-500-text': materialColors.$white
-    '--tertiary-500-text-70': materialColors.$white70
-    '--tertiary-600-text': materialColors.$white
-    '--tertiary-700-text': materialColors.$white
-    '--tertiary-800-text': materialColors.$white
-    '--tertiary-900-text': materialColors.$white
-    '--tertiary-900-text-12': materialColors.$white12
-    '--tertiary-900-text-54': materialColors.$white54
+    '--secondary-50': '#FFF6F1'
+    '--secondary-100': '#FFE9DC'
+    '--secondary-200': '#FFDBC4'
+    '--secondary-300': '#FFCCAC'
+    '--secondary-400': '#FFC19B'
+    '--secondary-500': '#FFB689'
+    '--secondary-600': '#FFAF81'
+    '--secondary-700': '#FFA676'
+    '--secondary-800': '#FF9E6C'
+    '--secondary-900': '#FF8E5'
+    '--secondary-100-text': materialColors.$black
+    '--secondary-200-text': materialColors.$black
+    '--secondary-300-text': materialColors.$black
+    '--secondary-400-text': materialColors.$black
+    '--secondary-500-text': materialColors.$black
+    '--secondary-600-text': materialColors.$black
+    '--secondary-700-text': materialColors.$black
+    '--secondary-800-text': materialColors.$black
+    '--secondary-900-text': materialColors.$black
+
+    '--tertiary-50': '#FEFEFC'
+    '--tertiary-100': '#FEFBF7'
+    '--tertiary-200': '#FDF9F2'
+    '--tertiary-300': '#FCF7ED'
+    '--tertiary-400': '#FBF5E9'
+    '--tertiary-500': '#FAF3E5'
+    '--tertiary-600': '#F9F1E2'
+    '--tertiary-700': '#F9EFDE'
+    '--tertiary-800': '#F8EDDA'
+    '--tertiary-900': '#FFFFFF'
+    # '--tertiary-900': '#F6EAD'
+    '--tertiary-100-text': materialColors.$black
+    '--tertiary-200-text': materialColors.$black
+    '--tertiary-300-text': materialColors.$black
+    '--tertiary-400-text': materialColors.$black
+    '--tertiary-500-text': materialColors.$black
+    '--tertiary-500-text-70': materialColors.$black70
+    '--tertiary-600-text': materialColors.$black
+    '--tertiary-700-text': materialColors.$black
+    '--tertiary-800-text': materialColors.$black
+    '--tertiary-900-text': materialColors.$black
+    '--tertiary-900-text-6': 'rgba(0, 0, 0, 0.06)'
+    '--tertiary-900-text-12': materialColors.$black12
+    '--tertiary-900-text-54': materialColors.$black54
 
     '--test-color': '#000' # don't change
 
@@ -60,9 +90,6 @@ colors = _defaults {
   '$header500Text54': 'var(--header-500-text54)'
   '$header500Icon': 'var(--header-500-icon)'
 
-  '$drawerHeader500': 'var(--drawer-header-500)'
-  '$drawerHeader500Text': 'var(--drawer-header-500-text)'
-
   '$primary50': 'var(--primary-50)'
   '$primary100': 'var(--primary-100)'
   '$primary200': 'var(--primary-200)'
@@ -75,38 +102,35 @@ colors = _defaults {
   '$primary800': 'var(--primary-800)'
   '$primary900': 'var(--primary-900)'
 
+  '$primary100Text': 'var(--primary-100-text)'
+  '$primary200Text': 'var(--primary-200-text)'
+  '$primary300Text': 'var(--primary-300-text)'
+  '$primary400Text': 'var(--primary-400-text)'
   '$primary500Text': 'var(--primary-500-text)'
+  '$primary600Text': 'var(--primary-600-text)'
+  '$primary700Text': 'var(--primary-700-text)'
+  '$primary800Text': 'var(--primary-800-text)'
+  '$primary900Text': 'var(--primary-900-text)'
 
-  # TODO: move rest to vars
-  '$primary100Text': materialColors.$red900Text
-  '$primary200Text': materialColors.$red900Text
-  '$primary300Text': materialColors.$red900Text
-  '$primary400Text': materialColors.$red900Text
+  '$secondary100': 'var(--secondary-100)'
+  '$secondary200': 'var(--secondary-200)'
+  '$secondary300': 'var(--secondary-300)'
+  '$secondary400': 'var(--secondary-400)'
+  '$secondary500': 'var(--secondary-500)'
+  '$secondary600': 'var(--secondary-600)'
+  '$secondary700': 'var(--secondary-700)'
+  '$secondary800': 'var(--secondary-800)'
+  '$secondary900': 'var(--secondary-900)'
 
-  '$primary600Text': materialColors.$red600Text
-  '$primary700Text': materialColors.$red700Text
-  '$primary800Text': materialColors.$red800Text
-  '$primary900Text': materialColors.$red900Text
-
-  '$secondary100': materialColors.$white
-  '$secondary200': materialColors.$white
-  '$secondary300': materialColors.$white
-  '$secondary400': materialColors.$white
-  '$secondary500': '#ffc800'
-  '$secondary600': materialColors.$white
-  '$secondary700': materialColors.$white
-  '$secondary800': materialColors.$white
-  '$secondary900': materialColors.$white
-  '$secondary100Text': materialColors.$blueGrey900
-  '$secondary200Text': materialColors.$blueGrey900
-  '$secondary300Text': materialColors.$blueGrey900
-  '$secondary400Text': materialColors.$blueGrey900
-  '$secondary500Text': materialColors.$blueGrey900
-  '$secondary600Text': materialColors.$blueGrey900
-  '$secondary700Text': materialColors.$blueGrey900
-  '$secondary800Text': materialColors.$blueGrey900
-  '$secondary900Text': materialColors.$blueGrey900
-
+  '$secondary100Text': 'var(--secondary-100-text)'
+  '$secondary200Text': 'var(--secondary-200-text)'
+  '$secondary300Text': 'var(--secondary-300-text)'
+  '$secondary500Text': 'var(--secondary-500-text)'
+  '$secondary500Text': 'var(--secondary-500-text)'
+  '$secondary600Text': 'var(--secondary-600-text)'
+  '$secondary700Text': 'var(--secondary-700-text)'
+  '$secondary800Text': 'var(--secondary-800-text)'
+  '$secondary900Text': 'var(--secondary-900-text)'
 
   '$tertiary50': 'var(--tertiary-50)'
   '$tertiary100': 'var(--tertiary-100)'
@@ -130,6 +154,7 @@ colors = _defaults {
   '$tertiary700Text': 'var(--tertiary-700-text)'
   '$tertiary800Text': 'var(--tertiary-800-text)'
   '$tertiary900Text': 'var(--tertiary-900-text)'
+  '$tertiary900Text6': 'var(--tertiary-900-text-6)'
   '$tertiary900Text12': 'var(--tertiary-900-text-12)'
   '$tertiary900Text54': 'var(--tertiary-900-text-54)'
 

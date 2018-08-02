@@ -10,12 +10,12 @@ _defaults = require 'lodash/defaults'
 
 config = require '../../config'
 colors = require '../../colors'
-rubikCss = require './rubik'
+fontsCss = require './fonts'
 
 DEFAULT_IMAGE = 'https://fdn.uno/d/images/web_icon_256.png'
 
 module.exports = class Head
-  constructor: ({@model, meta, requests, serverData}) ->
+  constructor: ({@model, meta, requests, serverData, group}) ->
     route = requests.map ({route}) -> route
     requestsAndLanguage = RxObservable.combineLatest(
       requests, @model.l.getLanguage(), (vals...) -> vals
@@ -33,13 +33,13 @@ module.exports = class Head
       meta: meta
       serverData: serverData
       route: route
-      group: group
-      additionalCss: @model.additionalScript.getCss()
+      # group: group
       routeKey: route.map (route) =>
         if route?.src
           routeKey = @model.l.getRouteKeyByValue route.src
       modelSerialization: unless window?
         @model.getSerializationStream()
+      additionalCss: @model.additionalScript.getCss()
       cssVariables: group?.map (group) =>
         groupKey = group?.key
 
@@ -68,18 +68,8 @@ module.exports = class Head
     {meta, serverData, route, routeKey, group, additionalCss,
       modelSerialization, cssVariables} = @state.getValue()
 
-    if group?.key is 'fortnitees'
-      gaId = 'UA-27992080-33'
-      gaSampleRate = 100
-    else if group?.key is 'fortnite'
-      gaId = 'UA-27992080-34'
-      gaSampleRate = 100
-    else if group?.key is 'nickatnyte'
-      gaId = 'UA-27992080-35'
-      gaSampleRate = 100
-    else
-      gaId = 'UA-27992080-30'
-      gaSampleRate = 100
+    gaId = 'UA-27992080-30'
+    gaSampleRate = 100
 
     paths = _mapValues @model.l.getAllPathsByRouteKey(routeKey), (path) ->
       pathVars = path.match /:([a-zA-Z0-9-]+)/g
@@ -243,7 +233,7 @@ module.exports = class Head
         async: true
         src: 'https://www.google-analytics.com/analytics.js'
 
-      z 'style#rubik', {key: 'rubik'}, rubikCss
+      z 'style#fonts', {key: 'fonts'}, fontsCss
 
       # styles
       z 'style#css-variables',
@@ -288,20 +278,20 @@ module.exports = class Head
            hreflang: lang
          }
 
-      unless isNative
-        [
-          z 'script#adsense',
-            key: 'adsense'
-            async: true
-            src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
-          z 'script#stripe1',
-            key: 'stripe1'
-            # async: true
-            src: 'https://js.stripe.com/v2/'
-          z 'script#stripe2',
-            key: 'stripe2'
-            # async: true
-            innerHTML: "
-              Stripe.setPublishableKey('#{config.STRIPE_PUBLISHABLE_KEY}');
-            "
-        ]
+      # unless isNative
+      #   [
+      #     z 'script#adsense',
+      #       key: 'adsense'
+      #       async: true
+      #       src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'
+      #     z 'script#stripe1',
+      #       key: 'stripe1'
+      #       # async: true
+      #       src: 'https://js.stripe.com/v2/'
+      #     z 'script#stripe2',
+      #       key: 'stripe2'
+      #       # async: true
+      #       innerHTML: "
+      #         Stripe.setPublishableKey('#{config.STRIPE_PUBLISHABLE_KEY}');
+      #       "
+      #   ]

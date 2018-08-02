@@ -26,6 +26,7 @@ module.exports = class Auth
           .then ->
             return {accessToken}
         .catch =>
+          console.log 'caught'
           @exoid.call 'auth.login', {language}
       else
         @exoid.call 'auth.login', {language})

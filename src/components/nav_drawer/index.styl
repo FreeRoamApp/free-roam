@@ -18,9 +18,8 @@ $zIndexDrawer = 300
     padding: 20px 16px
     height: 56px
     box-sizing: border-box
-    border-bottom: 1px solid getColor('$tertiary900Text12')
     border-right: 1px solid getColor('$tertiary90012')
-    background: getColor('$drawerHeader500')
+    background: getColor('$tertiary500')
     display: flex
     align-items: center
 
@@ -33,7 +32,7 @@ $zIndexDrawer = 300
 
     > .name
       font-h1(false)
-      color: getColor('$drawerHeader500Text')
+      color: getColor('$tertiary500Text')
 
   > .ad
     // position: absolute
@@ -45,7 +44,7 @@ $zIndexDrawer = 300
     flex: 1
     width: 100%
     box-sizing: border-box
-    background: getColor('$tertiary700')
+    background: getColor('$tertiary900')
     padding: 8px 0
     overflow-y: auto
     -webkit-overflow-scrolling: touch
@@ -86,20 +85,17 @@ $zIndexDrawer = 300
 
       .menu-item
         > .menu-item-link
-          font-title()
+          font-body1()
           cursor: pointer
           display: flex
           align-items: center
           padding: 8px 16px
 
-          &:active
-            background: getColor('$tertiary500')
+          // &:active
+          //   background: getColor('$tertiary500')
 
           &.is-child
             color: getColor('$tertiary500Text70')
-
-          &.is-selected
-            color: getColor('$tertiary500Text')
 
           > .icon
             margin-right: 36px
@@ -128,7 +124,8 @@ $zIndexDrawer = 300
 
         &.is-selected
           > .menu-item-link
-            background: getColor('$tertiary500')
+            font-title()
+            // background: getColor('$tertiary500')
 
     > .my-groups
       position: relative
@@ -187,5 +184,5 @@ $zIndexDrawer = 300
   .z-nav-drawer_drawer > .content > .menu .menu-item > .menu-item-link
     padding: 4px 16px
 
-    &:hover
-      background: getColor('$tertiary600')
+    // &:hover
+    //   background: getColor('$tertiary600')

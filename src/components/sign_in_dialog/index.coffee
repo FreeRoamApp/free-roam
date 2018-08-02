@@ -138,8 +138,8 @@ module.exports = class SignInDialog
             z '.header',
               z '.title',
                 if mode is 'join'
-                then @model.l.get 'join.title'
-                else @model.l.get 'signIn.title'
+                then @model.l.get 'signInDialog.join'
+                else @model.l.get 'signInDialog.signIn'
               z '.button', {
                 onclick: =>
                   @model.signInDialog.setMode(
@@ -190,7 +190,7 @@ module.exports = class SignInDialog
 
               if mode is 'join'
                 z '.terms',
-                  @model.l.get 'signIn.terms', {
+                  @model.l.get 'signInDialog.terms', {
                     replacements: {tos: ' '}
                   }
                   z 'a', {
@@ -208,7 +208,7 @@ module.exports = class SignInDialog
                     text: if isLoading \
                           then @model.l.get 'general.loading'
                           else if mode is 'join'
-                          then @model.l.get 'join.createAccountButtonText'
+                          then @model.l.get 'signInDialog.createAccount'
                           else @model.l.get 'general.signIn'
                     colors:
                       cText: colors.$primary500

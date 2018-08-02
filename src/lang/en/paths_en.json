@@ -1,0 +1,15 @@
+{
+  "about": "/about",
+  "backpack": "/backpack",
+  "home": "",
+  "item": "/item/:id",
+  "items": "/items",
+  "map": "/map",
+  "partners": "/partners",
+  "policies": "/policies",
+  "privacy": "/privacy",
+  "product": "/product/:nameKebab/:id",
+  "termsOfService": "/tos",
+  "siteHome": "/",
+  "404": "/*"
+}

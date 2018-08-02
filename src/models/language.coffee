@@ -30,6 +30,7 @@ class Language
     else
       files = {
         strings: null
+        paths: null
       }
 
       @files = _mapValues files, (val, file) ->

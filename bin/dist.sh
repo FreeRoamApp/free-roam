@@ -30,7 +30,7 @@ fi
 echo "building current branch"
 git checkout $CURRENT_BRANCH
 
-source ../kaiser/mystic_rose/namespaces/production/env.sh
+source ../padlock/kubernetes/namespaces/production/env.sh
 NODE_ENV=production ./node_modules/gulp/bin/gulp.js dist
 
 # echo "restoring last tag dist"

@@ -18,13 +18,12 @@ require 'rxjs/add/operator/publishReplay'
 Head = require './components/head'
 NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
-EarnAlert = require './components/earn_alert'
 SignInDialog = require './components/sign_in_dialog'
 InstallOverlay = require './components/install_overlay'
 GetAppDialog = require './components/get_app_dialog'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
 PushNotificationsSheet = require './components/push_notifications_sheet'
-ConversationImageView = require './components/conversation_image_view'
+# ConversationImageView = require './components/conversation_image_view'
 OfflineOverlay = require './components/offline_overlay'
 Nps = require './components/nps'
 Environment = require './services/environment'
@@ -33,10 +32,17 @@ config = require './config'
 colors = require './colors'
 
 Pages =
+  AboutPage: require './pages/about'
+  BackpackPage: require './pages/backpack'
   HomePage: require './pages/home'
-  TosPage: require './pages/tos'
+  ItemPage: require './pages/item'
+  ItemsPage: require './pages/items'
+  MapPage: require './pages/map'
+  PartnersPage: require './pages/partners'
+  ProductPage: require './pages/product'
   PoliciesPage: require './pages/policies'
   PrivacyPage: require './pages/privacy'
+  TosPage: require './pages/tos'
   FourOhFourPage: require './pages/404'
 
 TIME_UNTIL_ADD_TO_HOME_PROMPT_MS = 90000 # 1.5 min
@@ -89,6 +95,7 @@ module.exports = class App
     )
 
     @group = requestsAndLanguage.switchMap ([{route}, language]) =>
+      return RxObservable.of {key: 'freeroam'} # TODO
       host = @serverData?.req?.headers.host or window?.location?.host
       groupId = route.params.groupId
 
@@ -156,7 +163,7 @@ module.exports = class App
     if localStorage? and not localStorage['lastAddToHomePromptTime']
       setTimeout ->
         isNative = Environment.isNativeApp('freeroam')
-        if not isNative and not localStorage['lastAddToHomePromptTime']
+        if not isNative and not localStorage['lastAddToHomePromptTime'] and false # FIXME TODO
           addToHomeSheetIsVisible.next true
           localStorage['lastAddToHomePromptTime'] = Date.now()
       , TIME_UNTIL_ADD_TO_HOME_PROMPT_MS
@@ -212,11 +219,18 @@ module.exports = class App
             })
           return @$cachedPages[pageKey]
 
+    route 'about', 'AboutPage'
+    route 'backpack', 'BackpackPage'
+    route 'item', 'ItemPage'
+    route 'map', 'MapPage'
+    route 'partners', 'PartnersPage'
+    route 'product', 'ProductPage'
+
     route 'policies', 'PoliciesPage'
     route 'termsOfService', 'TosPage'
     route 'privacy', 'PrivacyPage'
 
-    route ['home', 'siteHome'], 'HomePage'
+    route ['home', 'siteHome', 'items'], 'ItemsPage'
     route '404', 'FourOhFourPage'
     routes
 
@@ -285,7 +299,6 @@ module.exports = class App
 
               },
                 @model.l.get 'app.stillLoading'
-            z @$earnAlert
             # used in color.coffee to detect support
             z '#css-variable-test',
               style:
