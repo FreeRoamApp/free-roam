@@ -40,8 +40,8 @@ module.exports = class GetAppDialog
                   url: googlePlayAppUrl
                   target: '_system'
             }
-            # z '.text',
-            #   @model.l.get 'getAppDialog.text'
+            z '.text',
+              @model.l.get 'getAppDialog.text'
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>

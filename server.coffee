@@ -115,6 +115,9 @@ stats = JSON.parse \
 
 app.use (req, res, next) ->
   hasSent = false
+  userAgent = req.headers['user-agent']
+  host = req.headers.host
+  accessToken = req.query.accessToken
 
   io = socketIO config.API_HOST, {
     path: (config.API_PATH or '') + '/socket.io'

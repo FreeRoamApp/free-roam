@@ -1,0 +1,50 @@
+@require '../../vars'
+
+.z-about
+  padding: 16px
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .g-grid
+
+    > .meet
+      font-display1()
+      text-align: center
+      margin-bottom: 16px
+
+    > .divider
+      width: 100%
+      height: 1px
+      background: getColor('$tertiary900Text6')
+      margin: 8px 0
+
+    > .clear
+      clear: both
+
+    > .us
+      padding: 8px 32px
+
+      > img
+        width: 100%
+        max-width: 400px
+
+    > .home
+      width: 100%
+      margin-top: 8px
+      max-width: 800px
+
+    a
+      font-weight: 500
+
+
+  @media (min-width: $breakPointMedium)
+    > .g-grid
+      > .us
+        float: left
+        margin-right: 16px
+        margin-bottom: 8px
+        padding: 0
+
+        > img
+          max-width: 300px

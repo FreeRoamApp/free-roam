@@ -13,9 +13,6 @@ require 'rxjs/add/operator/map'
 
 Icon = require '../icon'
 FlatButton = require '../flat_button'
-AdsenseAd = require '../adsense_ad'
-ClanBadge = require '../clan_badge'
-GroupBadge = require '../group_badge'
 Drawer = require '../drawer'
 SemverService = require '../../services/semver'
 Ripple = require '../ripple'
@@ -28,8 +25,6 @@ if window?
 
 module.exports = class NavDrawer
   constructor: ({@model, @router, group, @overlay$}) ->
-    @$adsenseAd = new AdsenseAd {@model, group}
-    @$groupBadge = new GroupBadge {@model, group}
     @$socialIcon = new Icon()
     @$drawer = new Drawer {
       @model
@@ -39,18 +34,16 @@ module.exports = class NavDrawer
     }
 
     me = @model.user.getMe()
-    groupPages = group.switchMap (group) =>
-      @model.groupPage.getAllByGroupId group.id
     menuItemsInfo = RxObservable.combineLatest(
       me
       group
-      groupPages
       @model.l.getLanguage()
       (vals...) -> vals
     )
 
     myGroups = me.switchMap (me) =>
-      @model.group.getAllByUserId me.id
+      RxObservable.of []
+      # @model.group.getAllByUserId me.id
     groupAndMyGroups = RxObservable.combineLatest(
       group
       myGroups
@@ -64,29 +57,29 @@ module.exports = class NavDrawer
       language: @model.l.getLanguage()
       me: me
       expandedItems: []
-      group: group
-      myGroups: groupAndMyGroups.map (props) =>
-        [group, groups, me, language] = props
-        groups = _orderBy groups, (group) =>
-          @model.cookie.get("group_#{group.id}_lastVisit") or 0
-        , 'desc'
-        groups = _filter groups, ({id}) ->
-          id isnt group.id
-        myGroups = _map groups, (group, i) =>
-          {
-            group
-            key: group.key
-            $badge: if group.clan \
-                    then new ClanBadge {@model, clan: group.clan}
-                    else new GroupBadge {@model, group}
-          }
-        myGroups
+      # group: group
+      # myGroups: groupAndMyGroups.map (props) =>
+      #   [group, groups, me, language] = props
+      #   groups = _orderBy groups, (group) =>
+      #     @model.cookie.get("group_#{group.id}_lastVisit") or 0
+      #   , 'desc'
+      #   groups = _filter groups, ({id}) ->
+      #     id isnt group.id
+      #   myGroups = _map groups, (group, i) =>
+      #     {
+      #       group
+      #       key: group.key
+      #       $badge: if group.clan \
+      #               then new ClanBadge {@model, clan: group.clan}
+      #               else new GroupBadge {@model, group}
+      #     }
+      #   myGroups
 
       windowSize: @model.window.getSize()
       drawerWidth: @model.window.getDrawerWidth()
       breakpoint: @model.window.getBreakpoint()
 
-      menuItems: menuItemsInfo.map ([me, group, groupPages, language]) =>
+      menuItems: menuItemsInfo.map ([me, group, language]) =>
         meGroupUser = group.meGroupUser
 
         userAgent = navigator?.userAgent
@@ -99,34 +92,48 @@ module.exports = class NavDrawer
 
         _filter([
           {
-            path: @model.group.getPath group, 'groupHome', {@router}
-            title: @model.l.get 'general.home'
+            path: @router.get 'items'
+            title: @model.l.get 'drawer.productGuide'
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'home'
             isDefault: true
           }
           {
-            path: @model.group.getPath group, 'groupChat', {@router}
-            title: @model.l.get 'general.chat'
+            path: @router.get 'about'
+            title: @model.l.get 'drawer.about'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'chat'
+            iconName: 'info'
           }
           {
-            path: @router.get 'conversations'
-            title: @model.l.get 'drawer.menuItemPrivateMessages'
+            path: @router.get 'backpack'
+            title: @model.l.get 'drawer.backpack'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'chat-bubble'
+            iconName: 'star'
           }
           {
-            path: @model.group.getPath group, 'groupForum', {@router}
-            title: @model.l.get 'general.forum'
+            path: @router.get 'partners'
+            title: @model.l.get 'general.partners'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'rss'
+            iconName: 'cash'
           }
+        #   {
+        #     path: @router.get 'conversations'
+        #     title: @model.l.get 'drawer.menuItemPrivateMessages'
+        #     $icon: new Icon()
+        #     $ripple: new Ripple()
+        #     iconName: 'chat-bubble'
+        #   }
+        #   {
+        #     path: @model.group.getPath group, 'groupForum', {@router}
+        #     title: @model.l.get 'general.forum'
+        #     $icon: new Icon()
+        #     $ripple: new Ripple()
+        #     iconName: 'rss'
+        #   }
           # {
           #   path: @model.group.getPath group, 'groupPeople', {@router}
           #   title: @model.l.get 'people.title'
@@ -134,13 +141,13 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'friends'
           # }
-          {
-            path: @model.group.getPath group, 'groupProfile', {@router}
-            title: @model.l.get 'drawer.menuItemProfile'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'profile'
-          }
+          # {
+          #   path: @model.group.getPath group, 'groupProfile', {@router}
+          #   title: @model.l.get 'drawer.menuItemProfile'
+          #   $icon: new Icon()
+          #   $ripple: new Ripple()
+          #   iconName: 'profile'
+          # }
           # if @model.groupUser.hasPermission {
           #   meGroupUser, me, permissions: ['manageRole']
           # }
@@ -227,7 +234,7 @@ module.exports = class NavDrawer
 
   render: ({currentPath}) =>
     {isOpen, me, menuItems, myGroups, drawerWidth, breakpoint, group,
-      language, windowSize, groupPages} = @state.getValue()
+      language, windowSize} = @state.getValue()
 
     group ?= {}
 
@@ -280,26 +287,23 @@ module.exports = class NavDrawer
             className: z.classKebab {hasA}
           },
             z '.header',
-              z '.icon',
-                z @$groupBadge
-              z '.name',
-                @model.group.getDisplayName group
+              z '.name', 'FreeRoam'
             z '.content',
               z 'ul.menu',
                 [
-                  if me and not me?.isMember
-                    [
-                      z 'li.sign-in-buttons',
-                        z '.button', {
-                          onclick: =>
-                            @model.signInDialog.open 'signIn'
-                        }, @model.l.get 'general.signIn'
-                        z '.button', {
-                          onclick: =>
-                            @model.signInDialog.open()
-                        }, @model.l.get 'general.signUp'
-                      z 'li.divider'
-                    ]
+                  # if me and not me?.username
+                  #   [
+                  #     z 'li.sign-in-buttons',
+                  #       z '.button', {
+                  #         onclick: =>
+                  #           @model.signInDialog.open 'signIn'
+                  #       }, @model.l.get 'general.signIn'
+                  #       z '.button', {
+                  #         onclick: =>
+                  #           @model.signInDialog.open()
+                  #       }, @model.l.get 'general.signUp'
+                  #     z 'li.divider'
+                  #   ]
                   _map menuItems, (menuItem) =>
                     {path, onclick, title, $icon, $chevronIcon, $ripple, isNew,
                       iconName, isDivider, children, expandOnClick} = menuItem
@@ -312,7 +316,7 @@ module.exports = class NavDrawer
                     if menuItem.isDefault
                       isSelected = currentPath in [
                         @router.get 'siteHome'
-                        @model.group.getPath group, 'groupHome', {@router}
+                        @router.get 'items'
                         '/'
                       ]
                     else
@@ -372,44 +376,38 @@ module.exports = class NavDrawer
                   # z 'li.subhead', @model.l.get 'drawer.otherGroups'
               ]
 
-              unless isGroupApp
-                z '.my-groups',
-                  z '.my-groups-scroller', {
-                    ontouchstart: (e) ->
-                      # don't close drawer w/ iscroll
-                      e?.stopPropagation()
-                  },
-                    [
-                      _map myGroups, (myGroup) =>
-                        {$badge} = myGroup
-                        groupPath = @model.group.getPath(
-                          myGroup.group, 'groupHome', {@router}
-                        )
-                        z 'a.group-bubble', {
-                          href: groupPath
-                          onclick: (e) =>
-                            e.preventDefault()
-                            @model.drawer.close()
-                            @router.goPath groupPath
-                        },
-                          z $badge, {isRound: true}
-
-                      z '.a.group-bubble', {
-                        href: @router.get 'groups'
-                        onclick: (e) =>
-                          e.preventDefault()
-                          @model.drawer.close()
-                          @router.go 'groups'
-                      },
-                        z '.icon',
-                          z @$socialIcon,
-                            icon: 'add'
-                            isTouchTarget: false
-                            color: colors.$primary500
-                    ]
-
-            if hasA
-              z '.ad',
-                z @$adsenseAd, {
-                  slot: 'desktop336x280'
-                }
+              # unless isGroupApp
+              #   z '.my-groups',
+              #     z '.my-groups-scroller', {
+              #       ontouchstart: (e) ->
+              #         # don't close drawer w/ iscroll
+              #         e?.stopPropagation()
+              #     },
+              #       [
+              #         _map myGroups, (myGroup) =>
+              #           {$badge} = myGroup
+              #           groupPath = @model.group.getPath(
+              #             myGroup.group, 'groupHome', {@router}
+              #           )
+              #           z 'a.group-bubble', {
+              #             href: groupPath
+              #             onclick: (e) =>
+              #               e.preventDefault()
+              #               @model.drawer.close()
+              #               @router.goPath groupPath
+              #           },
+              #             z $badge, {isRound: true}
+              #
+              #         z '.a.group-bubble', {
+              #           href: @router.get 'groups'
+              #           onclick: (e) =>
+              #             e.preventDefault()
+              #             @model.drawer.close()
+              #             @router.go 'groups'
+              #         },
+              #           z '.icon',
+              #             z @$socialIcon,
+              #               icon: 'add'
+              #               isTouchTarget: false
+              #               color: colors.$primary500
+              #       ]
