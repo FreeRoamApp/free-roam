@@ -34,6 +34,7 @@ colors = require './colors'
 Pages =
   AboutPage: require './pages/about'
   BackpackPage: require './pages/backpack'
+  CategoriesPage: require './pages/categories'
   HomePage: require './pages/home'
   ItemPage: require './pages/item'
   ItemsPage: require './pages/items'
@@ -222,6 +223,7 @@ module.exports = class App
     route 'about', 'AboutPage'
     route 'backpack', 'BackpackPage'
     route 'item', 'ItemPage'
+    route 'itemsByCategory', 'ItemsPage'
     route 'map', 'MapPage'
     route 'partners', 'PartnersPage'
     route 'product', 'ProductPage'
@@ -230,7 +232,7 @@ module.exports = class App
     route 'termsOfService', 'TosPage'
     route 'privacy', 'PrivacyPage'
 
-    route ['home', 'siteHome', 'items'], 'ItemsPage'
+    route ['home', 'siteHome', 'categories'], 'CategoriesPage'
     route '404', 'FourOhFourPage'
     routes
 

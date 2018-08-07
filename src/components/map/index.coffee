@@ -15,6 +15,9 @@ module.exports = class Item extends Base
   constructor: ({@model, @router, item}) ->
     @state = z.state {}
 
+  beforeUnmount: ->
+    super()
+
   render: =>
     {item, products} = @state.getValue()
 

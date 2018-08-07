@@ -1,7 +1,7 @@
 config = require '../config'
 
-module.exports = class Item
-  namespace: 'items'
+module.exports = class Category
+  namespace: 'categories'
 
   constructor: ({@auth}) -> null
 
@@ -10,6 +10,3 @@ module.exports = class Item
 
   getAll: =>
     @auth.stream "#{@namespace}.getAll", {}
-
-  getAllByCategory: (category) =>
-    @auth.stream "#{@namespace}.getAllByCategory", {category}

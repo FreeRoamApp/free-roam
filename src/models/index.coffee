@@ -11,6 +11,7 @@ require 'rxjs/add/operator/take'
 Auth = require './auth'
 Ad = require './ad'
 AdditionalScript = require './additional_script'
+Category = require './category'
 # ChatMessage = require './chat_message'
 # Conversation = require './conversation'
 Cookie = require './cookie'
@@ -111,6 +112,7 @@ module.exports = class Model
     @ad = new Ad {@portal, @cookie, userAgent}
     @additionalScript = new AdditionalScript()
     # @ban = new Ban {@auth}
+    @category = new Category {@auth}
     # @chatMessage = new ChatMessage {@auth, proxy, @exoid}
     # @conversation = new Conversation {@auth}
     @experiment = new Experiment {@cookie}

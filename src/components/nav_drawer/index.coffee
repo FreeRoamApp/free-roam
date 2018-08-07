@@ -92,7 +92,7 @@ module.exports = class NavDrawer
 
         _filter([
           {
-            path: @router.get 'items'
+            path: @router.get 'categories'
             title: @model.l.get 'drawer.productGuide'
             $icon: new Icon()
             $ripple: new Ripple()
@@ -316,7 +316,7 @@ module.exports = class NavDrawer
                     if menuItem.isDefault
                       isSelected = currentPath in [
                         @router.get 'siteHome'
-                        @router.get 'items'
+                        @router.get 'categories'
                         '/'
                       ]
                     else

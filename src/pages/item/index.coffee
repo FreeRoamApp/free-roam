@@ -3,17 +3,18 @@ z = require 'zorium'
 AppBar = require '../../components/app_bar'
 ButtondBack = require '../../components/button_back'
 Item = require '../../components/item'
+BasePage = require '../base'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class ItemPage
+module.exports = class ItemPage extends BasePage
   hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group}) ->
-    @item = requests.switchMap ({route}) =>
+    @item = @clearOnUnmount requests.switchMap ({route}) =>
       @model.item.getById route.params.id
 
     @$appBar = new AppBar {@model}
