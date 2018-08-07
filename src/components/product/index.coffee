@@ -1,4 +1,5 @@
 z = require 'zorium'
+_map = require 'lodash/map'
 
 Icon = require '../icon'
 PrimaryButton = require '../primary_button'
@@ -36,7 +37,7 @@ module.exports = class Product
                   text: @model.l.get 'product.buyAmazon'
                   onclick: =>
                     @model.portal.call 'browser.openWindow', {
-                      url: "https://amazon.com/dp/#{product.sourceId}"
+                      url: "https://amazon.com/dp/#{product.sourceId}?tag=freeroam-20"
                       target: '_system'
                     }
                 }
@@ -50,3 +51,13 @@ module.exports = class Product
           product?.description
 
         # TODO: comparison
+
+        z '.title', @model.l.get 'product.reviewersLiked'
+        z 'ul.reviewers-liked',
+          _map product?.reviewersLiked, (item) ->
+            z 'li.item', item
+
+        z '.title', @model.l.get 'product.reviewersDisliked'
+        z 'ul.reviewers-disliked',
+          _map product?.reviewersDisliked, (item) ->
+            z 'li.item', item

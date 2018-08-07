@@ -16,8 +16,6 @@ module.exports = class ItemBox
   render: =>
     {item} = @state.getValue()
 
-    console.log 'item', item
-
     @router.link z 'a.z-item-box', {
       href: @router.get 'item', {
         id: item.id

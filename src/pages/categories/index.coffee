@@ -1,34 +1,25 @@
 z = require 'zorium'
 _map = require 'lodash/map'
-_find = require 'lodash/find'
 
 AppBar = require '../../components/app_bar'
-ButtonBack = require '../../components/button_back'
-Items = require '../../components/items'
-Base = require '..//base'
+ButtonMenu = require '../../components/button_menu'
+Categories = require '../../components/categories'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class ItemsPage extends Base
-  hideDrawer: true
+module.exports = class CategoriesPage
+  # hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group}) ->
-    category = @clearOnUnmount requests.map ({route}) =>
-      route.params.category
-
     @$appBar = new AppBar {@model}
-    @$buttonBack = new ButtonBack {@model, @router}
-    @$items = new Items {@model, @router, category}
+    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$categories = new Categories {@model, @router}
 
     @state = z.state
       me: @model.user.getMe()
-      category: category.switchMap (category) =>
-        @model.category.getAll()
-        .map (categories) ->
-          _find categories, {id: category}
       windowSize: @model.window.getSize()
 
   getMeta: ->
@@ -37,16 +28,16 @@ module.exports = class ItemsPage extends Base
     }
 
   render: =>
-    {me, windowSize, category} = @state.getValue()
+    {me, windowSize} = @state.getValue()
 
-    z '.p-items', {
+    z '.p-categories', {
       style:
         height: "#{windowSize.height}px"
     },
       z @$appBar, {
-        title: category?.name
+        title: @model.l.get 'categoriesPage.title'
         style: 'primary'
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
         $topRightButton:
           z '.p-group-home_top-right',
             z @$notificationsIcon,
@@ -62,4 +53,4 @@ module.exports = class ItemsPage extends Base
                   @model, @router, @overlay$, @group
                 }
       }
-      @$items
+      @$categories

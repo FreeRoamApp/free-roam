@@ -11,16 +11,20 @@ if window?
   require './index.styl'
 
 module.exports = class Items extends Base
-  constructor: ({@model, @router, items}) ->
+  constructor: ({@model, @router, category}) ->
     me = @model.user.getMe()
 
     @state = z.state
-      items: @model.item.getAll().map (items) =>
-        _map items, (item) =>
-          $itemBox = @getCached$(
-            "item-#{item.id}", ItemBox, {@model, @router, item}
-          )
-          {$itemBox}
+      items: category.switchMap (category) =>
+        @model.item.getAllByCategory(category).map (items) =>
+          _map items, (item) =>
+            $itemBox = @getCached$(
+              "item-#{item.id}", ItemBox, {@model, @router, item}
+            )
+            {$itemBox}
+
+  beforeUnmount: ->
+    super()
 
   render: =>
     {items} = @state.getValue()
