@@ -13,3 +13,6 @@ module.exports = class Item
 
   getAllByCategory: (category) =>
     @auth.stream "#{@namespace}.getAllByCategory", {category}
+
+  search: ({query}) =>
+    @auth.stream "#{@namespace}.search", {query}

@@ -4,6 +4,7 @@ _map = require 'lodash/map'
 Icon = require '../icon'
 PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
+FormattedText = require '../formatted_text'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -19,9 +20,12 @@ module.exports = class Product
 
     @state = z.state
       product: product
+      $description: new FormattedText {
+        text: product.map (product) -> product.description
+      }
 
   render: =>
-    {product} = @state.getValue()
+    {product, $description} = @state.getValue()
 
     z '.z-product',
       z '.g-grid',
@@ -44,11 +48,13 @@ module.exports = class Product
               z '..g-col.g-xs-12.g-md-6',
                 z @$packButton, {
                   text: @model.l.get 'product.addToPack'
+                  onclick: ->
+                    alert 'Coming soon!'
                 }
         z '.name',
           product?.name
         z '.description',
-          product?.description
+          $description
 
         # TODO: comparison
 

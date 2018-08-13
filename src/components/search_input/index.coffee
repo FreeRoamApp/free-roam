@@ -29,15 +29,15 @@ module.exports = class SearchInput
 
   render: (options = {}) =>
     {placeholder, isFocused, onBack, height, bgColor,
-      alwaysShowBack, isSearchIconRight, onclick} = options
+      alwaysShowBack, isSearchIconRight, onclick, onsubmit} = options
 
     {_isFocused, searchValue} = @state.getValue()
 
     onBack ?= =>
       @router.back()
-    height ?= '56px'
+    height ?= '36px'
     isFocused ?= _isFocused
-    bgColor ?= colors.$tertiary700
+    bgColor ?= colors.$grey100
     placeholder ?= @model.l.get 'searchInput.placeholder'
     hasOnClick = Boolean onclick
 
@@ -67,17 +67,21 @@ module.exports = class SearchInput
         z 'span.right-icon',
           if searchValue or isSearchIconRight
             z @$clearIcon,
-              icon: if isSearchIconRight and not searchValue \
-                    then 'search'
-                    else 'close'
+              icon: 'search'
+              # icon: if isSearchIconRight and not searchValue \
+              #       then 'search'
+              #       else 'close'
               color: if isSearchIconRight and not searchValue \
                      then colors.$tertiary900Text54
                      else colors.$tertiary900Text
               touchHeight: height
-              onclick: @clear
+              onclick: =>
+                onsubmit?()
+              # onclick: @clear
       z 'form.form', {
         onsubmit: (e) ->
           e.preventDefault()
+          onsubmit?()
           document.activeElement.blur() # hide keyboard
         style:
           height: height

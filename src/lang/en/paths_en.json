@@ -5,6 +5,7 @@
   "categories": "/categories",
   "item": "/item/:id",
   "itemsByCategory": "/items/:category",
+  "itemsBySearch": "/items/search/:query",
   "map": "/map",
   "partners": "/partners",
   "policies": "/policies",
