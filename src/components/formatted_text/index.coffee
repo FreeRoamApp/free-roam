@@ -8,8 +8,7 @@ _reduce = require 'lodash/reduce'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
-Sticker = require '../sticker'
-AddonListItem = require '../addon_list_item'
+# Sticker = require '../sticker'
 EmbeddedVideo = require '../embedded_video'
 config = require '../../config'
 
@@ -136,16 +135,7 @@ module.exports = class FormattedText
           youtubeId = props.href?.match(config.YOUTUBE_ID_REGEX)?[1]
           imgurId = props.href?.match(config.IMGUR_ID_REGEX)?[1]
 
-          if isAddon
-            addonKey = props.title.replace('addon:', '')
-            if addonKey
-              $addonListItem = new AddonListItem {
-                model
-                @router
-                addon: state?.addon
-              }
-              z $addonListItem, {hasPadding: false}
-          else if youtubeId and @embedVideos
+          if youtubeId and @embedVideos
             $embeddedVideo = new EmbeddedVideo {
               model
               videoAttachment:

@@ -1,11 +1,13 @@
 z = require 'zorium'
 _map = require 'lodash/map'
 _find = require 'lodash/find'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 Items = require '../../components/items'
-Base = require '..//base'
+Base = require '../base'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -16,35 +18,43 @@ module.exports = class ItemsPage extends Base
   hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group}) ->
-    category = @clearOnUnmount requests.map ({route}) =>
-      route.params.category
+    filter = @clearOnUnmount requests.map ({route}) =>
+      if route.params.category
+        {type: 'category', value: route.params.category}
+      else if route.params.query
+        {type: 'search', value: route.params.query}
+      else
+        {}
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$items = new Items {@model, @router, category}
+    @$items = new Items {@model, @router, filter}
 
     @state = z.state
       me: @model.user.getMe()
-      category: category.switchMap (category) =>
-        @model.category.getAll()
-        .map (categories) ->
-          _find categories, {id: category}
+      title: filter.switchMap (filter) =>
+        if filter.type is 'category'
+          @model.category.getAll()
+          .map (categories) ->
+            _find(categories, {id: filter.value})?.name
+        else
+          RxObservable.of filter.value
       windowSize: @model.window.getSize()
 
   getMeta: ->
     {
-      title: "How to decide what to buy for your RV"
+      title: "The best products for your RV"
     }
 
   render: =>
-    {me, windowSize, category} = @state.getValue()
+    {me, windowSize, title} = @state.getValue()
 
     z '.p-items', {
       style:
         height: "#{windowSize.height}px"
     },
       z @$appBar, {
-        title: category?.name
+        title: title
         style: 'primary'
         $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         $topRightButton:

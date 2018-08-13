@@ -223,7 +223,7 @@ module.exports = class App
     route 'about', 'AboutPage'
     route 'backpack', 'BackpackPage'
     route 'item', 'ItemPage'
-    route 'itemsByCategory', 'ItemsPage'
+    route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
     route 'map', 'MapPage'
     route 'partners', 'PartnersPage'
     route 'product', 'ProductPage'
