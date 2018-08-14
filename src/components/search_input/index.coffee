@@ -88,11 +88,11 @@ module.exports = class SearchInput
       },
         z 'input.input',
           placeholder: placeholder
-          value: searchValue
+          value: if window? then searchValue
           onfocus: @open
           onblur: @close
           focused: 'focused'
           style:
             backgroundColor: bgColor
-          oninput: z.ev (e, $$el) =>
-            @searchValue.next $$el?.value
+          oninput: (e) ->
+            @searchValue.next e.target.value

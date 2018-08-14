@@ -21,7 +21,7 @@ module.exports = class Categories
   constructor: ({@model, @router, categories}) ->
     me = @model.user.getMe()
 
-    @searchValue = new RxBehaviorSubject null
+    @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
     @state = z.state
