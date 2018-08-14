@@ -126,7 +126,11 @@ init = ->
     host: window.location.host
   }
 
-  root = document.createElement 'div'
+  # alternative is to find a way for zorium to subscribe to observables
+  # to not start with null
+  # (flash with whatever obs data is on page going empty for 1 frame), then
+  # render after a few ms
+  root = document.getElementById('zorium-root').cloneNode(true)
   requests = router.getStream()
   app = new App {
     requests
@@ -289,7 +293,6 @@ if document.readyState isnt 'complete' and
   document.addEventListener 'DOMContentLoaded', init
 else
   init()
-
 #############################
 # ENABLE WEBPACK HOT RELOAD #
 #############################

@@ -120,6 +120,14 @@ module.exports = class NavDrawer
             $ripple: new Ripple()
             iconName: 'cash'
           }
+          if config.ENV is config.ENVS.DEV
+            {
+              path: @router.get 'map'
+              title: 'map'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'cash'
+            }
         #   {
         #     path: @router.get 'conversations'
         #     title: @model.l.get 'drawer.menuItemPrivateMessages'
