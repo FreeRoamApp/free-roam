@@ -94,5 +94,5 @@ module.exports = class SearchInput
           focused: 'focused'
           style:
             backgroundColor: bgColor
-          oninput: (e) ->
+          oninput: (e) =>
             @searchValue.next e.target.value

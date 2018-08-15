@@ -11,10 +11,11 @@ module.exports = class About
   constructor: ({@model, @router}) ->
     me = @model.user.getMe()
 
-    @state = z.state {}
+    @state = z.state
+      windowSize: @model.window.getSize()
 
   render: =>
-    {} = @state.getValue()
+    {windowSize} = @state.getValue()
 
     z '.z-about',
       z '.g-grid',
@@ -22,6 +23,8 @@ module.exports = class About
         z '.us',
           z 'img',
             src: "#{config.CDN_URL}/us.jpg"
+            width: Math.min(400, windowSize.width - 32 * 2 - 16 * 2)
+            height: Math.min(400, windowSize.width - 32 * 2 - 16 * 2)
         z '.divider'
         z 'p', @model.l.get 'about.text1'
         z 'p', @model.l.get 'about.text2'

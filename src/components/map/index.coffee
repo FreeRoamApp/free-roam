@@ -16,8 +16,10 @@ module.exports = class Map
       windowSize: @model.window.getSize()
 
   afterMount: (@$$el) =>
-    @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.47.0/mapbox-gl.css'
-    @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.47.0/mapbox-gl.js'
+    # TODO update after this is resolved
+    # https://github.com/mapbox/mapbox-gl-js/issues/6722
+    @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.css'
+    @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.js'
 
     setTimeout => # FIXME
       @map = new mapboxgl.Map {
