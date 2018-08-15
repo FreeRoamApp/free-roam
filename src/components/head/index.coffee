@@ -68,7 +68,7 @@ module.exports = class Head
     {meta, serverData, route, routeKey, group, additionalCss,
       modelSerialization, cssVariables} = @state.getValue()
 
-    gaId = 'UA-27992080-30'
+    gaId = 'UA-123979730-1'
     gaSampleRate = 100
 
     paths = _mapValues @model.l.getAllPathsByRouteKey(routeKey), (path) ->
