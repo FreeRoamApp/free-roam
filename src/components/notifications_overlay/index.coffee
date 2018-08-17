@@ -17,7 +17,7 @@ module.exports = class NotificationsOverlay
 
     @state = z.state
       notifications: group.switchMap (group) =>
-        @model.notification.getAll {groupId: group.id}
+        @model.notification.getAll {groupUuid: group.uuid}
 
   afterMount: =>
     @router.onBack =>
@@ -46,7 +46,7 @@ module.exports = class NotificationsOverlay
               z @$emptyIcon,
                 icon: 'notifications'
                 isTouchTarget: false
-                color: colors.$tertiary300
+                color: colors.$tertiary900Text54
                 size: '100px'
             @model.l.get 'notificationsOverlay.empty'
         else

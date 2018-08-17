@@ -60,11 +60,9 @@ isomorphic =
     sendMessage: true
     sendLink: true
     sendImage: true
-    sendAddon: true
-    bypassSlowMode: false
   DEFAULT_NOTIFICATIONS:
-    chatMessage: true
-    chatMention: true
+    conversationMessage: true
+    conversationMention: true
   CDN_URL: 'https://fdn.uno/d/images'
   # d folder has longer cache
   SCRIPTS_CDN_URL: 'https://fdn.uno/d/scripts'

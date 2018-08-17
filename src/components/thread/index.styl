@@ -1,0 +1,115 @@
+@require '../../vars'
+
+@keyframes z-thread-share-animation-wiggle
+  0%
+    transform: rotate(0deg)
+  25%
+    transform: rotate(12deg) scale(1.3)
+  50%
+    transform: rotate(-12deg) scale(1.3)
+  75%
+    transform: rotate(12deg) scale(1.3)
+  100%
+    transform: rotate(0deg)
+
+.z-thread
+  flex: 1
+  width: 100%
+  display: flex
+  flex-direction: column
+  background: getColor('$tertiary700')
+  margin: 0 auto
+
+  > .content
+    flex: 1
+    display: flex
+    flex-direction: column
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+    // https://stackoverflow.com/questions/39261456/reducing-scroll-jank-when-using-overflow-y-scroll/39368219
+    will-change: transform
+
+    > .post
+      padding: 16px
+
+      > .g-grid
+        > .author
+          font-caption1()
+          color: getColor('$tertiary900Text54')
+          display: flex
+
+          > .name
+            display: flex
+            margin-left: 8px
+            cursor: pointer
+
+            > .icon
+              margin-left: 4px
+
+        > .title
+          font-title()
+          margin-top: 16px
+
+        > .body
+          font-body1()
+          margin-top: 16px
+
+          a
+            color: getColor('$primary500')
+            text-decoration: underline
+
+    > .stats
+      padding-right: 16px
+
+      > .g-grid
+        display: flex
+        align-items: center
+
+        > .vote
+          display: flex
+          align-items: center
+
+        > .score
+          margin-left: auto
+
+        > .filter-icon
+          margin-left: 8px
+
+
+      > .ad
+        margin: 16px 0
+
+    > .comments-wrapper
+      flex: 1
+      background: getColor('$tertiary900')
+
+      > .g-grid
+        > .comments
+          padding: 16px
+
+        > .no-comments
+          padding: 16px
+
+        > .divider
+          width: 100%
+          height: 1px
+          background: getColor('$white12')
+          margin: 8px 0
+
+    > .divider
+      width: 100%
+      height: 1px
+      background: getColor('$white12')
+      margin: 8px 0
+
+  > .fab
+    position: fixed
+    bottom: 16px
+    right: 16px
+    z-index: 50
+
+.z-thread_top-right
+  display: flex
+
+  > .share.wiggle
+    animation: z-thread-share-animation-wiggle 1s

@@ -1,0 +1,93 @@
+@require '../../vars'
+
+.z-thread-list-item
+  width: 100%
+  box-sizing: border-box
+  display: block
+
+  &.has-padding
+    padding: 8px 16px
+    border-bottom: 1px solid getColor('$tertiary500')
+
+  &.is-image-loaded
+    opacity: 1
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+    > .content
+      > .image
+        opacity: 1 !important
+        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  &.is-pinned&.has-padding
+    border-left: 4px solid getColor('$primary500')
+
+  > .content
+    display: flex
+    flex: 1
+
+    > .image
+      background-size: cover
+      background-position: center
+      width: 70px
+      height: 70px
+      margin-right: 16px
+      // padding-bottom: 100%
+      opacity: 0
+      flex-shrink: 0
+
+    > .text-icon
+      background: getColor('$primary500')
+      width: 70px
+      height: 70px
+      margin-right: 16px
+
+    > .icon
+      width: 34px
+      margin-right: 16px
+
+    > .info
+      flex: 1
+      display: flex
+      flex-direction: column
+      min-width: 0
+
+      > .title
+        font-title()
+        word-break: break-word
+
+      > .bottom
+        margin-top: auto
+
+        > .author
+          font-caption2()
+          display: flex
+          align-items: center
+
+          > .name
+            whitespace: nowrap
+            text-overflow: ellipsis
+            overflow: hidden
+            max-width: 25%
+
+          > .icon
+            margin-left: 4px
+
+          > .middot
+            margin: 0 4px
+
+          > .time
+            margin-right: 8px
+
+          > .comments
+            margin-left: auto
+            // margin-right: 16px
+
+          > .comments, > .points
+            display: flex
+            align-items: center
+
+            > .icon
+              margin: 0 8px
+  > .preview
+    width: 100%
+    margin-top: 8px

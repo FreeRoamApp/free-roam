@@ -28,7 +28,7 @@ class PaymentService
           platform = if platform is 'android' then 'android' else 'ios'
           model.payment.verify {
             platform: platform
-            groupId: group.id
+            groupUuid: group.uuid
             receipt: receipt
             productId: productId
             packageName: packageName

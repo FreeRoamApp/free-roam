@@ -12,11 +12,14 @@ if window?
 
 module.exports = class CategoriesPage
   # hideDrawer: true
+  @hasBottomBar: true
 
-  constructor: ({@model, @router, requests, serverData, group}) ->
+  constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$categories = new Categories {@model, @router}
+
+    console.log @$bottomBar
 
     @state = z.state
       me: @model.user.getMe()
@@ -54,3 +57,4 @@ module.exports = class CategoriesPage
                 }
       }
       @$categories
+      @$bottomBar

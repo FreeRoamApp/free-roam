@@ -109,42 +109,6 @@ module.exports = class EditProfile
             hintText: @model.l.get 'general.username'
 
       z '.section',
-        z '.title', @model.l.get 'editProfile.linkedGames'
-        # TODO: get all user players and have x to unlink
-        _map players, ({player, $removeIcon}) =>
-          z '.player',
-            z '.game', _startCase player?.gameKey
-            z '.id', player?.playerId
-            z '.remove',
-              z $removeIcon,
-                icon: 'close'
-                isTouchTarget: false
-                color: colors.$tertiary900Text
-                onclick: =>
-                  @model.player.unlinkByMeAndGameKey {
-                    gameKey: player?.gameKey
-                  }
-
-      z '.section',
-        z '.title', 'Twitch'
-        z '.connect-twitch', {
-          onclick: =>
-            @model.portal.call 'twitch.connect'
-            .then (data) =>
-              if data?.code
-                @model.connection.upsertByCode data.code, {
-                  site: 'twitch'
-                  groupId: group?.id
-                  idToken: data.idToken
-                }
-        },
-          if isTwitchConnected
-            @model.l.get 'general.connected'
-          else
-            @model.l.get 'general.connect'
-
-
-      z '.section',
         z '.title', @model.l.get 'editProfile.changeAvatar'
         if avatarUploadError
           avatarUploadError

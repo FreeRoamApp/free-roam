@@ -67,14 +67,6 @@ module.exports = class Auth
     @exoid.call 'auth.loginUsername', {username, password}
     .then @afterLogin
 
-  loginTwitch: ({code, idToken, isLoginOnly} = {}) =>
-    @exoid.call 'auth.loginTwitch', {isLoginOnly, code, idToken}
-    .then @afterLogin
-
-  loginTwitchExtension: ({token, isLoginOnly} = {}) =>
-    @exoid.call 'auth.loginTwitchExtension', {isLoginOnly, token}
-    .then @afterLogin
-
   stream: (path, body, options = {}) =>
     options = _pick options, [
       'isErrorable', 'clientChangesStream', 'ignoreCache', 'initialSortFn'

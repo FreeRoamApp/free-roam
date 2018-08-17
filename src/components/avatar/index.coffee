@@ -17,36 +17,36 @@ module.exports = class Avatar
     src or= src or user?.avatarImage?.versions[0].url or PLACEHOLDER_URL
 
     playerColors = config.PLAYER_COLORS
-    lastChar = user?.id?.substr(user?.id?.length - 1, 1) or 'a'
+    lastChar = user?.uuid?.substr(user?.uuid?.length - 1, 1) or 'a'
     avatarColor = playerColors[ \
       Math.ceil (parseInt(lastChar, 16) / 16) * (playerColors.length - 1)
     ]
 
     # TODO: move to constructor so we don't do this loop every render
-    if groupUser
-      level = _find(config.XP_LEVEL_REQUIREMENTS, ({xpRequired}) ->
-        groupUser.xp >= xpRequired
-      )?.level
+    # if groupUser
+    #   level = _find(config.XP_LEVEL_REQUIREMENTS, ({xpRequired}) ->
+    #     groupUser.xp >= xpRequired
+    #   )?.level
 
-    levelColor = colors["$#{config.XP_LEVEL_COLORS[level]}500"]
-    textShadowColor = colors["$#{config.XP_LEVEL_COLORS[level]}500TextShadow"]
+    # levelColor = colors["$#{config.XP_LEVEL_COLORS[level]}500"]
+    # textShadowColor = colors["$#{config.XP_LEVEL_COLORS[level]}500TextShadow"]
 
     z '.z-avatar', {
       style:
         width: size
         height: size
         backgroundColor: avatarColor
-        border: if level then "2px solid #{levelColor}" else 'none'
+        # border: if level then "2px solid #{levelColor}" else 'none'
     },
       if src
         z '.image',
           style:
             backgroundImage: "url(#{src})"
-      if level
-        z '.level',  {
-          style:
-            backgroundColor: levelColor
-            color: colors["$#{config.XP_LEVEL_COLORS[level]}500Text"]
-            textShadow: "0 1px 0 #{textShadowColor}"
-        },
-          level
+      # if level
+      #   z '.level',  {
+      #     style:
+      #       backgroundColor: levelColor
+      #       color: colors["$#{config.XP_LEVEL_COLORS[level]}500Text"]
+      #       textShadow: "0 1px 0 #{textShadowColor}"
+      #   },
+      #     level

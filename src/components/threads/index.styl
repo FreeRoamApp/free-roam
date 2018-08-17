@@ -1,0 +1,48 @@
+@require '../../vars'
+
+.z-threads
+  flex: 1
+  width: 100%
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  box-sizing: border-box
+  will-change: transform // speed up scrolling (otherwise repaints on scroll)
+
+  > .no-threads
+    text-align: center
+    padding: 16px
+
+  > .g-grid
+    margin-top: 4px
+    padding-bottom: 48px // for loading spinner
+    position: relative
+    // this + padding/appbar forces page to be taller than window so scroll works (for infinite scroll)
+    min-height: 100%
+
+    > .loading
+      position: absolute
+      width: 100%
+      left: 0
+      bottom: 16px
+
+    > .user-of-week
+      background: getColor('$primary900')
+      padding: 8px
+      margin: 16px
+      border-radius: 2px
+
+      > .title
+        font-button()
+
+    > .columns
+      display: flex
+
+      > .column
+        flex: 1
+        margin: 0 8px
+
+        &:first-child
+          margin-left: 0
+
+        &:last-child
+          margin-right: 0

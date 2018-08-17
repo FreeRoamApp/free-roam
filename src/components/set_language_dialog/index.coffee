@@ -13,22 +13,18 @@ if window?
   require './index.styl'
 
 module.exports = class SetLanguageDialog
-  constructor: ({@model, @router, @overlay$, group}) ->
+  constructor: ({@model, @router, @overlay$}) ->
     @$dialog = new Dialog()
 
     @languageStreams = new RxReplaySubject null
     @languageStreams.next @model.l.getLanguage()
 
     @state = z.state
-      group: group
       currentLanguage: @languageStreams.switch()
       languages: @model.l.getAll()
 
   render: =>
-    {group, currentLanguage, languages} = @state.getValue()
-
-    gameKey = group?.gameKey or group?.gameKeys?[0]
-    isGameGroup = group?.gameKey
+    {currentLanguage, languages} = @state.getValue()
 
     z '.z-set-language-dialog',
       z @$dialog,
@@ -62,11 +58,4 @@ module.exports = class SetLanguageDialog
             @model.l.setLanguage currentLanguage
             @model.user.setLanguage currentLanguage
             @overlay$.next null
-            # we use a separate bundle.js per language, so need to load that in
-            # also need to switch to correct group
-            if gameKey and isGameGroup
-              @model.cookie.set 'routerLastPath', ''
-              @model.cookie.set 'lastGroupId', ''
-              window.location.href = "/game/#{gameKey}"
-            else
-              window.location.reload()
+            window.location.reload()

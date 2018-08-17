@@ -1,0 +1,43 @@
+@require '../../vars'
+
+.z-filter-comments-dialog_dialog
+  > .subhead
+    font-subhead()
+    color: getColor('$primary500')
+    margin-top: 16px
+
+    &:first-child
+      margin-top: 0
+
+  > .option
+    display: flex
+    padding: 8px 0
+    align-items: center
+
+    // TODO: stylus fn or component
+    > .radio
+      appearance: none
+      outline: none
+      width: 20px
+      height: 20px
+      border-radius: 50%
+      border: 2px solid getColor('$tertiary900Text54')
+      box-sizing: border-box
+      position: relative
+      margin-right: 8px
+
+      &:checked
+        background: getColor('$primary500')
+        border: 2px solid getColor('$primary500')
+
+        &:after
+          content: ''
+          position: absolute
+          width: 100%
+          height: 100%
+          border-radius: 50%
+          border: 2px solid getColor('$tertiary700')
+          box-sizing: border-box
+
+    > .text
+      font-body1()

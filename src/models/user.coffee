@@ -14,8 +14,8 @@ module.exports = class User
   getCountry: =>
     @auth.stream "#{@namespace}.getCountry"
 
-  getById: (id) =>
-    @auth.stream "#{@namespace}.getById", {id}
+  getByUuid: (uuid) =>
+    @auth.stream "#{@namespace}.getByUuid", {uuid}
 
   getByUsername: (username) =>
     @auth.stream "#{@namespace}.getByUsername", {username}

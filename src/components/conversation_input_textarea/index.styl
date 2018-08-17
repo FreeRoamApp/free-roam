@@ -1,0 +1,32 @@
+@require '../../vars'
+
+.z-conversation-input-textarea
+    position: relative
+
+    > .textarea
+      width: 100%
+      height: 54px
+      padding: 16px 92px 16px 16px
+      box-sizing: border-box
+      max-height: 150px
+      border: none
+      outline: none
+      resize: none
+      display: block
+      background: getColor('$tertiary500')
+
+      &::placeholder
+        color: getColor('$tertiary900Text54')
+
+    > .right-icons
+      position: absolute
+      right: 12px
+      top: 0%
+      height: 100%
+      display: flex
+      align-items: center
+      cursor: pointer
+
+      > .send-icon
+        height: 100%
+        display: flex

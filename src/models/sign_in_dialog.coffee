@@ -22,7 +22,7 @@ module.exports = class SignInDialog
 
   openIfGuest: (user) =>
     new Promise (resolve, reject) =>
-      if user?.isMember
+      if user?.username
         resolve true
       else
         @open()

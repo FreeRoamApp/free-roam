@@ -1,4 +1,13 @@
 {
+  "groupChat": "/g/:groupUuid/chat",
+  "groupChatConversation": "/g/:groupUuid/chat/:conversationUuid",
+  "groupForum": "/g/:groupUuid/forum",
+  "groupNewThread": "/g/:groupUuid/new-thread",
+  "groupThread": "/g/:groupUuid/thread/:id",
+  "groupNewThreadWithCategory": "/g/:groupUuid/new-thread/:category",
+  "groupNewThreadWithCategoryAndUuid": "/g/:groupUuid/new-thread/:category/:uuid",
+  "groupThreadEdit": "/g/:groupUuid/thread/:id/edit",
+
   "about": "/about",
   "backpack": "/backpack",
   "home": "",

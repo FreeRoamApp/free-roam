@@ -35,14 +35,18 @@ Pages =
   AboutPage: require './pages/about'
   BackpackPage: require './pages/backpack'
   CategoriesPage: require './pages/categories'
+  GroupChatPage: require './pages/group_chat'
+  GroupForumPage: require './pages/group_forum'
   HomePage: require './pages/home'
   ItemPage: require './pages/item'
   ItemsPage: require './pages/items'
   MapPage: require './pages/map'
+  NewThreadPage: require './pages/new_thread'
   PartnersPage: require './pages/partners'
   ProductPage: require './pages/product'
   PoliciesPage: require './pages/policies'
   PrivacyPage: require './pages/privacy'
+  ThreadPage: require './pages/thread'
   TosPage: require './pages/tos'
   FourOhFourPage: require './pages/404'
 
@@ -79,7 +83,7 @@ module.exports = class App
 
       subdomain = @router.getSubdomain()
 
-      if subdomain # equiv to /groupId/route
+      if subdomain # equiv to /groupUuid/route
         route = routes.get "/#{subdomain}#{req.path}"
         if route.handler?() instanceof Pages['FourOhFourPage']
           route = routes.get req.path
@@ -91,29 +95,26 @@ module.exports = class App
       {req, route, $page: $page}
     .publishReplay(1).refCount()
 
-    requestsAndLanguage = RxObservable.combineLatest(
-      @requests, @model.l.getLanguage(), (vals...) -> vals
-    )
-
-    @group = requestsAndLanguage.switchMap ([{route}, language]) =>
-      return RxObservable.of {key: 'freeroam'} # TODO
+    @group = @requests.switchMap ({route}) =>
       host = @serverData?.req?.headers.host or window?.location?.host
-      groupId = route.params.groupId
+      groupUuid = route.params.groupUuid
 
       subdomain = @router.getSubdomain()
-      if subdomain and not groupId
-        groupId = subdomain
+      if subdomain and not groupUuid
+        groupUuid = subdomain
 
-      groupId or= @model.cookie.get 'lastGroupId'
+      groupUuid or= @model.cookie.get 'lastGroupUuid'
 
-      (if isUuid groupId
-        @model.group.getById groupId, {autoJoin: true}
-      else if groupId and groupId isnt 'undefined' and groupId isnt 'null'
-        @model.group.getByKey groupId, {autoJoin: true}
+      console.log groupUuid
+
+      (if isUuid groupUuid
+        console.log 'get uuid'
+        @model.group.getByUuid groupUuid, {autoJoin: true}
+      else if groupUuid and groupUuid isnt 'undefined' and groupUuid isnt 'null'
+        console.log 'get id'
+        @model.group.getById groupUuid, {autoJoin: true}
       else
-        @model.group.getByGameKeyAndLanguage(
-          config.DEFAULT_GAME_KEY, language, {autoJoin: true}
-        )
+        @model.group.getDefaultGroup {autoJoin: true}
       )
     .publishReplay(1).refCount()
 
@@ -214,6 +215,7 @@ module.exports = class App
               @router
               @serverData
               @overlay$
+              @group
               $bottomBar: if Page.hasBottomBar then @$bottomBar
               requests: @requests.filter ({$page}) ->
                 $page instanceof Page
@@ -222,6 +224,14 @@ module.exports = class App
 
     route 'about', 'AboutPage'
     route 'backpack', 'BackpackPage'
+    route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
+    route 'groupForum', 'GroupForumPage'
+    route [
+      'groupNewThread', 'groupNewThreadWithCategory',
+      'groupNewThreadWithCategoryAndUuid'
+    ], 'NewThreadPage'
+    route 'groupThread', 'ThreadPage'
+    route 'groupThreadEdit', 'EditThreadPage'
     route 'item', 'ItemPage'
     route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
     route 'map', 'MapPage'
@@ -247,7 +257,7 @@ module.exports = class App
     isIos = Environment.isiOS {userAgent}
     isAndroid = Environment.isAndroid {userAgent}
     isNative = Environment.isNativeApp('freeroam')
-    isPageAvailable = (me?.isMember or not request?.$page?.isPrivate)
+    isPageAvailable = (me?.username or not request?.$page?.isPrivate)
     defaultInstallMessage = @model.l.get 'app.defaultInstallMessage'
 
     $page = request?.$page or $backupPage
