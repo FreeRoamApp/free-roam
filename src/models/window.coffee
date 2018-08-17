@@ -1,7 +1,7 @@
 Environment = require '../services/environment'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 require 'rxjs/add/operator/map'
-uuid = require 'uuid'
+id = require 'uuid'
 _forEach = require 'lodash/forEach'
 
 config = require '../config'
@@ -90,7 +90,7 @@ module.exports = class Window
       fn()
 
   onResume: (fn) =>
-    id = uuid.v4()
+    id = id.v4()
     @resumeFns[id] = fn
     unsubscribe: =>
       delete @resumeFns[id]

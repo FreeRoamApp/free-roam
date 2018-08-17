@@ -5,55 +5,55 @@ module.exports = class Group
 
   constructor: ({@auth}) -> null
 
-  create: ({name, description, badgeId, background, mode}) =>
+  create: ({name, description, mode}) =>
     @auth.call "#{@namespace}.create", {
-      name, description, badgeId, background, mode
+      name, description, mode
     }, {invalidateAll: true}
 
   getAll: ({filter, language, embed} = {}) =>
     embed ?= ['conversations', 'star', 'userCount']
     @auth.stream "#{@namespace}.getAll", {filter, language, embed}
 
-  getAllByUserUuid: (userUuid, {embed} = {}) =>
+  getAllByUserId: (userId, {embed} = {}) =>
     embed ?= ['meGroupUser', 'conversations', 'star', 'userCount']
-    @auth.stream "#{@namespace}.getAllByUserUuid", {userUuid, embed}
-
-  getByUuid: (uuid, {autoJoin} = {}) =>
-    @auth.stream "#{@namespace}.getByUuid", {uuid, autoJoin}
+    @auth.stream "#{@namespace}.getAllByUserId", {userId, embed}
 
   getById: (id, {autoJoin} = {}) =>
     @auth.stream "#{@namespace}.getById", {id, autoJoin}
 
+  getBySlug: (slug, {autoJoin} = {}) =>
+    @auth.stream "#{@namespace}.getBySlug", {slug, autoJoin}
+
   getDefaultGroup: ({autoJoin} = {}) =>
-    @auth.stream "#{@namespace}.getById", {id: 'free-roam', autoJoin}
+    @auth.stream "#{@namespace}.getBySlug", {slug: 'free-roam', autoJoin}
 
   getDefault: ({autoJoin} = {}) =>
     @auth.stream "#{@namespace}.getDefault", {autoJoin}
 
-  getAllChannelsByUuid: (id) =>
-    @auth.stream "#{@namespace}.getAllChannelsByUuid", {uuid}
+  getAllChannelsById: (slug) =>
+    @auth.stream "#{@namespace}.getAllChannelsById", {id}
 
-  joinByUuid: (uuid) =>
-    @auth.call "#{@namespace}.joinByUuid", {uuid}, {
+  joinById: (id) =>
+    @auth.call "#{@namespace}.joinById", {id}, {
       invalidateAll: true
     }
 
-  leaveByUuid: (uuid) =>
-    @auth.call "#{@namespace}.leaveByUuid", {uuid}, {
+  leaveById: (id) =>
+    @auth.call "#{@namespace}.leaveById", {id}, {
       invalidateAll: true
     }
 
-  inviteByUuid: (uuid, {userUuids}) =>
-    @auth.call "#{@namespace}.inviteByUuid", {uuid, userUuids}, {invalidateAll: true}
+  inviteById: (id, {userIds}) =>
+    @auth.call "#{@namespace}.inviteById", {id, userIds}, {invalidateAll: true}
 
-  sendNotificationByUuid: (uuid, {title, description, pathKey}) =>
-    @auth.call "#{@namespace}.sendNotificationByUuid", {
-      uuid, title, description, pathKey
+  sendNotificationById: (id, {title, description, pathKey}) =>
+    @auth.call "#{@namespace}.sendNotificationById", {
+      id, title, description, pathKey
       }, {invalidateAll: true}
 
-  updateByUuid: (uuid, {name, description, badgeId, background, mode}) =>
-    @auth.call "#{@namespace}.updateByUuid", {
-      uuid, name, description, badgeId, background, mode
+  updateById: (id, {name, description, mode}) =>
+    @auth.call "#{@namespace}.updateById", {
+      id, name, description, mode
     }, {invalidateAll: true}
 
   getDisplayName: (group) ->
@@ -65,20 +65,20 @@ module.exports = class Group
     subdomain = router.getSubdomain()
 
     replacements ?= {}
-    replacements.groupUuid = group?.id or group?.uuid
+    replacements.groupId = group?.slug or group?.id
 
     path = router.get key, replacements, {language}
-    if subdomain is group?.id
-      path = path.replace "/#{group?.id}", ''
+    if subdomain is group?.slug
+      path = path.replace "/#{group?.slug}", ''
     path
 
   goPath: (group, key, {replacements, router, language}) ->
     subdomain = router.getSubdomain()
 
     replacements ?= {}
-    replacements.groupUuid = group?.id or group?.uuid
+    replacements.groupId = group?.slug or group?.id
 
     path = router.get key, replacements, {language}
-    if subdomain is group?.id
-      path = path.replace "/#{group?.id}", ''
+    if subdomain is group?.slug
+      path = path.replace "/#{group?.slug}", ''
     router.goPath path

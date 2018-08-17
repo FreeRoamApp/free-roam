@@ -3,7 +3,7 @@ module.exports = class PushTopic
 
   constructor: ({@auth}) -> null
 
-  subscribe: ({groupUuid, appId, sourceType, sourceId}) =>
+  subscribe: ({groupId, appId, sourceType, sourceId}) =>
     @auth.call "#{@namespace}.subscribe", {
-      groupUuid, appId, sourceType, sourceId
+      groupId, appId, sourceType, sourceId
     }

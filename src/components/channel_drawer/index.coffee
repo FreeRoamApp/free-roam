@@ -19,9 +19,9 @@ module.exports = class ChannelDrawer
     @$channelList = new ChannelList {
       @model
       @router
-      selectedConversationUuid: conversation.map ({uuid}) -> uuid
+      selectedConversationId: conversation.map ({id}) -> id
       conversations: group.switchMap (group) =>
-        @model.conversation.getAllByGroupUuid group.uuid
+        @model.conversation.getAllByGroupId group.id
     }
     @$drawer = new Drawer {
       @model
@@ -54,9 +54,9 @@ module.exports = class ChannelDrawer
             z '.title', @model.l.get 'channelDrawer.title'
 
             z @$channelList, {
-              onclick: (e, {uuid}) =>
+              onclick: (e, {id}) =>
                 @model.group.goPath group, 'groupChatConversation', {
-                  @router, replacements: {conversationUuid: uuid}
+                  @router, replacements: {conversationId: id}
                 }, {ignoreHistory: true}
                 @isOpen.next false
             }

@@ -61,7 +61,7 @@ module.exports = class ThreadListItem
     console.log thread
 
     z 'a.z-thread-list-item', {
-      key: "thread-list-item-#{thread.uuid}"
+      key: "thread-list-item-#{thread.id}"
       href: @model.thread.getPath thread, group, @router
       className: z.classKebab {isExpanded, @isImageLoaded, hasPadding, isPinned}
       onclick: (e) =>
@@ -69,9 +69,9 @@ module.exports = class ThreadListItem
         # set cache manually so we don't have to re-fetch
         req = {
           body:
-            uuid: thread.uuid
+            id: thread.id
             language: language
-          path: 'threads.getById'
+          path: 'threads.getBySlug'
         }
         @model.exoid.setDataCache req, thread
         @router.goPath @model.thread.getPath(thread, group, @router)
@@ -126,7 +126,7 @@ module.exports = class ThreadListItem
                     vote: 'up'
                     hasVoted: hasVotedUp
                     parent:
-                      uuid: thread.uuid
+                      id: thread.id
                       type: 'thread'
                     isTouchTarget: false
                     # ripple uses anchor tag, don't want
@@ -146,7 +146,7 @@ module.exports = class ThreadListItem
                     vote: 'down'
                     hasVoted: hasVotedDown
                     parent:
-                      uuid: thread.uuid
+                      id: thread.id
                       type: 'thread'
                     isTouchTarget: false
                     # ripple uses anchor tag, don't want

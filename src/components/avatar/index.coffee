@@ -17,7 +17,7 @@ module.exports = class Avatar
     src or= src or user?.avatarImage?.versions[0].url or PLACEHOLDER_URL
 
     playerColors = config.PLAYER_COLORS
-    lastChar = user?.uuid?.substr(user?.uuid?.length - 1, 1) or 'a'
+    lastChar = user?.id?.substr(user?.id?.length - 1, 1) or 'a'
     avatarColor = playerColors[ \
       Math.ceil (parseInt(lastChar, 16) / 16) * (playerColors.length - 1)
     ]

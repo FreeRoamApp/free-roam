@@ -5,8 +5,8 @@ module.exports = class Category
 
   constructor: ({@auth}) -> null
 
-  getById: (id) =>
-    @auth.stream "#{@namespace}.getById", {id}
+  getBySlug: (slug) =>
+    @auth.stream "#{@namespace}.getBySlug", {slug}
 
   getAll: =>
     @auth.stream "#{@namespace}.getAll", {}

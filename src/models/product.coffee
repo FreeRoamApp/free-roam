@@ -5,8 +5,8 @@ module.exports = class Product
 
   constructor: ({@auth}) -> null
 
-  getById: (id) =>
-    @auth.stream "#{@namespace}.getById", {id}
+  getBySlug: (slug) =>
+    @auth.stream "#{@namespace}.getBySlug", {slug}
 
-  getAllByItemId: (itemId) =>
-    @auth.stream "#{@namespace}.getAllByItemId", {itemId}
+  getAllByItemSlug: (itemSlug) =>
+    @auth.stream "#{@namespace}.getAllByItemSlug", {itemSlug}

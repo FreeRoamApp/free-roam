@@ -36,13 +36,13 @@ module.exports = class Item extends Base
         _map item.videos, (video) =>
           new EmbeddedVideo {@model, video}
       products: item.switchMap (item) =>
-        unless item.id
+        unless item.slug
           return RxObservable.of []
-        @model.product.getAllByItemId item.id
+        @model.product.getAllByItemSlug item.slug
         .map (products) =>
           _map products, (product) =>
             $productBox = @getCached$(
-              "product-#{product.id}", ProductBox, {@model, @router, product}
+              "product-#{product.slug}", ProductBox, {@model, @router, product}
             )
             {$productBox}
 

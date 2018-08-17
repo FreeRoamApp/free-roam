@@ -27,7 +27,7 @@ module.exports = class Head
       else
         RxObservable.of meta
 
-    @lastGroupUuid = null
+    @lastGroupId = null
 
     @state = z.state
       meta: meta
@@ -41,24 +41,24 @@ module.exports = class Head
         @model.getSerializationStream()
       additionalCss: @model.additionalScript.getCss()
       cssVariables: group?.map (group) =>
-        groupId = group?.id
+        groupSlug = group?.slug
 
-        cssColors = _defaults colors[groupId], colors.default
+        cssColors = _defaults colors[groupSlug], colors.default
         cssColors['--drawer-header-500'] ?= cssColors['--primary-500']
         cssColors['--drawer-header-500-text'] ?= cssColors['--primary-500-text']
         cssVariables = _map(cssColors, (value, key) ->
           "#{key}:#{value}"
         ).join ';'
 
-        if @lastGroupUuid isnt group?.uuid
+        if @lastGroupId isnt group?.id
           newStatusBarColor = cssColors['--status-bar-500'] or
                               cssColors['--primary-900']
           @model.portal?.call 'statusBar.setBackgroundColor', {
             color: newStatusBarColor
           }
-          @lastGroupUuid = group.uuid
-          @model.cookie.set 'lastGroupUuid', group.uuid
-          @model.cookie.set "group_#{group.uuid}_lastVisit", Date.now()
+          @lastGroupId = group.id
+          @model.cookie.set 'lastGroupId', group.id
+          @model.cookie.set "group_#{group.id}_lastVisit", Date.now()
           if cssVariables
             @model.cookie.set 'cachedCssVariables', cssVariables
 

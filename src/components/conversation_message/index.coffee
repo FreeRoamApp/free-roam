@@ -19,12 +19,12 @@ module.exports = class ConversationMessage
           @selectedProfileDialogUser.next _defaults {
             groupUser: groupUser
             onDeleteMessage: =>
-              @model.conversationMessage.deleteByUuid id
+              @model.conversationMessage.deleteById id
               .then =>
                 @messageBatchesStreams.take(1).toPromise()
             onDeleteMessagesLast7d: =>
-              @model.conversationMessage.deleteAllByGroupUuidAndUserUuid(
-                groupUser?.groupUuid, user.uuid, {duration: '7d'}
+              @model.conversationMessage.deleteAllByGroupIdAndUserId(
+                groupUser?.groupId, user.id, {duration: '7d'}
               )
               .then =>
                 @messageBatchesStreams.take(1).toPromise()

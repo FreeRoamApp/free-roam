@@ -32,7 +32,7 @@ module.exports = class Product
         z '.image',
           style:
             backgroundImage:
-              "url(#{config.CDN_URL}/products/#{product?.id}-200h.jpg)"
+              "url(#{config.CDN_URL}/products/#{product?.slug}-200h.jpg)"
         z '.actions',
           z '.g-grid',
             z '.g-cols.no-padding',

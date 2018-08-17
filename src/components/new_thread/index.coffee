@@ -17,7 +17,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewThread
-  constructor: ({@model, @router, category, @thread, uuid, group}) ->
+  constructor: ({@model, @router, category, @thread, id, group}) ->
     @titleValueStreams ?= new RxReplaySubject 1
     @bodyValueStreams ?= new RxReplaySubject 1
     @attachmentsValueStreams ?= new RxReplaySubject 1
@@ -41,9 +41,9 @@ module.exports = class NewThread
       @model.user.getMe()
       (vals...) -> vals
     )
-    categoryAndUuid = RxObservable.combineLatest(
+    categoryAndId = RxObservable.combineLatest(
       category
-      uuid or RxObservable.of null
+      id or RxObservable.of null
       (vals...) -> vals
     )
 
@@ -80,7 +80,7 @@ module.exports = class NewThread
           .then =>
             newThread = {
               thread:
-                uuid: thread?.uuid
+                id: thread?.id
                 category: thread?.category or category
                 data:
                   title: titleValue
@@ -88,10 +88,10 @@ module.exports = class NewThread
                   attachments: attachmentsValue
                   extras: {}
               language: language
-              groupUuid: group.uuid
+              groupId: group.id
             }
             (if thread
-              @model.thread.upsert _defaults({uuid: thread.uuid}, newThread)
+              @model.thread.upsert _defaults({id: thread.id}, newThread)
             else
               @model.thread.upsert newThread)
             .then (newThread) =>

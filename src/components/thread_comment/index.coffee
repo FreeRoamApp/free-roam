@@ -34,7 +34,7 @@ module.exports = class ThreadComment
         time: @threadComment.time
         groupUser: @threadComment.groupUser
         card: @threadComment.card
-        uuid: @threadComment.uuid
+        id: @threadComment.id
       }
       $body: new FormattedText {
         text: @threadComment.body
@@ -114,8 +114,8 @@ module.exports = class ThreadComment
     .then =>
       @model.threadComment.create {
         body: body
-        threadUuid: threadComment.threadUuid
-        parentUuid: threadComment.uuid
+        threadId: threadComment.threadId
+        parentId: threadComment.id
         parentType: 'threadComment'
       }
       .then (response) =>
@@ -129,22 +129,22 @@ module.exports = class ThreadComment
     {depth, isMe, threadComment, isReplyVisible, $body, group,
       windowSize, $children} = @state.getValue()
 
-    {creator, time, card, body, uuid, clientUuid} = threadComment
+    {creator, time, card, body, id, clientId} = threadComment
 
     hasVotedUp = threadComment?.myVote?.vote is 1
     hasVotedDown = threadComment?.myVote?.vote is -1
 
     # pass these when voting so we can update scylla properly (no index on id)
     voteParent = _pick threadComment, [
-      'uuid', 'threadUuid', 'userUuid', 'parentUuid', 'parentType',
-      'timeUuid', 'timeBucket'
+      'id', 'threadId', 'userId', 'parentId', 'parentType',
+      'timeId', 'timeBucket'
     ]
-    voteParent.topUuid = threadComment.threadUuid
+    voteParent.topId = threadComment.threadId
     voteParent.type = 'threadComment'
 
     z '.z-thread-comment', {
       # re-use elements in v-dom
-      key: "thread-comment-#{clientUuid or uuid}"
+      key: "thread-comment-#{clientId or id}"
       className: z.classKebab {isMe}
     },
       z '.comment',
@@ -154,14 +154,14 @@ module.exports = class ThreadComment
             @selectedProfileDialogUser.next _defaults {
               onDeleteMessage: =>
                 @model.threadComment.deleteByThreadComment voteParent, {
-                  groupUuid: group?.uuid
+                  groupId: group?.id
                 }
                 .then =>
                   @commentStreams.take(1).toPromise()
               onDeleteMessagesLast7d: =>
-                @model.threadComment.deleteAllByGroupUuidAndUserUuid(
-                  groupUser.groupUuid, user.uuid, {
-                    duration: '7d', threadUuid: threadComment.threadUuid
+                @model.threadComment.deleteAllByGroupIdAndUserId(
+                  groupUser.groupId, user.id, {
+                    duration: '7d', threadId: threadComment.threadId
                   }
                 )
                 .then =>

@@ -64,7 +64,7 @@ module.exports = class TabsBar
 
               z '.tab',
                 key: i
-                id: item.id
+                slug: item.slug
                 className: z.classKebab {hasIcon, hasText, isSelected}
                 style: if tabWidth then {width: "#{tabWidth}px"} else null
 

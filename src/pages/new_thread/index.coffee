@@ -9,10 +9,10 @@ module.exports = class NewThreadPage
   constructor: ({@model, requests, @router, serverData, group}) ->
     category = requests.map ({route}) ->
       route.params.category
-    uuid = requests.map ({route}) ->
-      route.params.uuid
+    id = requests.map ({route}) ->
+      route.params.id
 
-    @$newThread = new NewThread {@model, @router, category, uuid, group}
+    @$newThread = new NewThread {@model, @router, category, id, group}
 
     @state = z.state
       windowSize: @model.window.getSize()

@@ -17,7 +17,7 @@ module.exports = class NotificationsOverlay
 
     @state = z.state
       notifications: group.switchMap (group) =>
-        @model.notification.getAll {groupUuid: group.uuid}
+        @model.notification.getAll {groupId: group.id}
 
   afterMount: =>
     @router.onBack =>

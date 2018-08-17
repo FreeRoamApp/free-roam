@@ -22,7 +22,7 @@ module.exports = class ThreadPage
     # allow reset beforeUnmount so stale thread doesn't show when loading new
     @thread = new RxBehaviorSubject null
     loadedThread = requests.switchMap ({route}) =>
-      @model.thread.getById route.params.id
+      @model.thread.getBySlug route.params.slug
     thread = RxObservable.merge @thread, loadedThread
     @groupAndThread = RxObservable.combineLatest(
       group, thread, (vals...) -> vals

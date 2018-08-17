@@ -19,11 +19,11 @@ module.exports = class Product
     @router.link z 'a.z-product-box', {
       href: @router.get 'product', {
         nameKebab: product.nameKebab
-        id: product.id
+        slug: product.slug
       }
     },
       z '.image',
         style:
-          backgroundImage: "url(#{config.CDN_URL}/products/#{product?.id}-200h.jpg)"
+          backgroundImage: "url(#{config.CDN_URL}/products/#{product?.slug}-200h.jpg)"
       z '.name',
         product?.name
