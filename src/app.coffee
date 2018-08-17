@@ -35,6 +35,7 @@ Pages =
   AboutPage: require './pages/about'
   BackpackPage: require './pages/backpack'
   CategoriesPage: require './pages/categories'
+  EditThreadPage: require './pages/edit_thread'
   GroupChatPage: require './pages/group_chat'
   GroupForumPage: require './pages/group_forum'
   HomePage: require './pages/home'

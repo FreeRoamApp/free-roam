@@ -58,6 +58,8 @@ module.exports = class ThreadListItem
     mediaSrc = @getImageUrl thread
     isPinned = thread.data?.isPinned
 
+    console.log thread
+
     z 'a.z-thread-list-item', {
       key: "thread-list-item-#{thread.uuid}"
       href: @model.thread.getPath thread, group, @router
