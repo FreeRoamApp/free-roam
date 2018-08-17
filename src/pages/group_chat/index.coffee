@@ -29,40 +29,40 @@ module.exports = class GroupChatPage
     {@model, requests, @router, serverData,
       @overlay$, @group, @$bottomBar} = options
 
-    conversationUuid = requests.map ({route}) ->
-      route.params.conversationUuid
+    conversationId = requests.map ({route}) ->
+      route.params.conversationId
 
-    minUuid = requests.map ({req}) ->
-      req.query.minUuid
+    minId = requests.map ({req}) ->
+      req.query.minId
 
     @isChannelDrawerOpen = new RxBehaviorSubject false
     selectedProfileDialogUser = new RxBehaviorSubject null
     isLoading = new RxBehaviorSubject false
     me = @model.user.getMe()
 
-    conversationsAndConversationUuidAndMe = RxObservable.combineLatest(
+    conversationsAndConversationIdAndMe = RxObservable.combineLatest(
       @group.switchMap (group) =>
-        @model.conversation.getAllByGroupUuid group.uuid
-      conversationUuid
+        @model.conversation.getAllByGroupId group.id
+      conversationId
       me
       (vals...) -> vals
     )
 
-    currentConversationUuid = null
-    conversation = conversationsAndConversationUuidAndMe
-    .switchMap ([conversations, conversationUuid, me]) ->
+    currentConversationId = null
+    conversation = conversationsAndConversationIdAndMe
+    .switchMap ([conversations, conversationId, me]) ->
       # side effect
-      if conversationUuid isnt currentConversationUuid
+      if conversationId isnt currentConversationId
         # is set to false when messages load in conversation component
         isLoading.next true
 
-      currentConversationUuid = conversationUuid
-      conversationUuid ?= _find(conversations, ({data, isDefault}) ->
+      currentConversationId = conversationId
+      conversationId ?= _find(conversations, ({data, isDefault}) ->
         isDefault or data?.name is 'general' or data?.name is 'geral'
-      )?.uuid
-      conversationUuid ?= conversations?[0]?.uuid
-      if conversationUuid
-        RxObservable.of _find conversations, {uuid: conversationUuid}
+      )?.id
+      conversationId ?= conversations?[0]?.id
+      if conversationId
+        RxObservable.of _find conversations, {id: conversationId}
       else
         RxObservable.of null
     # breaks switching groups (leaves getMessagesStream as prev val)
@@ -86,7 +86,7 @@ module.exports = class GroupChatPage
       @group
       isLoading: isLoading
       conversation: conversation
-      minUuid: minUuid
+      minId: minId
       onScrollUp: @showBottomBar
       onScrollDown: @hideBottomBar
       hasBottomBar: @hasBottomBarObs

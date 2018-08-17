@@ -1,4 +1,4 @@
-uuid = require 'uuid'
+id = require 'uuid'
 _sortBy = require 'lodash/sortBy'
 _merge = require 'lodash/merge'
 _cloneDeep = require 'lodash/cloneDeep'
@@ -16,65 +16,65 @@ module.exports = class ConversationMessage
     @clientChangesStream = {}
 
   create: (diff, localDiff) =>
-    clientUuid = uuid.v4()
+    clientId = id.v4()
 
-    @clientChangesStream[diff.conversationUuid]?.next(
-      _merge diff, {clientUuid}, localDiff
+    @clientChangesStream[diff.conversationId]?.next(
+      _merge diff, {clientId}, localDiff
     )
     ga? 'send', 'event', 'social_interaction', 'conversation_message', "#{diff.type}"
 
-    @auth.call "#{@namespace}.create", _merge diff, {clientUuid}
+    @auth.call "#{@namespace}.create", _merge diff, {clientId}
     .catch (err) ->
       console.log 'err', err
 
   # hacky: without this, when leaving a conversation, changing browser tabs,
   # then coming back and going back to conversation, the client-created
   # messages will show for a split-second before the rest load in
-  # resetClientChangesStream: (conversationUuid) =>
-  #   @clientChangesStream[conversationUuid] = null
+  # resetClientChangesStream: (conversationId) =>
+  #   @clientChangesStream[conversationId] = null
 
-  deleteByUuid: (uuid) =>
-    @auth.call "#{@namespace}.deleteByUuid", {uuid}, {
+  deleteById: (id) =>
+    @auth.call "#{@namespace}.deleteById", {id}, {
       invalidateAll: true
     }
 
-  deleteAllByGroupUuidAndUserUuid: (groupUuid, userUuid, {duration} = {}) =>
-    @auth.call "#{@namespace}.deleteAllByGroupUuidAndUserUuid", {
-      groupUuid, userUuid, duration
+  deleteAllByGroupIdAndUserId: (groupId, userId, {duration} = {}) =>
+    @auth.call "#{@namespace}.deleteAllByGroupIdAndUserId", {
+      groupId, userId, duration
     }, {invalidateAll: true}
 
-  getAllByConversationUuid: (conversationUuid, options = {}) =>
-    {minUuid, maxUuid, isStreamed} = options
+  getAllByConversationId: (conversationId, options = {}) =>
+    {minId, maxId, isStreamed} = options
     # buffer 0 so future streams don't try to add the client changes
     # (causes smooth scroll to bottom in conversations)
-    @clientChangesStream[conversationUuid] ?= new RxReplaySubject(0)
+    @clientChangesStream[conversationId] ?= new RxReplaySubject(0)
 
     options = {
       initialSortFn: ((items) -> _sortBy items, 'time')
       limit: CHAT_MESSAGES_LIMIT
       clientChangesStream: if isStreamed \
-                           then @clientChangesStream[conversationUuid]
+                           then @clientChangesStream[conversationId]
                            else null
       isStreamed: isStreamed
     }
 
-    @auth.stream "#{@namespace}.getAllByConversationUuid", {
-      conversationUuid
-      minUuid
-      maxUuid
+    @auth.stream "#{@namespace}.getAllByConversationId", {
+      conversationId
+      minId
+      maxId
       isStreamed
     }, options
 
-  getLastTimeByMeAndConversationUuid: (conversationUuid) =>
-    @auth.stream "#{@namespace}.getLastTimeByMeAndConversationUuid", {
-      conversationUuid
+  getLastTimeByMeAndConversationId: (conversationId) =>
+    @auth.stream "#{@namespace}.getLastTimeByMeAndConversationId", {
+      conversationId
     }
 
-  unsubscribeByConversationUuid: (conversationUuid) =>
-    @auth.call "#{@namespace}.unsubscribeByConversationUuid", {conversationUuid}
-    @exoid.invalidate "#{@namespace}.getAllByConversationUuid", {
-      conversationUuid
-      maxUuid: undefined
+  unsubscribeByConversationId: (conversationId) =>
+    @auth.call "#{@namespace}.unsubscribeByConversationId", {conversationId}
+    @exoid.invalidate "#{@namespace}.getAllByConversationId", {
+      conversationId
+      maxId: undefined
       isStreamed: true
     }
 

@@ -13,40 +13,40 @@ module.exports = class Thread
     @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
 
   getAll: (options = {}) =>
-    {groupUuid, category, sort, skip, maxUuid,
+    {groupId, category, sort, skip, maxId,
       limit, ignoreCache} = options
     language = @l.getLanguageStr()
     @auth.stream "#{@namespace}.getAll", {
-      groupUuid, category, language, skip, maxUuid, limit, sort
+      groupId, category, language, skip, maxId, limit, sort
     }, {ignoreCache}
-
-  getByUuid: (uuid, {ignoreCache} = {}) =>
-    language = @l.getLanguageStr()
-    @auth.stream "#{@namespace}.getByUuid", {uuid, language}, {ignoreCache}
 
   getById: (id, {ignoreCache} = {}) =>
     language = @l.getLanguageStr()
-    @auth.stream "#{@namespace}.getById", {
-      id, language
+    @auth.stream "#{@namespace}.getById", {id, language}, {ignoreCache}
+
+  getBySlug: (slug, {ignoreCache} = {}) =>
+    language = @l.getLanguageStr()
+    @auth.stream "#{@namespace}.getBySlug", {
+      slug, language
     }, {ignoreCache}
 
-  updateByUuid: (uuid, diff) =>
-    @auth.call "#{@namespace}.updateByUuid", _defaults(diff, {uuid}), {
+  updateById: (id, diff) =>
+    @auth.call "#{@namespace}.updateById", _defaults(diff, {id}), {
       invalidateAll: true
     }
 
-  deleteByUuid: (uuid) =>
-    @auth.call "#{@namespace}.deleteByUuid", {uuid}, {
+  deleteById: (id) =>
+    @auth.call "#{@namespace}.deleteById", {id}, {
       invalidateAll: true
     }
 
-  pinByUuid: (uuid) =>
-    @auth.call "#{@namespace}.pinByUuid", {uuid}, {
+  pinById: (id) =>
+    @auth.call "#{@namespace}.pinById", {id}, {
       invalidateAll: true
     }
 
-  unpinByUuid: (uuid) =>
-    @auth.call "#{@namespace}.unpinByUuid", {uuid}, {
+  unpinById: (id) =>
+    @auth.call "#{@namespace}.unpinById", {id}, {
       invalidateAll: true
     }
 
@@ -56,18 +56,18 @@ module.exports = class Thread
     @group.getPath group, 'groupThread', {
       router
       replacements:
-        id: thread?.id
+        slug: thread?.slug
     }
 
   hasPermission: (thread, user, {level} = {}) ->
-    userUuid = user?.uuid
+    userId = user?.id
     level ?= 'member'
 
-    unless userUuid and thread
+    unless userId and thread
       return false
 
     return switch level
       when 'admin'
-      then thread.userUuid is userUuid
+      then thread.userId is userId
       # member
-      else thread.userUuids?.indexOf(userUuid) isnt -1
+      else thread.userIds?.indexOf(userId) isnt -1

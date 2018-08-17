@@ -10,44 +10,44 @@ module.exports = class GroupUser
 
   constructor: ({@auth}) -> null
 
-  addRoleByGroupUuidAndUserUuid: (groupUuid, userUuid, roleUuid) =>
-    @auth.call "#{@namespace}.addRoleByGroupUuidAndUserUuid", {
-      userUuid, groupUuid, roleUuid
+  addRoleByGroupIdAndUserId: (groupId, userId, roleId) =>
+    @auth.call "#{@namespace}.addRoleByGroupIdAndUserId", {
+      userId, groupId, roleId
     }, {invalidateAll: true}
 
-  removeRoleByGroupUuidAndUserUuid: (groupUuid, userUuid, roleUuid) =>
-    @auth.call "#{@namespace}.removeRoleByGroupUuidAndUserUuid", {
-      userUuid, groupUuid, roleUuid
+  removeRoleByGroupIdAndUserId: (groupId, userId, roleId) =>
+    @auth.call "#{@namespace}.removeRoleByGroupIdAndUserId", {
+      userId, groupId, roleId
     }, {invalidateAll: true}
 
-  addXpByGroupUuidAndUserUuid: (groupUuid, userUuid, xp) =>
-    @auth.call "#{@namespace}.addXpByGroupUuidAndUserUuid", {
-      userUuid, groupUuid, xp
+  addXpByGroupIdAndUserId: (groupId, userId, xp) =>
+    @auth.call "#{@namespace}.addXpByGroupIdAndUserId", {
+      userId, groupId, xp
     }, {invalidateAll: true}
 
-  getByGroupUuidAndUserUuid: (groupUuid, userUuid) =>
-    @auth.stream "#{@namespace}.getByGroupUuidAndUserUuid", {groupUuid, userUuid}
+  getByGroupIdAndUserId: (groupId, userId) =>
+    @auth.stream "#{@namespace}.getByGroupIdAndUserId", {groupId, userId}
 
-  getTopByGroupUuid: (groupUuid) =>
-    @auth.stream "#{@namespace}.getTopByGroupUuid", {groupUuid}
+  getTopByGroupId: (groupId) =>
+    @auth.stream "#{@namespace}.getTopByGroupId", {groupId}
 
-  getMeSettingsByGroupUuid: (groupUuid) =>
-    @auth.stream "#{@namespace}.getMeSettingsByGroupUuid", {groupUuid}
+  getMeSettingsByGroupId: (groupId) =>
+    @auth.stream "#{@namespace}.getMeSettingsByGroupId", {groupId}
 
-  getOnlineCountByGroupUuid: (groupUuid) =>
-    @auth.stream "#{@namespace}.getOnlineCountByGroupUuid", {groupUuid}
+  getOnlineCountByGroupId: (groupId) =>
+    @auth.stream "#{@namespace}.getOnlineCountByGroupId", {groupId}
 
-  updateMeSettingsByGroupUuid: (groupUuid, {globalNotifications}) =>
-    @auth.call "#{@namespace}.updateMeSettingsByGroupUuid", {
-      groupUuid, globalNotifications
+  updateMeSettingsByGroupId: (groupId, {globalNotifications}) =>
+    @auth.call "#{@namespace}.updateMeSettingsByGroupId", {
+      groupId, globalNotifications
     }
 
-  hasPermission: ({meGroupUser, me, permissions, channelUuid, roles}) ->
+  hasPermission: ({meGroupUser, me, permissions, channelId, roles}) ->
     roles ?= meGroupUser?.roles
     isGlobalModerator = me?.flags?.isModerator
     isGlobalModerator or _every permissions, (permission) ->
       _find roles, (role) ->
-        channelPermissions = channelUuid and role.channelPermissions?[channelUuid]
+        channelPermissions = channelId and role.channelPermissions?[channelId]
         globalPermissions = role.globalPermissions
         permissions = _defaults(
           channelPermissions, globalPermissions, config.DEFAULT_PERMISSIONS

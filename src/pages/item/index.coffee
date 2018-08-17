@@ -15,7 +15,7 @@ module.exports = class ItemPage extends BasePage
 
   constructor: ({@model, @router, requests, serverData, group}) ->
     @item = @clearOnUnmount requests.switchMap ({route}) =>
-      @model.item.getById route.params.id
+      @model.item.getBySlug route.params.slug
 
     @$appBar = new AppBar {@model}
     @$buttondBack = new ButtondBack {@model, @router}

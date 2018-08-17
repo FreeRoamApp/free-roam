@@ -41,16 +41,16 @@ module.exports = class Categories
           }
         z '.g-cols',
           _map categories, (category, i) =>
-            productId = category?.data?.defaultProductId or
-                          category?.firstItemFirstProductId
+            productSlug = category?.data?.defaultProductSlug or
+                          category?.firstItemFirstProductSlug
             z '.g-col.g-xs-12.g-md-6',
               @router.link z 'a.category', {
-                href: @router.get 'itemsByCategory', {category: category.id}
+                href: @router.get 'itemsByCategory', {category: category.slug}
               },
                 z '.background',
                   style:
                     backgroundImage:
-                      "url(#{config.CDN_URL}/products/#{productId}-200h.jpg)"
+                      "url(#{config.CDN_URL}/products/#{productSlug}-200h.jpg)"
                   z '.gradient'
                 z '.overlay', {
                   style:

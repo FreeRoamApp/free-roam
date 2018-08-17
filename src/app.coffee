@@ -27,7 +27,6 @@ PushNotificationsSheet = require './components/push_notifications_sheet'
 OfflineOverlay = require './components/offline_overlay'
 Nps = require './components/nps'
 Environment = require './services/environment'
-PaymentService = require './services/payment'
 config = require './config'
 colors = require './colors'
 
@@ -84,7 +83,7 @@ module.exports = class App
 
       subdomain = @router.getSubdomain()
 
-      if subdomain # equiv to /groupUuid/route
+      if subdomain # equiv to /groupId/route
         route = routes.get "/#{subdomain}#{req.path}"
         if route.handler?() instanceof Pages['FourOhFourPage']
           route = routes.get req.path
@@ -98,30 +97,27 @@ module.exports = class App
 
     @group = @requests.switchMap ({route}) =>
       host = @serverData?.req?.headers.host or window?.location?.host
-      groupUuid = route.params.groupUuid
+      groupId = route.params.groupId
 
       subdomain = @router.getSubdomain()
-      if subdomain and not groupUuid
-        groupUuid = subdomain
+      if subdomain and not groupId
+        groupId = subdomain
 
-      groupUuid or= @model.cookie.get 'lastGroupUuid'
+      groupId or= @model.cookie.get 'lastGroupId'
 
-      console.log groupUuid
+      console.log groupId
 
-      (if isUuid groupUuid
-        console.log 'get uuid'
-        @model.group.getByUuid groupUuid, {autoJoin: true}
-      else if groupUuid and groupUuid isnt 'undefined' and groupUuid isnt 'null'
+      (if isUuid groupId
         console.log 'get id'
-        @model.group.getById groupUuid, {autoJoin: true}
+        @model.group.getById groupId, {autoJoin: true}
+      else if groupId and groupId isnt 'undefined' and groupId isnt 'null'
+        console.log 'get slug'
+        @model.group.getBySlug groupId, {autoJoin: true}
       else
         @model.group.getDefaultGroup {autoJoin: true}
       )
     .publishReplay(1).refCount()
 
-
-    # if window?
-    #   PaymentService.init @model, @group
     userAgent = @serverData?.req.headers?['user-agent']
     isNativeApp = Environment.isNativeApp 'freeroam', {userAgent}
 
@@ -229,7 +225,7 @@ module.exports = class App
     route 'groupForum', 'GroupForumPage'
     route [
       'groupNewThread', 'groupNewThreadWithCategory',
-      'groupNewThreadWithCategoryAndUuid'
+      'groupNewThreadWithCategoryAndId'
     ], 'NewThreadPage'
     route 'groupThread', 'ThreadPage'
     route 'groupThreadEdit', 'EditThreadPage'

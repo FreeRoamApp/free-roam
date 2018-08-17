@@ -54,9 +54,9 @@ module.exports = class ChannelDrawer
             z '.title', @model.l.get 'channelDrawer.title'
 
             z @$channelList, {
-              onclick: (e, {id}) =>
+              onclick: (e, {slug}) =>
                 @model.group.goPath group, 'groupChatConversation', {
-                  @router, replacements: {conversationId: id}
+                  @router, replacements: {conversationSlug: slug}
                 }, {ignoreHistory: true}
                 @isOpen.next false
             }

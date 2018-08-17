@@ -24,7 +24,7 @@ module.exports = class Conversations
 
     me = @model.user.getMe()
 
-    conversationsAndBlockedUserUuidsAndMe = RxObservable.combineLatest(
+    conversationsAndBlockedUserIdsAndMe = RxObservable.combineLatest(
       @model.conversation.getAll()
       @model.userBlock.getAllIds()
       me
@@ -33,12 +33,12 @@ module.exports = class Conversations
 
     @state = z.state
       me: me
-      conversations: conversationsAndBlockedUserUuidsAndMe
-      .map ([conversations, blockedUserUuids, me]) =>
+      conversations: conversationsAndBlockedUserIdsAndMe
+      .map ([conversations, blockedUserIds, me]) =>
         _filter _map conversations, (conversation) =>
           otherUser = _find conversation.users, (user) ->
-            user.uuid isnt me?.uuid
-          isBlocked = @model.userBlock.isBlocked blockedUserUuids, otherUser?.id
+            user.id isnt me?.id
+          isBlocked = @model.userBlock.isBlocked blockedUserIds, otherUser?.id
           unless isBlocked
             {conversation, otherUser, $avatar: new Avatar()}
 
@@ -53,10 +53,10 @@ module.exports = class Conversations
         else if conversations
           _map conversations, ({conversation, otherUser, $avatar}) =>
             isUnread = not conversation?.isRead
-            isLastMessageFromMe = conversation.lastMessage?.userUuid is me?.uuid
+            isLastMessageFromMe = conversation.lastMessage?.userId is me?.id
 
             @router.link z 'a.conversation', {
-              href: @router.get 'conversation', {uuid: conversation.uuid}
+              href: @router.get 'conversation', {id: conversation.id}
               className: z.classKebab {isUnread}
             },
               z '.status'

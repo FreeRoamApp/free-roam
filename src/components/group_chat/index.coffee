@@ -9,7 +9,7 @@ if window?
 module.exports = class GroupChat
   constructor: (options) ->
     {@model, @router, @conversation, overlay$, group, isLoading, onScrollUp
-      minUuid, onScrollDown, hasBottomBar,
+      minId, onScrollDown, hasBottomBar,
       selectedProfileDialogUser} = options
 
     @$conversation = new Conversation {
@@ -19,7 +19,7 @@ module.exports = class GroupChat
       @conversation
       group
       overlay$
-      minUuid
+      minId
       onScrollUp
       onScrollDown
       hasBottomBar

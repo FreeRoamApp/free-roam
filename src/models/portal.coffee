@@ -95,7 +95,7 @@ module.exports = class Portal
   ###
   @typedef AuthStatus
   @property {String} accessToken
-  @property {String} userUuid
+  @property {String} userId
   ###
 
   ###
@@ -105,8 +105,8 @@ module.exports = class Portal
     @model.user.getMe()
     .take(1).toPromise()
     .then (user) ->
-      accessToken: user.uuid # Temporary
-      userUuid: user.uuid
+      accessToken: user.id # Temporary
+      userId: user.id
 
   shareAny: ({text, imageUrl, url}) =>
     ga? 'send', 'event', 'share_service', 'share_any'

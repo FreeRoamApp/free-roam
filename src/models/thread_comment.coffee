@@ -2,26 +2,26 @@ module.exports = class ThreadComment
   namespace: 'threadComments'
   constructor: ({@auth}) -> null
 
-  create: ({body, threadUuid, parentUuid, parentType}) =>
-    ga? 'send', 'event', 'social_interaction', 'thread_comment', "#{parentUuid}"
-    @auth.call "#{@namespace}.create", {body, threadUuid, parentUuid, parentType}, {
+  create: ({body, threadId, parentId, parentType}) =>
+    ga? 'send', 'event', 'social_interaction', 'thread_comment', "#{parentId}"
+    @auth.call "#{@namespace}.create", {body, threadId, parentId, parentType}, {
       invalidateAll: true
     }
 
-  flag: (uuid) =>
-    @auth.call "#{@namespace}.flag", {uuid}
+  flag: (id) =>
+    @auth.call "#{@namespace}.flag", {id}
 
-  getAllByThreadUuid: (threadUuid, {sort, skip, limit, groupUuid} = {}) =>
-    @auth.stream "#{@namespace}.getAllByThreadUuid", {
-      threadUuid, sort, skip, limit, groupUuid
+  getAllByThreadId: (threadId, {sort, skip, limit, groupId} = {}) =>
+    @auth.stream "#{@namespace}.getAllByThreadId", {
+      threadId, sort, skip, limit, groupId
     }
 
-  deleteByThreadComment: (threadComment, {groupUuid}) =>
+  deleteByThreadComment: (threadComment, {groupId}) =>
     @auth.call "#{@namespace}.deleteByThreadComment", {
-      threadComment, groupUuid
+      threadComment, groupId
     }, {invalidateAll: true}
 
-  deleteAllByGroupUuidAndUserUuid: (groupUuid, userUuid, {threadUuid} = {}) =>
-    @auth.call "#{@namespace}.deleteAllByGroupUuidAndUserUuid", {
-      groupUuid, userUuid, threadUuid
+  deleteAllByGroupIdAndUserId: (groupId, userId, {threadId} = {}) =>
+    @auth.call "#{@namespace}.deleteAllByGroupIdAndUserId", {
+      groupId, userId, threadId
     }, {invalidateAll: true}

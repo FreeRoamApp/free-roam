@@ -58,7 +58,7 @@ module.exports = class Threads extends Base
           cols = 1
 
         threads = _map threads, (thread) =>
-          $threadListItem = @getCached$ thread.uuid, ThreadListItem, {
+          $threadListItem = @getCached$ thread.id, ThreadListItem, {
             @model, @router, thread, group
           }
           {
@@ -91,16 +91,16 @@ module.exports = class Threads extends Base
     if totalScrollHeight - totalScrolled < SCROLL_THRESHOLD
       @loadMore()
 
-  getTopStream: (skip = 0, maxUuid) =>
+  getTopStream: (skip = 0, maxId) =>
     @groupAndFilter.switchMap ([group, filter]) =>
       console.log 'group', group
       if group
         @model.thread.getAll {
-          groupUuid: group?.uuid
+          groupId: group?.id
           category: filter.filter
           sort: filter.sort
           skip
-          maxUuid
+          maxId
           limit: SCROLL_THREAD_LOAD_COUNT
         }
       else
@@ -113,8 +113,8 @@ module.exports = class Threads extends Base
     {chunkedThreads} = @state.getValue()
 
     skip = @threadStreamCache.length * SCROLL_THREAD_LOAD_COUNT
-    maxUuid = _last(_last(chunkedThreads))?.thread.uuid
-    threadStream = @getTopStream skip, maxUuid
+    maxId = _last(_last(chunkedThreads))?.thread.id
+    threadStream = @getTopStream skip, maxId
     @appendThreadStream threadStream
 
     threadStream.take(1).toPromise()

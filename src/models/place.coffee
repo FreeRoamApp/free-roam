@@ -5,8 +5,8 @@ module.exports = class Place
 
   constructor: ({@auth}) -> null
 
-  getById: (id) =>
-    @auth.stream "#{@namespace}.getById", {id}
+  getBySlug: (slug) =>
+    @auth.stream "#{@namespace}.getBySlug", {slug}
 
   search: ({query}) =>
     @auth.stream "#{@namespace}.search", {query}

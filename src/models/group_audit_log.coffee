@@ -3,5 +3,5 @@ module.exports = class GroupAuditLog
 
   constructor: ({@auth}) -> null
 
-  getAllByGroupUuid: (groupUuid) =>
-    @auth.stream "#{@namespace}.getAllByGroupUuid", {groupUuid}
+  getAllByGroupId: (groupId) =>
+    @auth.stream "#{@namespace}.getAllByGroupId", {groupId}

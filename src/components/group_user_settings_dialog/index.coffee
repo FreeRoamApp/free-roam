@@ -46,7 +46,7 @@ module.exports = class GroupUserSettingsDialog
       isLeaveGroupLoading: false
       notificationTypes: groupAndMe.switchMap ([group, me]) =>
         console.log 'group', group
-        @model.groupUser.getMeSettingsByGroupUuid group.uuid
+        @model.groupUser.getMeSettingsByGroupId group.id
         .map (groupUserSettings) ->
           _map notificationTypes, (type) ->
             notifications = _defaults(
@@ -65,7 +65,7 @@ module.exports = class GroupUserSettingsDialog
 
     unless isLeaveGroupLoading
       @state.set isLeaveGroupLoading: true
-      @model.group.leaveByUuid group.uuid
+      @model.group.leaveById group.id
       .then =>
         @state.set isLeaveGroupLoading: false
         @router.go 'home'
@@ -115,7 +115,7 @@ module.exports = class GroupUserSettingsDialog
                   z '.toggle',
                     z $toggle, {
                       onToggle: (isSelected) =>
-                        @model.groupUser.updateMeSettingsByGroupUuid group.uuid, {
+                        @model.groupUser.updateMeSettingsByGroupId group.id, {
                           globalNotifications:
                             "#{key}": isSelected
                         }

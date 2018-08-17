@@ -3,30 +3,30 @@ module.exports = class Conversation
 
   constructor: ({@auth}) -> null
 
-  create: ({userUuids, name, description, groupUuid}) =>
-    @auth.call "#{@namespace}.create", {userUuids, name, description, groupUuid}, {
+  create: ({userIds, name, description, groupId}) =>
+    @auth.call "#{@namespace}.create", {userIds, name, description, groupId}, {
       invalidateAll: true
     }
 
-  updateByUuid: (id, options) =>
-    {name, description, isSlowMode, slowModeCooldown, groupUuid} = options
-    @auth.call "#{@namespace}.updateByUuid", {
-      id, name, description, isSlowMode, slowModeCooldown, groupUuid
+  updateById: (id, options) =>
+    {name, description, isSlowMode, slowModeCooldown, groupId} = options
+    @auth.call "#{@namespace}.updateById", {
+      id, name, description, isSlowMode, slowModeCooldown, groupId
     }, {invalidateAll: true}
 
-  markReadByUuidAndGroupUuid: (uuid, groupUuid) =>
-    @auth.call "#{@namespace}.markReadByUuid", {uuid, groupUuid}, {
+  markReadByIdAndGroupId: (id, groupId) =>
+    @auth.call "#{@namespace}.markReadById", {id, groupId}, {
       invalidateSingle:
         body:
-          groupUuid: groupUuid
-        path: "#{@namespace}.getAllByGroupUuid"
+          groupId: groupId
+        path: "#{@namespace}.getAllByGroupId"
   }
 
   getAll: =>
     @auth.stream "#{@namespace}.getAll", {}
 
-  getAllByGroupUuid: (groupUuid) =>
-    @auth.stream "#{@namespace}.getAllByGroupUuid", {groupUuid}
+  getAllByGroupId: (groupId) =>
+    @auth.stream "#{@namespace}.getAllByGroupId", {groupId}
 
-  getByUuid: (uuid) =>
-    @auth.stream "#{@namespace}.getByUuid", {uuid}
+  getById: (id) =>
+    @auth.stream "#{@namespace}.getById", {id}

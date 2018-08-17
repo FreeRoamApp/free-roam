@@ -14,7 +14,7 @@ module.exports = class ProductPage
 
   constructor: ({@model, @router, requests, serverData, group}) ->
     @product = requests.switchMap ({route}) =>
-      @model.product.getById route.params.id
+      @model.product.getBySlug route.params.slug
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}

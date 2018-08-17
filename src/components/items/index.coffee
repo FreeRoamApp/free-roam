@@ -33,7 +33,7 @@ module.exports = class Items extends Base
         items.map (items) =>
           _map items, (item) =>
             $itemBox = @getCached$(
-              "item-#{item.id}", ItemBox, {@model, @router, item}
+              "item-#{item.slug}", ItemBox, {@model, @router, item}
             )
             {$itemBox}
 

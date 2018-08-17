@@ -46,7 +46,7 @@ module.exports = class Conversation extends Base
   constructor: (options) ->
     {@model, @router, @error, @conversation, isActive, @overlay$,
       selectedProfileDialogUser, @scrollYOnly, @isGroup, isLoading, @onScrollUp,
-      @onScrollDown, @minUuid, hasBottomBar, group} = options
+      @onScrollDown, @minId, hasBottomBar, group} = options
 
     isLoading ?= new RxBehaviorSubject false
     @isPostLoading = new RxBehaviorSubject false
@@ -57,10 +57,10 @@ module.exports = class Conversation extends Base
 
     @isPaused = new RxBehaviorSubject false
 
-    conversationAndMeAndminUuid = RxObservable.combineLatest(
+    conversationAndMeAndminId = RxObservable.combineLatest(
       @conversation
       me
-      @minUuid or RxObservable.of null
+      @minId or RxObservable.of null
       (vals...) -> vals
     )
 
@@ -68,24 +68,24 @@ module.exports = class Conversation extends Base
     @message = new RxBehaviorSubject ''
     @resetMessageBatches = new RxBehaviorSubject null
 
-    lastConversationUuid = null
+    lastConversationId = null
     @canLoadMore = true
     @isFirstLoad = true
 
-    loadedMessages = conversationAndMeAndminUuid.switchMap (resp) =>
-      [conversation, me, minUuid] = resp
+    loadedMessages = conversationAndMeAndminId.switchMap (resp) =>
+      [conversation, me, minId] = resp
 
-      if minUuid
+      if minId
         @state.set hasLoadedAllNewMessages: false
 
-      if lastConversationUuid isnt conversation?.uuid
+      if lastConversationId isnt conversation?.id
         isLoading.next true
 
-      lastConversationUuid = conversation?.uuid
+      lastConversationId = conversation?.id
 
       @messageBatchesStreams = new RxReplaySubject(1)
       @messageBatchesStreamCache = []
-      @prependMessagesStream @getMessagesStream {minUuid}
+      @prependMessagesStream @getMessagesStream {minId}
 
       @messageBatchesStreams.switch()
       .map (messageBatches) =>
@@ -94,7 +94,7 @@ module.exports = class Conversation extends Base
         @state.set isLoaded: true
         @iScrollContainer?.refresh()
 
-        if minUuid and @isFirstLoad
+        if minId and @isFirstLoad
           @isFirstLoad = false
           # scroll to top
           setTimeout =>
@@ -138,20 +138,20 @@ module.exports = class Conversation extends Base
       meGroupUser: @groupUser
       onPost: @postMessage
       allowedPanels: groupUserAndConversation.map ([groupUser, conversation]) =>
-        if conversation?.groupUuid
+        if conversation?.groupId
           panels = ['text', 'stickers']
           meGroupUser = groupUser
           permissions = ['sendImage']
-          channelUuid = conversation.uuid
+          channelId = conversation.id
           hasImagePermission = @model.groupUser.hasPermission {
-            meGroupUser, permissions, channelUuid
+            meGroupUser, permissions, channelId
           }
           if hasImagePermission
             panels = panels.concat ['image', 'gifs']
 
           permissions = ['sendAddon']
           hasAddonPermission = @model.groupUser.hasPermission {
-            meGroupUser, permissions, channelUuid
+            meGroupUser, permissions, channelId
           }
           if hasAddonPermission
             panels = panels.concat ['addons']
@@ -161,7 +161,7 @@ module.exports = class Conversation extends Base
           ['text', 'stickers', 'image', 'gifs', 'addons']
     }
 
-    messageBatchesAndMeAndBlockedUserUuids = RxObservable.combineLatest(
+    messageBatchesAndMeAndBlockedUserIds = RxObservable.combineLatest(
       messageBatches
       me
       @model.userBlock.getAllIds()
@@ -183,8 +183,8 @@ module.exports = class Conversation extends Base
       isJoinLoading: false
       isLoaded: false
 
-      messageBatches: messageBatchesAndMeAndBlockedUserUuids
-      .map ([messageBatches, me, blockedUserUuids]) =>
+      messageBatches: messageBatchesAndMeAndBlockedUserIds
+      .map ([messageBatches, me, blockedUserIds]) =>
         if messageBatches
           _map messageBatches, (messages) =>
             prevMessage = null
@@ -192,19 +192,19 @@ module.exports = class Conversation extends Base
               unless message
                 return
               isBlocked = @model.userBlock.isBlocked(
-                blockedUserUuids, message?.userUuid
+                blockedUserIds, message?.userId
               )
               if isBlocked
                 return
               isRecent = new Date(message?.time) - new Date(prevMessage?.time) <
                           FIVE_MINUTES_MS
-              isGrouped = message.userUuid is prevMessage?.userUuid and isRecent
-              isMe = message.userUuid is me.uuid
-              uuid = message.uuid or message.clientUuid
+              isGrouped = message.userId is prevMessage?.userId and isRecent
+              isMe = message.userId is me.id
+              id = message.id or message.clientId
               # if we get this in conversationmessasge, there's a flicker for
               # state to get set
-              bodyCacheKey = "#{message.clientUuid}:text"
-              messageCacheKey = "#{uuid}:#{message.lastUpdateTime}:message"
+              bodyCacheKey = "#{message.clientId}:text"
+              messageCacheKey = "#{id}:#{message.lastUpdateTime}:message"
 
               $body = @getCached$ bodyCacheKey, FormattedText, {
                 @model, @router, text: message.body, selectedProfileDialogUser
@@ -217,7 +217,7 @@ module.exports = class Conversation extends Base
                 @messageBatchesStreams
               }
               prevMessage = message
-              {$el, isGrouped, timeUuid: message.timeUuid, uuid}
+              {$el, isGrouped, timeId: message.timeId, id}
 
   afterMount: (@$$el) =>
     @$$loadingSpinner = @$$el?.querySelector('.loading')
@@ -242,11 +242,11 @@ module.exports = class Conversation extends Base
     prevConversation = null
     @disposable = @conversation.subscribe (newConversation) =>
       @model.portal.call 'push.setContextId', {
-        contextId: newConversation?.uuid
+        contextId: newConversation?.id
       }
       # server doesn't need to push us new updates
-      if prevConversation and prevConversation.uuid isnt newConversation.uuid
-        @model.conversationMessage.unsubscribeByConversationUuid prevConversation.uuid
+      if prevConversation and prevConversation.id isnt newConversation.id
+        @model.conversationMessage.unsubscribeByConversationId prevConversation.id
 
       prevConversation = newConversation
 
@@ -255,7 +255,7 @@ module.exports = class Conversation extends Base
 
     {conversation} = @state.getValue()
     if conversation
-      @model.conversationMessage.unsubscribeByConversationUuid conversation?.uuid
+      @model.conversationMessage.unsubscribeByConversationId conversation?.id
 
     @isFirstLoad = true
 
@@ -292,7 +292,7 @@ module.exports = class Conversation extends Base
     # messages will show for a split-second before the rest load in.
     # but WITH this, leaving a conversation and coming back to it sometimes
     # causes new messages to not post FIXME FIXME
-    # @model.conversationMessage.resetClientChangesStream conversation?.uuid
+    # @model.conversationMessage.resetClientChangesStream conversation?.id
 
   initIScroll: =>
     @iScrollContainer = new IScroll @$$messages, {
@@ -319,8 +319,8 @@ module.exports = class Conversation extends Base
     @iScrollContainer.on 'scrollEnd', =>
       isScrolling = false
 
-  getMessagesStream: ({minUuid, maxUuid, isStreamed} = {}) =>
-    isStreamed ?= not maxUuid and not minUuid
+  getMessagesStream: ({minId, maxId, isStreamed} = {}) =>
+    isStreamed ?= not maxId and not minId
     conversationAndIsPaused = RxObservable.combineLatest(
       @conversation
       @isPaused
@@ -331,12 +331,12 @@ module.exports = class Conversation extends Base
     # in count to show how many new messages
     conversationAndIsPaused.switchMap (result) =>
       [conversation, isPaused] = result
-      if isPaused and not maxUuid
+      if isPaused and not maxId
         RxObservable.never()
       else if conversation
-        @model.conversationMessage.getAllByConversationUuid conversation.uuid, {
-          minUuid
-          maxUuid
+        @model.conversationMessage.getAllByConversationId conversation.id, {
+          minId
+          maxId
           # don't stream old message batches
           isStreamed
         }
@@ -408,8 +408,8 @@ module.exports = class Conversation extends Base
     @$$loadingSpinner.style.display = 'block'
 
     {messageBatches} = @state.getValue()
-    maxUuid = messageBatches?[0]?[0]?.timeUuid
-    messagesStream = @getMessagesStream {maxUuid}
+    maxId = messageBatches?[0]?[0]?.timeId
+    messagesStream = @getMessagesStream {maxId}
     @prependMessagesStream messagesStream
 
     messagesStream.take(1).toPromise()
@@ -426,8 +426,8 @@ module.exports = class Conversation extends Base
     @$$loadingSpinner.style.display = 'block'
 
     {messageBatches, hasLoadedAllNewMessages} = @state.getValue()
-    minUuid = _last(_last(messageBatches))?.timeUuid
-    messagesStream = @getMessagesStream {minUuid, isStreamed}
+    minId = _last(_last(messageBatches))?.timeId
+    messagesStream = @getMessagesStream {minId, isStreamed}
     @appendMessagesStream messagesStream
 
     previousScrollHeight = @$$messages.scrollHeight
@@ -440,7 +440,7 @@ module.exports = class Conversation extends Base
       if messages?.length < 10 and not hasLoadedAllNewMessages
         @state.set {hasLoadedAllNewMessages: true}
         # HACK. need to wait until messageBatches is updated so it can grab
-        # the new minUuid
+        # the new minId
         setTimeout =>
           @loadNewer isStreamed = true
         , 500
@@ -490,15 +490,15 @@ module.exports = class Conversation extends Base
 
       type = if conversation?.group?.type is 'public' \
              then 'public'
-             else if conversation?.groupUuid
+             else if conversation?.groupId
              then 'group'
              else 'private'
       ga? 'send', 'event', 'conversation_message', 'post', type
 
       @model.conversationMessage.create {
         body: messageBody
-        conversationUuid: conversation?.uuid
-        userUuid: me?.uuid
+        conversationId: conversation?.id
+        userId: me?.id
       }, {user: me, time: Date.now()}
       .then (response) =>
         # @model.user.emit('conversationMessage').catch log.error
@@ -518,9 +518,9 @@ module.exports = class Conversation extends Base
       unless @model.cookie.get 'isPushTokenStored'
         @model.pushNotificationSheet.open()
       Promise.all _filter [
-        @model.group.joinByUuid group.uuid
+        @model.group.joinById group.id
         if group.star
-          @model.userFollower.followByUserUuid group.star?.user?.uuid
+          @model.userFollower.followByUserId group.star?.user?.id
       ]
       .then =>
         # just in case...
@@ -560,7 +560,7 @@ module.exports = class Conversation extends Base
             _map messageBatches, (messageBatch) ->
               z '.message-batch', {
                 className: z.classKebab {isLoaded}
-                key: "message-batch-#{messageBatch?[0]?.uuid}"
+                key: "message-batch-#{messageBatch?[0]?.id}"
               },
                 _map messageBatch, ({$el, isGrouped}, i) ->
                   [
@@ -569,7 +569,7 @@ module.exports = class Conversation extends Base
                       z $el
                   ]
 
-      if conversation?.groupUuid and groupUser and not groupUser.userUuid
+      if conversation?.groupId and groupUser and not groupUser.userId
         z '.bottom.is-gate',
           z '.text',
             @model.l.get 'conversation.joinMessage', {

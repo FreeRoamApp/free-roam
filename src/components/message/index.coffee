@@ -56,9 +56,9 @@ module.exports = class Message
   render: ({openProfileDialogFn, isTimeAlignedLeft}) =>
     {isMe, message, isGrouped, isMeMentioned, windowSize} = @state.getValue()
 
-    {user, groupUser, time, card, uuid, clientUuid} = message
+    {user, groupUser, time, card, id, clientId} = message
 
-    groupUpgrades = _filter user?.upgrades, {groupUuid: groupUser?.groupUuid}
+    groupUpgrades = _filter user?.upgrades, {groupId: groupUser?.groupId}
     hasBadge = _find groupUpgrades, {upgradeType: 'fireBadge'}
     subBadgeImage = _find(groupUpgrades, {upgradeType: 'twitchSubBadge'})
                     ?.data?.image
@@ -72,10 +72,10 @@ module.exports = class Message
 
     onclick = =>
       unless @isTextareaFocused?.getValue()
-        openProfileDialogFn uuid, user, groupUser
+        openProfileDialogFn id, user, groupUser
 
     oncontextmenu = ->
-      openProfileDialogFn uuid, user, groupUser
+      openProfileDialogFn id, user, groupUser
 
     isVerified = user and user.gameStat?.isVerified
     isModerator = groupUser?.roleNames and
@@ -86,7 +86,7 @@ module.exports = class Message
 
     z '.z-message', {
       # re-use elements in v-dom. doesn't seem to work with prepending more
-      key: "message-#{uuid or clientUuid}"
+      key: "message-#{id or clientId}"
       className: z.classKebab {isGrouped, isMe, isMeMentioned}
       oncontextmenu: (e) ->
         e?.preventDefault()

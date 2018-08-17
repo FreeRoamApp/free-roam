@@ -18,12 +18,12 @@ module.exports = class ItemBox
 
     @router.link z 'a.z-item-box', {
       href: @router.get 'item', {
-        id: item.id
+        slug: item.slug
       }
     },
       z '.image',
         style:
           backgroundImage:
-            "url(#{config.CDN_URL}/products/#{item?.firstProductId}-200h.jpg)"
+            "url(#{config.CDN_URL}/products/#{item?.firstProductSlug}-200h.jpg)"
       z '.name',
         item?.name

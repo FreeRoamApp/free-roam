@@ -119,7 +119,7 @@ module.exports = class Thread extends Base
         threadComments = _filter threadComments
         _map threadComments, (threadComment) =>
           # cache, otherwise there's a flicker on invalidate
-          cacheId = "threadComment-#{threadComment.uuid}"
+          cacheId = "threadComment-#{threadComment.id}"
           $el = @getCached$ cacheId, ThreadComment, {
             @model, @router, @selectedProfileDialogUser, threadComment
             @commentStreams, group
@@ -160,12 +160,12 @@ module.exports = class Thread extends Base
 
   getTopStream: (skip = 0) =>
     @filterAndThread.switchMap ([filter, thread]) =>
-      if thread?.uuid
-        @model.threadComment.getAllByThreadUuid thread.uuid, {
+      if thread?.id
+        @model.threadComment.getAllByThreadId thread.id, {
           limit: SCROLL_COMMENT_LOAD_COUNT
           skip: skip
           sort: filter?.sort
-          groupUuid: thread.groupUuid
+          groupId: thread.groupId
         }
         .map (comments) ->
           comments or false
@@ -207,8 +207,8 @@ module.exports = class Thread extends Base
     .then =>
       @model.threadComment.create {
         body: messageBody
-        threadUuid: thread.uuid
-        parentUuid: thread.uuid
+        threadId: thread.id
+        parentId: thread.id
         parentType: 'thread'
       }
       .then (response) =>
@@ -277,7 +277,7 @@ module.exports = class Thread extends Base
                     @model.group.goPath group, 'groupThreadEdit', {
                       @router
                       replacements:
-                        id: thread.id
+                        slug: thread.slug
                     }
               if hasPinThreadPermission
                 z @$pinIcon,
@@ -286,9 +286,9 @@ module.exports = class Thread extends Base
                   hasRipple: true
                   onclick: =>
                     if thread?.data?.isPinned
-                      @model.thread.unpinByUuid thread.uuid
+                      @model.thread.unpinById thread.id
                     else
-                      @model.thread.pinByUuid thread.uuid
+                      @model.thread.pinById thread.id
               if hasDeleteThreadPermission
                 z @$deleteIcon,
                   icon: 'delete'
@@ -296,7 +296,7 @@ module.exports = class Thread extends Base
                   hasRipple: true
                   onclick: =>
                     if confirm 'Confirm?'
-                      @model.thread.deleteByUuid thread.uuid
+                      @model.thread.deleteById thread.id
                       .then =>
                         @model.group.goPath group, 'groupForum', {@router}
             ]
@@ -352,7 +352,7 @@ module.exports = class Thread extends Base
                   vote: 'up'
                   hasVoted: hasVotedUp
                   parent:
-                    uuid: thread?.uuid
+                    id: thread?.id
                     type: 'thread'
                 }
               z '.downvote',
@@ -360,7 +360,7 @@ module.exports = class Thread extends Base
                   vote: 'down'
                   hasVoted: hasVotedDown
                   parent:
-                    uuid: thread?.uuid
+                    id: thread?.id
                     type: 'thread'
                 }
             z '.score',

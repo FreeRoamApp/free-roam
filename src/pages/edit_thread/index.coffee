@@ -14,8 +14,8 @@ module.exports = class EditThreadPage
 
   constructor: ({@model, requests, @router, serverData, group}) ->
     thread = requests.switchMap ({route}) =>
-      if route.params.id
-        @model.thread.getById route.params.id
+      if route.params.slug
+        @model.thread.getBySlug route.params.slug
       else
         RxObservable.of null
 

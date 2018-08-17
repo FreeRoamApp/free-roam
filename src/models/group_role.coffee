@@ -9,16 +9,16 @@ module.exports = class GroupRole
 
   constructor: ({@auth}) -> null
 
-  createByGroupUuid: (groupUuid, diff) =>
-    @auth.call "#{@namespace}.createByGroupUuid", _defaults({groupUuid}, diff), {
+  createByGroupId: (groupId, diff) =>
+    @auth.call "#{@namespace}.createByGroupId", _defaults({groupId}, diff), {
       invalidateAll: true
     }
 
-  getAllByGroupUuid: (groupUuid) =>
-    @auth.stream "#{@namespace}.getAllByGroupUuid", {groupUuid}
+  getAllByGroupId: (groupId) =>
+    @auth.stream "#{@namespace}.getAllByGroupId", {groupId}
 
-  deleteByGroupUuidAndRoleId: (groupUuid, roleUuid) =>
-    @auth.call "#{@namespace}.deleteByGroupUuidAndRoleId", {groupUuid, roleUuid}, {
+  deleteByGroupIdAndRoleId: (groupId, roleId) =>
+    @auth.call "#{@namespace}.deleteByGroupIdAndRoleId", {groupId, roleId}, {
       invalidateAll: true
     }
 
