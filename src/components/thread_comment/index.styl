@@ -1,0 +1,43 @@
+@require '../../vars'
+
+.z-thread-comment
+  width: 100%
+  box-sizing: border-box
+  overflow: hidden
+
+  > .comment
+    display: flex
+
+  > .bottom
+    display: flex
+
+    > .actions
+      margin-left: auto
+      display: flex
+      align-items: center
+
+      > .reply
+        cursor: pointer
+        font-button-small(false)
+        color: getColor('$tertiary900Text54')
+
+      > .points
+        display: flex
+        align-items: center
+        margin-left: 8px
+
+        > .icon
+          margin: 0 8px
+
+  > .reply
+    margin: 8px 0 16px 0
+
+  > .children
+    border-left: 2px solid getColor('$tertiary900Text12')
+    padding-left: 16px
+    margin: 8px 0
+
+
+  // @media (min-width: $breakPointMedium)
+  //   > .comment > .content > .info > .name
+  //     max-width: none

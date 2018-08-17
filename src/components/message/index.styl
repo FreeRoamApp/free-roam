@@ -1,0 +1,136 @@
+@require '../../vars'
+
+.z-message
+  display: flex
+  width: 100%
+  box-sizing: border-box
+  overflow: hidden
+  position: relative
+
+  &.is-me-mentioned
+    > .content > .body
+      background: getColor('$tertiary700')
+      border-left: 2px solid getColor('$primary500')
+      border-radius: 2px
+      padding-left: 4px
+
+  &.is-grouped
+    padding-top: 4px
+
+    > .avatar
+      visibility: hidden
+
+  > .avatar
+    margin-right: 16px
+    cursor: pointer
+    position: relative
+
+    > .level
+      font-micro()
+      position: absolute
+      bottom: 0
+      left: 0
+      background: red
+      border-radius: 50%
+      color: getColor('$tertiary900Text')
+      padding: 4px
+
+  > .content
+    flex: 1
+    min-width: 0 // fix
+
+    > .author
+      font-caption1(no)
+      color: getColor('$tertiary900Text54')
+      display: flex
+      align-items: center
+      cursor: pointer
+
+      > .icon
+        margin-right: 8px
+
+      > .name
+        font-title(no)
+        color: getColor('$tertiary900Text')
+
+      > .icons
+        display: flex
+        align-items: center
+
+        > .icon
+          margin-left: 4px
+
+          > .badge
+            display: block
+
+      > .time
+        margin-left: auto
+
+        &.is-aligned-left
+          margin-left: 8px
+
+      > .middot
+        margin-left: 4px
+        margin-right: 4px
+
+      > .trophies
+        display: flex
+        align-items: center
+
+        > .icon
+          margin-left: 4px
+
+    > .body
+      font-body2(no)
+      // font-size: 14px
+      position: relative
+      z-index: 2
+      padding-right: 16px
+      margin-top: 6px
+      overflow: hidden
+
+      p
+        &:first-child
+          margin-top: 0
+
+        &:last-child
+          margin-bottom: 0
+
+      .link
+        text-decoration: underline
+
+      // .sticker
+      //   width: 70px
+      //   height: 70px
+      //   background-size: 100%
+      //   background-repeat: no-repeat
+      //   margin-right: auto
+
+    > .card
+      position: relative
+      z-index: 2
+      background: getColor('$tertiary700')
+      padding: 8px
+      margin-top: 12px
+      border-radius: 2px
+      cursor: pointer
+      max-width: 300px
+      overflow: hidden
+
+      > .title
+        font-title()
+
+      > .description
+        font-body1()
+        color: getColor('$tertiary900Text54')
+        margin-top: 6px
+
+
+  @media (min-width: $breakPointMedium)
+    > .content
+      > .author
+        > .time
+          margin-left: 8px
+
+      > .info > .name
+        max-width: none

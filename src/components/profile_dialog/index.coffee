@@ -28,7 +28,6 @@ module.exports = class ProfileDialog
     @$messageIcon = new Icon()
     @$manageIcon = new Icon()
     @$flagIcon = new Icon()
-    @$tradeIcon = new Icon()
     @$blockIcon = new Icon()
     @$banIcon = new Icon()
     @$tempBanIcon = new Icon()
@@ -61,19 +60,19 @@ module.exports = class ProfileDialog
       me: me
       meGroupUser: groupAndMe.switchMap ([group, me]) =>
         if group and me
-          @model.groupUser.getByGroupIdAndUserId group.id, me.id
+          @model.groupUser.getByGroupUuidAndUserUuid group.uuid, me.uuid
         else
           RxObservable.of null
       user: @selectedProfileDialogUser
       isBanned: groupAndUser.switchMap ([group, user]) =>
         if group and user
-          @model.ban.getByGroupIdAndUserId group.id, user.id
+          @model.ban.getByGroupUuidAndUserUuid group.uuid, user.uuid
         else
           RxObservable.of null
       group: group
       loadingItems: []
       expandedItems: []
-      blockedUserIds: @model.userBlock.getAllIds()
+      blockedUserUuids: [] # TODO: @model.userBlock.getAllUuids()
       windowSize: @model.window.getSize()
 
   afterMount: =>
@@ -100,7 +99,7 @@ module.exports = class ProfileDialog
   getModOptions: =>
     {me, user, meGroupUser, group, isBanned} = @state.getValue()
 
-    isMe = user?.id is me?.id
+    isMe = user?.uuid is me?.uuid
 
     hasDeleteMessagePermission = @model.groupUser.hasPermission {
       group, meGroupUser, me
@@ -140,10 +139,10 @@ module.exports = class ProfileDialog
                 isVisible: not isMe
                 onclick: =>
                   if isBanned
-                    @model.ban.unbanByGroupIdAndUserId group?.id, user?.id
+                    @model.ban.unbanByGroupUuidAndUserUuid group?.uuid, user?.uuid
                   else
-                    @model.ban.banByGroupIdAndUserId group?.id, user?.id, {
-                      duration: '24h', groupId: group?.id
+                    @model.ban.banByGroupUuidAndUserUuid group?.uuid, user?.uuid, {
+                      duration: '24h', groupUuid: group?.uuid
                     }
                   @selectedProfileDialogUser.next null
               }
@@ -159,9 +158,9 @@ module.exports = class ProfileDialog
                 isVisible: not isMe
                 onclick: =>
                   if isBanned
-                    @model.ban.unbanByGroupIdAndUserId group?.id, user?.id
+                    @model.ban.unbanByGroupUuidAndUserUuid group?.uuid, user?.uuid
                   else
-                    @model.ban.banByGroupIdAndUserId group?.id, user?.id, {
+                    @model.ban.banByGroupUuidAndUserUuid group?.uuid, user?.uuid, {
                       duration: 'permanent'
                     }
                   @selectedProfileDialogUser.next null
@@ -178,9 +177,9 @@ module.exports = class ProfileDialog
                 isVisible: not isMe
                 onclick: =>
                   if isBanned
-                    @model.ban.unbanByGroupIdAndUserId group?.id, user?.id
+                    @model.ban.unbanByGroupUuidAndUserUuid group?.uuid, user?.uuid
                   else
-                    @model.ban.banByGroupIdAndUserId group?.id, user?.id, {
+                    @model.ban.banByGroupUuidAndUserUuid group?.uuid, user?.uuid, {
                       type: 'ip', duration: 'permanent'
                     }
                   @selectedProfileDialogUser.next null
@@ -221,8 +220,8 @@ module.exports = class ProfileDialog
             #     @setLoadingByText(
             #       @model.l.get 'profileDialog.deleteMessagesLast24hr'
             #     )
-            #     @model.chatMessage.deleteAllByGroupIdAndUserId(
-            #       group.id, user.id, {duration: '24h'}
+            #     @model.conversationMessage.deleteAllByGroupUuidAndUserUuid(
+            #       group.uuid, user.uuid, {duration: '24h'}
             #     )
             #     .then =>
             #       @unsetLoadingByText(
@@ -259,18 +258,18 @@ module.exports = class ProfileDialog
           isVisible: true
           onclick: =>
             @model.group.goPath group, 'groupManage', {
-              @router, replacements: {userId: user?.id}
+              @router, replacements: {userUuid: user?.uuid}
             }
             @selectedProfileDialogUser.next null
         }
     ]
 
   getUserOptions: =>
-    {me, user, blockedUserIds, isFlagged, group} = @state.getValue()
+    {me, user, blockedUserUuids, isFlagged, group} = @state.getValue()
 
-    isBlocked = @model.userBlock.isBlocked blockedUserIds, user?.id
+    isBlocked = @model.userBlock.isBlocked blockedUserUuids, user?.uuid
 
-    isMe = user?.id is me?.id
+    isMe = user?.uuid is me?.uuid
 
     _filter [
       {
@@ -279,7 +278,7 @@ module.exports = class ProfileDialog
         text: @model.l.get 'general.profile'
         isVisible: not isMe
         onclick: =>
-          @router.go 'userById', {id: user?.id}
+          @router.go 'userByUuid', {uuid: user?.uuid}
           @selectedProfileDialogUser.next null
       }
       {
@@ -294,22 +293,13 @@ module.exports = class ProfileDialog
           unless @isLoadingByText @model.l.get 'profileDialog.message'
             @setLoadingByText @model.l.get 'profileDialog.message'
             @model.conversation.create {
-              userIds: [user.id]
+              userUuids: [user.uuid]
             }
             .then (conversation) =>
               @unsetLoadingByText @model.l.get 'profileDialog.message'
-              @router.go 'conversation', {id: conversation.id}
+              @router.go 'conversation', {uuid: conversation.uuid}
               @selectedProfileDialogUser.next null
       }
-      if not group?.key or group?.key.indexOf('fortnite') is -1
-        {
-          icon: 'trade'
-          $icon: @$tradeIcon
-          text: @model.l.get 'tradePage.title'
-          isVisible: not isMe
-          onclick: =>
-            @router.go 'newTradeToId', {toId: user.id}
-        }
       unless user?.flags?.isModerator
         {
           icon: 'block'
@@ -322,9 +312,9 @@ module.exports = class ProfileDialog
           onclick: =>
             if confirm @model.l.get 'general.confirm'
               if isBlocked
-                @model.userBlock.unblockByUserId user?.id
+                @model.userBlock.unblockByUserUuid user?.uuid
               else
-                @model.userBlock.blockByUserId user?.id
+                @model.userBlock.blockByUserUuid user?.uuid
               @selectedProfileDialogUser.next null
         }
       {
@@ -385,7 +375,7 @@ module.exports = class ProfileDialog
   render: =>
     {me, user, group, windowSize} = @state.getValue()
 
-    isMe = user?.id is me?.id
+    isMe = user?.uuid is me?.uuid
 
     userOptions = @getUserOptions()
     modOptions = @getModOptions()

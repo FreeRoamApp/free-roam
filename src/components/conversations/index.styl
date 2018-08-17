@@ -1,0 +1,56 @@
+@require '../../vars'
+
+.z-conversations
+  flex: 1
+  width: 100%
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding-top: 8px
+
+  > .g-grid
+    > .no-conversations
+      text-align: center
+      padding: 16px
+
+    > .conversation
+      display: flex
+      padding: 14px 16px
+
+      &.is-unread
+        > .status
+          border-radius: 50%
+          background: getColor('$primary500')
+
+      > .status
+        width: 4px
+        height: 4px
+        margin: auto 8px auto 0
+
+
+      > .avatar
+        width: 40px
+        height: 40px
+        border-radius: 50%
+        margin-right: 16px
+
+      > .right
+        flex: 1
+        display: flex
+        flex-direction: column
+
+        > .info
+          flex: 1
+          display: flex
+          align-items: center
+
+          > .name
+            font-title()
+            margin-bottom: 8px
+
+          > .time
+            font-caption1()
+            margin-left: auto
+            color: getColor('$primary500')
+
+        > .last-message
+          color: getColor('$tertiary900Text54')

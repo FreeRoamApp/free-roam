@@ -1,0 +1,38 @@
+@require '../../vars'
+
+.z-channel-list
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .channel
+    padding: 12px 16px
+    display: flex
+    cursor: pointer
+
+    &.is-selected
+      background: getColor('$tertiary500')
+
+    > .hashtag
+      font-body1()
+      color: getColor('$tertiary900Text54')
+
+    > .info
+      margin-left: 8px
+
+      > .name
+        font-title()
+        color: getColor('$tertiary900Text')
+
+        > .notifications
+          font-caption1()
+          display: inline-block
+          margin-left: 8px
+          padding: 0 8px
+          background: getColor('$primary500')
+          color: getColor('$primary500Text')
+          border-radius: 2px
+
+      > .description
+        font-caption1()
+        color: getColor('$tertiary900Text54')
+        // margin-top: 4px

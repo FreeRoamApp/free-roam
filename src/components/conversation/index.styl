@@ -1,0 +1,109 @@
+@require '../../vars'
+
+$zIndexTextarea = 2
+
+// overflow:auto; display:flex; flex-direction:column-reverse;
+
+.z-conversation
+  display: flex
+  flex: 1
+  min-height: 0 // fix for older chrome (otherwise doesn't keep height 100)
+  flex-direction: column
+  width: 100%
+  position: relative
+
+  > .loading
+    position: absolute
+    z-index: 999
+    top: 0
+    left: 0
+    right: 0
+    height: 30px
+
+  &.has-bottom-bar
+    > .messages
+      padding-top: 30px + 64px
+
+    > .loading
+      top: 64px
+
+  > .messages
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+    flex: 1
+    min-height: 0 // fix for older chrome (otherwise doesn't keep height 100)
+    overflow-y: auto
+    overflow-x: hidden
+    // -webkit-overflow-scrolling: touch
+
+    // https://stackoverflow.com/questions/18614301/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+    // reverse scrolling so we always stay at the bottom
+    display: flex
+    flex-direction: column-reverse
+
+    // use gpu
+    // transform: translateZ(0)
+    // https://stackoverflow.com/questions/39261456/reducing-scroll-jank-when-using-overflow-y-scroll/39368219
+    will-change: transform
+    // margin-bottom: 64px
+    width: 100%
+    min-width: 0 // fix
+    padding: 8px
+    box-sizing: border-box
+    padding-top: 30px // for loading more indicator
+    margin-bottom: 100px // for bottom input bar
+    // padding-bottom: 90px
+
+    > .messages-inner
+      > .message-batch
+        opacity: 0
+        // chrome has painting glitch without this. when scrolling, some
+        // messages will flicker, or get clipped out
+        will-change: transform
+
+        &.is-loaded
+          opacity: 1
+
+        > .divider
+          width: 100%
+          height: 1px
+          background: getColor('$tertiary900Text12')
+          margin: 0
+
+  > .bottom
+    padding: 0 8px 8px 8px
+    position: absolute
+    bottom: -1px // fix text showing behind for bottom 1px
+    left: 0
+    right: 0
+    background: getColor('$tertiary900')
+
+    > .jump-new
+      position: absolute
+      left: 0
+      top: -24px
+      background: getColor('$primary500')
+      color: getColor('$primary500Text')
+      height: 24px
+      width: 100%
+      padding: 4px 16px
+      box-sizing: border-box
+      cursor: pointer
+
+    &.is-gate
+      background: getColor('$tertiary700')
+      padding: 16px
+
+      > .text
+        font-body1()
+        text-align: center
+        margin-bottom: 4px
+
+  @media (min-width: $breakPointMedium)
+    > .textarea-container
+      background: getColor('$tertiary900')
+
+    > .bottom
+      bottom: 0px
+
+      // > .g-grid
+      //   margin-bottom: 16px

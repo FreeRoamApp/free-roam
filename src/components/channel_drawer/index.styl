@@ -1,0 +1,30 @@
+@require '../../vars'
+
+$zIndexChannelDrawer = 998
+$zIndexChannelDrawerDrawer = 999
+
+.z-channel-drawer_drawer
+  flex: 1
+  display: flex
+  flex-direction: column
+
+  > .title
+    font-subhead()
+    color: getColor('$primary500')
+    padding: 16px
+
+  > .divider
+    width: 100%
+    height: 1px
+    background: getColor('$tertiary900Text12')
+    margin: 8px 0
+
+  > .manage-channels
+    padding: 16px
+    display: flex
+    align-items: center
+    cursor: pointer
+
+    > .text
+      font-body1()
+      margin-left: 16px

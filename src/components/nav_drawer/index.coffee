@@ -43,7 +43,7 @@ module.exports = class NavDrawer
 
     myGroups = me.switchMap (me) =>
       RxObservable.of []
-      # @model.group.getAllByUserId me.id
+      # @model.group.getAllByUserUuid me.uuid
     groupAndMyGroups = RxObservable.combineLatest(
       group
       myGroups
@@ -61,17 +61,14 @@ module.exports = class NavDrawer
       # myGroups: groupAndMyGroups.map (props) =>
       #   [group, groups, me, language] = props
       #   groups = _orderBy groups, (group) =>
-      #     @model.cookie.get("group_#{group.id}_lastVisit") or 0
+      #     @model.cookie.get("group_#{group.uuid}_lastVisit") or 0
       #   , 'desc'
-      #   groups = _filter groups, ({id}) ->
-      #     id isnt group.id
+      #   groups = _filter groups, ({uuid}) ->
+      #     uuid isnt group.uuid
       #   myGroups = _map groups, (group, i) =>
       #     {
       #       group
-      #       key: group.key
-      #       $badge: if group.clan \
-      #               then new ClanBadge {@model, clan: group.clan}
-      #               else new GroupBadge {@model, group}
+      #       id: group.id
       #     }
       #   myGroups
 
@@ -85,7 +82,7 @@ module.exports = class NavDrawer
         userAgent = navigator?.userAgent
         hasGroupApp = group.googlePlayAppId
         needsGroupApp = hasGroupApp and
-                          not Environment.isGroupApp group.key, {userAgent}
+                          not Environment.isGroupApp group.id, {userAgent}
         needsMainApp = userAgent and
                   not Environment.isNativeApp('freeroam', {userAgent}) and
                   not window?.matchMedia('(display-mode: standalone)').matches
@@ -252,7 +249,7 @@ module.exports = class NavDrawer
       windowSize?.height > 880 and
       not Environment.isMobile()
 
-    isGroupApp = group.key and Environment.isGroupApp group.key
+    isGroupApp = group.id and Environment.isGroupApp group.id
 
     renderChild = (child, depth = 0) =>
       {path, title, $chevronIcon, children, expandOnClick} = child

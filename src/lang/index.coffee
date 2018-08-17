@@ -6,11 +6,7 @@ config = require '../config'
 
 files = {
   strings: null
-  cards: null
-  addons: null
   paths: null
-  languages: null
-  fortnite: null
 }
 
 module.exports = getJsonString: (language) ->

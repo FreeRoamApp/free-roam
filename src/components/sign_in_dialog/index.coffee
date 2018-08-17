@@ -151,28 +151,6 @@ module.exports = class SignInDialog
                 else @model.l.get 'general.signUp'
 
             z 'form.content',
-              z '.social-logins',
-                if group?.key is 'nickatnyte'
-                  [
-                    z '.login-twitch',
-                      z @$twitchButton,
-                        text:
-                          z '.z-sign-in-dialog_button',
-                            z '.icon',
-                              z @$twitchIcon,
-                                icon: 'twitch'
-                                color: colors.$tertiary900Text
-                                isTouchTarget: false
-                            @model.l.get 'signIn.withPlatform', {
-                              replacements:
-                                platform: 'Twitch'
-                            }
-                        onclick: @signInTwitch
-
-                    z '.or', @model.l.get 'general.or'
-                  ]
-
-
               z '.input',
                 z @$usernameInput, {
                   hintText: @model.l.get 'general.username'

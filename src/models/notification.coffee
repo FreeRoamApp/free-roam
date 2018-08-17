@@ -5,5 +5,5 @@ module.exports = class Notification
 
   constructor: ({@auth}) -> null
 
-  getAll: ({groupId}) =>
-    @auth.stream "#{@namespace}.getAll", {groupId}
+  getAll: ({groupUuid}) =>
+    @auth.stream "#{@namespace}.getAll", {groupUuid}

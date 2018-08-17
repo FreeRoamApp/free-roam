@@ -30,10 +30,10 @@ class PushService
       unless reply.additionalData # legacy (older than 1.4.10)
         reply = reply[0]
       payload = reply.additionalData.payload or reply.additionalData.data
-      if payload.conversationId
-        model.chatMessage.create {
+      if payload.conversationUuid
+        model.conversationMessage.create {
           body: reply.additionalData.inlineReply
-          conversationId: payload.conversationId
+          conversationUuid: payload.conversationUuid
         }
     model.portal.call 'push.registerAction', {
       action: 'reply'

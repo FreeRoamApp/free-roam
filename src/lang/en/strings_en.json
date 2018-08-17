@@ -66,6 +66,9 @@
   "app.defaultInstallMessage": "Add FreeRoam to your homescreen to quickly access all features anytime",
   "app.stillLoading": "We're still loading this page. If this message remains for more than a few seconds, send us an email with the version of Android you're using: austin@freeroam.app",
   "categories.searchPlaceholder": "Looking for something?",
+  "compose.titleHintText": "Title...",
+  "compose.responseHintText": "Write a response...",
+  "compose.postHintText": "Write a post...",
   "drawer.about": "About us",
   "drawer.backpack": "Backpack",
   "drawer.menuItemNeedsApp": "Get the app",
@@ -97,6 +100,20 @@
   "signInDialog.signIn": "Welcome back!",
   "signInDialog.createAccount": "Create account",
   "signInDialog.terms": "By registering, you agree to our {tos}",
+  "thread.noComments": "No comments found",
+  "thread.points": "points",
+  "thread.comments": "comments",
+  "time.justNow": "now",
+  "time.secondShorthand": "s",
+  "time.minuteShorthand": "m",
+  "time.hourShorthand": "h",
+  "time.dayShorthand": "d",
+  "time.weekShorthand": "w",
+  "time.monthShorthand": "M",
+  "time.yearShorthand": "Y",
+
+
   "categoriesPage.title": "Choose a category",
-  "itemsPage.title": "Items"
+  "itemsPage.title": "Items",
+  "newThreadPage.title": "New thread"
 }

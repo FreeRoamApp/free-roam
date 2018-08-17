@@ -1,0 +1,49 @@
+@require '../../vars'
+
+.p-group-chat
+  display: flex
+  flex-direction: column
+  // overflow: hidden
+
+  &.should-show-bottom-bar
+    // for some reason this is necessary... without it, hiding the bottom bar
+    // works, but when scrolling to top, it scrolls entire page...
+    position: fixed
+    width: 100%
+    height: 100%
+
+    > .content
+      position: relative
+      margin-top: -64px // bottom bar offset
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+  > .content
+    flex: 1
+    display: flex
+    min-height: 0 // fix for older chrome (otherwise doesn't keep height 100)
+    // flex-direction: column
+
+  > .overlay
+    position: fixed
+    z-index: 999999
+    left: 0
+    top: 0
+    width: 100%
+    height: 100%
+
+.p-group-chat_top-right
+  display: flex
+
+  > .channels-icon
+    @media (min-width: $contentMaxWidth)
+      display: none
+
+.p-group-chat_title
+  padding: 12px
+  margin-left: -12px
+  position: relative
+
+  > .group
+    font-micro()
+    color: getColor('$header500Text54')
+    margin-bottom: 2px

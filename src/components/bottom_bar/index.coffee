@@ -22,14 +22,6 @@ module.exports = class BottomBar
     @state = z.state
       requests: requests
       group: group
-      hasShopNotification: group.switchMap (group) =>
-        if group and group.key in collectionGroupKeys
-          @model.product.getAllByGroupId group.id
-        else
-          RxObservable.of null
-      .map (products) ->
-        Boolean _find products, ({cost, isLocked}) ->
-          cost is 0 and not isLocked
 
   afterMount: (@$$el) => null
 
@@ -40,7 +32,7 @@ module.exports = class BottomBar
     @$$el?.classList.remove 'is-hidden'
 
   render: ({isAbsolute} = {}) =>
-    {requests, group, hasShopNotification} = @state.getValue()
+    {requests, group} = @state.getValue()
 
     currentPath = requests?.req.path
 
@@ -49,65 +41,30 @@ module.exports = class BottomBar
     # per-group menu:
     # profile, tools, home, forum, chat
     @menuItems = _filter [
-      if group?.key in ['nickatnyte', 'theviewage']
-        {
-          $icon: new Icon()
-          icon: 'trade'
-          route: @model.group.getPath group, 'trades', {@router}
-          text: @model.l.get 'tradesPage.title'
-        }
-      else if @model.group.hasGameKey group, 'fortnite'
-        {
-          $icon: new Icon()
-          icon: 'friends'
-          route: @model.group.getPath group, 'groupPeople', {@router}
-          text: @model.l.get 'people.title'
-        }
-      else
-        {
-          $icon: new Icon()
-          icon: 'profile'
-          route: @model.group.getPath group, 'groupProfile', {@router}
-          text: @model.l.get 'general.profile'
-        }
+      {
+        $icon: new Icon()
+        icon: 'profile'
+        route: ''
+        text: @model.l.get 'general.profile'
+      }
       {
         $icon: new Icon()
         icon: 'chat'
-        route: @model.group.getPath group, 'groupChat', {@router}
+        route: ''
         text: @model.l.get 'general.chat'
       }
       {
         $icon: new Icon()
         icon: 'home'
-        route: @model.group.getPath group, 'groupHome', {@router}
+        route: ''
         text: @model.l.get 'general.home'
         isDefault: true
       }
-      if group?.key in collectionGroupKeys
-        {
-          $icon: new Icon()
-          icon: 'cards'
-          route: if hasShopNotification
-            @model.group.getPath group, 'groupCollectionWithTab', {
-              @router, replacements: {tab: 'shop'}
-            }
-          else
-            @model.group.getPath group, 'groupCollection', {@router}
-          text: @model.l.get 'general.collection'
-          hasNotification: hasShopNotification
-        }
-      else if group?.type is 'public'
-        {
-          $icon: new Icon()
-          icon: 'rss'
-          route: @model.group.getPath group, 'groupForum', {@router}
-          text: @model.l.get 'general.forum'
-        }
       {
         $icon: new Icon()
-        icon: 'tools'
-        route: @model.group.getPath group, 'groupTools', {@router}
-        text: @model.l.get 'general.tools'
+        icon: 'rss'
+        route: @model.group.getPath group, 'groupForum', {@router}
+        text: @model.l.get 'general.forum'
       }
     ]
 
@@ -121,7 +78,7 @@ module.exports = class BottomBar
         if isDefault
           isSelected =  currentPath in [
             @router.get 'siteHome'
-            @model.group.getPath group, 'groupHome', {@router}
+            ''
             '/'
           ]
         else

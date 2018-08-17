@@ -1,0 +1,28 @@
+@require '../../vars'
+
+.z-group-user-settings-dialog_dialog
+  > .title
+    font-title()
+    color: getColor('$primary500')
+    margin-bottom: 8px
+
+  > .list
+    margin: 0
+    padding: 0
+    list-style-type: none
+
+    > .item
+      display: flex
+      align-items: center
+      padding: 16px 0
+      cursor: pointer
+
+      > .icon
+        margin-right: 30px
+
+      > .text
+        font-body1()
+        color: getColor('$tertiary900Text')
+
+      > .toggle
+        margin-left: auto
