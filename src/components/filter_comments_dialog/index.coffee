@@ -36,7 +36,6 @@ module.exports = class FilterCommentsDialog
 
     filterOptions = [
       {key: 'all'}
-      {key: 'deckGuide'}
     ]
 
     z '.z-filter-comments-dialog',

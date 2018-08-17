@@ -277,7 +277,7 @@ module.exports = class Thread extends Base
                     @model.group.goPath group, 'groupThreadEdit', {
                       @router
                       replacements:
-                        uuid: thread.uuid
+                        id: thread.id
                     }
               if hasPinThreadPermission
                 z @$pinIcon,

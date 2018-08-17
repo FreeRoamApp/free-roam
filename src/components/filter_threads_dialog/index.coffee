@@ -41,7 +41,6 @@ module.exports = class FilterThreadsDialog
 
     filterOptions = _filter [
       {key: 'all'}
-      {key: 'news'}
     ]
 
     z '.z-filter-threads-dialog',
@@ -66,19 +65,19 @@ module.exports = class FilterThreadsDialog
                 z '.text',
                   @model.l.get "filterThreadsDialog.sort#{pascalKey}"
 
-            z '.subhead', @model.l.get 'general.filter'
-            _map filterOptions, ({key, name}) =>
-              pascalKey = _upperFirst _camelCase key
-              z 'label.option',
-                z 'input.radio',
-                  type: 'radio'
-                  name: 'filter'
-                  value: key
-                  checked: selectedFilter is key
-                  onchange: =>
-                    @selectedFilter.next key
-                z '.text',
-                  @model.l.get "filterThreadsDialog.filter#{pascalKey}"
+            # z '.subhead', @model.l.get 'general.filter'
+            # _map filterOptions, ({key, name}) =>
+            #   pascalKey = _upperFirst _camelCase key
+            #   z 'label.option',
+            #     z 'input.radio',
+            #       type: 'radio'
+            #       name: 'filter'
+            #       value: key
+            #       checked: selectedFilter is key
+            #       onchange: =>
+            #         @selectedFilter.next key
+            #     z '.text',
+            #       @model.l.get "filterThreadsDialog.filter#{pascalKey}"
 
         cancelButton:
           text: @model.l.get 'general.cancel'
