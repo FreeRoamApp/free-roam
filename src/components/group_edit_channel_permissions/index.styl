@@ -1,0 +1,45 @@
+@require '../../vars'
+
+.z-group-edit-channel-permissions
+  flex: 1
+  display: flex
+  flex-direction: column
+  // padding: 16px
+
+  > .g-grid
+
+    > .title
+      font-subhead()
+      color: getColor('$primary500')
+      padding: 14px 0
+
+    > .list
+      margin: 0
+      padding: 0
+      list-style-type: none
+      max-width: 600px
+
+      > .item
+        display: flex
+        align-items: center
+        padding: 16px
+        cursor: pointer
+
+        > .icon
+          margin-right: 30px
+
+        > .text
+          font-body1()
+          color: getColor('$tertiary900Text')
+
+        > .toggle
+          margin-left: auto
+
+    > .actions
+      display: flex
+      justify-content: flex-end
+      margin-top: 16px
+      max-width: 600px
+
+      > .save-button
+        margin-left: 8px

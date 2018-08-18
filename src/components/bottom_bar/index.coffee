@@ -38,26 +38,18 @@ module.exports = class BottomBar
 
     isLoaded = Boolean group
 
-    # per-group menu:
-    # profile, tools, home, forum, chat
     @menuItems = _filter [
       {
         $icon: new Icon()
-        icon: 'profile'
-        route: ''
-        text: @model.l.get 'general.profile'
-      }
-      {
-        $icon: new Icon()
         icon: 'chat'
-        route: ''
+        route: @model.group.getPath group, 'groupChat', {@router}
         text: @model.l.get 'general.chat'
       }
       {
         $icon: new Icon()
         icon: 'home'
-        route: ''
-        text: @model.l.get 'general.home'
+        route: @router.get 'home'
+        text: @model.l.get 'drawer.productGuide'
         isDefault: true
       }
       {
@@ -77,8 +69,8 @@ module.exports = class BottomBar
 
         if isDefault
           isSelected =  currentPath in [
-            @router.get 'siteHome'
-            ''
+            @router.get 'home'
+            @router.get 'categories'
             '/'
           ]
         else

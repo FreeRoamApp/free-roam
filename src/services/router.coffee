@@ -30,7 +30,7 @@ class RouterService
     unless ignoreHistory
       @history.push(path or window?.location.pathname)
 
-    if @history[0] is '/' or @history[0] is @get('siteHome') or reset
+    if @history[0] is '/' or @history[0] is @get('home') or reset
       @history = [path]
 
     if path
@@ -77,7 +77,7 @@ class RouterService
     if @model.drawer.isOpen().getValue()
       return @model.drawer.close()
     if @history.length is 1 and fromNative and (
-      @history[0] is '/' or @history[0] is @get 'siteHome'
+      @history[0] is '/' or @history[0] is @get 'home'
     )
       @model.portal.call 'app.exit'
     else if @history.length > 1 and window.history.length > 0

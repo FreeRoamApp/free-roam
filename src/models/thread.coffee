@@ -51,7 +51,6 @@ module.exports = class Thread
     }
 
   getPath: (thread, group, router) ->
-    console.log 'ge tpath', thread
     formattedTitle = _kebabCase thread?.data?.title
     @group.getPath group, 'groupThread', {
       router

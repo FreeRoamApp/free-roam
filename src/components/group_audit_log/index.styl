@@ -1,0 +1,31 @@
+@require '../../vars'
+
+.z-group-audit-log
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 16px
+
+  > .logs
+    margin: 0
+    padding: 0
+    list-style-type: none
+    max-width: 800px
+    margin-top: 16px
+
+    > .log
+      background: getColor('$tertiary500')
+      display: flex
+      align-items: center
+      padding: 16px
+      margin-bottom: 2px
+
+      > .avatar
+        margin-right: 16px
+
+      > .text
+        font-body1()
+        color: getColor('$tertiary900Text')
+
+        > .time
+          font-caption2()

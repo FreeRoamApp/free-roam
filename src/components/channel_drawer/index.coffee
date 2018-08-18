@@ -44,8 +44,6 @@ module.exports = class ChannelDrawer
   render: =>
     {isOpen, group, me, conversation} = @state.getValue()
 
-    hasAdminPermission = @model.group.hasPermission group, me, {level: 'admin'}
-
     z '.z-channel-drawer',
       z @$drawer,
         hasAppBar: true
@@ -61,19 +59,19 @@ module.exports = class ChannelDrawer
                 @isOpen.next false
             }
 
-            if hasAdminPermission
-              [
-                z '.divider'
-                z '.manage-channels', {
-                  onclick: =>
-                    @model.group.goPath group, 'groupManageChannels', {
-                      @router
-                    }
-                },
-                  z '.icon',
-                    z @$manageChannelsSettingsIcon,
-                      icon: 'settings'
-                      isTouchTarget: false
-                      color: colors.$primary500
-                  z '.text', 'Manage channels'
-              ]
+            # if hasAdminPermission
+            #   [
+            #     z '.divider'
+            #     z '.manage-channels', {
+            #       onclick: =>
+            #         @model.group.goPath group, 'groupManageChannels', {
+            #           @router
+            #         }
+            #     },
+            #       z '.icon',
+            #         z @$manageChannelsSettingsIcon,
+            #           icon: 'settings'
+            #           isTouchTarget: false
+            #           color: colors.$primary500
+            #       z '.text', 'Manage channels'
+            #   ]

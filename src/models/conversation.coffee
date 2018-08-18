@@ -9,9 +9,9 @@ module.exports = class Conversation
     }
 
   updateById: (id, options) =>
-    {name, description, isSlowMode, slowModeCooldown, groupId} = options
+    {name, description, groupId} = options
     @auth.call "#{@namespace}.updateById", {
-      id, name, description, isSlowMode, slowModeCooldown, groupId
+      id, name, description, groupId
     }, {invalidateAll: true}
 
   markReadByIdAndGroupId: (id, groupId) =>

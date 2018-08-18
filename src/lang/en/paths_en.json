@@ -1,11 +1,18 @@
 {
+  "groupAuditLog": "/g/:groupId/audit-log",
+  "groupBannedUsers": "/g/:groupId/banned-users",
   "groupChat": "/g/:groupId/chat",
   "groupChatConversation": "/g/:groupId/chat/:conversationId",
+  "groupEditChannel": "/g/:groupId/chat/:conversationId/edit",
   "groupForum": "/g/:groupId/forum",
+  "groupManage": "/g/:groupId/manage/:userId",
+  "groupManageChannels": "/g/:groupId/manage-channels",
+  "groupManageRoles": "/g/:groupId/manage-roles",
+  "groupNewChannel": "/g/:groupId/new-channel",
   "groupNewThread": "/g/:groupId/new-thread",
-  "groupThread": "/g/:groupId/thread/:slug",
   "groupNewThreadWithCategory": "/g/:groupId/new-thread/:category",
-  "groupNewThreadWithCategoryAndId": "/g/:groupId/new-thread/:category/:id",
+  "groupSettings": "/g/:groupId/settings",
+  "groupThread": "/g/:groupId/thread/:slug",
   "groupThreadEdit": "/g/:groupId/thread/:slug/edit",
 
   "about": "/about",
@@ -21,6 +28,6 @@
   "privacy": "/privacy",
   "product": "/product/:nameKebab/:slug",
   "termsOfService": "/tos",
-  "siteHome": "/",
+  "home": "/",
   "404": "/*"
 }

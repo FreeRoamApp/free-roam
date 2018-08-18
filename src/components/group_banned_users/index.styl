@@ -1,0 +1,31 @@
+@require '../../vars'
+
+.z-group-banned-users
+  width: 100%
+  padding: 16px
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .g-grid
+    > .user
+      display: flex
+      padding: 10px 0
+      cursor: pointer
+
+      > .avatar
+        margin-right: 16px
+
+      > .right
+        padding: 0 16px 20px 0
+        flex: 1
+        border-bottom: 1px solid getColor('$tertiary900Text12')
+
+        > .name
+          responsive-font-subhead()
+          font-weight: 500
+          margin-bottom: 8px
+
+        > .banned, > .reason
+          responsive-font-caption()
+          font-weight: 400

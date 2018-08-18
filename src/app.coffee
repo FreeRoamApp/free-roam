@@ -35,8 +35,16 @@ Pages =
   BackpackPage: require './pages/backpack'
   CategoriesPage: require './pages/categories'
   EditThreadPage: require './pages/edit_thread'
+  GroupAddChannelPage: require './pages/group_add_channel'
+  GroupAuditLogPage: require './pages/group_audit_log'
+  GroupBannedUsersPage: require './pages/group_banned_users'
   GroupChatPage: require './pages/group_chat'
+  GroupEditChannelPage: require './pages/group_edit_channel'
   GroupForumPage: require './pages/group_forum'
+  GroupManageChannelsPage: require './pages/group_manage_channels'
+  GroupManageRolesPage: require './pages/group_manage_roles'
+  GroupManageMemberPage: require './pages/group_manage_member'
+  GroupSettingsPage: require './pages/group_settings'
   HomePage: require './pages/home'
   ItemPage: require './pages/item'
   ItemsPage: require './pages/items'
@@ -105,13 +113,9 @@ module.exports = class App
 
       groupId or= @model.cookie.get 'lastGroupId'
 
-      console.log groupId
-
       (if isUuid groupId
-        console.log 'get id'
         @model.group.getById groupId, {autoJoin: true}
       else if groupId and groupId isnt 'undefined' and groupId isnt 'null'
-        console.log 'get slug'
         @model.group.getBySlug groupId, {autoJoin: true}
       else
         @model.group.getDefaultGroup {autoJoin: true}
@@ -221,12 +225,17 @@ module.exports = class App
 
     route 'about', 'AboutPage'
     route 'backpack', 'BackpackPage'
+    route 'groupBannedUsers', 'GroupBannedUsersPage'
+    route 'groupAuditLog', 'GroupAuditLogPage'
     route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
+    route 'groupEditChannel', 'GroupEditChannelPage'
     route 'groupForum', 'GroupForumPage'
-    route [
-      'groupNewThread', 'groupNewThreadWithCategory',
-      'groupNewThreadWithCategoryAndId'
-    ], 'NewThreadPage'
+    route 'groupManage', 'GroupManageMemberPage'
+    route 'groupManageChannels', 'GroupManageChannelsPage'
+    route 'groupManageRoles', 'GroupManageRolesPage'
+    route 'groupNewChannel', 'GroupAddChannelPage'
+    route ['groupNewThread', 'groupNewThreadWithCategory'], 'NewThreadPage'
+    route 'groupSettings', 'GroupSettingsPage'
     route 'groupThread', 'ThreadPage'
     route 'groupThreadEdit', 'EditThreadPage'
     route 'item', 'ItemPage'
@@ -239,7 +248,7 @@ module.exports = class App
     route 'termsOfService', 'TosPage'
     route 'privacy', 'PrivacyPage'
 
-    route ['home', 'siteHome', 'categories'], 'CategoriesPage'
+    route ['home', 'categories'], 'CategoriesPage'
     route '404', 'FourOhFourPage'
     routes
 

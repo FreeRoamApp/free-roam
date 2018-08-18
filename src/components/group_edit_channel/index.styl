@@ -1,0 +1,32 @@
+@require '../../vars'
+
+.z-group-edit-channel
+  flex: 1
+  display: flex
+  flex-direction: column
+  padding: 16px
+
+  > .g-grid
+
+    > .title
+      font-subhead()
+      color: getColor('$primary500')
+      padding: 14px 0
+
+    > .input
+      margin-bottom: 8px
+
+      > .label
+        display: flex
+        margin-top: 16px
+
+        > .text
+          flex: 1
+
+    > .actions
+      display: flex
+      justify-content: flex-end
+      margin-top: 16px
+
+      > .save-button
+        margin-left: 8px

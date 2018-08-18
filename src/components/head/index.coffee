@@ -56,9 +56,9 @@ module.exports = class Head
           @model.portal?.call 'statusBar.setBackgroundColor', {
             color: newStatusBarColor
           }
-          @lastGroupId = group.id
-          @model.cookie.set 'lastGroupId', group.id
-          @model.cookie.set "group_#{group.id}_lastVisit", Date.now()
+          @lastGroupId = group?.id
+          @model.cookie.set 'lastGroupId', group?.id
+          @model.cookie.set "group_#{group?.id}_lastVisit", Date.now()
           if cssVariables
             @model.cookie.set 'cachedCssVariables', cssVariables
 
