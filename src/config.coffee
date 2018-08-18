@@ -83,6 +83,16 @@ isomorphic =
   API_HOST: API_HOST
   API_PATH: API_PATH
   VAPID_PUBLIC_KEY: process.env.BACK_ROADS_VAPID_PUBLIC_KEY
+  # also in free-roam
+  DEFAULT_PERMISSIONS:
+    readMessage: true
+    manageChannel: false
+    sendMessage: true
+    sendLink: true
+    sendImage: true
+  DEFAULT_NOTIFICATIONS:
+    chatMessage: true
+    chatMention: true
   FIREBASE:
     API_KEY: process.env.FIREBASE_API_KEY
     AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN

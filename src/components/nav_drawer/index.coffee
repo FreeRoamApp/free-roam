@@ -97,26 +97,40 @@ module.exports = class NavDrawer
             isDefault: true
           }
           {
+            path: @model.group.getPath group, 'groupForum', {@router}
+            title: @model.l.get 'general.forum'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'rss'
+          }
+          {
+            path: @model.group.getPath group, 'groupChat', {@router}
+            title: @model.l.get 'general.chat'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'chat'
+          }
+          {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'info'
           }
-          {
-            path: @router.get 'backpack'
-            title: @model.l.get 'drawer.backpack'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'star'
-          }
-          {
-            path: @router.get 'partners'
-            title: @model.l.get 'general.partners'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'cash'
-          }
+          # {
+          #   path: @router.get 'backpack'
+          #   title: @model.l.get 'drawer.backpack'
+          #   $icon: new Icon()
+          #   $ripple: new Ripple()
+          #   iconName: 'star'
+          # }
+          # {
+          #   path: @router.get 'partners'
+          #   title: @model.l.get 'general.partners'
+          #   $icon: new Icon()
+          #   $ripple: new Ripple()
+          #   iconName: 'cash'
+          # }
           if config.ENV is config.ENVS.DEV
             {
               path: @router.get 'map'
@@ -132,13 +146,6 @@ module.exports = class NavDrawer
         #     $ripple: new Ripple()
         #     iconName: 'chat-bubble'
         #   }
-        #   {
-        #     path: @model.group.getPath group, 'groupForum', {@router}
-        #     title: @model.l.get 'general.forum'
-        #     $icon: new Icon()
-        #     $ripple: new Ripple()
-        #     iconName: 'rss'
-        #   }
           # {
           #   path: @model.group.getPath group, 'groupPeople', {@router}
           #   title: @model.l.get 'people.title'
@@ -153,60 +160,47 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'profile'
           # }
-          # if @model.groupUser.hasPermission {
-          #   meGroupUser, me, permissions: ['manageRole']
-          # }
-          #   {
-          #     # path: @model.group.getPath group, 'groupSettings', {@router}
-          #     expandOnClick: true
-          #     title: @model.l.get 'groupSettingsPage.title'
-          #     $icon: new Icon()
-          #     $ripple: new Ripple()
-          #     iconName: 'settings'
-          #     $chevronIcon: new Icon()
-          #     children: _filter [
-          #       {
-          #         path: @model.group.getPath group, 'groupManageChannels', {
-          #           @router
-          #         }
-          #         title: @model.l.get 'groupManageChannelsPage.title'
-          #       }
-          #       {
-          #         path: @model.group.getPath group, 'groupManagePages', {
-          #           @router
-          #         }
-          #         title: @model.l.get 'groupManagePagesPage.title'
-          #       }
-          #       {
-          #         path: @model.group.getPath group, 'groupManageRoles', {
-          #           @router
-          #         }
-          #         title: @model.l.get 'groupManageRolesPage.title'
-          #       }
-          #       if @model.groupUser.hasPermission {
-          #         meGroupUser, me, permissions: ['readAuditLog']
-          #       }
-          #         {
-          #           path: @model.group.getPath group, 'groupAuditLog', {
-          #             @router
-          #           }
-          #           title: @model.l.get 'groupAuditLogPage.title'
-          #         }
-          #       {
-          #         path: @model.group.getPath group, 'groupBannedUsers', {
-          #           @router
-          #         }
-          #         title: @model.l.get 'groupBannedUsersPage.title'
-          #       }
-          #       if me?.username in ['austin', 'brunoph']
-          #         {
-          #           path: @model.group.getPath group, 'groupSendNotification', {
-          #             @router
-          #           }
-          #           title: @model.l.get 'groupSendNotificationPage.title'
-          #         }
-          #     ]
-          #   }
+          if @model.groupUser.hasPermission {
+            meGroupUser, me, permissions: ['manageRole']
+          }
+            {
+              # path: @model.group.getPath group, 'groupSettings', {@router}
+              expandOnClick: true
+              title: @model.l.get 'groupSettingsPage.title'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'settings'
+              $chevronIcon: new Icon()
+              children: _filter [
+                {
+                  path: @model.group.getPath group, 'groupManageChannels', {
+                    @router
+                  }
+                  title: @model.l.get 'groupManageChannelsPage.title'
+                }
+                {
+                  path: @model.group.getPath group, 'groupManageRoles', {
+                    @router
+                  }
+                  title: @model.l.get 'groupManageRolesPage.title'
+                }
+                if @model.groupUser.hasPermission {
+                  meGroupUser, me, permissions: ['readAuditLog']
+                }
+                  {
+                    path: @model.group.getPath group, 'groupAuditLog', {
+                      @router
+                    }
+                    title: @model.l.get 'groupAuditLogPage.title'
+                  }
+                {
+                  path: @model.group.getPath group, 'groupBannedUsers', {
+                    @router
+                  }
+                  title: @model.l.get 'groupBannedUsersPage.title'
+                }
+              ]
+            }
           if needsMainApp or needsGroupApp
             {
               isDivider: true
@@ -320,7 +314,7 @@ module.exports = class NavDrawer
 
                     if menuItem.isDefault
                       isSelected = currentPath in [
-                        @router.get 'siteHome'
+                        @router.get 'home'
                         @router.get 'categories'
                         '/'
                       ]

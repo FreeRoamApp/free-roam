@@ -58,8 +58,6 @@ module.exports = class ThreadListItem
     mediaSrc = @getImageUrl thread
     isPinned = thread.data?.isPinned
 
-    console.log thread
-
     z 'a.z-thread-list-item', {
       key: "thread-list-item-#{thread.id}"
       href: @model.thread.getPath thread, group, @router
@@ -97,8 +95,8 @@ module.exports = class ThreadListItem
           z '.title', thread.data?.title
           z '.bottom',
             z '.author',
-              z '.name', @model.user.getDisplayName thread.creator
-              if thread.creator?.flags?.isStar
+              z '.name', @model.user.getDisplayName thread.user
+              if thread.user?.flags?.isStar
                 z '.icon',
                   z @$starIcon,
                     icon: 'star-tag'

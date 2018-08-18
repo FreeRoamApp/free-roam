@@ -68,8 +68,6 @@ module.exports = class GroupForumPage
       if isFilterThreadsDialogVisible
         z @$filterThreadsDialog
 
-      console.log 'group', group
-
       z '.fab',
         z @$fab,
           colors:

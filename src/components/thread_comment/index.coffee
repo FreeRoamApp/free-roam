@@ -30,7 +30,7 @@ module.exports = class ThreadComment
 
     @$message = new Message {
       message: {
-        user: @threadComment.creator
+        user: @threadComment.user
         time: @threadComment.time
         groupUser: @threadComment.groupUser
         card: @threadComment.card
@@ -129,7 +129,7 @@ module.exports = class ThreadComment
     {depth, isMe, threadComment, isReplyVisible, $body, group,
       windowSize, $children} = @state.getValue()
 
-    {creator, time, card, body, id, clientId} = threadComment
+    {user, time, card, body, id, clientId} = threadComment
 
     hasVotedUp = threadComment?.myVote?.vote is 1
     hasVotedDown = threadComment?.myVote?.vote is -1

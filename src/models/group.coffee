@@ -30,8 +30,8 @@ module.exports = class Group
   getDefault: ({autoJoin} = {}) =>
     @auth.stream "#{@namespace}.getDefault", {autoJoin}
 
-  getAllChannelsById: (slug) =>
-    @auth.stream "#{@namespace}.getAllChannelsById", {id}
+  getAllConversationsById: (id) =>
+    @auth.stream "#{@namespace}.getAllConversationsById", {id}
 
   joinById: (id) =>
     @auth.call "#{@namespace}.joinById", {id}, {

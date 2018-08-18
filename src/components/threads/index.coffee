@@ -93,7 +93,6 @@ module.exports = class Threads extends Base
 
   getTopStream: (skip = 0, maxId) =>
     @groupAndFilter.switchMap ([group, filter]) =>
-      console.log 'group', group
       if group
         @model.thread.getAll {
           groupId: group?.id

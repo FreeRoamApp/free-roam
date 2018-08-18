@@ -45,7 +45,6 @@ module.exports = class GroupUserSettingsDialog
       isSaving: false
       isLeaveGroupLoading: false
       notificationTypes: groupAndMe.switchMap ([group, me]) =>
-        console.log 'group', group
         @model.groupUser.getMeSettingsByGroupId group.id
         .map (groupUserSettings) ->
           _map notificationTypes, (type) ->
@@ -77,18 +76,18 @@ module.exports = class GroupUserSettingsDialog
 
     items = []
 
-    hasAdminPermission = @model.group.hasPermission group, me, {level: 'admin'}
-    unless hasAdminPermission
-      items = items.concat [
-        {
-          $icon: @$leaveIcon
-          icon: 'subtract-circle'
-          text: if isLeaveGroupLoading \
-                then @model.l.get 'general.loading'
-                else @model.l.get 'groupSettings.leaveGroup'
-          onclick: @leaveGroup
-        }
-      ]
+    # hasAdminPermission = false # TODO
+    # unless hasAdminPermission
+    #   items = items.concat [
+    #     {
+    #       $icon: @$leaveIcon
+    #       icon: 'subtract-circle'
+    #       text: if isLeaveGroupLoading \
+    #             then @model.l.get 'general.loading'
+    #             else @model.l.get 'groupSettings.leaveGroup'
+    #       onclick: @leaveGroup
+    #     }
+    #   ]
 
     z '.z-group-user-settings-dialog',
       z @$dialog,

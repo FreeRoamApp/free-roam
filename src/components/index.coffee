@@ -44,7 +44,7 @@ module.exports = class ChannelDrawer
   render: =>
     {isOpen, group, me, conversation} = @state.getValue()
 
-    hasAdminPermission = @model.group.hasPermission group, me, {level: 'admin'}
+    hasAdminPermission = false # TODO
 
     z '.z-channel-drawer',
       z @$drawer,

@@ -306,27 +306,21 @@ module.exports = class Thread extends Base
           z '.g-grid',
             z '.author',
               z '.avatar',
-                z @$avatar, {user: thread?.creator, size: '20px'}
+                z @$avatar, {user: thread?.user, size: '20px'}
               z '.name', {
                 onclick: =>
-                  @selectedProfileDialogUser.next thread?.creator
+                  @selectedProfileDialogUser.next thread?.user
               },
-                # TODO: don't hardcode this
-                if thread?.creator?.username is 'clashroyalees'
-                  'ClashRoyaleES (Oficial)'
-                else if thread?.creator?.username is 'clashroyalebr'
-                  'ClashRoyaleBR (Oficial)'
-                else
-                  @model.user.getDisplayName thread?.creator
+                @model.user.getDisplayName thread?.user
 
-                if thread?.creator?.flags?.isStar
+                if thread?.user?.flags?.isStar
                   z '.icon',
                     z @$starIcon,
                       icon: 'star-tag'
                       color: colors.$tertiary900Text
                       isTouchTarget: false
                       size: '22px'
-                else if thread?.creator?.flags?.isModerator
+                else if thread?.user?.flags?.isModerator
                   z '.icon',
                     z @$starIcon,
                       icon: 'mod'

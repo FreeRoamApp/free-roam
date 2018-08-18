@@ -105,9 +105,9 @@ module.exports = class Conversation extends Base
           , 100
 
         messageBatches
-      .catch (err) ->
-        console.log err
-        RxObservable.of []
+      # .catch (err) ->
+      #   console.log err
+      #   RxObservable.of []
     .share()
 
     messageBatches = RxObservable.merge @resetMessageBatches, loadedMessages

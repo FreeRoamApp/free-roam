@@ -39,7 +39,7 @@ module.exports = class ConversationInputGifs
     gifs = currentPanelAndSearchValueAndGroup
     .switchMap ([currentPanel, query, group]) =>
       if currentPanel is 'gifs'
-        query or= _startCase group?.gameKeys?[0]
+        query or= 'van'
         @state.set isLoadingGifs: true
         search = @model.gif.search query, {
           limit: 25
