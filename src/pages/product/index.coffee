@@ -28,7 +28,6 @@ module.exports = class ProductPage
   getMeta: ->
     @product.map (product) ->
       {
-        canonical: "https://#{config.HOST}"
         title: product?.name
       }
 

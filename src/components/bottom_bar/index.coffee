@@ -12,11 +12,6 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-collectionGroupKeys = [
-  'playhard', 'eclihpse', 'nickatnyte', 'ferg'
-  'teamqueso', 'ninja', 'theviewage'
-]
-
 module.exports = class BottomBar
   constructor: ({@model, @router, requests, group}) ->
     @state = z.state

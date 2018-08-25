@@ -290,19 +290,19 @@ module.exports = class NavDrawer
             z '.content',
               z 'ul.menu',
                 [
-                  # if me and not me?.username
-                  #   [
-                  #     z 'li.sign-in-buttons',
-                  #       z '.button', {
-                  #         onclick: =>
-                  #           @model.signInDialog.open 'signIn'
-                  #       }, @model.l.get 'general.signIn'
-                  #       z '.button', {
-                  #         onclick: =>
-                  #           @model.signInDialog.open()
-                  #       }, @model.l.get 'general.signUp'
-                  #     z 'li.divider'
-                  #   ]
+                  if me and not me?.username
+                    [
+                      z 'li.sign-in-buttons',
+                        z '.button', {
+                          onclick: =>
+                            @model.signInDialog.open 'signIn'
+                        }, @model.l.get 'general.signIn'
+                        z '.button', {
+                          onclick: =>
+                            @model.signInDialog.open()
+                        }, @model.l.get 'general.signUp'
+                      z 'li.divider'
+                    ]
                   _map menuItems, (menuItem) =>
                     {path, onclick, title, $icon, $chevronIcon, $ripple, isNew,
                       iconName, isDivider, children, expandOnClick} = menuItem

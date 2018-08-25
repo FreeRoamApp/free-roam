@@ -332,7 +332,7 @@ module.exports = class Thread extends Base
                 if thread?.time
                 then DateService.fromNow thread.time
                 else '...'
-            z '.title',
+            z 'h1.title',
               thread?.data?.title
 
             z '.body', $body

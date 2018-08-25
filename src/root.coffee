@@ -151,42 +151,17 @@ init = ->
   model.portal.call 'networkInformation.onOffline', onOffline
   model.portal.call 'networkInformation.onOnline', onOnline
 
-  # model.reward.setup()
-
-  if model.ad.isVisible() and Environment.isNativeApp 'freeroam'
-    appVersion = Environment.getAppVersion 'freeroam'
-    if appVersion
-      admobMediationSupported = SemverService.gte(appVersion, '1.2.4')
-      nativeAdsSupported = SemverService.gte(appVersion, '1.2.3')
-      # TODO: implement by group key, not app info
-      isFortniteApp = Environment.isGroupApp 'fortnite'
-      setTimeout ->
-        if Environment.isiOS() and Environment.isGroupApp 'nickatnyte'
-          adId = 'ca-app-pub-9043203456638369/2146180874'
-        else if Environment.isGroupApp 'nickatnyte'
-          adId = 'ca-app-pub-9043203456638369/3407291659'
-        else if Environment.isiOS()
-          adId = 'ca-app-pub-9043203456638369/5699503414'
-        else if isFortniteApp and Math.random() > 0.50
-          adId = 'ca-app-pub-4313642096020551/3038303833'
-        else
-          adId = 'ca-app-pub-9043203456638369/2454362164'
-
-        portalCall = if admobMediationSupported \
-                     then 'admob.showBanner'
-                     else 'heyzap.showBanner'
-
-        model.portal?.call portalCall, {
-          position: 'bottom'
-          overlap: false
-          adId: adId
-        }
-      , 1000
-
-
-  # model.portal.call 'admob.prepareInterstitial', {
-  #   adid: '' # FIXME
-  # }
+  # if model.ad.isVisible() and Environment.isNativeApp 'freeroam'
+  #   if Environment.isiOS()
+  #     adId = '' # TODO
+  #   else
+  #     adId = '' # TODO
+  #
+  #   model.portal?.call 'admob.showBanner', {
+  #     position: 'bottom'
+  #     overlap: false
+  #     adId: adId
+  #   }
 
   model.portal.call 'app.onBack', ->
     router.back({fromNative: true})

@@ -1,5 +1,4 @@
 _defaults = require 'lodash/defaults'
-_kebabCase = require 'lodash/kebabCase'
 
 config = require '../config'
 
@@ -51,7 +50,6 @@ module.exports = class Thread
     }
 
   getPath: (thread, group, router) ->
-    formattedTitle = _kebabCase thread?.data?.title
     @group.getPath group, 'groupThread', {
       router
       replacements:
