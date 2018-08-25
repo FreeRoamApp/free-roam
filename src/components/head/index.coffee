@@ -7,6 +7,7 @@ _merge = require 'lodash/merge'
 _map = require 'lodash/map'
 _mapValues = require 'lodash/mapValues'
 _defaults = require 'lodash/defaults'
+_kebabCase = require 'lodash/kebabCase'
 
 config = require '../../config'
 colors = require '../../colors'
@@ -16,7 +17,10 @@ DEFAULT_IMAGE = 'https://fdn.uno/d/images/web_icon_256.png'
 
 module.exports = class Head
   constructor: ({@model, meta, requests, serverData, group}) ->
-    route = requests.map ({route}) -> route
+    route = requests.map ({route}) ->
+      route
+    path = requests.map ({req}) ->
+      req.path
     requestsAndLanguage = RxObservable.combineLatest(
       requests, @model.l.getLanguage(), (vals...) -> vals
     )
@@ -28,11 +32,14 @@ module.exports = class Head
         RxObservable.of meta
 
     @lastGroupId = null
+    @bundlePath = serverData?.bundlePath or
+      document?.getElementById('bundle').src
 
     @state = z.state
       meta: meta
       serverData: serverData
       route: route
+      path: path
       # group: group
       routeKey: route.map (route) =>
         if route?.src
@@ -65,7 +72,7 @@ module.exports = class Head
         cssVariables
 
   render: =>
-    {meta, serverData, route, routeKey, group, additionalCss,
+    {meta, serverData, path, route, routeKey, group, additionalCss,
       modelSerialization, cssVariables} = @state.getValue()
 
     gaId = 'UA-123979730-1'
@@ -105,12 +112,14 @@ module.exports = class Head
         # min 152 x 152
         icon: undefined
 
-      canonical: undefined
+      canonical: "https://#{config.HOST}#{path or ''}"
       themeColor: colors.$primary500
       # reccomended 32 x 32 png
       favicon: config.CDN_URL + '/favicon.png'
       manifestUrl: '/manifest.json'
     }, meta
+
+    console.log 'meta canon', meta.canonical
 
     meta.title = "#{group?.name or ''} #{meta.title} | FreeRoam"
 
@@ -212,8 +221,6 @@ module.exports = class Head
         innerHTML: modelSerialization or ''
 
 
-      # GA limits us to 10M hits per month, which we exceed by a lot...
-      # so we'll sample it (10%)
       z 'script#ga1',
         key: 'ga1'
         innerHTML: "
@@ -254,8 +261,9 @@ module.exports = class Head
       else
         null
 
+      # z 'link'
       _map additionalCss, (href) ->
-        z "link##{href}",
+        z "link##{_kebabCase(href)}",
           key: href
           rel: 'stylesheet'
           href: href
@@ -264,19 +272,23 @@ module.exports = class Head
       z 'script#bundle',
         key: 'bundle'
         async: true
-        src: if isInliningSource then serverData?.bundlePath \
+        src: if isInliningSource then @bundlePath \
              else "#{webpackDevUrl}/bundle.js"
+
+      z 'link' # FIXME: this is a hack. the additionalCss stylesheets don't
+      # get bound to an element without this here.
+
 
        # TODO: have these update with the router, not just on pageload
        # maybe route should do a head re-render, so it doesn't ave to do it for
        # every render
-       _map paths, (path, lang) ->
-         z "link#alternate-#{path}-#{lang}", {
-           key: "alternate-#{path}-#{lang}"
-           rel: 'alternate'
-           href: "https://#{config.HOST}#{path}"
-           hreflang: lang
-         }
+      #  _map paths, (path, lang) ->
+      #    z "link#alternate-#{path}-#{lang}", {
+      #      key: "alternate-#{path}-#{lang}"
+      #      rel: 'alternate'
+      #      href: "https://#{config.HOST}#{path}"
+      #      hreflang: lang
+      #    }
 
       # unless isNative
       #   [

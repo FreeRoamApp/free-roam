@@ -67,11 +67,9 @@ isomorphic =
   # d folder has longer cache
   SCRIPTS_CDN_URL: 'https://fdn.uno/d/scripts'
   USER_CDN_URL: 'https://fdn.uno/images'
-  DEFAULT_IOS_APP_ID: ''
   IOS_APP_URL: ''
-  DEFAULT_GOOGLE_PLAY_APP_ID: ''
   GOOGLE_PLAY_APP_URL:
-    ''
+    'https://play.google.com/store/apps/details?id=app.freeroam.main'
   HOST: HOST
   STRIPE_PUBLISHABLE_KEY:
     serverEnv.STRIPE_PUBLISHABLE_KEY or

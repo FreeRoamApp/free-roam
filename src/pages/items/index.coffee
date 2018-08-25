@@ -36,7 +36,7 @@ module.exports = class ItemsPage extends Base
         if filter.type is 'category'
           @model.category.getAll()
           .map (categories) ->
-            _find(categories, {id: filter.value})?.name
+            _find(categories, {slug: filter.value})?.name
         else
           RxObservable.of filter.value
       windowSize: @model.window.getSize()

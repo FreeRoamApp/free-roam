@@ -40,6 +40,7 @@ module.exports = class Product
                 z @$buyButton, {
                   text: @model.l.get 'product.buyAmazon'
                   onclick: =>
+                    ga? 'send', 'event', 'amazon', 'freeroam-20', product.slug
                     @model.portal.call 'browser.openWindow', {
                       url: "https://amazon.com/dp/#{product.sourceId}?tag=freeroam-20"
                       target: '_system'

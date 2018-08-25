@@ -306,17 +306,17 @@ module.exports = class App
             if $overlay
               # can be array of components or component
               z $overlay
-            if not window?
-              z '#server-loading', {
-                key: 'server-loading'
-                attributes:
-                  onmousedown: "document.getElementById('server-loading')" +
-                    ".classList.add('is-clicked')"
-                  ontouchstart: "document.getElementById('server-loading')" +
-                    ".classList.add('is-clicked')"
-
-              },
-                @model.l.get 'app.stillLoading'
+            # if not window?
+            #   z '#server-loading', {
+            #     key: 'server-loading'
+            #     attributes:
+            #       onmousedown: "document.getElementById('server-loading')" +
+            #         ".classList.add('is-clicked')"
+            #       ontouchstart: "document.getElementById('server-loading')" +
+            #         ".classList.add('is-clicked')"
+            #
+            #   },
+            #     @model.l.get 'app.stillLoading'
             # used in color.coffee to detect support
             z '#css-variable-test',
               style:

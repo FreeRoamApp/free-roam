@@ -148,6 +148,7 @@ module.exports = class GroupChatPage
       @$$content.style.transform = 'translateY(0)'
 
   hideBottomBar: =>
+    return # TODO: re-enable when chat is more active / has scrolling
     {shouldShowBottomBar} = @state.getValue()
     if shouldShowBottomBar and @isBottomBarVisible and @isMounted
       @isBottomBarVisible = false

@@ -29,7 +29,6 @@ module.exports = class ItemPage extends BasePage
   getMeta: ->
     @item.map (item) ->
       {
-        canonical: "https://#{config.HOST}"
         title: "RV #{item?.name}"
       }
 

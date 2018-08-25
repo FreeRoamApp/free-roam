@@ -37,7 +37,7 @@ module.exports = class AppBar
                   color: color
               },
                 $topLeftButton
-            z '.title', {
+            z 'h1.title', {
               style:
                 color: color
             }, title
