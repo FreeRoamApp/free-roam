@@ -38,6 +38,7 @@ module.exports = class About
           }, @model.l.get 'general.here'
           '.'
         z 'p', @model.l.get 'about.text5'
+        z 'p', @model.l.get 'about.text6'
         z '.divider.clear'
         z 'img.home',
           src: "#{config.CDN_URL}/home.jpg"
