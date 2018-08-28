@@ -64,6 +64,7 @@
   "about.text3": "We are not in this to get rich. We hope that this can one day support our costs, but past that we intend to direct any additional revenue toward the community. ",
   "about.text4": "All of the code for FreeRoam is Open-Source, which means anyone can read through the underlying code that makes up the app",
   "about.text5": "We're doing this to be as transparent as possible. We live in a time where tech companies do some pretty shady things to make more money, and we want to be the embody opposite of that.",
+  "about.text6": "If you would like to get in touch, you can send an email to austin@freeroam.app",
   "addToHomeSheet.submitButton": "Add to home",
   "app.defaultInstallMessage": "Add FreeRoam to your homescreen to quickly access all features anytime",
   "app.stillLoading": "We're still loading this page. If this message remains for more than a few seconds, send us an email with the version of Android you're using: austin@freeroam.app",
@@ -159,5 +160,15 @@
   "groupManageMemberPage.title": "Manage member",
   "groupSettingsPage.title": "Group settings",
   "itemsPage.title": "Items",
-  "newThreadPage.title": "New thread"
+  "newThreadPage.title": "New thread",
+
+
+  "error.usernameTaken": "Username is taken",
+  "error.invalid": "Invalid",
+  "error.invalidUsername": "Invalid username",
+  "error.invalidPassword": "Invalid password",
+  "error.usernameNotFound": "Username not found",
+  "error.incorrectPassword": "Incorrect password",
+  "error.invalidEmail": "Invalid email",
+  "error.passwordSet": "Password is already set"
 }
