@@ -26,17 +26,33 @@ module.exports = class EmbeddedVideo
                    else 9 / 16
     height = width * heightAspect
 
-    isNativeApp = Environment.isNativeApp 'freeroam'
+    userAgent = @model.window.getUserAgent()
+    isNativeApp = Environment.isNativeApp 'freeroam', {userAgent}
 
     z '.z-embedded-video',
-      z 'iframe',
-        width: width
-        height: height
-        src: "https://www.youtube.com/embed/#{video.sourceId}"
-        frameborder: 0
-        allow: 'autoplay; encrypted-media'
-        allowfullscreen: true
-        webkitallowfullscreen: true
+      if isNativeApp
+        z '.thumbnail', {
+          onclick: =>
+            @model.portal.call 'browser.openWindow', {
+              url: "https://www.youtube.com/watch?v=#{video.sourceId}"
+              target: '_system'
+            }
+        },
+          z 'img', {
+            width
+            height
+            src: "https://img.youtube.com/vi/#{video.sourceId}/hqdefault.jpg"
+          }
+          z '.play'
+      else
+        z 'iframe',
+          width: width
+          height: height
+          src: "https://www.youtube.com/embed/#{video.sourceId}"
+          frameborder: 0
+          allow: 'autoplay; encrypted-media'
+          allowfullscreen: true
+          webkitallowfullscreen: true
       # if video.mp4Src
       #   z 'video.video', {
       #     width: width

@@ -1,10 +1,10 @@
 z = require 'zorium'
-Environment = require '../../services/environment'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
 Icon = require '../icon'
+Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -120,7 +120,7 @@ module.exports = class ConversationInputTextarea
           ontouchend: (e) =>
             isFocused = e.target is document.activeElement
             # weird bug causes textarea to sometimes not focus
-            unless isFocused
+            if not isFocused and not Environment.isiOS()
               e?.target.focus()
           onfocus: =>
             unless Environment.isNativeApp 'freeroam'
