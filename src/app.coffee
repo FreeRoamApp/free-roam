@@ -34,6 +34,8 @@ Pages =
   AboutPage: require './pages/about'
   BackpackPage: require './pages/backpack'
   CategoriesPage: require './pages/categories'
+  ConversationPage: require './pages/conversation'
+  ConversationsPage: require './pages/conversations'
   EditThreadPage: require './pages/edit_thread'
   GroupAddChannelPage: require './pages/group_add_channel'
   GroupAuditLogPage: require './pages/group_audit_log'
@@ -48,7 +50,7 @@ Pages =
   HomePage: require './pages/home'
   ItemPage: require './pages/item'
   ItemsPage: require './pages/items'
-  MapPage: require './pages/map'
+  PlacesPage: require './pages/places'
   NewThreadPage: require './pages/new_thread'
   PartnersPage: require './pages/partners'
   ProductPage: require './pages/product'
@@ -67,8 +69,7 @@ module.exports = class App
     routes = @model.window.getBreakpoint().map @getRoutes
             .publishReplay(1).refCount()
 
-    userAgent = navigator?.userAgent or
-                  requests.getValue().headers?['user-agent']
+    userAgent = @model.window.getUserAgent()
     isNativeApp = Environment.isMainApp 'freeroam', {userAgent}
     if isNativeApp and not @model.cookie.get('routerLastPath')
       appActionPath = @model.appInstallAction.get().map (appAction) ->
@@ -122,7 +123,6 @@ module.exports = class App
       )
     .publishReplay(1).refCount()
 
-    userAgent = @serverData?.req.headers?['user-agent']
     isNativeApp = Environment.isNativeApp 'freeroam', {userAgent}
 
     # used if state / requests fails to work
@@ -151,7 +151,7 @@ module.exports = class App
       isVisible: addToHomeSheetIsVisible
     }
     @$pushNotificationsSheet = new PushNotificationsSheet {@model, @router}
-    @$bottomBar = new BottomBar {@model, @router, @requests, @group}
+    @$bottomBar = new BottomBar {@model, @router, @requests, @group, @serverData}
     @$head = new Head({
       @model
       @requests
@@ -223,33 +223,46 @@ module.exports = class App
             })
           return @$cachedPages[pageKey]
 
-    route 'about', 'AboutPage'
-    route 'backpack', 'BackpackPage'
-    route 'groupBannedUsers', 'GroupBannedUsersPage'
-    route 'groupAuditLog', 'GroupAuditLogPage'
-    route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
-    route 'groupEditChannel', 'GroupEditChannelPage'
-    route 'groupForum', 'GroupForumPage'
-    route 'groupManage', 'GroupManageMemberPage'
-    route 'groupManageChannels', 'GroupManageChannelsPage'
-    route 'groupManageRoles', 'GroupManageRolesPage'
-    route 'groupNewChannel', 'GroupAddChannelPage'
-    route ['groupNewThread', 'groupNewThreadWithCategory'], 'NewThreadPage'
-    route 'groupSettings', 'GroupSettingsPage'
-    route 'groupThread', 'ThreadPage'
-    route 'groupThreadEdit', 'EditThreadPage'
-    route 'item', 'ItemPage'
-    route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
-    route 'map', 'MapPage'
-    route 'partners', 'PartnersPage'
-    route 'product', 'ProductPage'
+    userAgent = @model.window.getUserAgent()
+    isiOSApp = Environment.isiOS({userAgent}) and
+                Environment.isNativeApp('freeroam', {userAgent})
+    isSafari = /^((?!chrome|android).)*safari/i.test(userAgent)
+    disableWeb = isSafari and not isiOSApp
+    if disableWeb
+      route ['about', '404', 'home'], 'AboutPage'
+      route 'termsOfService', 'TosPage'
+      route 'privacy', 'PrivacyPage'
+    else
+      route 'about', 'AboutPage'
+      route 'backpack', 'BackpackPage'
+      route 'categories', 'CategoriesPage'
+      route 'conversation', 'ConversationPage'
+      route 'conversations', 'ConversationsPage'
+      route 'groupBannedUsers', 'GroupBannedUsersPage'
+      route 'groupAuditLog', 'GroupAuditLogPage'
+      route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
+      route 'groupEditChannel', 'GroupEditChannelPage'
+      route 'groupForum', 'GroupForumPage'
+      route 'groupManage', 'GroupManageMemberPage'
+      route 'groupManageChannels', 'GroupManageChannelsPage'
+      route 'groupManageRoles', 'GroupManageRolesPage'
+      route 'groupNewChannel', 'GroupAddChannelPage'
+      route ['groupNewThread', 'groupNewThreadWithCategory'], 'NewThreadPage'
+      route 'groupSettings', 'GroupSettingsPage'
+      route 'groupThread', 'ThreadPage'
+      route 'groupThreadEdit', 'EditThreadPage'
+      route 'home', if isiOSApp then 'GroupForumPage' else 'CategoriesPage'
+      route 'item', 'ItemPage'
+      route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
+      route 'places', 'PlacesPage'
+      route 'partners', 'PartnersPage'
+      route 'product', 'ProductPage'
 
-    route 'policies', 'PoliciesPage'
-    route 'termsOfService', 'TosPage'
-    route 'privacy', 'PrivacyPage'
+      route 'policies', 'PoliciesPage'
+      route 'termsOfService', 'TosPage'
+      route 'privacy', 'PrivacyPage'
 
-    route ['home', 'categories'], 'CategoriesPage'
-    route '404', 'FourOhFourPage'
+      route '404', 'FourOhFourPage'
     routes
 
   render: =>
@@ -258,11 +271,11 @@ module.exports = class App
       pushNotificationSheetIsOpen, getAppDialogIsOpen
       addToHomeSheetIsVisible, $overlay, isOffline} = @state.getValue()
 
-    userAgent = request?.req?.headers?['user-agent'] or
-      navigator?.userAgent or ''
+    userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
+    isSafari = /^((?!chrome|android).)*safari/i.test(userAgent)
     isAndroid = Environment.isAndroid {userAgent}
-    isNative = Environment.isNativeApp('freeroam')
+    isNative = Environment.isNativeApp 'freeroam', {userAgent}
     isPageAvailable = (me?.username or not request?.$page?.isPrivate)
     defaultInstallMessage = @model.l.get 'app.defaultInstallMessage'
 
@@ -275,7 +288,7 @@ module.exports = class App
           className: z.classKebab {isIos, isAndroid}
         },
           z '.z-root',
-            unless hideDrawer
+            if not hideDrawer and (not isSafari or isNative)
               z @$navDrawer, {currentPath: request?.req.path}
             z '.page',
               # show page before me has loaded

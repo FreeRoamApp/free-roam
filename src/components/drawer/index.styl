@@ -84,7 +84,7 @@ $zIndexDrawer = 300
         // prevents flicker glitch http://stackoverflow.com/a/3921870
         backface-visibility: hidden
 
-  @media (min-width: $contentMaxWidth)
+  &.is-static
     position: relative
     z-index: 1
     pointer-events: all // not supported in ie9/10 (ie our entire app breaks)

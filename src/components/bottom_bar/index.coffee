@@ -6,6 +6,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 
 Icon = require '../icon'
+Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -13,10 +14,11 @@ if window?
   require './index.styl'
 
 module.exports = class BottomBar
-  constructor: ({@model, @router, requests, group}) ->
+  constructor: ({@model, @router, requests, group, @serverData}) ->
     @state = z.state
       requests: requests
       group: group
+      serverData: @serverData
 
   afterMount: (@$$el) => null
 
@@ -27,13 +29,25 @@ module.exports = class BottomBar
     @$$el?.classList.remove 'is-hidden'
 
   render: ({isAbsolute} = {}) =>
-    {requests, group} = @state.getValue()
+    {requests, group, serverData} = @state.getValue()
+
+    userAgent = @model.window.getUserAgent()
+    showMaps = Environment.isiOS({userAgent}) and Environment.isNativeApp('freeroam')
 
     currentPath = requests?.req.path
 
     isLoaded = Boolean group
+    isiOSApp = Environment.isiOS({userAgent}) and
+                Environment.isNativeApp('freeroam', {userAgent})
 
     @menuItems = _filter [
+      {
+        $icon: new Icon()
+        icon: 'cart'
+        route: @router.get 'categories'
+        text: @model.l.get 'drawer.productGuide'
+        isDefault: not isiOSApp
+      }
       {
         $icon: new Icon()
         icon: 'chat'
@@ -42,17 +56,18 @@ module.exports = class BottomBar
       }
       {
         $icon: new Icon()
-        icon: 'home'
-        route: @router.get 'home'
-        text: @model.l.get 'drawer.productGuide'
-        isDefault: true
-      }
-      {
-        $icon: new Icon()
         icon: 'rss'
         route: @model.group.getPath group, 'groupForum', {@router}
         text: @model.l.get 'general.forum'
+        isDefault: isiOSApp
       }
+      if showMaps
+        {
+          $icon: new Icon()
+          icon: 'map'
+          route: @router.get 'places'
+          text: @model.l.get 'general.places'
+        }
     ]
 
     z '.z-bottom-bar', {
@@ -63,11 +78,8 @@ module.exports = class BottomBar
         {$icon, icon, route, text, isDefault, hasNotification} = menuItem
 
         if isDefault
-          isSelected =  currentPath in [
-            @router.get 'home'
-            @router.get 'categories'
-            '/'
-          ]
+          isSelected = currentPath is @router.get('home') or
+            (currentPath and currentPath.indexOf(route) isnt -1)
         else
           isSelected = currentPath and currentPath.indexOf(route) isnt -1
 

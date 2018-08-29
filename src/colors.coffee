@@ -184,6 +184,12 @@ colors = _defaults {
   '$rareText': materialColors.$white
   '$epicText': materialColors.$white
   '$legendaryText': materialColors.$white
+
+  getRawColor: (color) ->
+    if typeof color is 'string' and matches = color.match(/\(([^)]+)\)/)
+      colors.default[matches[1]]
+    else
+      color
 }, materialColors
 
 # https://stackoverflow.com/a/4900484
@@ -199,9 +205,6 @@ if window?
     getComputedStyle($$el, null)?.backgroundColor is 'rgb(0, 0, 0)'
   unless isCssVariableSupported
     colors = _mapValues colors, (color, key) ->
-      if typeof color is 'string' and matches = color.match(/\(([^)]+)\)/)
-        colors.default[matches[1]]
-      else
-        color
+      colors.getRawColor color
 
 module.exports = colors

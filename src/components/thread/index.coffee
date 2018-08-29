@@ -239,7 +239,7 @@ module.exports = class Thread extends Base
 
     points = if thread then thread.upvotes else 0
 
-    isNativeApp = Environment.isNativeApp(config.GAME_KEY)
+    isNativeApp = Environment.isNativeApp('freeroam')
 
     z '.z-thread',
       z @$appBar, {

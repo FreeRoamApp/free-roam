@@ -10,10 +10,11 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class ItemsPage
+module.exports = class PlacesPage
   # hideDrawer: true
+  @hasBottomBar: true
 
-  constructor: ({@model, @router, requests, serverData, group}) ->
+  constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$map = new Map {@model, @router}
@@ -24,19 +25,20 @@ module.exports = class ItemsPage
 
   getMeta: ->
     {
-      title: "The best products for your RV"
+      title: @model.l.get 'places'
     }
 
   render: =>
     {me, windowSize} = @state.getValue()
 
-    z '.p-map', {
+    z '.p-places', {
       style:
         height: "#{windowSize.height}px"
     },
       z @$appBar, {
-        title: @model.l.get 'itemsPage.title'
+        title: @model.l.get 'general.places'
         style: 'primary'
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
       }
       @$map
+      @$bottomBar

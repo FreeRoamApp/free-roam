@@ -10,58 +10,60 @@ if window?
 MAX_OVERLAY_OPACITY = 0.5
 
 module.exports = class Drawer
-  constructor: ({@model, @isOpen, @onOpen, @onClose, @side, @key}) ->
+  constructor: ({@model, @isOpen, @onOpen, @onClose, @side, @key, @isStatic}) ->
     @transformProperty = window?.getTransformProperty()
 
     @side ?= 'left'
     @key ?= 'nav'
+    @isStatic ?= @model.window.getBreakpoint().map (breakpoint) ->
+      breakpoint in ['desktop']
+    .publishReplay(1).refCount()
 
     @state = z.state
       isOpen: @isOpen
+      isStatic: @isStatic
       windowSize: @model.window.getSize()
       appBarHeight: @model.window.getAppBarHeightVal()
       drawerWidth: @model.window.getDrawerWidth()
-      breakpoint: @model.window.getBreakpoint()
 
   afterMount: (@$$el) =>
-    {drawerWidth, breakpoint} = @state.getValue()
+    {drawerWidth} = @state.getValue()
 
-    breakpoint = @model.window.getBreakpoint()
-    onBreakpoint = (breakpoint) =>
-      if not @iScrollContainer and breakpoint isnt 'desktop'
+    onStaticChange = (isStatic) =>
+      if not @iScrollContainer and not isStatic
         checkIsReady = =>
           $$container = @$$el
           if $$container and $$container.clientWidth
-            @initIScroll $$container
+            setImmediate =>
+              @initIScroll $$container
           else
             setTimeout checkIsReady, 1000
 
         checkIsReady()
-      else if @iScrollContainer and breakpoint is 'desktop'
-        @open()
+      else if @iScrollContainer and isStatic
+        @open 0
         @iScrollContainer?.destroy()
         delete @iScrollContainer
         @disposable?.unsubscribe()
-    @breakpointDisposable = breakpoint.subscribe onBreakpoint
-    # onBreakpoint breakpoint
+    @isStaticDisposable = @isStatic.subscribe onStaticChange
 
   beforeUnmount: =>
     @iScrollContainer?.destroy()
     delete @iScrollContainer
     @disposable?.unsubscribe()
-    @breakpointDisposable?.unsubscribe()
+    @isStaticDisposable?.unsubscribe()
 
-  close: =>
+  close: (animationLengthMs = 500) =>
     if @side is 'right'
-      @iScrollContainer.goToPage 0, 0, 500
+      @iScrollContainer.goToPage 0, 0, animationLengthMs
     else
-      @iScrollContainer.goToPage 1, 0, 500
+      @iScrollContainer.goToPage 1, 0, animationLengthMs
 
-  open: =>
+  open: (animationLengthMs = 500) =>
     if @side is 'right'
-      @iScrollContainer.goToPage 1, 0, 500
+      @iScrollContainer.goToPage 1, 0, animationLengthMs
     else
-      @iScrollContainer.goToPage 0, 0, 500
+      @iScrollContainer.goToPage 0, 0, animationLengthMs
 
   initIScroll: ($$container) =>
     {drawerWidth} = @state.getValue()
@@ -115,10 +117,10 @@ module.exports = class Drawer
 
   render: ({$content, hasAppBar}) =>
     {isOpen, windowSize, appBarHeight,
-      drawerWidth, breakpoint} = @state.getValue()
+      drawerWidth, isStatic} = @state.getValue()
 
     height = windowSize.height
-    if hasAppBar and breakpoint is 'desktop'
+    if hasAppBar and isStatic
       height -= appBarHeight
 
     $drawerTab =
@@ -137,12 +139,12 @@ module.exports = class Drawer
         z '.grip'
 
     z '.z-drawer', {
-      className: z.classKebab {isOpen, isRight: @side is 'right'}
+      className: z.classKebab {isOpen, isStatic, isRight: @side is 'right'}
       key: "drawer-#{@key}"
       style:
         display: if windowSize.width then 'block' else 'none'
         height: "#{height}px"
-        width: if breakpoint is 'mobile' \
+        width: if not isStatic \
                then '100%'
                else "#{drawerWidth}px"
     },

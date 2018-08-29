@@ -69,7 +69,7 @@ module.exports = class GroupChatPage
     # .publishReplay(1).refCount()
 
     @hasBottomBarObs = @model.window.getBreakpoint().map (breakpoint) ->
-      breakpoint isnt 'desktop'
+      breakpoint in ['mobile', 'tablet']
 
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
@@ -205,12 +205,12 @@ module.exports = class GroupChatPage
         key: 'group-chat-content' # since we change css (transform) manually
       },
         z @$groupChat
-        if breakpoint is 'desktop'
+        if breakpoint in ['desktop']
           z @$channelDrawer
       @$bottomBar
 
       if selectedProfileDialogUser
         z @$profileDialog
 
-      if breakpoint isnt 'desktop'
+      if breakpoint in ['mobile', 'tablet']
         z @$channelDrawer

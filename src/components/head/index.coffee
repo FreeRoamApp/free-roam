@@ -84,7 +84,7 @@ module.exports = class Head
         path = path.replace pathVar, route.params[pathVar.substring(1)]
       path
 
-    userAgent = navigator?.userAgent or serverData?.req?.headers?['user-agent']
+    userAgent = @model.window.getUserAgent()
 
     meta = _merge {
       title: @model.l.get 'meta.defaultTitle'
@@ -118,8 +118,6 @@ module.exports = class Head
       favicon: config.CDN_URL + '/favicon.png'
       manifestUrl: '/manifest.json'
     }, meta
-
-    console.log 'meta canon', meta.canonical
 
     meta.title = "#{group?.name or ''} #{meta.title} | FreeRoam"
 

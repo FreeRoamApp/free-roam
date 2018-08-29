@@ -11,7 +11,7 @@ DRAWER_MAX_WIDTH = 336
 GRID_WIDTH = 1280
 
 module.exports = class Window
-  constructor: ({@cookie, @experiment}) ->
+  constructor: ({@cookie, @experiment, @userAgent}) ->
     @isPaused = false
 
     @size = new RxBehaviorSubject @getSizeVal()
@@ -52,6 +52,8 @@ module.exports = class Window
     {width} = @getSizeVal()
     if width >= 1280
       'desktop'
+    else if width >= 768
+      'tablet'
     else
       'mobile'
 
@@ -64,7 +66,10 @@ module.exports = class Window
 
   getAppBarHeightVal: =>
     {width} = @getSizeVal()
-    if width > 768 then 64 else 56
+    if width >= 768 then 64 else 56
+
+  getUserAgent: =>
+    @userAgent
 
   getSize: =>
     @size

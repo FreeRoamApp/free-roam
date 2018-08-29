@@ -6,7 +6,6 @@ _isEmpty = require 'lodash/isEmpty'
 _orderBy = require 'lodash/orderBy'
 _clone = require 'lodash/clone'
 _find = require 'lodash/find'
-Environment = require '../../services/environment'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/map'
@@ -14,6 +13,7 @@ require 'rxjs/add/operator/map'
 Icon = require '../icon'
 FlatButton = require '../flat_button'
 Drawer = require '../drawer'
+Environment = require '../../services/environment'
 SemverService = require '../../services/semver'
 Ripple = require '../ripple'
 colors = require '../../colors'
@@ -52,6 +52,10 @@ module.exports = class NavDrawer
       (vals...) -> vals
     )
 
+    userAgent = @model.window.getUserAgent()
+    isiOSApp = Environment.isiOS({userAgent}) and
+                Environment.isNativeApp('freeroam', {userAgent})
+
     @state = z.state
       isOpen: @model.drawer.isOpen()
       language: @model.l.getLanguage()
@@ -79,13 +83,13 @@ module.exports = class NavDrawer
       menuItems: menuItemsInfo.map ([me, group, language]) =>
         meGroupUser = group.meGroupUser
 
-        userAgent = navigator?.userAgent
+        userAgent = @model.window.getUserAgent()
         hasGroupApp = group.googlePlayAppId
-        needsGroupApp = hasGroupApp and
-                          not Environment.isGroupApp group.slug, {userAgent}
-        needsMainApp = userAgent and
+        needsApp = userAgent and
                   not Environment.isNativeApp('freeroam', {userAgent}) and
                   not window?.matchMedia('(display-mode: standalone)').matches
+
+        showMaps = Environment.isiOS({userAgent}) and Environment.isNativeApp('freeroam')
 
         _filter([
           {
@@ -93,15 +97,8 @@ module.exports = class NavDrawer
             title: @model.l.get 'drawer.productGuide'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'home'
-            isDefault: true
-          }
-          {
-            path: @model.group.getPath group, 'groupForum', {@router}
-            title: @model.l.get 'general.forum'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'rss'
+            iconName: 'cart'
+            isDefault: not isiOSApp
           }
           {
             path: @model.group.getPath group, 'groupChat', {@router}
@@ -110,6 +107,29 @@ module.exports = class NavDrawer
             $ripple: new Ripple()
             iconName: 'chat'
           }
+          {
+            path: @router.get 'conversations'
+            title: @model.l.get 'drawer.privateMessages'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'chat-bubble'
+          }
+          {
+            path: @model.group.getPath group, 'groupForum', {@router}
+            title: @model.l.get 'general.forum'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'rss'
+            isDefault: isiOSApp
+          }
+          if showMaps
+            {
+              path: @router.get 'places'
+              title: @model.l.get 'general.places'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'map'
+            }
           {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'
@@ -131,21 +151,6 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'cash'
           # }
-          if config.ENV is config.ENVS.DEV
-            {
-              path: @router.get 'map'
-              title: 'map'
-              $icon: new Icon()
-              $ripple: new Ripple()
-              iconName: 'cash'
-            }
-        #   {
-        #     path: @router.get 'conversations'
-        #     title: @model.l.get 'drawer.menuItemPrivateMessages'
-        #     $icon: new Icon()
-        #     $ripple: new Ripple()
-        #     iconName: 'chat-bubble'
-        #   }
           # {
           #   path: @model.group.getPath group, 'groupPeople', {@router}
           #   title: @model.l.get 'people.title'
@@ -201,11 +206,11 @@ module.exports = class NavDrawer
                 }
               ]
             }
-          if needsMainApp or needsGroupApp
+          if needsApp
             {
               isDivider: true
             }
-          if needsMainApp or needsGroupApp
+          if needsApp
             {
               onclick: =>
                 @model.portal.call 'app.install', {group}
@@ -313,11 +318,8 @@ module.exports = class NavDrawer
                       return z 'li.divider'
 
                     if menuItem.isDefault
-                      isSelected = currentPath in [
-                        @router.get 'home'
-                        @router.get 'categories'
-                        '/'
-                      ]
+                      isSelected = currentPath is @router.get('home') or
+                        (currentPath and currentPath.indexOf(path) is 0)
                     else
                       isSelected = currentPath?.indexOf(path) is 0
 

@@ -142,7 +142,7 @@ module.exports = class Model
     @portal?.setModels {
       @user, @modal, @installOverlay, @getAppDialog,@pushToken
     }
-    @window = new Window {@cookie, @experiment}
+    @window = new Window {@cookie, @experiment, userAgent}
 
   wasCached: => @isFromCache
 
