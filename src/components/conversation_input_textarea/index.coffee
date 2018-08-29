@@ -34,6 +34,9 @@ module.exports = class ConversationInputTextarea
     @$$textarea?.setSelectionRange(
       @selectionStart.getValue(), @selectionEnd.getValue()
     )
+    if Environment.isiOS()
+      # ios focuses on setSelectionRange
+      @$$textarea?.blur()
 
   beforeUnmount: =>
     @selectionStart.next @$$textarea?.selectionStart
@@ -112,7 +115,7 @@ module.exports = class ConversationInputTextarea
             @resizeTextarea e
             @setMessageFromEvent e
           ontouchstart: (e) =>
-            unless Environment.isNativeApp config.GAME_KEY
+            unless Environment.isNativeApp 'freeroam'
               @model.window.pauseResizing()
           ontouchend: (e) =>
             isFocused = e.target is document.activeElement
@@ -120,17 +123,17 @@ module.exports = class ConversationInputTextarea
             unless isFocused
               e?.target.focus()
           onfocus: =>
-            unless Environment.isNativeApp config.GAME_KEY
+            unless Environment.isNativeApp 'freeroam'
               @model.window.pauseResizing()
             clearTimeout @blurTimeout
-            setImmediate =>
+            setImmediate => # FIXME FIXME: breaks ios
               @isTextareaFocused.next true
             @onResize?()
           onblur: (e) =>
-            @blurTimeout = setTimeout =>
+            @blurTimeout = setImmediate =>
               isFocused = e.target is document.activeElement
               unless isFocused
-                unless Environment.isNativeApp config.GAME_KEY
+                unless Environment.isNativeApp 'freeroam'
                   @model.window.resumeResizing()
                 setImmediate =>
                   @isTextareaFocused.next false

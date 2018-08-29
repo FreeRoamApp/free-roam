@@ -90,7 +90,11 @@ module.exports = class Conversation extends Base
       @messageBatchesStreams.switch()
       .map (messageBatches) =>
         isLoading.next false
-        @$$loadingSpinner?.style.display = 'none'
+        setImmediate =>
+          # HACK not sure why this timeout is necessary. the dom element changes
+          # if done before this, even though it has a key on it
+          @$$loadingSpinner = @$$el?.querySelector('.loading')
+          @$$loadingSpinner?.style.display = 'none'
         @state.set isLoaded: true
         @iScrollContainer?.refresh()
 
@@ -98,7 +102,7 @@ module.exports = class Conversation extends Base
           @isFirstLoad = false
           # scroll to top
           setTimeout =>
-            if Environment.isiOS {userAgent: navigator.userAgent}
+            if Environment.isiOS {userAgent: @model.window.getUserAgent()}
               @messages.scrollTop = @$$messages.scrollHeight + @$$messages.offsetHeight - 1
             else
               @$$messages.scrollTop = 1 # if it's 0, it'll load more msgs
@@ -223,7 +227,7 @@ module.exports = class Conversation extends Base
     @$$loadingSpinner = @$$el?.querySelector('.loading')
     @$$messages = @$$el?.querySelector('.messages')
     # use iscroll on ios...
-    if Environment.isiOS {userAgent: navigator.userAgent}
+    if Environment.isiOS {userAgent: @model.window.getUserAgent()}
       checkIsReady = =>
         @$$messages = @$$el?.querySelector('.messages')
         if @$$messages and @$$messages.clientWidth
@@ -292,6 +296,7 @@ module.exports = class Conversation extends Base
     # messages will show for a split-second before the rest load in.
     # but WITH this, leaving a conversation and coming back to it sometimes
     # causes new messages to not post FIXME FIXME
+    #
     # @model.conversationMessage.resetClientChangesStream conversation?.id
 
   initIScroll: =>
@@ -368,7 +373,9 @@ module.exports = class Conversation extends Base
 
 
     # safari treats these different with flex-direction: column-reverse
-    isSafari = navigator.userAgent?.match /^((?!chrome|android).)*safari/i
+    isSafari = @model.window.getUserAgent()?.match(
+      /^((?!chrome|android).)*safari/i
+    )
     if isSafari
       # scrollTopTmp = scrollTop
       # scrollTop = fromBottom

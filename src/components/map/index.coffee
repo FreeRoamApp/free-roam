@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
 _map = require 'lodash/map'
 
 tile = require './tilejson'
@@ -12,6 +13,9 @@ module.exports = class Map
   type: 'Widget'
 
   constructor: ({@model, @router, item}) ->
+    window?.openLink = (url) => # for map tooltips
+      @model.portal.call 'browser.openWindow', {url, target: '_system'}
+
     @state = z.state
       windowSize: @model.window.getSize()
 
@@ -20,13 +24,12 @@ module.exports = class Map
     # https://github.com/mapbox/mapbox-gl-js/issues/6722
     @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.css'
     @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.js'
-
-    setTimeout => # FIXME
+    .then =>
       @map = new mapboxgl.Map {
         container: @$$el
         style: tile
-        center: [-97.6, 30.5]
-        zoom: 13
+        center: [-98.5795, 39.8283]
+        zoom: 4
       }
 
       @map.on 'load', =>
@@ -42,10 +45,17 @@ module.exports = class Map
           # https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
           # could also do the name of rv park to right of symbol
           paint:
-            'circle-color': '#000000'
+            'circle-color': colors.getRawColor colors.$primary500
+            # invis stroke to make tap target bigger
+            'circle-stroke-color': '#ffffff'
+            'circle-stroke-width': {
+              # 20px @ zoom 8, 20px @ zoom 11, 20px @ zoom 16
+              stops: [[8, 20], [11, 20], [16, 20]]
+            }
+            'circle-stroke-opacity': 0
             'circle-radius': {
-              # 1px @ zoom 8, 6px @ zoom 11, 40px @ zoom 16
-              stops: [[8, 2], [11, 8], [16, 40]]
+              # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
+              stops: [[8, 3], [11, 10], [16, 50]]
             }
         }
 
@@ -92,14 +102,14 @@ module.exports = class Map
               lon: @map.getBounds()._ne.lng
     }
     .take(1).subscribe (places) =>
-
       @map.getSource('places').setData {
         type: 'FeatureCollection'
         features: _map places, (place) ->
+          directionsUrl = "https://maps.apple.com/?saddr=Current%20Location&daddr=#{place.location.lat},#{place.location.lon}"
           {
             type: 'Feature'
             properties:
-              description: place.name
+              description: "<strong>#{place.name}</strong><br><div><a href='#{directionsUrl}' target='_system' onclick='openLink(\"#{directionsUrl}\")'>Get directions</a></div>"
             geometry:
               type: 'Point'
               coordinates: [
@@ -110,12 +120,12 @@ module.exports = class Map
         # could use symbol, but need spritesheet
         # https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
         # could also do the name of rv park to right of symbol
-        paint:
-          'circle-color': '#000000'
-          'circle-radius': {
-            # 1px @ zoom 8, 6px @ zoom 11, 40px @ zoom 16
-            stops: [[8, 2], [11, 8], [16, 40]]
-          }
+        # paint:
+        #   'circle-color': '#000000'
+        #   'circle-radius': {
+        #     # 1px @ zoom 8, 6px @ zoom 11, 40px @ zoom 16
+        #     stops: [[8, 2], [11, 8], [16, 40]]
+        #   }
       }
 
   render: =>

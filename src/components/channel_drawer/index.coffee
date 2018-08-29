@@ -16,6 +16,9 @@ module.exports = class ChannelDrawer
   constructor: ({@model, @router, @isOpen, group, conversation}) ->
     me = @model.user.getMe()
 
+    isStatic = @model.window.getBreakpoint().map (breakpoint) ->
+      breakpoint in ['desktop']
+
     @$channelList = new ChannelList {
       @model
       @router
@@ -28,6 +31,7 @@ module.exports = class ChannelDrawer
       side: 'right'
       key: 'channel'
       @isOpen
+      isStatic: isStatic
       onOpen: =>
         @isOpen.next true
       onClose: =>
@@ -42,9 +46,11 @@ module.exports = class ChannelDrawer
       me: @model.user.getMe()
 
   render: =>
-    {isOpen, group, me, conversation} = @state.getValue()
+    {isOpen, group, me, conversation, isStatic} = @state.getValue()
 
-    z '.z-channel-drawer',
+    z '.z-channel-drawer', {
+      className: z.classKebab {isStatic}
+    },
       z @$drawer,
         hasAppBar: true
         $content:
