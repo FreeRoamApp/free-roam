@@ -19,7 +19,7 @@ module.exports = class ConversationsPage
 
   getMeta: =>
     {
-      title: @model.l.get 'drawer.menuItemConversations'
+      title: @model.l.get 'drawer.privateMessages'
     }
 
   render: =>
@@ -31,5 +31,5 @@ module.exports = class ConversationsPage
     },
       z @$appBar,
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
-        title: @model.l.get 'drawer.menuItemConversations'
+        title: @model.l.get 'drawer.privateMessages'
       @$conversations

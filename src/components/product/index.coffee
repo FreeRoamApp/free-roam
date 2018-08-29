@@ -1,5 +1,6 @@
 z = require 'zorium'
 _map = require 'lodash/map'
+_isEmpty = require 'lodash/isEmpty'
 
 Icon = require '../icon'
 PrimaryButton = require '../primary_button'
@@ -46,12 +47,12 @@ module.exports = class Product
                       target: '_system'
                     }
                 }
-              z '..g-col.g-xs-12.g-md-6',
-                z @$packButton, {
-                  text: @model.l.get 'product.addToPack'
-                  onclick: ->
-                    alert 'Coming soon!'
-                }
+              # z '..g-col.g-xs-12.g-md-6',
+              #   z @$packButton, {
+              #     text: @model.l.get 'product.addToPack'
+              #     onclick: ->
+              #       alert 'Coming soon!'
+              #   }
         z '.name',
           product?.name
         z '.description',
@@ -59,12 +60,18 @@ module.exports = class Product
 
         # TODO: comparison
 
-        z '.title', @model.l.get 'product.reviewersLiked'
-        z 'ul.reviewers-liked',
-          _map product?.reviewersLiked, (item) ->
-            z 'li.item', item
+        unless _isEmpty product?.reviewersLiked
+          [
+            z '.title', @model.l.get 'product.reviewersLiked'
+            z 'ul.reviewers-liked',
+              _map product?.reviewersLiked, (item) ->
+                z 'li.item', item
+          ]
 
-        z '.title', @model.l.get 'product.reviewersDisliked'
-        z 'ul.reviewers-disliked',
-          _map product?.reviewersDisliked, (item) ->
-            z 'li.item', item
+        unless _isEmpty product?.reviewersDisliked
+          [
+            z '.title', @model.l.get 'product.reviewersDisliked'
+            z 'ul.reviewers-disliked',
+              _map product?.reviewersDisliked, (item) ->
+                z 'li.item', item
+          ]

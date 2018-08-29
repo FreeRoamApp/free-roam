@@ -28,12 +28,12 @@ module.exports = class GetAppDialog
         $title: group?.name
         $content:
           z '.z-get-app-dialog_dialog',
-            z '.badge.ios', {
-              onclick: =>
-                @model.portal.call 'browser.openWindow',
-                  url: iosAppUrl
-                  target: '_system'
-            }
+            # z '.badge.ios', {
+            #   onclick: =>
+            #     @model.portal.call 'browser.openWindow',
+            #       url: iosAppUrl
+            #       target: '_system'
+            # }
             z '.badge.android', {
               onclick: =>
                 @model.portal.call 'browser.openWindow',

@@ -18,6 +18,7 @@ module.exports = class ChannelDrawer
 
     isStatic = @model.window.getBreakpoint().map (breakpoint) ->
       breakpoint in ['desktop']
+    .publishReplay(1).refCount()
 
     @$channelList = new ChannelList {
       @model

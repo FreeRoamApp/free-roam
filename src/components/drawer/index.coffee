@@ -34,7 +34,7 @@ module.exports = class Drawer
         checkIsReady = =>
           $$container = @$$el
           if $$container and $$container.clientWidth
-            setImmediate =>
+            setImmediate =># sometimes get cannot get length of undefined for gotopage with this
               @initIScroll $$container
           else
             setTimeout checkIsReady, 1000
@@ -54,16 +54,22 @@ module.exports = class Drawer
     @isStaticDisposable?.unsubscribe()
 
   close: (animationLengthMs = 500) =>
-    if @side is 'right'
-      @iScrollContainer.goToPage 0, 0, animationLengthMs
-    else
-      @iScrollContainer.goToPage 1, 0, animationLengthMs
+    try
+      if @side is 'right'
+        @iScrollContainer.goToPage 0, 0, animationLengthMs
+      else
+        @iScrollContainer.goToPage 1, 0, animationLengthMs
+    catch err
+      console.log 'caught err', err
 
   open: (animationLengthMs = 500) =>
-    if @side is 'right'
-      @iScrollContainer.goToPage 1, 0, animationLengthMs
-    else
-      @iScrollContainer.goToPage 0, 0, animationLengthMs
+    try
+      if @side is 'right'
+        @iScrollContainer.goToPage 1, 0, animationLengthMs
+      else
+        @iScrollContainer.goToPage 0, 0, animationLengthMs
+    catch err
+      console.log 'caught err', err
 
   initIScroll: ($$container) =>
     {drawerWidth} = @state.getValue()
