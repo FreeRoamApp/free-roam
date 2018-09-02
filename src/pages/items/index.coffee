@@ -42,8 +42,9 @@ module.exports = class ItemsPage extends Base
       windowSize: @model.window.getSize()
 
   getMeta: ->
+    {title} = @state.getValue()
     {
-      title: "The best products for your RV"
+      title: title
     }
 
   render: =>

@@ -20,6 +20,12 @@ module.exports = class User
   getByUsername: (username) =>
     @auth.stream "#{@namespace}.getByUsername", {username}
 
+  getPartner: =>
+    @auth.stream "#{@namespace}.getPartner", {}
+
+  setPartner: (partner) =>
+    @auth.call "#{@namespace}.setPartner", {partner}
+
   setAvatarImage: (file) =>
     formData = new FormData()
     formData.append 'file', file, file.name

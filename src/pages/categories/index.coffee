@@ -27,7 +27,7 @@ module.exports = class CategoriesPage
 
   getMeta: ->
     {
-      title: "The best products for your RV"
+      title: "The best products for Boondocking"
     }
 
   render: =>

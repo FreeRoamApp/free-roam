@@ -39,6 +39,9 @@ module.exports = class About
           '.'
         z 'p', @model.l.get 'about.text5'
         z 'p', @model.l.get 'about.text6'
+        z 'p', @model.l.get 'about.text7'
+
+        # TODO: the vision (long-term, helping people, environment)
         z '.divider.clear'
         z 'img.home',
           src: "#{config.CDN_URL}/home.jpg"

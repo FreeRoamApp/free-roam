@@ -30,21 +30,21 @@ module.exports = class Drawer
     {drawerWidth} = @state.getValue()
 
     onStaticChange = (isStatic) =>
-      if not @iScrollContainer and not isStatic
-        checkIsReady = =>
-          $$container = @$$el
-          if $$container and $$container.clientWidth
-            setImmediate =># sometimes get cannot get length of undefined for gotopage with this
+      setImmediate =># sometimes get cannot get length of undefined for gotopage with this
+        if not @iScrollContainer and not isStatic
+          checkIsReady = =>
+            $$container = @$$el
+            if $$container and $$container.clientWidth
               @initIScroll $$container
-          else
-            setTimeout checkIsReady, 1000
+            else
+              setTimeout checkIsReady, 1000
 
-        checkIsReady()
-      else if @iScrollContainer and isStatic
-        @open 0
-        @iScrollContainer?.destroy()
-        delete @iScrollContainer
-        @disposable?.unsubscribe()
+          checkIsReady()
+        else if @iScrollContainer and isStatic
+          @open 0
+          @iScrollContainer?.destroy()
+          delete @iScrollContainer
+          @disposable?.unsubscribe()
     @isStaticDisposable = @isStatic.subscribe onStaticChange
 
   beforeUnmount: =>
