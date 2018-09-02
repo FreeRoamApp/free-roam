@@ -29,7 +29,7 @@ module.exports = class ItemPage extends BasePage
   getMeta: ->
     @item.map (item) ->
       {
-        title: "RV #{item?.name}"
+        title: "Boondocking #{item?.name}"
       }
 
   # beforeUnmount: =>

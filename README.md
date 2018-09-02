@@ -1,7 +1,7 @@
 # free-roam
 
 ## Manifesto
-The goal with [FreeRoam](https://freeroam.app) is to build an open community and resource app for RVers.
+The goal with [FreeRoam](https://freeroam.app) is to build an open community and resource app for free roamers.
 
 Sticking with openness, FreeRoam is open source. [free-roam](https://github.com/freeroamapp/free-roam) contains the client-side code, [back-roads](https://github.com/freeroamapp/back-roads) has the backend code, and  [free-roam-assets](https://github.com/freeroamapp/free-roam-assets).
 

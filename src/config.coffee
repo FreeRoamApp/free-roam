@@ -67,7 +67,7 @@ isomorphic =
   # d folder has longer cache
   SCRIPTS_CDN_URL: 'https://fdn.uno/d/scripts'
   USER_CDN_URL: 'https://fdn.uno/images'
-  IOS_APP_URL: ''
+  IOS_APP_URL: 'https://itunes.apple.com/us/app/freeroam/id1434359242?mt=8'
   GOOGLE_PLAY_APP_URL:
     'https://play.google.com/store/apps/details?id=app.freeroam.main'
   HOST: HOST

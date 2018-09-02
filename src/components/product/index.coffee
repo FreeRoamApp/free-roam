@@ -21,12 +21,13 @@ module.exports = class Product
 
     @state = z.state
       product: product
+      partner: @model.user.getPartner()
       $description: new FormattedText {
         text: product.map (product) -> product.description
       }
 
   render: =>
-    {product, $description} = @state.getValue()
+    {product, partner, $description} = @state.getValue()
 
     z '.z-product',
       z '.g-grid',
@@ -41,9 +42,9 @@ module.exports = class Product
                 z @$buyButton, {
                   text: @model.l.get 'product.buyAmazon'
                   onclick: =>
-                    ga? 'send', 'event', 'amazon', 'freeroam-20', product.slug
+                    ga? 'send', 'event', 'amazon', partner?.amazonAffiliateCode, product.slug
                     @model.portal.call 'browser.openWindow', {
-                      url: "https://amazon.com/dp/#{product.sourceId}?tag=freeroam-20"
+                      url: "https://amazon.com/dp/#{product.sourceId}?tag=#{partner?.amazonAffiliateCode}"
                       target: '_system'
                     }
                 }

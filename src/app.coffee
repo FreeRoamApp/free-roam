@@ -71,20 +71,18 @@ module.exports = class App
 
     userAgent = @model.window.getUserAgent()
     isNativeApp = Environment.isMainApp 'freeroam', {userAgent}
-    if isNativeApp and not @model.cookie.get('routerLastPath')
-      appActionPath = @model.appInstallAction.get().map (appAction) ->
-        appAction?.path
-    else
-      appActionPath = RxObservable.of null
 
     requestsAndRoutes = RxObservable.combineLatest(
-      requests, routes, appActionPath, (vals...) -> vals
+      requests, routes, (vals...) -> vals
     )
 
     isFirstRequest = true
-    @requests = requestsAndRoutes.map ([req, routes, appActionPath]) =>
+    @requests = requestsAndRoutes.map ([req, routes]) =>
+      if window? and isFirstRequest and req.query.partner
+        @model.user.setPartner req.query.partner
+
       if isFirstRequest and isNativeApp
-        path = @model.cookie.get('routerLastPath') or appActionPath or req.path
+        path = @model.cookie.get('routerLastPath') or req.path
         if window?
           req.path = path # doesn't work server-side
         else
@@ -226,43 +224,36 @@ module.exports = class App
     userAgent = @model.window.getUserAgent()
     isiOSApp = Environment.isiOS({userAgent}) and
                 Environment.isNativeApp('freeroam', {userAgent})
-    isSafari = /^((?!chrome|android).)*safari/i.test(userAgent)
-    disableWeb = isSafari and not isiOSApp
-    if disableWeb
-      route ['about', '404', 'home'], 'AboutPage'
-      route 'termsOfService', 'TosPage'
-      route 'privacy', 'PrivacyPage'
-    else
-      route 'about', 'AboutPage'
-      route 'backpack', 'BackpackPage'
-      route 'categories', 'CategoriesPage'
-      route 'conversation', 'ConversationPage'
-      route 'conversations', 'ConversationsPage'
-      route 'groupBannedUsers', 'GroupBannedUsersPage'
-      route 'groupAuditLog', 'GroupAuditLogPage'
-      route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
-      route 'groupEditChannel', 'GroupEditChannelPage'
-      route 'groupForum', 'GroupForumPage'
-      route 'groupManage', 'GroupManageMemberPage'
-      route 'groupManageChannels', 'GroupManageChannelsPage'
-      route 'groupManageRoles', 'GroupManageRolesPage'
-      route 'groupNewChannel', 'GroupAddChannelPage'
-      route ['groupNewThread', 'groupNewThreadWithCategory'], 'NewThreadPage'
-      route 'groupSettings', 'GroupSettingsPage'
-      route 'groupThread', 'ThreadPage'
-      route 'groupThreadEdit', 'EditThreadPage'
-      route 'home', if isiOSApp then 'GroupForumPage' else 'CategoriesPage'
-      route 'item', 'ItemPage'
-      route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
-      route 'places', 'PlacesPage'
-      route 'partners', 'PartnersPage'
-      route 'product', 'ProductPage'
+    route 'about', 'AboutPage'
+    route 'backpack', 'BackpackPage'
+    route 'categories', 'CategoriesPage'
+    route 'conversation', 'ConversationPage'
+    route 'conversations', 'ConversationsPage'
+    route 'groupBannedUsers', 'GroupBannedUsersPage'
+    route 'groupAuditLog', 'GroupAuditLogPage'
+    route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
+    route 'groupEditChannel', 'GroupEditChannelPage'
+    route 'groupForum', 'GroupForumPage'
+    route 'groupManage', 'GroupManageMemberPage'
+    route 'groupManageChannels', 'GroupManageChannelsPage'
+    route 'groupManageRoles', 'GroupManageRolesPage'
+    route 'groupNewChannel', 'GroupAddChannelPage'
+    route ['groupNewThread', 'groupNewThreadWithCategory'], 'NewThreadPage'
+    route 'groupSettings', 'GroupSettingsPage'
+    route 'groupThread', 'ThreadPage'
+    route 'groupThreadEdit', 'EditThreadPage'
+    route 'home', if isiOSApp then 'GroupForumPage' else 'CategoriesPage'
+    route 'item', 'ItemPage'
+    route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
+    route 'places', 'PlacesPage'
+    route 'partners', 'PartnersPage'
+    route 'product', 'ProductPage'
 
-      route 'policies', 'PoliciesPage'
-      route 'termsOfService', 'TosPage'
-      route 'privacy', 'PrivacyPage'
+    route 'policies', 'PoliciesPage'
+    route 'termsOfService', 'TosPage'
+    route 'privacy', 'PrivacyPage'
 
-      route '404', 'FourOhFourPage'
+    route '404', 'FourOhFourPage'
     routes
 
   render: =>
@@ -273,7 +264,6 @@ module.exports = class App
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
-    isSafari = /^((?!chrome|android).)*safari/i.test(userAgent)
     isAndroid = Environment.isAndroid {userAgent}
     isNative = Environment.isNativeApp 'freeroam', {userAgent}
     isPageAvailable = (me?.username or not request?.$page?.isPrivate)
@@ -288,7 +278,7 @@ module.exports = class App
           className: z.classKebab {isIos, isAndroid}
         },
           z '.z-root',
-            if not hideDrawer and (not isSafari or isNative)
+            unless hideDrawer
               z @$navDrawer, {currentPath: request?.req.path}
             z '.page',
               # show page before me has loaded

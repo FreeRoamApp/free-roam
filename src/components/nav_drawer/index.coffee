@@ -144,13 +144,13 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'star'
           # }
-          # {
-          #   path: @router.get 'partners'
-          #   title: @model.l.get 'general.partners'
-          #   $icon: new Icon()
-          #   $ripple: new Ripple()
-          #   iconName: 'cash'
-          # }
+          {
+            path: @router.get 'partners'
+            title: @model.l.get 'general.partners'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'star'
+          }
           # {
           #   path: @model.group.getPath group, 'groupPeople', {@router}
           #   title: @model.l.get 'people.title'
