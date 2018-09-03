@@ -52,10 +52,6 @@ module.exports = class NavDrawer
       (vals...) -> vals
     )
 
-    userAgent = @model.window.getUserAgent()
-    isiOSApp = Environment.isiOS({userAgent}) and
-                Environment.isNativeApp('freeroam', {userAgent})
-
     @state = z.state
       isOpen: @model.drawer.isOpen()
       language: @model.l.getLanguage()
@@ -84,12 +80,9 @@ module.exports = class NavDrawer
         meGroupUser = group.meGroupUser
 
         userAgent = @model.window.getUserAgent()
-        hasGroupApp = group.googlePlayAppId
         needsApp = userAgent and
                   not Environment.isNativeApp('freeroam', {userAgent}) and
                   not window?.matchMedia('(display-mode: standalone)').matches
-
-        showMaps = Environment.isiOS({userAgent}) and Environment.isNativeApp('freeroam')
 
         _filter([
           {
@@ -98,7 +91,6 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'cart'
-            isDefault: not isiOSApp
           }
           {
             path: @model.group.getPath group, 'groupChat', {@router}
@@ -106,6 +98,7 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'chat'
+            isDefault: true
           }
           {
             path: @router.get 'conversations'
@@ -120,16 +113,14 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'rss'
-            isDefault: isiOSApp
           }
-          if showMaps
-            {
-              path: @router.get 'places'
-              title: @model.l.get 'general.places'
-              $icon: new Icon()
-              $ripple: new Ripple()
-              iconName: 'map'
-            }
+          # {
+          #   path: @router.get 'places'
+          #   title: @model.l.get 'general.places'
+          #   $icon: new Icon()
+          #   $ripple: new Ripple()
+          #   iconName: 'map'
+          # }
           {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'

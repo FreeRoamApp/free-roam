@@ -1,3 +1,12 @@
+- Update Google Play & iOS descriptions
+- Onboarding in chat. The community for Boondockers
+- "Find me a WALMART!", maybe some people-of-walmart personality here while it's loading
+- Nearest dump, fresh water
+- Find campgrounds YouTubers have been to, link videos, Instagram posts?
+  - Ask YouTuber if it's alright if we link to video from the page, explain FreeRoam
+
+---
+
 Things people want
 - Ways to make money on road
 - Better trip / gas station tools (ones out there are pretty decent though)

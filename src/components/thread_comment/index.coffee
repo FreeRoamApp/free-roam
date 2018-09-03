@@ -137,7 +137,7 @@ module.exports = class ThreadComment
     # pass these when voting so we can update scylla properly (no index on id)
     voteParent = _pick threadComment, [
       'id', 'threadId', 'userId', 'parentId', 'parentType',
-      'timeId', 'timeBucket'
+      'timeBucket'
     ]
     voteParent.topId = threadComment.threadId
     voteParent.type = 'threadComment'

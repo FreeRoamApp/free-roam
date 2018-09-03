@@ -69,7 +69,8 @@ module.exports = class Conversation extends Base
     @resetMessageBatches = new RxBehaviorSubject null
 
     lastConversationId = null
-    @canLoadMore = true
+    @canLoadOlder = true
+    @canLoadNewer = true
     @isFirstLoad = true
 
     loadedMessages = conversationAndMeAndminId.switchMap (resp) =>
@@ -98,12 +99,12 @@ module.exports = class Conversation extends Base
         @state.set isLoaded: true
         @iScrollContainer?.refresh()
 
-        if minId and @isFirstLoad
+        if (minId or @useIscroll) and @isFirstLoad
           @isFirstLoad = false
           # scroll to top
           setTimeout =>
-            if Environment.isiOS {userAgent: @model.window.getUserAgent()}
-              @messages.scrollTop = @$$messages.scrollHeight + @$$messages.offsetHeight - 1
+            if @useIscroll
+              @$$messages.scrollTop = @$$messages.scrollHeight + @$$messages.offsetHeight - 1
             else
               @$$messages.scrollTop = 1 # if it's 0, it'll load more msgs
           , 100
@@ -172,6 +173,13 @@ module.exports = class Conversation extends Base
       (vals...) -> vals
     )
 
+    userAgent = @model.window.getUserAgent()
+    raw = userAgent.match(/Chrom(e|ium)\/([0-9]+)\./)
+    chromeVersion = if raw then parseInt(raw[2], 10) else false
+    isOldChrome = chromeVersion and chromeVersion < 50
+    # ios and old chrome don't do well with flex-direction: column-reverse
+    @useIscroll = Environment.isiOS({userAgent}) or isOldChrome
+
     @state = z.state
       me: me
       isLoading: isLoading
@@ -221,13 +229,13 @@ module.exports = class Conversation extends Base
                 @messageBatchesStreams
               }
               prevMessage = message
-              {$el, isGrouped, timeId: message.timeId, id}
+              {$el, isGrouped, id}
 
   afterMount: (@$$el) =>
     @$$loadingSpinner = @$$el?.querySelector('.loading')
     @$$messages = @$$el?.querySelector('.messages')
     # use iscroll on ios...
-    if Environment.isiOS {userAgent: @model.window.getUserAgent()}
+    if @useIscroll
       checkIsReady = =>
         @$$messages = @$$el?.querySelector('.messages')
         if @$$messages and @$$messages.clientWidth
@@ -398,9 +406,9 @@ module.exports = class Conversation extends Base
     else if notNearTop and direction is -1
       @onScrollDown?()
 
-    if @canLoadMore and fromTopPx is 0
+    if @canLoadOlder and fromTopPx is 0
       @loadOlder()
-    else if @canLoadMore and fromBottomPx is 0
+    else if @canLoadNewer and fromBottomPx is 0
       {hasLoadedAllNewMessages} = @state.getValue()
       unless hasLoadedAllNewMessages
         @loadNewer()
@@ -408,32 +416,33 @@ module.exports = class Conversation extends Base
     @lastFromTopPx = fromTopPx
 
   loadOlder: =>
-    @canLoadMore = false
+    @canLoadOlder = false
 
     # don't re-render or set state since it's slow with all of the conversation
     # messages
     @$$loadingSpinner.style.display = 'block'
 
     {messageBatches} = @state.getValue()
-    maxId = messageBatches?[0]?[0]?.timeId
+    maxId = messageBatches?[0]?[0]?.id
     messagesStream = @getMessagesStream {maxId}
     @prependMessagesStream messagesStream
 
     messagesStream.take(1).toPromise()
-    .then =>
-      setTimeout (=> @canLoadMore = true), DELAY_BETWEEN_LOAD_MORE_MS
+    .then (messages) =>
+      unless _isEmpty messages
+        setTimeout (=> @canLoadOlder = true), DELAY_BETWEEN_LOAD_MORE_MS
 
       @$$loadingSpinner.style.display = 'none'
 
   loadNewer: (isStreamed) =>
-    @canLoadMore = false
+    @canLoadNewer = false
 
     # don't re-render or set state since it's slow with all of the conversation
     # messages
     @$$loadingSpinner.style.display = 'block'
 
     {messageBatches, hasLoadedAllNewMessages} = @state.getValue()
-    minId = _last(_last(messageBatches))?.timeId
+    minId = _last(_last(messageBatches))?.id
     messagesStream = @getMessagesStream {minId, isStreamed}
     @appendMessagesStream messagesStream
 
@@ -441,7 +450,7 @@ module.exports = class Conversation extends Base
 
     messagesStream.take(1).toPromise()
     .then (messages) =>
-      setTimeout (=> @canLoadMore = true), DELAY_BETWEEN_LOAD_MORE_MS
+      setTimeout (=> @canLoadNewer = true), DELAY_BETWEEN_LOAD_MORE_MS
 
       # should be caught up now
       if messages?.length < 10 and not hasLoadedAllNewMessages
@@ -545,7 +554,7 @@ module.exports = class Conversation extends Base
       groupUser, isJoinLoading, hasBottomBar} = @state.getValue()
 
     z '.z-conversation', {
-      className: z.classKebab {hasBottomBar}
+      className: z.classKebab {hasBottomBar, @useIscroll}
       onclick: (e) =>
         if @isTextareaFocused.getValue() and Environment.isiOS() and
             e?.target isnt @$conversationInput.getTextarea$$()

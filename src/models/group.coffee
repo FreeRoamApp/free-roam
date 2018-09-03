@@ -25,7 +25,7 @@ module.exports = class Group
     @auth.stream "#{@namespace}.getBySlug", {slug, autoJoin}
 
   getDefaultGroup: ({autoJoin} = {}) =>
-    @auth.stream "#{@namespace}.getBySlug", {slug: 'free-roam', autoJoin}
+    @auth.stream "#{@namespace}.getBySlug", {slug: 'boondocking', autoJoin}
 
   getDefault: ({autoJoin} = {}) =>
     @auth.stream "#{@namespace}.getDefault", {autoJoin}

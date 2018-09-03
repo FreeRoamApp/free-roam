@@ -242,7 +242,7 @@ module.exports = class App
     route 'groupSettings', 'GroupSettingsPage'
     route 'groupThread', 'ThreadPage'
     route 'groupThreadEdit', 'EditThreadPage'
-    route 'home', if isiOSApp then 'GroupForumPage' else 'CategoriesPage'
+    route 'home', 'GroupChatPage'
     route 'item', 'ItemPage'
     route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
     route 'places', 'PlacesPage'
