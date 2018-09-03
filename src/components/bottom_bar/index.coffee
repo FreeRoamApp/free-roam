@@ -18,6 +18,8 @@ module.exports = class BottomBar
     @state = z.state
       requests: requests
       group: group
+      currentPath: requests.map ({req}) ->
+        req.path
       serverData: @serverData
 
   afterMount: (@$$el) => null
@@ -29,16 +31,10 @@ module.exports = class BottomBar
     @$$el?.classList.remove 'is-hidden'
 
   render: ({isAbsolute} = {}) =>
-    {requests, group, serverData} = @state.getValue()
+    {requests, group, currentPath, serverData} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
-    showMaps = Environment.isiOS({userAgent}) and Environment.isNativeApp('freeroam')
-
-    currentPath = requests?.req.path
-
     isLoaded = Boolean group
-    isiOSApp = Environment.isiOS({userAgent}) and
-                Environment.isNativeApp('freeroam', {userAgent})
 
     @menuItems = _filter [
       {
@@ -46,28 +42,26 @@ module.exports = class BottomBar
         icon: 'cart'
         route: @router.get 'categories'
         text: @model.l.get 'drawer.productGuide'
-        isDefault: not isiOSApp
       }
       {
         $icon: new Icon()
         icon: 'chat'
         route: @model.group.getPath group, 'groupChat', {@router}
         text: @model.l.get 'general.chat'
+        isDefault: true
       }
       {
         $icon: new Icon()
         icon: 'rss'
         route: @model.group.getPath group, 'groupForum', {@router}
         text: @model.l.get 'general.forum'
-        isDefault: isiOSApp
       }
-      if showMaps
-        {
-          $icon: new Icon()
-          icon: 'map'
-          route: @router.get 'places'
-          text: @model.l.get 'general.places'
-        }
+      # {
+      #   $icon: new Icon()
+      #   icon: 'map'
+      #   route: @router.get 'places'
+      #   text: @model.l.get 'general.places'
+      # }
     ]
 
     z '.z-bottom-bar', {

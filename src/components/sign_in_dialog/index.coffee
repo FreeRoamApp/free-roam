@@ -36,9 +36,6 @@ module.exports = class SignInDialog
     @$submitButton = new FlatButton()
     @$cancelButton = new FlatButton()
 
-    @$twitchButton = new PrimaryButton()
-    @$twitchIcon = new Icon()
-
     @$dialog = new Dialog()
 
     @state = z.state
@@ -107,21 +104,6 @@ module.exports = class SignInDialog
 
       errorSubject.next @model.l.get err.info?.langKey
       @state.set isLoading: false
-
-  signInTwitch: =>
-    @model.portal.call 'twitch.connect'
-    .then (data) =>
-      if data?.code
-        @model.auth.loginTwitch {
-          code: data.code
-          idToken: data.idToken
-        }
-        .then =>
-          setTimeout =>
-            @model.user.getMe().take(1).subscribe =>
-              @model.signInDialog.loggedIn()
-              @model.signInDialog.close()
-          , 0
 
   cancel: =>
     @model.signInDialog.cancel()
