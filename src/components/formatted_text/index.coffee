@@ -24,16 +24,8 @@ module.exports = class FormattedText
     if text?.map
       $el = text.map((text) => @get$ {text, model})
     else
-      hasAddon = text.match /\([^\)]+"addon:([a-zA-Z0-9-]+)/
-      if hasAddon
-        @minHeight = '60px'
-        $el = model.addon.getByKey hasAddon[1]
-        .map (addon) =>
-          state = {addon}
-          @get$ {text, model, state}
-      else
-        @$el = @get$ {text, model} # use right away
-        $el = null
+      @$el = @get$ {text, model} # use right away
+      $el = null
 
     @state = z.state {
       $el: $el
@@ -131,7 +123,6 @@ module.exports = class FormattedText
 
         a: (tagName, props, children) =>
           isMention = props.title and props.title.indexOf('user:') isnt -1
-          isAddon = props.title and props.title.indexOf('addon:') isnt -1
           youtubeId = props.href?.match(config.YOUTUBE_ID_REGEX)?[1]
           imgurId = props.href?.match(config.IMGUR_ID_REGEX)?[1]
 

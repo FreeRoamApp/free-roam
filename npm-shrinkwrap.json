@@ -4357,33 +4357,6 @@
         }
       }
     },
-    "exoid-router": {
-      "version": "0.2.6",
-      "resolved": "https://registry.npmjs.org/exoid-router/-/exoid-router-0.2.6.tgz",
-      "integrity": "sha1-FK20U8tqlCsu0nhfJHp3F66hOeI=",
-      "dev": true,
-      "requires": {
-        "bluebird": "^2.10.1",
-        "coffee-script": "^1.9.3",
-        "joi": "^6.7.1",
-        "lodash": "^3.10.0",
-        "loga": "^0.1.1"
-      },
-      "dependencies": {
-        "bluebird": {
-          "version": "2.11.0",
-          "resolved": "https://registry.npmjs.org/bluebird/-/bluebird-2.11.0.tgz",
-          "integrity": "sha1-U0uQM8AiyVecVro7Plpcqvu2UOE=",
-          "dev": true
-        },
-        "lodash": {
-          "version": "3.10.1",
-          "resolved": "https://registry.npmjs.org/lodash/-/lodash-3.10.1.tgz",
-          "integrity": "sha1-W/Rejkm6QYnhfUgnid/RW9FAt7Y=",
-          "dev": true
-        }
-      }
-    },
     "expand-braces": {
       "version": "0.1.2",
       "resolved": "https://registry.npmjs.org/expand-braces/-/expand-braces-0.1.2.tgz",

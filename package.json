@@ -24,7 +24,6 @@
     "css-loader": "^0.28.11",
     "del": "^2.0.2",
     "dustjs-linkedin": "^2.7.5",
-    "exoid-router": "^0.2.2",
     "flare-gun": "^0.6.5",
     "git-rev": "^0.2.1",
     "gulp": "^3.9.0",
