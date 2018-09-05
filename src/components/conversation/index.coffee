@@ -154,16 +154,9 @@ module.exports = class Conversation extends Base
           if hasImagePermission
             panels = panels.concat ['image', 'gifs']
 
-          permissions = ['sendAddon']
-          hasAddonPermission = @model.groupUser.hasPermission {
-            meGroupUser, permissions, channelId
-          }
-          if hasAddonPermission
-            panels = panels.concat ['addons']
-
           panels
         else
-          ['text', 'stickers', 'image', 'gifs', 'addons']
+          ['text', 'stickers', 'image', 'gifs']
     }
 
     messageBatchesAndMeAndBlockedUserIds = RxObservable.combineLatest(
@@ -313,6 +306,7 @@ module.exports = class Conversation extends Base
       scrollY: true
       # eventPassthrough: true
       click: true
+      tap: true
       bounce: false
       deceleration: 0.0006
       useTransition: false

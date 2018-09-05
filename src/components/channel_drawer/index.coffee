@@ -23,7 +23,8 @@ module.exports = class ChannelDrawer
     @$channelList = new ChannelList {
       @model
       @router
-      selectedConversationId: conversation.map ({id}) -> id
+      selectedConversationId: conversation.map (conversation) ->
+        conversation?.id
       conversations: group.switchMap (group) =>
         @model.conversation.getAllByGroupId group.id
     }

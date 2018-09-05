@@ -40,7 +40,6 @@ module.exports = class GroupManageRoles
         'sendMessage'
         'sendLink'
         'sendImage'
-        'sendAddon'
         'deleteForumThread'
         'pinForumThread'
         'deleteForumComment'

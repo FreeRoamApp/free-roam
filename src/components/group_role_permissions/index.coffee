@@ -33,7 +33,7 @@ module.exports = class GroupRolePermissions
 
     @roleValueStreams = new RxReplaySubject 1
     @roleValueStreams.next @roles.map (roles) ->
-      roles?[0]?.roleId
+      roles?[0]?.id
 
     permissionTypesData = RxObservable.combineLatest(
       group
@@ -61,7 +61,7 @@ module.exports = class GroupRolePermissions
       permissionTypes: permissionTypesData.map (response) =>
         [group, roles, roleId, conversation, permissionTypes] = response
 
-        role = _find roles, {roleId}
+        role = _find roles, {id: roleId}
 
         _map permissionTypes, (key) =>
           isSelected = new RxBehaviorSubject(
@@ -99,13 +99,13 @@ module.exports = class GroupRolePermissions
     if confirm 'Confirm?'
       @model.groupRole.deleteByGroupIdAndRoleId group.id, roleId
       @roleValueStreams.next RxObservable.of(
-        _find(roles, {name: 'everyone'})?.roleId
+        _find(roles, {name: 'everyone'})?.id
       )
 
   render: =>
     {me, isSaving, group, roles, roleId, permissionTypes} = @state.getValue()
 
-    role = _find roles, {roleId}
+    role = _find roles, {id: roleId}
 
     z '.z-group-role-permissions',
       if _isEmpty roles
@@ -120,7 +120,7 @@ module.exports = class GroupRolePermissions
                 hintText: 'Type'
                 isFloating: false
                 options: _map roles, (role) ->
-                  {value: role.roleId, text: role.name}
+                  {value: role.id, text: role.name}
           z 'ul.list',
             _map permissionTypes, ({key, $toggle, isSelected}) =>
               z 'li.item',

@@ -140,7 +140,7 @@ module.exports = class Model
     @imageViewOverlay = new ImageViewOverlay()
     @pushNotificationSheet = new PushNotificationSheet()
     @portal?.setModels {
-      @user, @modal, @installOverlay, @getAppDialog,@pushToken
+      @user, @modal, @installOverlay, @getAppDialog, @pushToken
     }
     @window = new Window {@cookie, @experiment, userAgent}
 

@@ -50,17 +50,28 @@ module.exports = class GroupChatPage
 
     currentConversationId = null
     conversation = conversationsAndConversationIdAndMe
-    .switchMap ([conversations, conversationId, me]) ->
-      # side effect
+    .switchMap ([conversations, conversationId, me]) =>
+      lastConversationIdCookie =
+        "group_#{conversations?[0]?.groupId}_lastConversationId"
+
+      conversationId ?= @model.cookie.get(lastConversationIdCookie)
+      conversationId ?= _find(conversations, ({data, isDefault}) ->
+         isDefault or data?.name is 'general'
+      )?.id
+      conversationId ?= conversations?[0]?.id
+
+      # side effects
       if conversationId isnt currentConversationId
+        if conversations?[0]?.groupId
+          @model.cookie.set(
+            lastConversationIdCookie
+            conversationId
+          )
         # is set to false when messages load in conversation component
         isLoading.next true
 
       currentConversationId = conversationId
-      conversationId ?= _find(conversations, ({data, isDefault}) ->
-        isDefault or data?.name is 'general' or data?.name is 'geral'
-      )?.id
-      conversationId ?= conversations?[0]?.id
+
       if conversationId
         RxObservable.of _find conversations, {id: conversationId}
       else

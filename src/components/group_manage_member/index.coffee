@@ -100,7 +100,7 @@ module.exports = class GroupManageMember
                 z '.role', {
                   onclick: =>
                     @model.groupUser.removeRoleByGroupIdAndUserId(
-                      group.id, user.id, role.roleId
+                      group.id, user.id, role.id
                     )
                 }, role.name
           z '.row',
@@ -108,7 +108,7 @@ module.exports = class GroupManageMember
               hintText: 'Type'
               isFloating: false
               options: _map roles, (role) ->
-                {value: role.roleId, text: role.name}
+                {value: role.id, text: role.name}
             z '.button',
               z @$addRoleButton,
                 text: @model.l.get 'groupManageMember.addRole'
