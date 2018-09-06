@@ -46,7 +46,7 @@ module.exports = class NotificationsOverlay
               z @$emptyIcon,
                 icon: 'notifications'
                 isTouchTarget: false
-                color: colors.$tertiary900Text54
+                color: colors.$bgText54
                 size: '100px'
             @model.l.get 'notificationsOverlay.empty'
         else

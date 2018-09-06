@@ -317,14 +317,14 @@ module.exports = class Thread extends Base
                   z '.icon',
                     z @$starIcon,
                       icon: 'star-tag'
-                      color: colors.$tertiary900Text
+                      color: colors.$bgText
                       isTouchTarget: false
                       size: '22px'
                 else if thread?.user?.flags?.isModerator
                   z '.icon',
                     z @$starIcon,
                       icon: 'mod'
-                      color: colors.$tertiary900Text
+                      color: colors.$bgText
                       isTouchTarget: false
                       size: '22px'
               z 'span', innerHTML: '&nbsp;&middot;&nbsp;'
@@ -366,7 +366,7 @@ module.exports = class Thread extends Base
               z @$filterIcon,
                 icon: 'filter'
                 isTouchTarget: false
-                color: colors.$tertiary900Text
+                color: colors.$bgText
                 onclick: =>
                   @overlay$.next @$filterCommentsDialog
 

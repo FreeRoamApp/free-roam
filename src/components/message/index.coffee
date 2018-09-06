@@ -113,21 +113,21 @@ module.exports = class Message
               z '.icon',
                 z @$starIcon,
                   icon: 'star-tag'
-                  color: nameColor or colors.$tertiary900Text
+                  color: nameColor or colors.$bgText
                   isTouchTarget: false
                   size: '22px'
             if user?.flags?.isDev
               z '.icon',
                 z @$statusIcon,
                   icon: 'dev'
-                  color: nameColor or colors.$tertiary900Text
+                  color: nameColor or colors.$bgText
                   isTouchTarget: false
                   size: '22px'
             else if user?.flags?.isModerator or isModerator
               z '.icon',
                 z @$statusIcon,
                   icon: 'mod'
-                  color: nameColor or colors.$tertiary900Text
+                  color: nameColor or colors.$bgText
                   isTouchTarget: false
                   size: '22px'
             z '.name', {
@@ -140,7 +140,7 @@ module.exports = class Message
                 z '.icon',
                   z @$verifiedIcon,
                     icon: 'verified'
-                    color: nameColor or colors.$tertiary900Text
+                    color: nameColor or colors.$bgText
                     isTouchTarget: false
                     size: '14px'
               if hasBadge
@@ -173,7 +173,7 @@ module.exports = class Message
                     icon: if user.gameStat.gameKey is 'fortnite' \
                           then 'win'
                           else 'trophy'
-                    color: colors.$tertiary900Text54
+                    color: colors.$bgText54
                     isTouchTarget: false
                     size: '16px'
 

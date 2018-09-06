@@ -14,7 +14,7 @@ module.exports = class PrimaryTextarea extends Textarea
         isDark: true
         colors:
           c200: colors.$tertiary200Text
-          c500: colors.$tertiary900Text
+          c500: colors.$bgText
           c600: colors.$tertiary600Text
           c700: colors.$tertiary500Text
           ink: colors.$tertiary500Text

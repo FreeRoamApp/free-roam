@@ -100,7 +100,7 @@ module.exports = class ThreadListItem
                 z '.icon',
                   z @$starIcon,
                     icon: 'star-tag'
-                    color: colors.$tertiary900Text
+                    color: colors.$bgText
                     isTouchTarget: false
                     size: '22px'
               z '.middot',
@@ -115,7 +115,7 @@ module.exports = class ThreadListItem
                   z @$commentsIcon,
                     icon: 'comment'
                     isTouchTarget: false
-                    color: colors.$tertiary900Text54
+                    color: colors.$bgText54
                     size: '14px'
 
               z '.points',
@@ -131,7 +131,7 @@ module.exports = class ThreadListItem
                     # anchor within anchor since it breaks
                     # server-side render
                     hasRipple: window?
-                    color: colors.$tertiary900Text54
+                    color: colors.$bgText54
                     size: '14px'
                     onclick: =>
                       @state.set hasVotedUp: true, hasVotedDown: false
@@ -151,7 +151,7 @@ module.exports = class ThreadListItem
                     # anchor within anchor since it breaks
                     # server-side render
                     hasRipple: window?
-                    color: colors.$tertiary900Text54
+                    color: colors.$bgText54
                     size: '14px'
                     onclick: =>
                       @state.set hasVotedUp: false, hasVotedDown: true

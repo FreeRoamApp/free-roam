@@ -102,7 +102,7 @@ module.exports = class MarkdownEditor
           },
             z $icon, {
               icon: icon
-              color: colors.$tertiary900Text
+              color: colors.$bgText
               onclick: =>
                 if onclick
                   onclick()

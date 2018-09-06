@@ -1,9 +1,8 @@
 z = require 'zorium'
-_map = require 'lodash/map'
 
 AppBar = require '../../components/app_bar'
 ButtonMenu = require '../../components/button_menu'
-Map = require '../../components/map'
+Places = require '../../components/places'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -17,7 +16,7 @@ module.exports = class PlacesPage
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
-    @$map = new Map {@model, @router}
+    @$places = new Places {@model, @router}
 
     @state = z.state
       me: @model.user.getMe()
@@ -40,5 +39,5 @@ module.exports = class PlacesPage
         style: 'primary'
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
       }
-      @$map
+      @$places
       @$bottomBar

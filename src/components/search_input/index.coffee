@@ -37,7 +37,7 @@ module.exports = class SearchInput
       @router.back()
     height ?= '36px'
     isFocused ?= _isFocused
-    bgColor ?= colors.$grey100
+    bgColor ?= colors.$tertiary100
     placeholder ?= @model.l.get 'searchInput.placeholder'
     hasOnClick = Boolean onclick
 
@@ -72,8 +72,8 @@ module.exports = class SearchInput
               #       then 'search'
               #       else 'close'
               color: if isSearchIconRight and not searchValue \
-                     then colors.$tertiary900Text54
-                     else colors.$tertiary900Text
+                     then colors.$bgText54
+                     else colors.$bgText
               touchHeight: height
               onclick: =>
                 onsubmit?()

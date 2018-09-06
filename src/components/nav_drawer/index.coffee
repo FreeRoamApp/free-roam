@@ -77,7 +77,7 @@ module.exports = class NavDrawer
       breakpoint: @model.window.getBreakpoint()
 
       menuItems: menuItemsInfo.map ([me, group, language]) =>
-        meGroupUser = group.meGroupUser
+        meGroupUser = group?.meGroupUser
 
         userAgent = @model.window.getUserAgent()
         needsApp = userAgent and
@@ -356,7 +356,7 @@ module.exports = class NavDrawer
                               touchHeight: '28px'
                               onclick: expand
                         if breakpoint is 'desktop'
-                          z $ripple
+                          z $ripple, {color: colors.$bgText54}
                       if hasChildren and isExpanded
                         z 'ul.children',
                           _map children, (child) ->

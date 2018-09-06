@@ -14,7 +14,7 @@ html, body
 body
   font-body1()
   -webkit-tap-highlight-color: transparent
-  background: getColor('$tertiary900')
+  background: getColor('$tertiary300')
   padding-top: constant(safe-area-inset-top)
   padding-top: env(safe-area-inset-top)
 
@@ -64,7 +64,7 @@ a
 
 input::placeholder
   font-body1()
-  color: getColor('$tertiary900Text54')
+  color: getColor('$bgText54')
 
 // hack for chrome yellow input for autocomplete
 input:-webkit-autofill,
@@ -72,7 +72,7 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active
   transition: background-color 5000s ease-in-out 0s
-  -webkit-text-fill-color: white !important
+  -webkit-text-fill-color: getColor('$bgText87') !important
 
 @media (min-width: $breakPointMedium)
   &::-webkit-scrollbar

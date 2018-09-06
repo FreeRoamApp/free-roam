@@ -147,5 +147,5 @@ module.exports = class ConversationInputTextarea
               icon: 'send'
               hasRipple: true
               color: if hasText and not isPostLoading \
-                     then colors.$tertiary900Text
-                     else colors.$tertiary900Text54
+                     then colors.$bgText
+                     else colors.$bgText54
