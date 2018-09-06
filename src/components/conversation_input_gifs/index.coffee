@@ -66,7 +66,7 @@ module.exports = class ConversationInputGifs
       z @$searchInput, {
         isSearchIconRight: true
         height: '36px'
-        bgColor: colors.$tertiary500
+        bgColor: colors.$tertiary100
         placeholder: @model.l.get 'conversationInputGifs.hintText'
       }
       z '.gifs', {

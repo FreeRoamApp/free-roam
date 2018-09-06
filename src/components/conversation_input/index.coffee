@@ -170,8 +170,8 @@ module.exports = class ConversationInput
                   @currentPanel.next panel
                 icon: icon
                 color: if currentPanel is panel \
-                       then colors.$tertiary900Text
-                       else colors.$tertiary900Text54
+                       then colors.$bgText
+                       else colors.$bgText54
                 isTouchTarget: true
                 hasRipple: true
                 touchWidth: '36px'

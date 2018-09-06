@@ -33,8 +33,8 @@ module.exports = class TabsBar
     {selectedIndex} = @state.getValue()
 
     bgColor ?= colors.$tertiary700
-    inactiveColor ?= colors.$tertiary900Text54
-    color ?= colors.$tertiary900Text
+    inactiveColor ?= colors.$bgText54
+    color ?= colors.$bgText
     underlineColor ?= colors.$primary500
 
     isFullWidth = not tabWidth

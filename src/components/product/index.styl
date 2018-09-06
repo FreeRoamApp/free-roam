@@ -1,12 +1,12 @@
 @require '../../vars'
 
 .z-product
-  padding: 16px
   flex: 1
   overflow: auto
   -webkit-overflow-scrolling: touch
 
-  > .g-grid
+  > .image-wrapper
+    background: getColor('$white')
 
     > .image
       width: 100%
@@ -16,19 +16,23 @@
       background-repeat: no-repeat
       background-position: center center
 
-    > .actions
-      margin: 20px 0
+  > .content
+    padding: 16px
+    > .g-grid
 
-    > .name
-      font-h2()
-      margin-bottom: 8px
+      > .actions
+        margin: 20px 0
 
-    > .description
-      font-body1()
+      > .name
+        font-h2()
+        margin-bottom: 8px
 
-    > .title
-      font-title()
-      margin-top: 16px
+      > .description
+        font-body1()
+
+      > .title
+        font-title()
+        margin-top: 16px
 
   // @media (min-width: $breakPointMedium)
   //   > .g-grid

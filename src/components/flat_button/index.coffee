@@ -13,7 +13,7 @@ module.exports = class FlatButton extends Button
       super _defaultsDeep opts, {
         isFullWidth: true
         colors:
-          cText: colors.$tertiary900Text
+          cText: colors.$bgText
           # c200: colors.$grey100
           # c500: colors.$white
           # c600: colors.$grey200

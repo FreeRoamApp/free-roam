@@ -5,10 +5,10 @@ materialColors = require './material_colors'
 
 colors = _defaults {
   default:
-    '--header-500': '#FAF3E5' # t500
-    '--header-500-text': materialColors.$black
+    '--header-500': '#ffffff' # t100
+    '--header-500-text': '#C74800' # p500 materialColors.$black
     '--header-500-text-54': materialColors.$black54
-    '--header-500-icon': '#D25A00' # p500
+    '--header-500-icon': materialColors.$black
 
     '--primary-50': '#FAEBE0'
     '--primary-100': '#F2CEB3'
@@ -51,17 +51,29 @@ colors = _defaults {
     '--secondary-800-text': materialColors.$black
     '--secondary-900-text': materialColors.$black
 
-    '--tertiary-50': '#FEFEFC'
-    '--tertiary-100': '#FEFBF7'
-    '--tertiary-200': '#FDF9F2'
-    '--tertiary-300': '#FCF7ED'
-    '--tertiary-400': '#FBF5E9'
-    '--tertiary-500': '#FAF3E5'
-    '--tertiary-600': '#F9F1E2'
-    '--tertiary-700': '#F9EFDE'
-    '--tertiary-800': '#F8EDDA'
-    '--tertiary-900': '#FFFFFF'
-    # '--tertiary-900': '#F6EAD'
+    # '--tertiary-50': '#FEFEFC'
+    # '--tertiary-100': '#FEFBF7'
+    # '--tertiary-200': '#FDF9F2'
+    # '--tertiary-300': '#FCF7ED'
+    # '--tertiary-400': '#FBF5E9'
+    # '--tertiary-500': '#FAF3E5'
+    # '--tertiary-600': '#F9F1E2'
+    # '--tertiary-700': '#F9EFDE'
+    # '--tertiary-800': '#F8EDDA'
+    # '--tertiary-900': '#FFFFFF'
+
+    # '--tertiary-50': '#FAF1E0 '
+    '--tertiary-100': '#ffffff'
+    '--tertiary-200': '#FBF5E8'
+    '--tertiary-300': '#f0efed'
+    '--tertiary-400': '#FCF7ED'
+    '--tertiary-500': '#FCF8F0'
+    '--tertiary-600': '#FDF9F2'
+    '--tertiary-700': '#FEFBF6'
+    # '--tertiary-800': '#FEFDFA'
+    '--tertiary-900': '#f0f0f0'
+
+
     '--tertiary-100-text': materialColors.$black
     '--tertiary-200-text': materialColors.$black
     '--tertiary-300-text': materialColors.$black
@@ -72,15 +84,15 @@ colors = _defaults {
     '--tertiary-700-text': materialColors.$black
     '--tertiary-800-text': materialColors.$black
     '--tertiary-900-text': materialColors.$black
-    '--tertiary-900-text-6': 'rgba(0, 0, 0, 0.06)'
-    '--tertiary-900-text-12': materialColors.$black12
-    '--tertiary-900-text-54': materialColors.$black54
+
+    '--bg-text': '#B62E00' # primary900
+    '--bg-text-6': 'rgba(0, 0, 0, 0.06)'
+    '--bg-text-12': materialColors.$black12
+    '--bg-text-54': materialColors.$black54
+    '--bg-text-70': materialColors.$black70
+    '--bg-text-87': materialColors.$black87
 
     '--test-color': '#000' # don't change
-
-
-
-
 
 
 
@@ -135,7 +147,9 @@ colors = _defaults {
   '$tertiary50': 'var(--tertiary-50)'
   '$tertiary100': 'var(--tertiary-100)'
   '$tertiary200': 'var(--tertiary-200)'
-  '$tertiary900Text54': 'var(--tertiary-300)'
+
+  '$tertiary300': 'var(--tertiary-300)'
+
   '$tertiary400': 'var(--tertiary-400)'
   '$tertiary500': 'var(--tertiary-500)'
   '$tertiary600': 'var(--tertiary-600)'
@@ -146,7 +160,7 @@ colors = _defaults {
   '$tertiary90054': 'var(--tertiary-90054)'
   '$tertiary100Text': 'var(--tertiary-100-text)'
   '$tertiary200Text': 'var(--tertiary-200-text)'
-  '$tertiary900Text54Text': 'var(--tertiary-300-text)'
+  '$tertiary300Text': 'var(--tertiary-300-text)'
   '$tertiary400Text': 'var(--tertiary-400-text)'
   '$tertiary500Text': 'var(--tertiary-500-text)'
   '$tertiary500Text70': 'var(--tertiary-500-text-70)'
@@ -154,9 +168,14 @@ colors = _defaults {
   '$tertiary700Text': 'var(--tertiary-700-text)'
   '$tertiary800Text': 'var(--tertiary-800-text)'
   '$tertiary900Text': 'var(--tertiary-900-text)'
-  '$tertiary900Text6': 'var(--tertiary-900-text-6)'
-  '$tertiary900Text12': 'var(--tertiary-900-text-12)'
-  '$tertiary900Text54': 'var(--tertiary-900-text-54)'
+
+
+  '$bgText': 'var(--bg-text)'
+  '$bgText6': 'var(--bg-text-6)'
+  '$bgText12': 'var(--bg-text-12)'
+  '$bgText54': 'var(--bg-text-54)'
+  '$bgText70': 'var(--bg-text-70)'
+  '$bgText87': 'var(--bg-text-87)'
 
   '$quaternary500': '#ff7b45'
 
@@ -177,13 +196,6 @@ colors = _defaults {
 
   '$transparent': 'rgba(0, 0, 0, 0)'
   '$common': '#3e4447'
-  '$rare': materialColors.$blue500
-  '$epic': materialColors.$purple500
-  '$legendary': materialColors.$orange500
-  '$commonText': materialColors.$white
-  '$rareText': materialColors.$white
-  '$epicText': materialColors.$white
-  '$legendaryText': materialColors.$white
 
   getRawColor: (color) ->
     if typeof color is 'string' and matches = color.match(/\(([^)]+)\)/)

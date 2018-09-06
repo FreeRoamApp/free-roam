@@ -194,7 +194,7 @@ module.exports = class ThreadComment
               # z @$threadReplyIcon,
               #   icon: 'reply'
               #   isTouchTarget: false
-              #   color: colors.$tertiary900Text
+              #   color: colors.$bgText
           z '.points',
             z '.icon',
               z @$upvoteButton, {
@@ -202,7 +202,7 @@ module.exports = class ThreadComment
                 hasVoted: hasVotedUp
                 parent: voteParent
                 isTouchTarget: false
-                color: colors.$tertiary900Text54
+                color: colors.$bgText54
                 size: '14px'
               }
 
@@ -214,7 +214,7 @@ module.exports = class ThreadComment
                 hasVoted: hasVotedDown
                 parent: voteParent
                 isTouchTarget: false
-                color: colors.$tertiary900Text54
+                color: colors.$bgText54
                 size: '14px'
               }
 
