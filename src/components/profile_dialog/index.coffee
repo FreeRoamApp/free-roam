@@ -20,7 +20,10 @@ if window?
 module.exports = class ProfileDialog
   constructor: (options) ->
     {@model, @router, @selectedProfileDialogUser, group} = options
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        @selectedProfileDialogUser.next null
+    }
     @$avatar = new Avatar()
 
     @$profileIcon = new Icon()
@@ -382,8 +385,6 @@ module.exports = class ProfileDialog
 
     z '.z-profile-dialog', {className: z.classKebab {isVisible: me and user}},
       z @$dialog,
-        onLeave: =>
-          @selectedProfileDialogUser.next null
         $content:
           z '.z-profile-dialog_dialog', {
             style:

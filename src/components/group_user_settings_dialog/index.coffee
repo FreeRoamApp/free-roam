@@ -35,7 +35,10 @@ module.exports = class GroupUserSettingsDialog
 
     me = @model.user.getMe()
     @$leaveIcon = new Icon()
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        @overlay$.next null
+    }
 
     groupAndMe = RxObservable.combineLatest(group, me, (vals...) -> vals)
 
@@ -92,8 +95,6 @@ module.exports = class GroupUserSettingsDialog
     z '.z-group-user-settings-dialog',
       z @$dialog,
         isVanilla: true
-        onLeave: =>
-          @overlay$.next null
         # $title: @model.l.get 'general.filter'
         $content:
           z '.z-group-user-settings-dialog_dialog',

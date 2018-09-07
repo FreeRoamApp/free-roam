@@ -87,6 +87,9 @@
   "drawer.menuItemNeedsApp": "Get the app",
   "drawer.privateMessages": "Private Messages",
   "drawer.productGuide": "Product guide",
+  "roadDifficulty.label": "Select the maximum difficulty you are ok with",
+  "roadDifficulty.minFlavorText": "Grandma Jean could drive it in her Prius",
+  "roadDifficulty.maxFlavorText": "Ain't happening without a lifted 4x4",
   "filterThreadsDialog.sortPopular": "Popular",
   "filterThreadsDialog.sortNew": "New",
   "filterThreadsDialog.filterAll": "All",
@@ -195,6 +198,9 @@
   "permissions.pinForumThread": "Pin thread",
   "permissions.addXp": "Add XP",
 
+  "campground.cellSignal": "Cell signal",
+  "campground.crowds": "Crowds",
+  "campground.roadDifficulty": "Road difficulty",
 
   "error.usernameTaken": "Username is taken",
   "error.invalid": "Invalid",

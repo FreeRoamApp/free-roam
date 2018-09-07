@@ -53,7 +53,10 @@ module.exports = class GroupManageRoles
     @$groupRolePermissions = new GroupRolePermissions {
       @model, @router, group, permissionTypes, onSave: @save
     }
-    @$newRoleDialog = new Dialog()
+    @$newRoleDialog = new Dialog {
+    onLeave: =>
+      @state.set isNewRoleDialogVisible: false
+    }
     @newRoleNameValue = new RxBehaviorSubject ''
     @$newRoleInput = new PrimaryInput {value: @newRoleNameValue}
 
@@ -101,8 +104,6 @@ module.exports = class GroupManageRoles
             z '.z-group-manage-roles_new-role-dialog',
               z @$newRoleInput,
                 hintText: @model.l.get 'general.name'
-          onLeave: =>
-            @state.set isNewRoleDialogVisible: false
           cancelButton:
             text: @model.l.get 'general.cancel'
             onclick: =>

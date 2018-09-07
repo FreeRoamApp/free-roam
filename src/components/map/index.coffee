@@ -12,14 +12,19 @@ if window?
 module.exports = class Map
   type: 'Widget'
 
-  constructor: ({@model, @router, item}) ->
+  constructor: ({@model, @router, @places, @setFilterByField}) ->
     window?.openLink = (url) => # for map tooltips
       @model.portal.call 'browser.openWindow', {url, target: '_system'}
 
     @state = z.state
       windowSize: @model.window.getSize()
 
+  getClosestPixelRatio: ->
+    if window.devicePixelRatio > 1.5 then 2 else 1
+
   afterMount: (@$$el) =>
+    pixelRatio = @getClosestPixelRatio()
+
     # TODO update after this is resolved
     # https://github.com/mapbox/mapbox-gl-js/issues/6722
     @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.css'
@@ -28,40 +33,57 @@ module.exports = class Map
       @map = new mapboxgl.Map {
         container: @$$el
         style: tile
-        center: [-98.5795, 39.8283]
+        center: [-109.283071, 34.718803]
         zoom: 4
       }
 
       @map.on 'load', =>
-        @map.addLayer {
-          id: 'places'
-          type: 'circle'
-          source:
-            type: 'geojson'
-            data:
-              type: 'FeatureCollection'
-              features: []
-          # could use symbol, but need spritesheet
-          # https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
-          # could also do the name of rv park to right of symbol
-          paint:
-            'circle-color': colors.getRawColor colors.$primary500
-            # invis stroke to make tap target bigger
-            'circle-stroke-color': '#ffffff'
-            'circle-stroke-width': {
-              # 20px @ zoom 8, 20px @ zoom 11, 20px @ zoom 16
-              stops: [[8, 20], [11, 20], [16, 20]]
-            }
-            'circle-stroke-opacity': 0
-            'circle-radius': {
-              # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
-              stops: [[8, 3], [11, 10], [16, 50]]
-            }
-        }
+        markerSrc = "#{config.CDN_URL}/maps/markers/default@#{pixelRatio}x.png"
+        console.log @map.getStyle().layers
+        @map.loadImage markerSrc, (err, image) =>
+          @map.addImage 'marker', image, {pixelRatio: pixelRatio}
+          @resizeSubscription = @model.window.getSize().subscribe =>
+            setImmediate =>
+              @map.resize()
+          @map.addLayer {
+            id: 'places'
+            type: 'symbol'
+            source:
+              type: 'geojson'
+              data:
+                type: 'FeatureCollection'
+                features: []
+            # need spritesheet for symbols.
+            # eg. https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
+            # keep in mind these don't use svgs...
+            # could also do the name of rv park to right of symbol
 
-        @updateMarkers()
+            layout:
+              # there is a bug where markers don't show if zoomed in on another area then zoom out.
+              # not sure how to fix
+              'icon-image': 'marker' # uses spritesheet defined in tilejson.coffee
+              'icon-allow-overlap': true
+              'icon-size': 1
+              'icon-anchor': 'bottom'
 
-      @map.on 'moveend', @updateMarkers
+              'text-field': '{title}'
+              'text-optional': true
+              'text-anchor': 'bottom-left'
+              'text-size': 12
+              'text-font': ['Klokantech Noto Sans Regular'] # must exist in tilejson
+
+            paint:
+              'text-translate': [12, -4]
+              'text-halo-color': 'rgba(255, 255, 255, 1)'
+              'text-halo-width': 2
+              #  # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
+              #  stops: [[8, 3], [11, 10], [16, 50]]
+          }
+
+          @updateMapBounds()
+          @subscribeToPlaces()
+
+      @map.on 'moveend', @updateMapBounds
 
       @map.addControl new mapboxgl.GeolocateControl {
         positionOptions:
@@ -77,7 +99,7 @@ module.exports = class Map
         # over the copy being pointed to.
         while Math.abs(e.lngLat.lng - (coordinates[0])) > 180
           coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
-        (new (mapboxgl.Popup)).setLngLat(coordinates).setHTML(description).addTo @map
+        (new mapboxgl.Popup({offset: 25})).setLngLat(coordinates).setHTML(description).addTo @map
 
       # Change the cursor to a pointer when the mouse is over the places layer.
       @map.on 'mouseenter', 'places', =>
@@ -89,19 +111,12 @@ module.exports = class Map
 
     , 3000
 
-  updateMarkers: =>
-    @model.place.search {
-      query:
-        geo_bounding_box:
-          location:
-            top_left:
-              lat: @map.getBounds()._ne.lat
-              lon: @map.getBounds()._sw.lng
-            bottom_right:
-              lat: @map.getBounds()._sw.lat
-              lon: @map.getBounds()._ne.lng
-    }
-    .take(1).subscribe (places) =>
+  beforeUnmount: =>
+    @disposable?.unsubscribe()
+    @resizeSubscription?.unsubscribe()
+
+  subscribeToPlaces: =>
+    @disposable = @places.subscribe (places) =>
       @map.getSource('places').setData {
         type: 'FeatureCollection'
         features: _map places, (place) ->
@@ -109,6 +124,7 @@ module.exports = class Map
           {
             type: 'Feature'
             properties:
+              title: place.name
               description: "<strong>#{place.name}</strong><br><div><a href='#{directionsUrl}' target='_system' onclick='openLink(\"#{directionsUrl}\")'>Get directions</a></div>"
             geometry:
               type: 'Point'
@@ -117,16 +133,10 @@ module.exports = class Map
                 place.location.lat
               ]
           }
-        # could use symbol, but need spritesheet
-        # https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
-        # could also do the name of rv park to right of symbol
-        # paint:
-        #   'circle-color': '#000000'
-        #   'circle-radius': {
-        #     # 1px @ zoom 8, 6px @ zoom 11, 40px @ zoom 16
-        #     stops: [[8, 2], [11, 8], [16, 40]]
-        #   }
       }
+
+  updateMapBounds: =>
+    @setFilterByField 'location', @map.getBounds()
 
   render: =>
     {item, products, windowSize} = @state.getValue()

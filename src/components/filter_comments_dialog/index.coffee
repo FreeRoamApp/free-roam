@@ -15,7 +15,10 @@ module.exports = class FilterCommentsDialog
   constructor: ({@model, @overlay$, @filter}) ->
     @selectedSort = new RxBehaviorSubject 'popular'
 
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        @overlay$.next null
+    }
 
     @state = z.state
       selectedSort: @selectedSort
@@ -41,8 +44,6 @@ module.exports = class FilterCommentsDialog
     z '.z-filter-comments-dialog',
       z @$dialog,
         isVanilla: true
-        onLeave: =>
-          @overlay$.next null
         # $title: @model.l.get 'general.filter'
         $content:
           z '.z-filter-comments-dialog_dialog',

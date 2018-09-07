@@ -9,7 +9,10 @@ if window?
 
 module.exports = class GetAppDialog
   constructor: ({@model, group}) ->
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        @model.getAppDialog.close()
+    }
 
     @state = z.state
       group: group
@@ -23,8 +26,6 @@ module.exports = class GetAppDialog
     z '.z-get-app-dialog',
       z @$dialog,
         isVanilla: true
-        onLeave: =>
-          @model.getAppDialog.close()
         $title: group?.name
         $content:
           z '.z-get-app-dialog_dialog',
