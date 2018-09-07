@@ -14,7 +14,10 @@ if window?
 
 module.exports = class SetLanguageDialog
   constructor: ({@model, @router, @overlay$}) ->
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        @overlay$.next null
+    }
 
     @languageStreams = new RxReplaySubject null
     @languageStreams.next @model.l.getLanguage()
@@ -30,8 +33,6 @@ module.exports = class SetLanguageDialog
       z @$dialog,
         isVanilla: true
         isWide: true
-        onLeave: =>
-          @overlay$.next null
         $title: @model.l.get 'setLanguageDialog.title'
         $content:
           z '.z-set-language-dialog_dialog',

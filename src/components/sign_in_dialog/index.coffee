@@ -36,7 +36,9 @@ module.exports = class SignInDialog
     @$submitButton = new FlatButton()
     @$cancelButton = new FlatButton()
 
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: @cancel
+    }
 
     @state = z.state
       mode: @model.signInDialog.getMode()
@@ -114,7 +116,6 @@ module.exports = class SignInDialog
 
     z '.z-sign-in-dialog',
       z @$dialog,
-        onLeave: @cancel
         $content:
           z '.z-sign-in-dialog_dialog',
             z '.header',

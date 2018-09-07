@@ -1,7 +1,41 @@
 @require '../../vars'
 
-.z-items
-  padding: 16px
+.z-places
   flex: 1
-  overflow: auto
-  -webkit-overflow-scrolling: touch
+  display: flex
+  flex-direction: column
+
+  > .filters
+    background: getColor('$tertiary300')
+    white-space: nowrap
+    overflow-x: auto
+    -webkit-overflow-scrolling: touch
+
+    > .filter
+      font-caption1(false)
+      cursor: pointer
+      display: inline-block
+      background: getColor('$tertiary100')
+      border: 1px solid getColor('$tertiary100')
+      padding: 0 8px
+      border-radius: 10px
+      margin: 8px 4px
+      position: relative
+
+      &.has-value
+        border: 1px solid getColor('$primary500')
+
+      &.has-more
+        padding-right: 24px
+
+        &:after
+          content: ''
+          position: absolute
+          top: 50%
+          margin-top: -2px
+          right: 8px
+          width: 0
+          height: 0
+          border-left: 4px solid transparent
+          border-right: 4px solid transparent
+          border-top: 4px solid getColor('$primary500')

@@ -17,7 +17,10 @@ module.exports = class FilterThreadsDialog
     @selectedSort = new RxBehaviorSubject 'popular'
     @selectedFilter = new RxBehaviorSubject 'all'
 
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        @isVisible.next false
+    }
 
     @state = z.state
       group: group
@@ -46,8 +49,6 @@ module.exports = class FilterThreadsDialog
     z '.z-filter-threads-dialog',
       z @$dialog,
         isVanilla: true
-        onLeave: =>
-          @isVisible.next false
         # $title: @model.l.get 'general.filter'
         $content:
           z '.z-filter-threads-dialog_dialog',

@@ -56,12 +56,12 @@ module.exports = class BottomBar
         route: @model.group.getPath group, 'groupForum', {@router}
         text: @model.l.get 'general.forum'
       }
-      # {
-      #   $icon: new Icon()
-      #   icon: 'map'
-      #   route: @router.get 'places'
-      #   text: @model.l.get 'general.places'
-      # }
+      {
+        $icon: new Icon()
+        icon: 'map'
+        route: @router.get 'places'
+        text: @model.l.get 'general.places'
+      }
     ]
 
     z '.z-bottom-bar', {

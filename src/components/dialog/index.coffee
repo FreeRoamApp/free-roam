@@ -10,19 +10,32 @@ FlatButton = require '../flat_button'
 colors = require '../../colors'
 
 module.exports = class Dialog
-  constructor: ->
+  constructor: ({@onLeave} = {}) ->
+    @onLeave ?= (-> null)
     @$cancelButton = new FlatButton()
     @$submitButton = new FlatButton()
 
+  afterMount: =>
+    window.addEventListener 'keydown', @keyListener
+
+  beforeUnmount: =>
+    window.removeEventListener 'keydown', @keyListener
+
+  keyListener: (e) =>
+    if (e.key == 'Escape' or e.key == 'Esc' or e.keyCode == 27)
+      e.preventDefault()
+      @onLeave()
+
   render: (props) =>
     {$content, $title, cancelButton, submitButton, isVanilla,
-      isWide, onLeave} = props
+      isWide} = props
     $content ?= ''
-    onLeave ?= (-> null)
 
     z '.z-dialog', {className: z.classKebab {isVanilla, isWide}},
-      z '.backdrop', onclick: ->
-        onLeave()
+      z '.backdrop', {
+        onclick: =>
+          @onLeave()
+      }
 
       z '.dialog',
         z '.content',
