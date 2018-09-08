@@ -70,11 +70,6 @@ module.exports = class App
     routes = @model.window.getBreakpoint().map @getRoutes
             .publishReplay(1).refCount()
 
-    # setup for overlay pages (pages on top of other pages, eg 'place' over map)
-    routes.take(1).subscribe @router.setRoutes
-    @overlayPage$ = new RxBehaviorSubject null
-    @router.setOverlayPage$ @overlayPage$
-
     userAgent = @model.window.getUserAgent()
     isNativeApp = Environment.isMainApp 'freeroam', {userAgent}
 
@@ -108,6 +103,7 @@ module.exports = class App
       {req, route, $page: $page}
     .publishReplay(1).refCount()
 
+    # used for overlay pages
     @router.setRequests @requests
 
     @group = @requests.switchMap ({route}) =>
@@ -181,7 +177,6 @@ module.exports = class App
       $backupPage: $backupPage
       me: me
       $overlay: @overlay$
-      $overlayPage: @overlayPage$
       isOffline: isOffline
       addToHomeSheetIsVisible: addToHomeSheetIsVisible
       signInDialogIsOpen: @model.signInDialog.isOpen()
@@ -213,24 +208,19 @@ module.exports = class App
         _values @model.l.getAllPathsByRouteKey routeKey
 
       _map paths, (path) =>
-        routes.set path, ({requests, isOverlayed} = {}) =>
-          $page = null
-          if not @$cachedPages[pageKey] or isOverlayed
-            requests ?= @requests.filter ({$page}) ->
-              $page instanceof Page
-            $page = new Page({
+        routes.set path, =>
+          unless @$cachedPages[pageKey]
+            @$cachedPages[pageKey] = new Page({
               @model
               @router
               @serverData
               @overlay$
               @group
-              isOverlayed
               $bottomBar: if Page.hasBottomBar then @$bottomBar
-              requests
+              requests: @requests.filter ({$page}) ->
+                $page instanceof Page
             })
-            unless isOverlayed
-              @$cachedPages[pageKey] = $page
-          return $page or @$cachedPages[pageKey]
+          return @$cachedPages[pageKey]
 
     userAgent = @model.window.getUserAgent()
     isiOSApp = Environment.isiOS({userAgent}) and
@@ -271,7 +261,7 @@ module.exports = class App
   render: =>
     {request, $backupPage, $modal, me, hideDrawer
       installOverlayIsOpen, signInDialogIsOpen, signInDialogMode,
-      pushNotificationSheetIsOpen, getAppDialogIsOpen, $overlayPage
+      pushNotificationSheetIsOpen, getAppDialogIsOpen,
       addToHomeSheetIsVisible, $overlay, isOffline} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
@@ -281,7 +271,6 @@ module.exports = class App
     defaultInstallMessage = @model.l.get 'app.defaultInstallMessage'
 
     if @router.preservedRequest
-      console.log @router.preservedRequest, request
       $page = @router.preservedRequest?.$page
       $overlayPage = request?.$page
     else
