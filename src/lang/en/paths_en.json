@@ -24,6 +24,7 @@
   "item": "/item/:slug",
   "itemsByCategory": "/product-guides/:category",
   "itemsBySearch": "/product-guides/search/:query",
+  "place": "/place/:slug",
   "places": "/places",
   "partners": "/partners",
   "policies": "/policies",
