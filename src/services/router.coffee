@@ -25,11 +25,12 @@ isSimpleClick = (e) ->
 class RouterService
   constructor: ({@router, @model, @host}) ->
     @history = []
-    @routes = null
-    @overlayPage$
+    @requests = null
     @onBackFn = null
 
-  goPath: (path, {ignoreHistory, reset} = {}) =>
+  goPath: (path, {ignoreHistory, reset, keepPreserved} = {}) =>
+    unless keepPreserved
+      @preservedRequest = null
     unless ignoreHistory
       @history.push(path or window?.location.pathname)
 
@@ -57,24 +58,11 @@ class RouterService
     route
 
   goOverlay: (routeKey, replacements, options = {}) =>
-    # this method seems cleaner, but how does the page know it's in an overlay?
     @requests.take(1).subscribe (request) =>
       @preservedRequest = request
-      @go routeKey, replacements, options
+      @go routeKey, replacements, _defaults({keepPreserved: true}, options)
 
-      # FIXME: figure out requests... need to update that for page to get right place
-      # same goes for passing the right group to the overlaid page
-      # path = @get routeKey, replacements, options
-      # route = @routes.get path
-      # isOverlayed = true
-      # requests = RxObservable.of {route}
-      # $page = route.handler? {isOverlayed, requests}
-      # @overlayPage$.next $page
-      # history.pushState null, null, path
-
-  setRoutes: (@routes) => null
   setRequests: (@requests) => null
-  setOverlayPage$: (@overlayPage$) => null
 
   openLink: (url) =>
     isAbsoluteUrl = url?.match /^(?:[a-z-]+:)?\/\//i

@@ -28,5 +28,6 @@ module.exports = class Place
     z '.z-place',
       if place
         'place'
+        z '.map' # TODO. test 2 maps 1 page? or yelp style where you click on it. probs that
       else
         z @$spinner
