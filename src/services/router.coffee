@@ -5,6 +5,7 @@ _defaults = require 'lodash/defaults'
 _forEach = require 'lodash/forEach'
 _reduce = require 'lodash/reduce'
 _kebabCase = require 'lodash/kebabCase'
+RxObservable = require('rxjs/Observable').Observable
 Environment = require '../services/environment'
 
 SemverService = require '../services/semver'
@@ -24,6 +25,8 @@ isSimpleClick = (e) ->
 class RouterService
   constructor: ({@router, @model, @host}) ->
     @history = []
+    @routes = null
+    @overlayPage$
     @onBackFn = null
 
   goPath: (path, {ignoreHistory, reset} = {}) =>
@@ -53,6 +56,26 @@ class RouterService
       route = route.replace ":#{key}", value
     route
 
+  goOverlay: (routeKey, replacements, options = {}) =>
+    # this method seems cleaner, but how does the page know it's in an overlay?
+    @requests.take(1).subscribe (request) =>
+      @preservedRequest = request
+      @go routeKey, replacements, options
+
+      # FIXME: figure out requests... need to update that for page to get right place
+      # same goes for passing the right group to the overlaid page
+      # path = @get routeKey, replacements, options
+      # route = @routes.get path
+      # isOverlayed = true
+      # requests = RxObservable.of {route}
+      # $page = route.handler? {isOverlayed, requests}
+      # @overlayPage$.next $page
+      # history.pushState null, null, path
+
+  setRoutes: (@routes) => null
+  setRequests: (@requests) => null
+  setOverlayPage$: (@overlayPage$) => null
+
   openLink: (url) =>
     isAbsoluteUrl = url?.match /^(?:[a-z-]+:)?\/\//i
     freeRoamRegex = new RegExp "https?://(.*?)\.?(#{config.HOST})", 'i'
@@ -70,6 +93,7 @@ class RouterService
       }
 
   back: ({fromNative, fallbackPath} = {}) =>
+    @preservedRequest = null
     if @onBackFn
       fn = @onBackFn()
       @onBack null

@@ -50,6 +50,7 @@ Pages =
   HomePage: require './pages/home'
   ItemPage: require './pages/item'
   ItemsPage: require './pages/items'
+  PlacePage: require './pages/place'
   PlacesPage: require './pages/places'
   NewThreadPage: require './pages/new_thread'
   PartnersPage: require './pages/partners'
@@ -68,6 +69,11 @@ module.exports = class App
     @$cachedPages = []
     routes = @model.window.getBreakpoint().map @getRoutes
             .publishReplay(1).refCount()
+
+    # setup for overlay pages (pages on top of other pages, eg 'place' over map)
+    routes.take(1).subscribe @router.setRoutes
+    @overlayPage$ = new RxBehaviorSubject null
+    @router.setOverlayPage$ @overlayPage$
 
     userAgent = @model.window.getUserAgent()
     isNativeApp = Environment.isMainApp 'freeroam', {userAgent}
@@ -101,6 +107,8 @@ module.exports = class App
       isFirstRequest = false
       {req, route, $page: $page}
     .publishReplay(1).refCount()
+
+    @router.setRequests @requests
 
     @group = @requests.switchMap ({route}) =>
       host = @serverData?.req?.headers.host or window?.location?.host
@@ -173,6 +181,7 @@ module.exports = class App
       $backupPage: $backupPage
       me: me
       $overlay: @overlay$
+      $overlayPage: @overlayPage$
       isOffline: isOffline
       addToHomeSheetIsVisible: addToHomeSheetIsVisible
       signInDialogIsOpen: @model.signInDialog.isOpen()
@@ -201,25 +210,27 @@ module.exports = class App
         routeKeys = [routeKeys]
 
       paths = _flatten _map routeKeys, (routeKey) =>
-        # if routeKey is '404'
-        #   return _map languages, (lang) ->
-        #     if lang is 'en' then '/:gameKey/*' else "/#{lang}/:gameKey/*"
         _values @model.l.getAllPathsByRouteKey routeKey
 
       _map paths, (path) =>
-        routes.set path, =>
-          unless @$cachedPages[pageKey]
-            @$cachedPages[pageKey] = new Page({
+        routes.set path, ({requests, isOverlayed} = {}) =>
+          $page = null
+          if not @$cachedPages[pageKey] or isOverlayed
+            requests ?= @requests.filter ({$page}) ->
+              $page instanceof Page
+            $page = new Page({
               @model
               @router
               @serverData
               @overlay$
               @group
+              isOverlayed
               $bottomBar: if Page.hasBottomBar then @$bottomBar
-              requests: @requests.filter ({$page}) ->
-                $page instanceof Page
+              requests
             })
-          return @$cachedPages[pageKey]
+            unless isOverlayed
+              @$cachedPages[pageKey] = $page
+          return $page or @$cachedPages[pageKey]
 
     userAgent = @model.window.getUserAgent()
     isiOSApp = Environment.isiOS({userAgent}) and
@@ -245,6 +256,7 @@ module.exports = class App
     route 'home', 'GroupChatPage'
     route 'item', 'ItemPage'
     route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
+    route 'place', 'PlacePage'
     route 'places', 'PlacesPage'
     route 'partners', 'PartnersPage'
     route 'product', 'ProductPage'
@@ -259,17 +271,21 @@ module.exports = class App
   render: =>
     {request, $backupPage, $modal, me, hideDrawer
       installOverlayIsOpen, signInDialogIsOpen, signInDialogMode,
-      pushNotificationSheetIsOpen, getAppDialogIsOpen
+      pushNotificationSheetIsOpen, getAppDialogIsOpen, $overlayPage
       addToHomeSheetIsVisible, $overlay, isOffline} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
     isAndroid = Environment.isAndroid {userAgent}
     isNative = Environment.isNativeApp 'freeroam', {userAgent}
-    isPageAvailable = (me?.username or not request?.$page?.isPrivate)
     defaultInstallMessage = @model.l.get 'app.defaultInstallMessage'
 
-    $page = request?.$page or $backupPage
+    if @router.preservedRequest
+      console.log @router.preservedRequest, request
+      $page = @router.preservedRequest?.$page
+      $overlayPage = request?.$page
+    else
+      $page = request?.$page or $backupPage
 
     z 'html',
       z @$head, {meta: $page?.getMeta?()}
@@ -280,12 +296,9 @@ module.exports = class App
           z '.z-root',
             unless hideDrawer
               z @$navDrawer, {currentPath: request?.req.path}
-            z '.page',
-              # show page before me has loaded
-              if (not me or isPageAvailable) and request?.$page
-                request.$page
-              else
-                $backupPage
+
+            z '.page', {key: 'page'},
+              $page
 
             if signInDialogIsOpen
               z @$signInDialog, {mode: signInDialogMode}
@@ -306,6 +319,11 @@ module.exports = class App
                 gameName: 'free-roam'
                 onRate: =>
                   @model.portal.call 'app.rate'
+
+            if $overlayPage
+              z '.overlay-page', {key: 'overlay-page'},
+                z $overlayPage
+
             if $overlay
               # can be array of components or component
               z $overlay

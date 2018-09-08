@@ -9,6 +9,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
 Map = require '../../components/map'
+PlaceTooltip = require '../../components/place_tooltip'
 FilterDialog = require '../../components/filter_dialog'
 colors = require '../../colors'
 config = require '../../config'
@@ -30,15 +31,23 @@ module.exports = class Places
     placeType = RxObservable.of([]) # TODO
     @filters = @getFilters(placeType).publishReplay(1).refCount()
     places = @getPlacesStream()
+    @place = new RxBehaviorSubject null
+    @placePosition = new RxBehaviorSubject null
     @filterDialogField = new RxBehaviorSubject null
 
-    @$map = new Map {@model, @router, places, @setFilterByField}
+    @$map = new Map {
+      @model, @router, places, @setFilterByField, @place, @placePosition
+    }
+    @$placeTooltip = new PlaceTooltip {
+      @model, @router, @place, position: @placePosition
+    }
     @$filterDialog = new FilterDialog {
       @model, @router, @filterDialogField, @setFilterByField, @overlay$
     }
 
     @state = z.state
       filters: @filters
+      place: @place
       filterDialogField: @filterDialogField
 
   setFilterByField: (field, value) =>
@@ -127,7 +136,7 @@ module.exports = class Places
       }
 
   render: =>
-    {filters, filterDialogField} = @state.getValue()
+    {filters, filterDialogField, place} = @state.getValue()
 
     z '.z-places',
       z '.filters',
@@ -141,3 +150,6 @@ module.exports = class Places
             }, filter.name
 
       z @$map
+
+      if place
+        z @$placeTooltip

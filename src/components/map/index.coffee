@@ -12,10 +12,7 @@ if window?
 module.exports = class Map
   type: 'Widget'
 
-  constructor: ({@model, @router, @places, @setFilterByField}) ->
-    window?.openLink = (url) => # for map tooltips
-      @model.portal.call 'browser.openWindow', {url, target: '_system'}
-
+  constructor: ({@model, @router, @places, @setFilterByField, @place, @placePosition}) ->
     @state = z.state
       windowSize: @model.window.getSize()
 
@@ -39,7 +36,6 @@ module.exports = class Map
 
       @map.on 'load', =>
         markerSrc = "#{config.CDN_URL}/maps/markers/default@#{pixelRatio}x.png"
-        console.log @map.getStyle().layers
         @map.loadImage markerSrc, (err, image) =>
           @map.addImage 'marker', image, {pixelRatio: pixelRatio}
           @resizeSubscription = @model.window.getSize().subscribe =>
@@ -66,7 +62,7 @@ module.exports = class Map
               'icon-size': 1
               'icon-anchor': 'bottom'
 
-              'text-field': '{title}'
+              'text-field': '{name}'
               'text-optional': true
               'text-anchor': 'bottom-left'
               'text-size': 12
@@ -83,6 +79,7 @@ module.exports = class Map
           @updateMapBounds()
           @subscribeToPlaces()
 
+      @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapBounds
 
       @map.addControl new mapboxgl.GeolocateControl {
@@ -94,12 +91,18 @@ module.exports = class Map
       @map.on 'click', 'places', (e) =>
         coordinates = e.features[0].geometry.coordinates.slice()
         description = e.features[0].properties.description
+        slug = e.features[0].properties.slug
         # Ensure that if the map is zoomed out such that multiple
         # copies of the feature are visible, the popup appears
         # over the copy being pointed to.
         while Math.abs(e.lngLat.lng - (coordinates[0])) > 180
           coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
-        (new mapboxgl.Popup({offset: 25})).setLngLat(coordinates).setHTML(description).addTo @map
+        @place.next {
+          slug: slug
+          position: @map.project coordinates
+          location: coordinates
+        }
+        # (new mapboxgl.Popup({offset: 25})).setLngLat(coordinates).setHTML(description).addTo @map
 
       # Change the cursor to a pointer when the mouse is over the places layer.
       @map.on 'mouseenter', 'places', =>
@@ -120,12 +123,11 @@ module.exports = class Map
       @map.getSource('places').setData {
         type: 'FeatureCollection'
         features: _map places, (place) ->
-          directionsUrl = "https://maps.apple.com/?saddr=Current%20Location&daddr=#{place.location.lat},#{place.location.lon}"
           {
             type: 'Feature'
             properties:
-              title: place.name
-              description: "<strong>#{place.name}</strong><br><div><a href='#{directionsUrl}' target='_system' onclick='openLink(\"#{directionsUrl}\")'>Get directions</a></div>"
+              name: place.name
+              slug: place.slug
             geometry:
               type: 'Point'
               coordinates: [
@@ -135,10 +137,15 @@ module.exports = class Map
           }
       }
 
+  # update tooltip pos
+  onMapMove: =>
+    if place = @place.getValue()
+      @placePosition.next @map.project place.location
+
   updateMapBounds: =>
     @setFilterByField 'location', @map.getBounds()
 
   render: =>
-    {item, products, windowSize} = @state.getValue()
+    {windowSize} = @state.getValue()
 
     z '.z-map', {key: 'map'}

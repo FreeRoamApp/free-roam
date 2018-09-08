@@ -1,0 +1,22 @@
+@require '../../vars'
+
+.z-place-tooltip
+  position: absolute
+  z-index: 100
+  opacity: 0
+  background: getColor('$tertiary100')
+  max-width: 300px
+  // will-change: transform
+  // backface-visibility: hidden
+  // filter: blur(0.000001px)
+  transform: translateZ(0)
+
+
+
+  &.is-visible
+    opacity: 1
+
+  > .close
+    position: absolute
+    top: 0
+    right: 0
