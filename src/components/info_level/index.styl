@@ -1,0 +1,34 @@
+@require '../../vars'
+
+.z-info-level
+  > .bar
+    position: relative
+    margin: 8px 0
+    height: 8px
+    width: 100%
+    border-radius: 2px
+    background: linear-gradient(to right, getColor('$green50026') 0%, getColor('$red50026') 100%)
+
+    &.is-selector-right
+      > .selector
+        margin-left: -4px
+        margin-right: 0
+
+    > .selector
+      position: absolute
+      width: 8px
+      height: 16px
+      top: -4px
+      margin-right: -4px
+      background: getColor('$primary500')
+
+  > .bottom
+    display: flex
+
+    > .min, > .max
+      > .flavor-text
+        font-caption1()
+
+    > .max
+      margin-left: auto
+      text-align: right
