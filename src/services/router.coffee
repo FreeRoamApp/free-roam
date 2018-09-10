@@ -24,7 +24,7 @@ isSimpleClick = (e) ->
 
 class RouterService
   constructor: ({@router, @model, @host}) ->
-    @history = []
+    @history = if window? then [window.location.pathname] else []
     @requests = null
     @onBackFn = null
 

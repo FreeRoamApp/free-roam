@@ -63,7 +63,7 @@ module.exports = class Places
       filters.push {
         field: 'roadDifficulty'
         type: 'maxInt'
-        name: @model.l.get 'campground.roadDifficulty'
+        name: @model.l.get 'roadDifficulty.title'
         onclick: =>
           @filterDialogField.next 'roadDifficulty'
           @showFilterDialog()

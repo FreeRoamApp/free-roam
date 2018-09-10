@@ -42,6 +42,7 @@ module.exports = class PlacePage extends BasePage
     },
       z @$appBar, {
         title: place?.name
+        isFlat: true
         style: 'primary'
         $topLeftButton: z @$buttonBack, {
           @isOverlayed, color: colors.$header500Icon

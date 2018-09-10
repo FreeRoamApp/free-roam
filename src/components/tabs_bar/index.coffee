@@ -32,7 +32,7 @@ module.exports = class TabsBar
       isFlat, tabWidth} = props
     {selectedIndex} = @state.getValue()
 
-    bgColor ?= colors.$tertiary700
+    bgColor ?= colors.$tertiary100
     inactiveColor ?= colors.$bgText54
     color ?= colors.$bgText
     underlineColor ?= colors.$primary500

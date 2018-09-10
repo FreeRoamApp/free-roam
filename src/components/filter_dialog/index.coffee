@@ -32,7 +32,7 @@ module.exports = class FilterDialog
 
     switch filterDialogField
       when 'roadDifficulty'
-        $title = @model.l.get 'campground.roadDifficulty'
+        $title = @model.l.get 'roadDifficulty.title'
         $content = z @$inputRange, {
           label: @model.l.get 'roadDifficulty.label'
           minFlavorText: @model.l.get 'roadDifficulty.minFlavorText'
