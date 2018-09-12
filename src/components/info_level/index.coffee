@@ -6,24 +6,27 @@ if window?
   require './index.styl'
 
 module.exports = class InfoLevel
-  constructor: ({@model, @router}) ->
-    # @state = z.state {}
+  constructor: ({@model, @router, key}) ->
+    @state = z.state {key}
 
-  render: ({value, min, max, minFlavorText, maxFlavorText}) =>
-    # {} = @state.getValue()
+  render: ({value, min, max}) =>
+    {key} = @state.getValue()
 
-    selectorOffsetLeft = Math.floor(100 * value / (max - min))
-    isSelectorRight = selectorOffsetLeft > 50
+    value ?= 1
+
+    fillWidth = Math.floor(100 * (value - 1) / (max - min))
+    fillWidth = Math.max(fillWidth, 4)
+
+    # TODO: just 1 flavor text. can either have in lang, or returned from db with embed...
 
     z '.z-info-level',
-      z '.bar', {className: z.classKebab {isSelectorRight}},
-        z '.selector',
+      z '.flavor-text', @model.l.get "levelText.#{key}#{value}"
+      z '.bar',
+        z ".fill.has-#{value}",
           style:
-            left: "#{selectorOffsetLeft}%"
+            width: "#{fillWidth}%"
       z '.bottom',
         z '.min',
           "#{min}"
-          z '.flavor-text', minFlavorText
         z '.max',
           "#{max}"
-          z '.flavor-text', maxFlavorText

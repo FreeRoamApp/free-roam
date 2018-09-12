@@ -1,33 +1,50 @@
 @require '../../vars'
 
 .z-info-level
+  > .flavor-text
+    margin: 8px 0
+
   > .bar
     position: relative
     margin: 8px 0
     height: 8px
     width: 100%
-    border-radius: 2px
-    background: linear-gradient(to right, getColor('$green50026') 0%, getColor('$red50026') 100%)
+    border-radius: 4px
+    background: getColor('$bg700')
 
-    &.is-selector-right
-      > .selector
-        margin-left: -4px
-        margin-right: 0
-
-    > .selector
+    > .fill
       position: absolute
-      width: 8px
-      height: 16px
-      top: -4px
-      margin-right: -4px
+      height: 100%
+      border-radius: 4px
       background: getColor('$primary500')
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1)
+
+      // transition transform should be faster, but has weird quirks
+      // (font blurriness, problems with border-radius)
+      // width: 1% // increased and decreased with scale
+      // transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)
+      // transform-origin: left
+
+      &.has-1
+        background: getColor('$green500')
+
+      &.has-2
+        background: getColor('$green500')
+
+      &.has-3
+        background: getColor('$yellow500')
+
+      &.has-4
+        background: getColor('$red500')
+
+      &.has-5
+        background: getColor('$red500')
 
   > .bottom
     display: flex
 
     > .min, > .max
-      > .flavor-text
-        font-caption1()
+      font-title2()
 
     > .max
       margin-left: auto

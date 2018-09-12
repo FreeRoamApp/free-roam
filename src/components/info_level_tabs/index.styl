@@ -1,0 +1,18 @@
+@require '../../vars'
+
+.z-info-level-tabs
+  > .tabs
+    display: flex
+    background: getColor('$tertiary100')
+    border: 1px solid getColor('$bg700')
+    border-radius: 4px
+
+    > .tab
+      cursor: pointer
+      flex: 1
+      text-align: center
+      padding: 4px 0
+
+      &.is-selected
+        background: getColor('$tertiary500')
+        font-title()

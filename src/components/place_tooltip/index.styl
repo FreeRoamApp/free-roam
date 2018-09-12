@@ -1,17 +1,76 @@
 @require '../../vars'
 
 .z-place-tooltip
+  shadow-1()
   position: absolute
   z-index: 100
   opacity: 0
   background: getColor('$tertiary100')
-  max-width: 300px
+  max-width: 220px
   will-change: transform
+  padding: 16px
+  box-sizing: border-box
+  cursor: pointer
+  display: block
+
+  // @media (min-width: $breakPointMedium)
+  //   max-width: 300px
+
+  &::after
+    content: ''
+    position: absolute
+    border: 10px solid transparent
+
+  &.anchor-top-center
+    margin-top: 50px
+    &::after
+      left: 50%
+      top: -10px
+      margin-left: -10px
+      border-top: none
+      // border-left: none
+      border-bottom-color: #fff
+
+  &.anchor-bottom-center
+    margin-top: 8px
+    &::after
+      left: 50%
+      bottom: -10px
+      margin-left: -10px
+      border-bottom: none
+      border-top-color: #fff
+
+  &.anchor-center-left
+    margin-left: 10px
+    margin-top: 36px
+
+    &::after
+      top: 50%
+      left: -10px
+      margin-top: -10px
+      border-left: none
+      border-right-color: #fff
+
+  &.anchor-center-right
+    margin-left: -10px
+    margin-top: 36px
+
+    &::after
+      top: 50%
+      right: -10px
+      margin-top: -10px
+      border-right: none
+      border-left-color: #fff
 
   &.is-visible
     opacity: 1
 
   > .close
     position: absolute
-    top: 0
-    right: 0
+    top: 4px
+    right: 4px
+
+  > .title
+    font-title()
+
+  // > .rating
