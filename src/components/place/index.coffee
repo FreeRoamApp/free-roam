@@ -5,7 +5,7 @@ _map = require 'lodash/map'
 
 Fab = require '../fab'
 Icon = require '../icon'
-PlaceInfo = require '../place_info'
+CampgroundInfo = require '../campground_info'
 PlaceReviews = require '../place_reviews'
 Tabs = require '../tabs'
 colors = require '../../colors'
@@ -21,7 +21,7 @@ module.exports = class Place
     @$fab = new Fab()
     @$addIcon = new Icon()
     @$tabs = new Tabs {@model}
-    @$placeInfo = new PlaceInfo {@model, @router, place}
+    @$placeInfo = new CampgroundInfo {@model, @router, place}
     @$placeReviews = new PlaceReviews {@model, @router, place}
 
     @state = z.state

@@ -1,7 +1,7 @@
 config = require '../config'
 
-module.exports = class Place
-  namespace: 'places'
+module.exports = class Campground
+  namespace: 'campgrounds'
 
   constructor: ({@auth}) -> null
 

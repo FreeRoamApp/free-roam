@@ -34,12 +34,14 @@ module.exports = class Places
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
     @filterDialogField = new RxBehaviorSubject null
+    @mapSize = new RxBehaviorSubject null
 
     @$map = new Map {
-      @model, @router, places, @setFilterByField, @place, @placePosition
+      @model, @router, places, @setFilterByField
+      @place, @placePosition, @mapSize
     }
     @$placeTooltip = new PlaceTooltip {
-      @model, @router, @place, position: @placePosition
+      @model, @router, @place, position: @placePosition, @mapSize
     }
     @$filterDialog = new FilterDialog {
       @model, @router, @filterDialogField, @setFilterByField, @overlay$
@@ -70,7 +72,7 @@ module.exports = class Places
         valueSubject: new RxBehaviorSubject null
       }
       filters.push {
-        field: 'crowdLevel'
+        field: 'crowds'
         type: 'maxInt'
         name: @model.l.get 'campground.crowds'
         onclick: => null
@@ -129,7 +131,8 @@ module.exports = class Places
                     lon: filter.value._ne.lng
             }
 
-      @model.place.search {
+      # TODO: place model
+      @model.campground.search {
         query:
           bool:
             filter: filter

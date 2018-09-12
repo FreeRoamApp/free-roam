@@ -28,6 +28,7 @@ module.exports = class Tabs
   afterMount: (@$$el) =>
     checkIsReady = =>
       $$container = @$$el?.querySelector('.z-tabs > .content > .tabs-scroller')
+      console.log 'tabs', $$container.clientWidth
       if $$container and $$container.clientWidth
         @initIScroll $$container
       else
@@ -65,7 +66,7 @@ module.exports = class Tabs
       scrollY: false
       eventPassthrough: true
       bounce: false
-      snap: '.tab'
+      snap: '.iscroll-tab'
       deceleration: 0.002
     }
 
@@ -170,7 +171,7 @@ module.exports = class Tabs
               # webkitTransform: "translate(#{x}px, 0px) translateZ(0px)"
           },
             _map tabs, ({$el}, i) ->
-              z '.tab', {
+              z '.iscroll-tab', {
                 style:
                   width: "#{(100 / tabs.length)}%"
               },

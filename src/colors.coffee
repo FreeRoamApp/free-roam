@@ -85,6 +85,9 @@ colors = _defaults {
     '--tertiary-800-text': materialColors.$black
     '--tertiary-900-text': materialColors.$black
 
+    '--bg-500': '#f0efed'
+    '--bg-700': '#e4e4e4'
+
     '--bg-text': '#B62E00' # primary900
     '--bg-text-6': 'rgba(0, 0, 0, 0.06)'
     '--bg-text-12': materialColors.$black12
@@ -169,6 +172,8 @@ colors = _defaults {
   '$tertiary800Text': 'var(--tertiary-800-text)'
   '$tertiary900Text': 'var(--tertiary-900-text)'
 
+  '$bg500': 'var(--bg-500)'
+  '$bg700': 'var(--bg-700)'
 
   '$bgText': 'var(--bg-text)'
   '$bgText6': 'var(--bg-text-6)'
@@ -183,6 +188,10 @@ colors = _defaults {
   '$white54': 'rgba(255, 255, 255, 0.54)'
 
   '$black': '#0c0c0c'
+
+  '$green500': '#aec2ab'
+  '$yellow500': '#e9d982'
+  '$red500': '#e98383'
 
   '$blue50026': 'rgba(33, 150, 243, 0.26)'
   '$green50026': 'rgba(76, 175, 80, 0.26)'

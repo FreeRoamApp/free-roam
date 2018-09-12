@@ -12,7 +12,10 @@ if window?
 module.exports = class Map
   type: 'Widget'
 
-  constructor: ({@model, @router, @places, @setFilterByField, @place, @placePosition}) ->
+  constructor: (options) ->
+    {@model, @router, @places, @setFilterByField,
+      @place, @placePosition, @mapSize} = options
+
     @state = z.state
       windowSize: @model.window.getSize()
 
@@ -41,6 +44,9 @@ module.exports = class Map
           @resizeSubscription = @model.window.getSize().subscribe =>
             setImmediate =>
               @map.resize()
+              @mapSize.next {
+                width: @$$el.offsetWidth, height: @$$el.offsetHeight
+              }
           @map.addLayer {
             id: 'places'
             type: 'symbol'
@@ -90,7 +96,7 @@ module.exports = class Map
 
       @map.on 'click', 'places', (e) =>
         coordinates = e.features[0].geometry.coordinates.slice()
-        description = e.features[0].properties.description
+        name = e.features[0].properties.name
         slug = e.features[0].properties.slug
         # Ensure that if the map is zoomed out such that multiple
         # copies of the feature are visible, the popup appears
@@ -99,6 +105,7 @@ module.exports = class Map
           coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
         @place.next {
           slug: slug
+          name: name
           position: @map.project coordinates
           location: coordinates
         }
