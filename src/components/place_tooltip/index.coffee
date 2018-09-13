@@ -89,11 +89,11 @@ module.exports = class PlaceTooltip
     transform = @getTransform place?.position, anchor
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
-      href: @router.get 'campground', {slug: place?.slug}
+      href: @router.get place?.type, {slug: place?.slug}
       className: z.classKebab {isVisible: Boolean place}
       onclick: (e) =>
         e?.preventDefault()
-        @router.goOverlay place?.type, {slug: place.slug}
+        @router.goOverlay place.type, {slug: place.slug}
       style:
         transform: transform
         webkitTransform: transform

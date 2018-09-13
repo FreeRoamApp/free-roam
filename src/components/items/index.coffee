@@ -18,7 +18,6 @@ module.exports = class Items extends Base
 
     @state = z.state
       items: filter.switchMap (filter) =>
-        console.log 'filter', filter
         items = if filter.type is 'category'
           @model.item.getAllByCategory(filter.value)
         else if filter.type is 'search'

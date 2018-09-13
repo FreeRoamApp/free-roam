@@ -35,11 +35,11 @@ module.exports = class ThreadPage
 
   getMeta: =>
     @groupAndThread.map ([group, thread]) ->
-      imageAttachment = _find thread?.data?.attachments, {type: 'image'}
+      imageAttachment = _find thread?.attachments, {type: 'image'}
       mediaSrc = imageAttachment?.largeSrc or imageAttachment?.src
       {
-        title: thread?.data.title
-        description: thread?.data.body.replace(/\\n/g, ' ').split(/\s+/)
+        title: thread.title
+        description: thread.body.replace(/\\n/g, ' ').split(/\s+/)
                     .slice(0, WORDS_IN_DESCRIPTION).join(' ')
         openGraph:
           image: mediaSrc?.split(' ')[0]

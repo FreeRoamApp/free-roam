@@ -20,6 +20,7 @@
   "backpack": "/backpack",
   "home": "",
   "campground": "/campground/:slug",
+  "campgroundNewReview": "/campground/:slug/new-review",
   "categories": "/product-guides",
   "conversation": "/conversation/:id",
   "conversations": "/conversations",

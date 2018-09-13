@@ -98,6 +98,7 @@ module.exports = class Map
         coordinates = e.features[0].geometry.coordinates.slice()
         name = e.features[0].properties.name
         slug = e.features[0].properties.slug
+        type = e.features[0].properties.type
         # Ensure that if the map is zoomed out such that multiple
         # copies of the feature are visible, the popup appears
         # over the copy being pointed to.
@@ -105,6 +106,7 @@ module.exports = class Map
           coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
         @place.next {
           slug: slug
+          type: type
           name: name
           position: @map.project coordinates
           location: coordinates
@@ -135,6 +137,7 @@ module.exports = class Map
             properties:
               name: place.name
               slug: place.slug
+              type: place.type
             geometry:
               type: 'Point'
               coordinates: [

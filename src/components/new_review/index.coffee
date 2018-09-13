@@ -16,13 +16,13 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class NewThread
-  constructor: ({@model, @router, category, @thread, id, group}) ->
+module.exports = class NewReview
+  constructor: ({@model, @router, type, @review, id, parent}) ->
     @titleValueStreams ?= new RxReplaySubject 1
     @bodyValueStreams ?= new RxReplaySubject 1
     @attachmentsValueStreams ?= new RxReplaySubject 1
     @attachmentsValueStreams.next new RxBehaviorSubject []
-    category ?= RxObservable.of null
+    type ?= RxObservable.of null
 
     @resetValueStreams()
 
@@ -34,16 +34,21 @@ module.exports = class NewThread
       @titleValueStreams
       @bodyValueStreams
       @attachmentsValueStreams
-      uploadFn: @model.thread.uploadImage
+      uploadFn: (args...) ->
+        type.take(1).toPromise().then (type) =>
+          @model[type + 'Review'].uploadImage.apply(
+            @model[type + 'Review'].uploadImage
+            args
+          )
     }
 
-    categoryAndMe = RxObservable.combineLatest(
-      category
+    typeAndMe = RxObservable.combineLatest(
+      type
       @model.user.getMe()
       (vals...) -> vals
     )
-    categoryAndId = RxObservable.combineLatest(
-      category
+    typeAndId = RxObservable.combineLatest(
+      type
       id or RxObservable.of null
       (vals...) -> vals
     )
@@ -54,55 +59,40 @@ module.exports = class NewThread
       bodyValue: @bodyValueStreams.switch()
       attachmentsValue: @attachmentsValueStreams.switch()
       language: @model.l.getLanguage()
-      category: category
-      thread: @thread
-      group: group
+      type: type
+      review: @review
+      parent: parent
 
   beforeUnmount: =>
     @resetValueStreams()
 
   resetValueStreams: =>
-    if @thread
-      @titleValueStreams.next @thread.map (thread) -> thread?.title or ''
-      @bodyValueStreams.next @thread.map (thread) -> thread?.body or ''
+    if @review
+      @titleValueStreams.next @review.map (review) -> review?.title or ''
+      @bodyValueStreams.next @review.map (review) -> review?.body or ''
     else
       @titleValueStreams.next new RxBehaviorSubject ''
       @bodyValueStreams.next new RxBehaviorSubject ''
 
   render: =>
     {me, titleValue, bodyValue, attachmentsValue,
-      category, thread, language, group} = @state.getValue()
+      type, review, language, parent} = @state.getValue()
 
-    z '.z-new-thread',
+    z '.z-new-review',
       z @$compose,
         imagesAllowed: true
         onDone: (e) =>
           @model.signInDialog.openIfGuest me
           .then =>
-            newThread = {
-              thread:
-                id: thread?.id
-                category: thread?.category or category
-                title: titleValue
-                body: bodyValue
-                attachments: attachmentsValue
-              language: language
-              groupId: group.id
+            @model.campgroundReview.upsert {
+              id: review?.id
+              type: review?.type or type
+              parentId: parent?.id
+              title: titleValue
+              body: bodyValue
+              attachments: attachmentsValue
             }
-            (if thread
-              @model.thread.upsert _defaults({id: thread.id}, newThread)
-            else
-              @model.thread.upsert newThread)
-            .then (newThread) =>
-              console.log 'newthread', newThread
+            .then (newReview) =>
+              console.log 'newreview', newReview
               @resetValueStreams()
-              # FIXME FIXME: rm HACK. for some reason thread is empty initially?
-              # still unsure why
-              setTimeout =>
-                @router.goPath(
-                  @model.thread.getPath(
-                    _defaults(newThread, thread), group, @router
-                  )
-                  {reset: true}
-                )
-              , 200
+              # TODO: route back to place page

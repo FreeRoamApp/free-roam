@@ -12,7 +12,7 @@ PADDING = 16
 
 module.exports = class ThreadPreview
   constructor: ({@model, thread}) ->
-    videoAttachment = _find thread.data?.attachments, {type: 'video'}
+    videoAttachment = _find thread?.attachments, {type: 'video'}
     if videoAttachment
       @$embeddedVideo = new EmbeddedVideo {
         @model
@@ -29,7 +29,7 @@ module.exports = class ThreadPreview
     unless thread
       return
 
-    imageAttachment = _find thread.data.attachments, {type: 'image'}
+    imageAttachment = _find thread.attachments, {type: 'image'}
 
     z '.z-thread-preview',
       if @$embeddedVideo

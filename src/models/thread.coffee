@@ -5,7 +5,7 @@ config = require '../config'
 module.exports = class Thread
   namespace: 'threads'
 
-  constructor: ({@auth, @l, @group}) -> null
+  constructor: ({@auth, @l, @group, @proxy, @exoid}) -> null
 
   upsert: (options) =>
     ga? 'send', 'event', 'social_interaction', 'thread', options.thread.category
@@ -55,6 +55,20 @@ module.exports = class Thread
       replacements:
         slug: thread?.slug
     }
+
+  uploadImage: (file) =>
+    formData = new FormData()
+    formData.append 'file', file, file.name
+
+    @proxy config.API_URL + '/upload', {
+      method: 'post'
+      qs:
+        path: "#{@namespace}.uploadImage"
+      body: formData
+    }
+    .then (response) =>
+      @exoid.invalidateAll()
+      response
 
   hasPermission: (thread, user, {level} = {}) ->
     userId = user?.id

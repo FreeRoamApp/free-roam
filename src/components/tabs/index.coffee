@@ -28,7 +28,6 @@ module.exports = class Tabs
   afterMount: (@$$el) =>
     checkIsReady = =>
       $$container = @$$el?.querySelector('.z-tabs > .content > .tabs-scroller')
-      console.log 'tabs', $$container.clientWidth
       if $$container and $$container.clientWidth
         @initIScroll $$container
       else

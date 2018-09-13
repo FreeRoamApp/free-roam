@@ -6,7 +6,7 @@ require 'rxjs/add/observable/of'
 
 Icon = require '../icon'
 UploadOverlay = require '../upload_overlay'
-ConversationImagePreview = require '../conversation_image_preview'
+UploadImagePreview = require '../upload_image_preview'
 Textarea = require '../textarea'
 config = require '../../config'
 colors = require '../../colors'
@@ -16,17 +16,20 @@ if window?
 
 module.exports = class MarkdownEditor
   constructor: (options) ->
-    {@model, @valueStreams, @attachmentsValueStreams, @value, @error} = options
+    {@model, @valueStreams, @attachmentsValueStreams,
+      @value, @error, @uploadFn} = options
     @value ?= new RxBehaviorSubject ''
     @error ?= new RxBehaviorSubject null
     @overlay$ = new RxBehaviorSubject null
     @imageData = new RxBehaviorSubject null
 
-    @$conversationImagePreview = new ConversationImagePreview {
+    @$uploadImagePreview = new UploadImagePreview {
       @imageData
       @model
       @overlay$
+      @uploadFn
       onUpload: ({smallUrl, largeUrl, key, width, height}) =>
+        console.log 'upload', arguments
         {attachments} = @state.getValue()
 
         attachments or= []
@@ -122,7 +125,7 @@ module.exports = class MarkdownEditor
                         width: img.width
                         height: img.height
                       }
-                      @overlay$.next @$conversationImagePreview
+                      @overlay$.next @$uploadImagePreview
                 }
 
       overlay$

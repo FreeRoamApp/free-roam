@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
@@ -18,19 +19,20 @@ module.exports = class Place
   constructor: ({@model, @router, place}) ->
     me = @model.user.getMe()
 
+    selectedIndex = new RxBehaviorSubject 0
+
     @$fab = new Fab()
     @$addIcon = new Icon()
-    @$tabs = new Tabs {@model}
+    @$tabs = new Tabs {@model, selectedIndex}
     @$placeInfo = new CampgroundInfo {@model, @router, place}
     @$placeReviews = new PlaceReviews {@model, @router, place}
 
     @state = z.state
+      selectedIndex: selectedIndex
       place: place
 
   render: =>
-    {place} = @state.getValue()
-
-    console.log place
+    {place, selectedIndex} = @state.getValue()
 
     z '.z-place',
       z @$tabs,
@@ -47,14 +49,17 @@ module.exports = class Place
           }
         ]
 
-      z '.fab',
-        z @$fab,
-          colors:
-            c500: colors.$primary500
-          $icon: z @$addIcon, {
-            icon: 'add'
-            isTouchTarget: false
-            color: colors.$primary500Text
-          }
-          onclick: =>
-            @model.group.goPath group, 'groupNewThread', {@router}
+      if selectedIndex is 1 # reviews
+        z '.fab',
+          z @$fab,
+            colors:
+              c500: colors.$primary500
+            $icon: z @$addIcon, {
+              icon: 'add'
+              isTouchTarget: false
+              color: colors.$primary500Text
+            }
+            onclick: =>
+              @router.go 'campgroundNewReview', {
+                slug: place.slug
+              }

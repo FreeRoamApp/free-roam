@@ -15,9 +15,8 @@ module.exports = class PlacePage extends BasePage
 
   constructor: ({@model, @router, requests, serverData, group, @isOverlayed}) ->
     @place = @clearOnUnmount requests.switchMap ({route}) =>
-      console.log 'get', route
       type = route.src.split('/')[1]
-      type = if type in ['campground', 'amenitiy'] then type else 'campground'
+      type = if type in ['campground', 'amenity'] then type else 'campground'
       @model[type].getBySlug route.params.slug
 
     @$appBar = new AppBar {@model}

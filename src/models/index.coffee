@@ -27,7 +27,12 @@ Item = require './item'
 Language = require './language'
 Notification = require './notification'
 Nps = require './nps'
+# reviews
+CampgroundReview = require './campground_review'
+
+# places
 Campground = require './campground'
+
 Product = require './product'
 PushToken = require './push_token'
 Thread = require './thread'
@@ -124,12 +129,18 @@ module.exports = class Model
     @groupRole = new GroupRole {@auth}
     @image = new Image()
     @item = new Item {@auth}
-    @thread = new Thread {@auth, @l, @group}
+    @thread = new Thread {@auth, @l, @group, @exoid, proxy}
     @threadComment = new ThreadComment {@auth}
     @threadVote = new ThreadVote {@auth}
     @notification = new Notification {@auth}
     @nps = new Nps {@auth}
+
+    # reviews
+    @campgroundReview = new CampgroundReview {@auth, @exoid, proxy}
+
+    # places
     @campground = new Campground {@auth}
+
     @product = new Product {@auth}
     @pushToken = new PushToken {@auth, pushToken}
     @time = new Time({@auth})
