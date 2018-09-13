@@ -8,8 +8,8 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class ConversationImagePreview
-  constructor: ({@imageData, @model, @overlay$, @onUpload}) ->
+module.exports = class UploadImagePreview
+  constructor: ({@imageData, @model, @overlay$, @onUpload, @uploadFn}) ->
     @$sendIcon = new Icon()
     @$closeImagePreviewIcon = new Icon()
     @$uploadImageFab = new Fab()
@@ -39,7 +39,7 @@ module.exports = class ConversationImagePreview
       previewHeight = undefined
       previewWidth = undefined
 
-    z '.z-conversation-image-preview',
+    z '.z-upload-image-preview',
       z 'img',
         src: imageData.dataUrl
         width: previewWidth
@@ -65,7 +65,7 @@ module.exports = class ConversationImagePreview
             if not isUploading and not @isUploading
               @isUploading = true # instant, w/o we sometimes get 2 uploads
               @state.set isUploading: true
-              @model.conversationMessage.uploadImage imageData.file
+              @uploadFn imageData.file
               .then ({smallUrl, largeUrl, key}) =>
                 @onUpload arguments[0]
                 @state.set isUploading: false

@@ -1,12 +1,6 @@
 config = require '../config'
 
-module.exports = class Campground
+PlaceBase = require './place_base'
+
+module.exports = class Campground extends PlaceBase
   namespace: 'campgrounds'
-
-  constructor: ({@auth}) -> null
-
-  getBySlug: (slug) =>
-    @auth.stream "#{@namespace}.getBySlug", {slug}
-
-  search: ({query}) =>
-    @auth.stream "#{@namespace}.search", {query}

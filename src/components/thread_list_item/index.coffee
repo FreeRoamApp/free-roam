@@ -41,7 +41,7 @@ module.exports = class ThreadListItem
         @isImageLoaded = true
 
   getImageUrl: (thread) ->
-    mediaAttachment = thread.data?.attachments?[0]
+    mediaAttachment = thread?.attachments?[0]
     # FIXME rm after 3/1/2018
     if mediaAttachment?[0]
       mediaAttachment = mediaAttachment[0]
@@ -56,7 +56,7 @@ module.exports = class ThreadListItem
       hasVotedUp, hasVotedDown} = @state.getValue()
 
     mediaSrc = @getImageUrl thread
-    isPinned = thread.data?.isPinned
+    isPinned = thread?.isPinned
 
     z 'a.z-thread-list-item', {
       key: "thread-list-item-#{thread.id}"
@@ -92,7 +92,7 @@ module.exports = class ThreadListItem
               isTouchTarget: false
               color: colors.$primary500Text
         z '.info',
-          z '.title', thread.data?.title
+          z '.title', thread?.title
           z '.bottom',
             z '.author',
               z '.name', @model.user.getDisplayName thread.user

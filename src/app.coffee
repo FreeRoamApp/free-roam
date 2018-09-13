@@ -50,6 +50,7 @@ Pages =
   HomePage: require './pages/home'
   ItemPage: require './pages/item'
   ItemsPage: require './pages/items'
+  NewReviewPage: require './pages/new_review'
   NewThreadPage: require './pages/new_thread'
   PartnersPage: require './pages/partners'
   PlacePage: require './pages/place'
@@ -246,11 +247,13 @@ module.exports = class App
     route 'home', 'GroupChatPage'
     route 'item', 'ItemPage'
     route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
+    # new review
+    route ['campgroundNewReview'], 'NewReviewPage'
     route 'partners', 'PartnersPage'
+    # place
     route ['amenity', 'campground'], 'PlacePage'
     route 'places', 'PlacesPage'
     route 'product', 'ProductPage'
-
     route 'policies', 'PoliciesPage'
     route 'termsOfService', 'TosPage'
     route 'privacy', 'PrivacyPage'

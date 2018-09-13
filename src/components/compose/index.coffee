@@ -15,7 +15,7 @@ if window?
 module.exports = class Compose
   constructor: (options) ->
     {@model, @router, @titleValue, @titleValueStreams, @bodyValue,
-      @bodyValueStreams, @attachmentsValueStreams} = options
+      @bodyValueStreams, @attachmentsValueStreams, uploadFn} = options
     me = @model.user.getMe()
 
     @$actionBar = new ActionBar {@model}
@@ -23,6 +23,7 @@ module.exports = class Compose
     @attachmentsValueStreams ?= new RxReplaySubject 1
     @$markdownEditor = new MarkdownEditor {
       @model
+      uploadFn
       value: @bodyValue
       valueStreams: @bodyValueStreams
       attachmentsValueStreams: @attachmentsValueStreams

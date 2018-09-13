@@ -104,7 +104,7 @@ module.exports = class Thread extends Base
       group: group
       $body: new FormattedText {
         text: thread.map (thread) ->
-          thread?.data?.body
+          thread?.body
         imageWidth: 'auto'
         isFullWidth: true
         embedVideos: true
@@ -264,7 +264,7 @@ module.exports = class Thread extends Base
                     ga? 'send', 'event', 'thread', 'share'
                     path = @model.thread.getPath thread, group, @router
                     @model.portal.call 'share.any', {
-                      text: thread.data.title
+                      text: thread.title
                       path: path
                       url: "https://#{config.HOST}#{path}"
                     }
@@ -281,11 +281,11 @@ module.exports = class Thread extends Base
                     }
               if hasPinThreadPermission
                 z @$pinIcon,
-                  icon: if thread?.data?.isPinned then 'pin-off' else 'pin'
+                  icon: if thread?.isPinned then 'pin-off' else 'pin'
                   color: colors.$header500Icon
                   hasRipple: true
                   onclick: =>
-                    if thread?.data?.isPinned
+                    if thread?.isPinned
                       @model.thread.unpinById thread.id
                     else
                       @model.thread.pinById thread.id
@@ -333,7 +333,7 @@ module.exports = class Thread extends Base
                 then DateService.fromNow thread.time
                 else '...'
             z 'h1.title',
-              thread?.data?.title
+              thread?.title
 
             z '.body', $body
 

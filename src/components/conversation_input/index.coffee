@@ -12,7 +12,7 @@ require 'rxjs/add/observable/of'
 
 Icon = require '../icon'
 UploadOverlay = require '../upload_overlay'
-ConversationImagePreview = require '../conversation_image_preview'
+UploadImagePreview = require '../upload_image_preview'
 ConversationInputTextarea = require '../conversation_input_textarea'
 ConversationInputGifs = require '../conversation_input_gifs'
 colors = require '../../colors'
@@ -36,10 +36,11 @@ module.exports = class ConversationInput
     selectionStart = new RxBehaviorSubject 0
     selectionEnd = new RxBehaviorSubject 0
 
-    @$conversationImagePreview = new ConversationImagePreview {
+    @$uploadImagePreview = new UploadImagePreview {
       @imageData
       @overlay$
       @model
+      uploadFn: @model.conversationMessage.uploadImage
       onUpload: ({key, width, height}) =>
         @message.next "![](<#{config.USER_CDN_URL}/cm/#{key}.small.jpg" +
                           " =#{width}x#{height}>)"
@@ -190,7 +191,7 @@ module.exports = class ConversationInput
                           width: img.width
                           height: img.height
                         }
-                        @overlay$.next @$conversationImagePreview
+                        @overlay$.next @$uploadImagePreview
                   }
           z '.powered-by-giphy'
         ]
