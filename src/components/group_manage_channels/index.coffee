@@ -17,6 +17,9 @@ module.exports = class GroupManageChannels
       @model
       conversations: group.switchMap (group) =>
         @model.group.getAllConversationsById group.id
+      onReorder: (order) =>
+        {group} = @state.getValue()
+        @model.conversation.setOrderByGroupId group.id, order
     }
 
     @state = z.state {

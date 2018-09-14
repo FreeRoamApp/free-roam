@@ -30,3 +30,8 @@ module.exports = class Conversation
 
   getById: (id) =>
     @auth.stream "#{@namespace}.getById", {id}
+
+  setOrderByGroupId: (groupId, order) =>
+    @auth.call "#{@namespace}.setOrderByGroupId", {groupId, order}, {
+      invalidateAll: true
+    }

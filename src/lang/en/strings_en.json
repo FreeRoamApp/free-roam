@@ -193,6 +193,7 @@
   "permissions.managePage": "Manage page",
   "permissions.manageInfo": "Manage info",
   "permissions.manageRole": "Manage roles",
+  "permissions.mentionEveryone": "Mention everyone",
   "permissions.tempBanUser": "Temp ban user",
   "permissions.permaBanUser": "Perm ban user",
   "permissions.unbanUser": "Unban user",
