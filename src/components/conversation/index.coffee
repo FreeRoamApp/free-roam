@@ -547,6 +547,11 @@ module.exports = class Conversation extends Base
       isLoaded, messageBatches, conversation, group, inputTranslateY,
       groupUser, isJoinLoading, hasBottomBar} = @state.getValue()
 
+    hasSendMessagePermission = group and @model.groupUser.hasPermission {
+      meGroupUser: group.meGroupUser, me,
+      channelId: conversation?.id, permissions: ['sendMessage']
+    }
+
     z '.z-conversation', {
       className: z.classKebab {hasBottomBar, @useIscroll}
       onclick: (e) =>
@@ -599,4 +604,5 @@ module.exports = class Conversation extends Base
                 @jumpToNew()
             },
               @model.l.get 'conversations.jumpNew'
-          @$conversationInput
+          if not group or hasSendMessagePermission
+            @$conversationInput
