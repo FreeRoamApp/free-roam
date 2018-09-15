@@ -1,10 +1,11 @@
-RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/merge'
 
 module.exports = class Base
   clearOnUnmount: (observable) =>
-    @clearObservable = new RxBehaviorSubject {}
-    return RxObservable.merge @clearObservable, observable
+    @clearObservableStreams = new RxReplaySubject 1
+    return RxObservable.merge @clearObservableStreams.switch(), observable
 
   beforeUnmount: =>
-    @clearObservable.next {}
+    @clearObservableStreams.next RxObservable.of null

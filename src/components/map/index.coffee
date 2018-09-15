@@ -3,6 +3,7 @@ RxObservable = require('rxjs/Observable').Observable
 _map = require 'lodash/map'
 
 tile = require './tilejson'
+Spinner = require '../spinner'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -16,7 +17,10 @@ module.exports = class Map
     {@model, @router, @places, @setFilterByField,
       @place, @placePosition, @mapSize} = options
 
+    @$spinner = new Spinner()
+
     @state = z.state
+      isLoading: true
       windowSize: @model.window.getSize()
 
   getClosestPixelRatio: ->
@@ -24,6 +28,8 @@ module.exports = class Map
 
   afterMount: (@$$el) =>
     pixelRatio = @getClosestPixelRatio()
+
+    @state.set isLoading: true
 
     # TODO update after this is resolved
     # https://github.com/mapbox/mapbox-gl-js/issues/6722
@@ -65,13 +71,20 @@ module.exports = class Map
               # not sure how to fix
               'icon-image': 'marker' # uses spritesheet defined in tilejson.coffee
               'icon-allow-overlap': true
+              # 'icon-ignore-placement': true
               'icon-size': 1
               'icon-anchor': 'bottom'
 
               'text-field': '{name}'
               'text-optional': true
+              # 'text-ignore-placement': true
               'text-anchor': 'bottom-left'
-              'text-size': 12
+              'text-size':
+                stops: [
+                  [0, 0]
+                  [6, 0]
+                  [6.001, 12]
+                ]
               'text-font': ['Klokantech Noto Sans Regular'] # must exist in tilejson
 
             paint:
@@ -84,6 +97,7 @@ module.exports = class Map
 
           @updateMapBounds()
           @subscribeToPlaces()
+          @state.set isLoading: false
 
       @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapBounds
@@ -158,6 +172,8 @@ module.exports = class Map
     @setFilterByField 'location', @map.getBounds()
 
   render: =>
-    {windowSize} = @state.getValue()
+    {windowSize, isLoading} = @state.getValue()
 
-    z '.z-map', {key: 'map'}
+    z '.z-map', {key: 'map', className: z.classKebab {isLoading}},
+      z '.map', {key: 'map-container'}
+      z '.loading', @$spinner

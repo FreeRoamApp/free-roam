@@ -46,7 +46,7 @@ module.exports = class CampgroundInfo
       @model, @router, key: 'roadDifficulty'
     }
     @$rating = new Rating {
-      value: place.map (place) -> place.rating
+      value: place.map (place) -> place?.rating
     }
     @$spinner = new Spinner()
 
@@ -54,7 +54,7 @@ module.exports = class CampgroundInfo
       place: place.map (place) =>
         {
           place
-          $videos: _map place.videos, (video) =>
+          $videos: _map place?.videos, (video) =>
             new EmbeddedVideo {@model, video}
         }
 

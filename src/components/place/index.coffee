@@ -7,6 +7,7 @@ _map = require 'lodash/map'
 Fab = require '../fab'
 Icon = require '../icon'
 CampgroundInfo = require '../campground_info'
+CampgroundNearby = require '../campground_nearby'
 Reviews = require '../reviews'
 Tabs = require '../tabs'
 colors = require '../../colors'
@@ -26,6 +27,7 @@ module.exports = class Place
     @$tabs = new Tabs {@model, selectedIndex}
     @$placeInfo = new CampgroundInfo {@model, @router, place}
     @$reviews = new Reviews {@model, @router, parent: place}
+    @$nearby = new CampgroundNearby {@model, @router, place}
 
     @state = z.state
       selectedIndex: selectedIndex
@@ -48,6 +50,10 @@ module.exports = class Place
           {
             $menuText: @model.l.get 'general.reviews'
             $el: @$reviews
+          }
+          {
+            $menuText: @model.l.get 'general.nearby'
+            $el: @$nearby
           }
         ]
 
