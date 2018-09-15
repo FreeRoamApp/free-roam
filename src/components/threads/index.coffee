@@ -140,7 +140,7 @@ module.exports = class Threads extends Base
     }, [
       if chunkedThreads and _isEmpty chunkedThreads[0]
         z '.no-threads',
-          'No threads found'
+          @model.l.get 'threads.empty'
       else if chunkedThreads
         z '.g-grid',
           z '.columns',

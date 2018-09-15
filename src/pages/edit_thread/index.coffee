@@ -12,7 +12,7 @@ if window?
 module.exports = class EditThreadPage
   hideDrawer: true
 
-  constructor: ({@model, requests, @router, serverData, group}) ->
+  constructor: ({@model, requests, @router, overlay$, serverData, group}) ->
     thread = requests.switchMap ({route}) =>
       if route.params.slug
         @model.thread.getBySlug route.params.slug
@@ -22,6 +22,7 @@ module.exports = class EditThreadPage
     @$editThread = new NewThread {
       @model
       @router
+      overlay$
       thread
       group
     }

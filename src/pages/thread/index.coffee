@@ -38,8 +38,8 @@ module.exports = class ThreadPage
       imageAttachment = _find thread?.attachments, {type: 'image'}
       mediaSrc = imageAttachment?.largeSrc or imageAttachment?.src
       {
-        title: thread.title
-        description: thread.body.replace(/\\n/g, ' ').split(/\s+/)
+        title: thread?.title
+        description: thread?.body.replace(/\\n/g, ' ').split(/\s+/)
                     .slice(0, WORDS_IN_DESCRIPTION).join(' ')
         openGraph:
           image: mediaSrc?.split(' ')[0]

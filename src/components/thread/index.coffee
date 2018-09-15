@@ -21,6 +21,7 @@ AppBar = require '../app_bar'
 ButtonBack = require '../button_back'
 Icon = require '../icon'
 Avatar = require '../avatar'
+Author = require '../author'
 ThreadComment = require '../thread_comment'
 ConversationInput = require '../conversation_input'
 Spinner = require '../spinner'
@@ -57,6 +58,7 @@ module.exports = class Thread extends Base
 
     @$fab = new Fab()
     @$avatar = new Avatar()
+    @$author = new Author {@model, @router}
 
     @selectedProfileDialogUser = new RxBehaviorSubject false
     @$profileDialog = new ProfileDialog {
@@ -241,6 +243,8 @@ module.exports = class Thread extends Base
 
     isNativeApp = Environment.isNativeApp('freeroam')
 
+    console.log thread
+
     z '.z-thread',
       z @$appBar, {
         title: ''
@@ -304,34 +308,17 @@ module.exports = class Thread extends Base
       z '.content',
         z '.post',
           z '.g-grid',
-            z '.author',
+            z '.top',
               z '.avatar',
                 z @$avatar, {user: thread?.user, size: '20px'}
-              z '.name', {
-                onclick: =>
-                  @selectedProfileDialogUser.next thread?.user
-              },
-                @model.user.getDisplayName thread?.user
-
-                if thread?.user?.flags?.isStar
-                  z '.icon',
-                    z @$starIcon,
-                      icon: 'star-tag'
-                      color: colors.$bgText
-                      isTouchTarget: false
-                      size: '22px'
-                else if thread?.user?.flags?.isModerator
-                  z '.icon',
-                    z @$starIcon,
-                      icon: 'mod'
-                      color: colors.$bgText
-                      isTouchTarget: false
-                      size: '22px'
-              z 'span', innerHTML: '&nbsp;&middot;&nbsp;'
-              z '.time',
-                if thread?.time
-                then DateService.fromNow thread.time
-                else '...'
+              z '.author',
+                z @$author, {
+                  user: thread?.user
+                  # groupUser: thread?.groupUser
+                  time: thread?.time
+                  onclick: =>
+                    @selectedProfileDialogUser.next thread?.user
+                }
             z 'h1.title',
               thread?.title
 

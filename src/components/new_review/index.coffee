@@ -9,7 +9,7 @@ require 'rxjs/add/operator/switch'
 require 'rxjs/add/operator/switchMap'
 require 'rxjs/add/operator/map'
 
-Compose = require '../compose'
+ComposeReview = require '../compose_review'
 Spinner = require '../spinner'
 config = require '../../config'
 
@@ -17,9 +17,11 @@ if window?
   require './index.styl'
 
 module.exports = class NewReview
-  constructor: ({@model, @router, type, @review, id, parent}) ->
+  constructor: ({@model, @router, overlay$, type, @review, id, parent}) ->
     @titleValueStreams ?= new RxReplaySubject 1
     @bodyValueStreams ?= new RxReplaySubject 1
+    @ratingValueStreams ?= new RxReplaySubject 0
+    @ratingValueStreams.next new RxBehaviorSubject null
     @attachmentsValueStreams ?= new RxReplaySubject 1
     @attachmentsValueStreams.next new RxBehaviorSubject []
     type ?= RxObservable.of null
@@ -28,11 +30,13 @@ module.exports = class NewReview
 
     @$spinner = new Spinner()
 
-    @$compose = new Compose {
+    @$composeReview = new ComposeReview {
       @model
       @router
+      overlay$
       @titleValueStreams
       @bodyValueStreams
+      @ratingValueStreams
       @attachmentsValueStreams
       uploadFn: (args...) ->
         type.take(1).toPromise().then (type) =>
@@ -42,22 +46,12 @@ module.exports = class NewReview
           )
     }
 
-    typeAndMe = RxObservable.combineLatest(
-      type
-      @model.user.getMe()
-      (vals...) -> vals
-    )
-    typeAndId = RxObservable.combineLatest(
-      type
-      id or RxObservable.of null
-      (vals...) -> vals
-    )
-
     @state = z.state
       me: @model.user.getMe()
       titleValue: @titleValueStreams.switch()
       bodyValue: @bodyValueStreams.switch()
       attachmentsValue: @attachmentsValueStreams.switch()
+      ratingValue: @ratingValueStreams.switch()
       language: @model.l.getLanguage()
       type: type
       review: @review
@@ -75,15 +69,16 @@ module.exports = class NewReview
       @bodyValueStreams.next new RxBehaviorSubject ''
 
   render: =>
-    {me, titleValue, bodyValue, attachmentsValue,
+    {me, titleValue, bodyValue, ratingValue, attachmentsValue,
       type, review, language, parent} = @state.getValue()
 
     z '.z-new-review',
-      z @$compose,
-        imagesAllowed: true
+      z @$composeReview,
         onDone: (e) =>
+          console.log 'go'
           @model.signInDialog.openIfGuest me
           .then =>
+            console.log 'go2'
             @model.campgroundReview.upsert {
               id: review?.id
               type: review?.type or type
@@ -91,6 +86,7 @@ module.exports = class NewReview
               title: titleValue
               body: bodyValue
               attachments: attachmentsValue
+              rating: ratingValue
             }
             .then (newReview) =>
               console.log 'newreview', newReview

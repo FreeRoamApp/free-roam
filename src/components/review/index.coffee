@@ -5,10 +5,13 @@ _truncate = require 'lodash/truncate'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 Avatar = require '../avatar'
 Author = require '../author'
 Icon = require '../icon'
+Rating = require '../rating'
 FormatService = require '../../services/format'
 colors = require '../../colors'
 config = require '../../config'
@@ -19,31 +22,36 @@ if window?
 TITLE_LENGTH = 30
 DESCRIPTION_LENGTH = 100
 
-module.exports = class Message
+module.exports = class Review
   constructor: (options) ->
-    {message, @$body, isGrouped, isMe, @model, @overlay$, @isTextareaFocused
-      @selectedProfileDialogUser, @router, @messageBatchesStreams} = options
+    {review, @$body, isGrouped, isMe, @model, @overlay$, @isTextareaFocused
+      @selectedProfileDialogUser, @router} = options
 
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}
+    @$rating = new Rating {
+      value: RxObservable.of review?.rating
+    }
 
     me = @model.user.getMe()
 
     @state = z.state
-      message: message
+      review: review
       isMe: isMe
       isGrouped: isGrouped
       isMeMentioned: me.map (me) ->
-        mentions = message?.body?.match? config.MENTION_REGEX
+        mentions = review?.body?.match? config.MENTION_REGEX
         _find mentions, (mention) ->
           username = mention.replace('@', '').toLowerCase()
           username and username is me?.username
       windowSize: @model.window.getSize()
 
   render: ({openProfileDialogFn, isTimeAlignedLeft}) =>
-    {isMe, message, isGrouped, isMeMentioned, windowSize} = @state.getValue()
+    {isMe, review, windowSize} = @state.getValue()
 
-    {user, groupUser, time, card, id, clientId} = message
+    {title, user, groupUser, attachments, time} = review
+
+    console.log review
 
     avatarSize = if windowSize.width > 840 \
                  then '40px'
@@ -56,10 +64,15 @@ module.exports = class Message
     oncontextmenu = ->
       openProfileDialogFn id, user, groupUser
 
-    z '.z-message', {
+    isModerator = groupUser?.roleNames and
+                  (
+                    groupUser.roleNames.indexOf('mod') isnt -1 or
+                    groupUser.roleNames.indexOf('mods') isnt -1
+                  )
+
+    z '.z-review', {
       # re-use elements in v-dom. doesn't seem to work with prepending more
-      key: "message-#{id or clientId}"
-      className: z.classKebab {isGrouped, isMe, isMeMentioned}
+      className: z.classKebab {isMe}
       oncontextmenu: (e) ->
         e?.preventDefault()
         oncontextmenu?()
@@ -69,29 +82,22 @@ module.exports = class Message
         style:
           width: avatarSize
       },
-        unless isGrouped
-          z @$avatar, {
-            user
-            groupUser
-            size: avatarSize
-            bgColor: colors.$grey200
-          }
-        # z '.level', 1
+        z @$avatar, {
+          user
+          groupUser
+          size: avatarSize
+          bgColor: colors.$grey200
+        }
 
       z '.content',
-        unless isGrouped
-          z @$author, {user, groupUser, time, isTimeAlignedLeft, onclick}
-
+        z @$author, {user, groupUser, time, isTimeAlignedLeft, onclick}
+        z '.rating',
+          z @$rating, {size: '16px'}
+        z '.title', title
         z '.body',
           @$body
-
-        if card
-          z '.card', {
-            onclick: (e) =>
-              e?.stopPropagation()
-              @router.openLink card.url
-          },
-            z '.title', _truncate card.title, {length: TITLE_LENGTH}
-            z '.description', _truncate card.description, {
-              length: DESCRIPTION_LENGTH
-            }
+        z '.attachments',
+          _map attachments, (attachment) ->
+            z '.attachment',
+              style:
+                backgroundImage: "url(#{attachment.smallSrc})"

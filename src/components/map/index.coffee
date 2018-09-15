@@ -27,8 +27,8 @@ module.exports = class Map
 
     # TODO update after this is resolved
     # https://github.com/mapbox/mapbox-gl-js/issues/6722
-    @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.css'
-    @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.42.2/mapbox-gl.js'
+    @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.css'
+    @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.js'
     .then =>
       @map = new mapboxgl.Map {
         container: @$$el
@@ -104,11 +104,13 @@ module.exports = class Map
         # over the copy being pointed to.
         while Math.abs(e.lngLat.lng - (coordinates[0])) > 180
           coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
+        position = @map.project coordinates
+        @placePosition.next position
         @place.next {
           slug: slug
           type: type
           name: name
-          position: @map.project coordinates
+          position: position
           location: coordinates
         }
         # (new mapboxgl.Popup({offset: 25})).setLngLat(coordinates).setHTML(description).addTo @map

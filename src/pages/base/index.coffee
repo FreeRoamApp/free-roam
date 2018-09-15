@@ -7,5 +7,4 @@ module.exports = class Base
     return RxObservable.merge @clearObservable, observable
 
   beforeUnmount: =>
-    console.log 'bunext'
     @clearObservable.next {}

@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _range = require 'lodash/range'
 
@@ -11,15 +13,16 @@ if window?
 
 module.exports = class Rating
   # set isInteractive to true if tapping on a star should fill up to that star
-  constructor: ({@rating, @isInteractive}) ->
-    @rating ?= new RxBehaviorSubject 0
+  constructor: ({@value, @valueStreams, @isInteractive}) ->
+    @value ?= new RxBehaviorSubject 0
 
     @$icons = [new Icon(), new Icon(), new Icon(), new Icon(), new Icon()]
 
+    rating = @valueStreams?.switch() or @value
+
     @state = z.state {
-      @rating
-      starIcons: @rating.map (rating) ->
-        console.log rating
+      rating: rating
+      starIcons: rating.map (rating) ->
         rating ?= 0
         halfStars = Math.round(rating * 2)
         fullStars = Math.floor(halfStars / 2)
@@ -30,11 +33,11 @@ module.exports = class Rating
         .concat _map _range(emptyStars), -> 'star-outline'
     }
 
-  setRating: (stars) ->
-    @rating.next stars
-
-  getRating: =>
-    @rating.getValue()
+  setRating: (value) =>
+    if @valueStreams
+      @valueStreams.next RxObservable.of value
+    else
+      @value.next value
 
   render: ({size} = {}) =>
     {rating, starIcons} = @state.getValue()
@@ -42,13 +45,10 @@ module.exports = class Rating
     size ?= '20px'
 
     z '.z-rating', _map starIcons, (icon, i) =>
-      rating = i + 1
       z '.star',
         z @$icons[i],
           icon: icon
           size: size
           isTouchTarget: false
           color: colors.$primary500
-          onclick: =>
-            if @isInteractive
-              @setRating rating
+          onclick: if @isInteractive then (=> @setRating i + 1) else null

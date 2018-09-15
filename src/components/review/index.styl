@@ -1,0 +1,42 @@
+@require '../../vars'
+
+.z-review
+  display: flex
+  width: 100%
+  box-sizing: border-box
+  overflow: hidden
+  position: relative
+
+  > .avatar
+    margin-right: 16px
+    cursor: pointer
+    position: relative
+
+  > .content
+    flex: 1
+    min-width: 0 // fix
+
+    > .body
+      font-body2(no)
+      // font-size: 14px
+      position: relative
+      z-index: 2
+      padding-right: 16px
+      margin-top: 6px
+      overflow: hidden
+
+    > .attachments
+      display: flex
+      margin: 8px 0
+
+      > .attachment
+        width: 64px
+        height: 64px
+        margin-right: 8px
+        background-size: 100%
+        background-position: center
+
+  @media (min-width: $breakPointMedium)
+    > .content
+      > .info > .name
+        max-width: none

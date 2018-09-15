@@ -6,6 +6,7 @@ Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
 InfoLevel = require '../info_level'
 EmbeddedVideo = require '../embedded_video'
+Spinner = require '../spinner'
 Rating = require '../rating'
 colors = require '../../colors'
 config = require '../../config'
@@ -45,8 +46,9 @@ module.exports = class CampgroundInfo
       @model, @router, key: 'roadDifficulty'
     }
     @$rating = new Rating {
-      rating: place.map (place) -> 3.3 # FIXME place.rating
+      value: place.map (place) -> place.rating
     }
+    @$spinner = new Spinner()
 
     @state = z.state
       place: place.map (place) =>
@@ -61,10 +63,12 @@ module.exports = class CampgroundInfo
 
     {place, $videos} = place or {}
 
-    z '.z-campground-info',
+    # spinner as a class so the dom structure stays the same between loads
+    isLoading = not place?.slug
+    z '.z-campground-info', {className: z.classKebab {isLoading}},
       z '.g-grid',
         z '.location',
-          'City, ST' # TODO
+          "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
         z '.rating',
           z @$rating, {size: '20px'}
         if place?.drivingInstructions
@@ -121,3 +125,5 @@ module.exports = class CampgroundInfo
               z '.videos'
                 _map $videos, ($video) ->
                   z $video
+
+      z '.spinner', z @$spinner
