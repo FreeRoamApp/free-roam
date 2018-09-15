@@ -24,7 +24,7 @@ module.exports = class Reviews extends Base
     @state = z.state {
       parent: parent
       reviews: parent.switchMap (parent) =>
-        unless parent.type
+        unless parent?.type
           return RxObservable.of null
         @model["#{parent.type}Review"].getAllByParentId parent.id
         .map (reviews) =>

@@ -33,12 +33,12 @@ module.exports = class ItemsPage extends Base
     @state = z.state
       me: @model.user.getMe()
       title: filter.switchMap (filter) =>
-        if filter.type is 'category'
+        if filter?.type is 'category'
           @model.category.getAll()
           .map (categories) ->
             _find(categories, {slug: filter.value})?.name
         else
-          RxObservable.of filter.value
+          RxObservable.of filter?.value
       windowSize: @model.window.getSize()
 
   getMeta: ->

@@ -27,16 +27,16 @@ module.exports = class Item extends Base
     @state = z.state
       item: item
       $why: new FormattedText {
-        text: item.map (item) -> item.why
+        text: item.map (item) -> item?.why
       }
       $what: new FormattedText {
-        text: item.map (item) -> item.what
+        text: item.map (item) -> item?.what
       }
       $videos: item.map (item) =>
-        _map item.videos, (video) =>
+        _map item?.videos, (video) =>
           new EmbeddedVideo {@model, video}
       products: item.switchMap (item) =>
-        unless item.slug
+        unless item?.slug
           return RxObservable.of []
         @model.product.getAllByItemSlug item.slug
         .map (products) =>

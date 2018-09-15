@@ -107,6 +107,7 @@ module.exports = class PlaceTooltip
           color: colors.$bgText54
           onclick: (e) =>
             e?.stopPropagation()
+            e?.preventDefault()
             @place.next null
       z '.title', place?.name
       # z '.rating',

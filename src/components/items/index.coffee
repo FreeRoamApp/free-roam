@@ -18,9 +18,9 @@ module.exports = class Items extends Base
 
     @state = z.state
       items: filter.switchMap (filter) =>
-        items = if filter.type is 'category'
+        items = if filter?.type is 'category'
           @model.item.getAllByCategory(filter.value)
-        else if filter.type is 'search'
+        else if filter?.type is 'search'
           @model.item.search {
             query:
               multi_match:
