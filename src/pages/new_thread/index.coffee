@@ -6,13 +6,13 @@ if window?
   require './index.styl'
 
 module.exports = class NewThreadPage
-  constructor: ({@model, requests, @router, serverData, group}) ->
+  constructor: ({@model, requests, @router, overlay$, serverData, group}) ->
     category = requests.map ({route}) ->
       route.params.category
     id = requests.map ({route}) ->
       route.params.id
 
-    @$newThread = new NewThread {@model, @router, category, id, group}
+    @$newThread = new NewThread {@model, @router, overlay$, category, id, group}
 
     @state = z.state
       windowSize: @model.window.getSize()

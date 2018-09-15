@@ -213,6 +213,7 @@ module.exports = class Conversation extends Base
 
               $body = @getCached$ bodyCacheKey, FormattedText, {
                 @model, @router, text: message.body, selectedProfileDialogUser
+                @overlay$
                 mentionedUsers: message.mentionedUsers
                 useThumbnails: true
               }

@@ -7,7 +7,7 @@ _map = require 'lodash/map'
 Fab = require '../fab'
 Icon = require '../icon'
 CampgroundInfo = require '../campground_info'
-PlaceReviews = require '../place_reviews'
+Reviews = require '../reviews'
 Tabs = require '../tabs'
 colors = require '../../colors'
 config = require '../../config'
@@ -25,7 +25,7 @@ module.exports = class Place
     @$addIcon = new Icon()
     @$tabs = new Tabs {@model, selectedIndex}
     @$placeInfo = new CampgroundInfo {@model, @router, place}
-    @$placeReviews = new PlaceReviews {@model, @router, place}
+    @$reviews = new Reviews {@model, @router, parent: place}
 
     @state = z.state
       selectedIndex: selectedIndex
@@ -33,6 +33,8 @@ module.exports = class Place
 
   render: =>
     {place, selectedIndex} = @state.getValue()
+
+    console.log 'place', place
 
     z '.z-place',
       z @$tabs,
@@ -45,7 +47,7 @@ module.exports = class Place
           }
           {
             $menuText: @model.l.get 'general.reviews'
-            $el: @$placeReviews
+            $el: @$reviews
           }
         ]
 

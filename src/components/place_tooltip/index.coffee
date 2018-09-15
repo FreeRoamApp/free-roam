@@ -85,7 +85,6 @@ module.exports = class PlaceTooltip
     {place, mapSize} = @state.getValue()
 
     anchor = @getAnchor place?.position, mapSize
-
     transform = @getTransform place?.position, anchor
 
     z "a.z-place-tooltip.anchor-#{anchor}", {

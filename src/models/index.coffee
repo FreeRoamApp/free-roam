@@ -47,7 +47,6 @@ GetAppDialog = require './get_app_dialog'
 SignInDialog = require './sign_in_dialog'
 PushNotificationSheet = require './push_notification_sheet'
 InstallOverlay = require './install_overlay'
-ImageViewOverlay = require './image_view_overlay'
 Window = require './window'
 
 config = require '../config'
@@ -148,7 +147,6 @@ module.exports = class Model
     @signInDialog = new SignInDialog()
     @getAppDialog = new GetAppDialog()
     @installOverlay = new InstallOverlay()
-    @imageViewOverlay = new ImageViewOverlay()
     @pushNotificationSheet = new PushNotificationSheet()
     @portal?.setModels {
       @user, @modal, @installOverlay, @getAppDialog, @pushToken

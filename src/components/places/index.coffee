@@ -142,15 +142,15 @@ module.exports = class Places
     {filters, filterDialogField, place} = @state.getValue()
 
     z '.z-places',
-      z '.filters',
-        _map filters, (filter) ->
-          if filter.name
-            z '.filter', {
-              className: z.classKebab {
-                hasMore: true, hasValue: filter.value?
-              }
-              onclick: filter.onclick
-            }, filter.name
+      # z '.filters',
+      #   _map filters, (filter) ->
+      #     if filter.name
+      #       z '.filter', {
+      #         className: z.classKebab {
+      #           hasMore: true, hasValue: filter.value?
+      #         }
+      #         onclick: filter.onclick
+      #       }, filter.name
 
       z @$map
 

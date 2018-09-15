@@ -191,7 +191,9 @@ module.exports = class ConversationInput
                           width: img.width
                           height: img.height
                         }
-                        @overlay$.next @$uploadImagePreview
+                        @overlay$.next z @$uploadImagePreview, {
+                          iconName: 'send'
+                        }
                   }
           z '.powered-by-giphy'
         ]

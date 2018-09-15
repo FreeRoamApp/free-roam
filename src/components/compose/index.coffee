@@ -14,7 +14,7 @@ if window?
 
 module.exports = class Compose
   constructor: (options) ->
-    {@model, @router, @titleValue, @titleValueStreams, @bodyValue,
+    {@model, @router, @titleValueStreams, overlay$,
       @bodyValueStreams, @attachmentsValueStreams, uploadFn} = options
     me = @model.user.getMe()
 
@@ -24,7 +24,7 @@ module.exports = class Compose
     @$markdownEditor = new MarkdownEditor {
       @model
       uploadFn
-      value: @bodyValue
+      overlay$
       valueStreams: @bodyValueStreams
       attachmentsValueStreams: @attachmentsValueStreams
     }
@@ -32,24 +32,18 @@ module.exports = class Compose
     @state = z.state
       me: me
       isLoading: false
-      titleValue: @titleValueStreams?.switch() or @titleValue
+      titleValue: @titleValueStreams.switch()
 
   setTitle: (e) =>
-    if @titleValueStreams
-      @titleValueStreams.next RxObservable.of e.target.value
-    else
-      @titleValue.next e.target.value
+    @titleValueStreams.next RxObservable.of e.target.value
 
   setBody: (e) =>
-    if @bodyValueStreams
-      @bodyValueStreams.next RxObservable.of e.target.value
-    else
-      @bodyValue.next e.target.value
+    @bodyValueStreams.next RxObservable.of e.target.value
 
   beforeUnmount: =>
     @attachmentsValueStreams.next new RxBehaviorSubject []
 
-  render: ({isReply, imagesAllowed, onDone, $head}) =>
+  render: ({imagesAllowed, onDone, $head}) =>
     {me, isLoading, titleValue} = @state.getValue()
 
     z '.z-compose',
@@ -70,23 +64,18 @@ module.exports = class Compose
                 @state.set isLoading: false
       }
       z '.g-grid',
-        [
-          $head
-          unless isReply
-            [
-              z 'input.title',
-                type: 'text'
-                onkeyup: @setTitle
-                onchange: @setTitle
-                # bug where cursor goes to end w/ just value
-                defaultValue: titleValue or ''
-                placeholder: @model.l.get 'compose.titleHintText'
+        $head
 
-              z '.divider'
-            ]
-          z @$markdownEditor,
-            imagesAllowed: imagesAllowed
-            hintText: if isReply \
-                      then @model.l.get 'compose.responseHintText'
-                      else @model.l.get 'compose.postHintText'
-        ]
+        z 'input.title',
+          type: 'text'
+          onkeyup: @setTitle
+          onchange: @setTitle
+          # bug where cursor goes to end w/ just value
+          defaultValue: titleValue or ''
+          placeholder: @model.l.get 'compose.titleHintText'
+
+        z '.divider'
+
+        z @$markdownEditor,
+          imagesAllowed: imagesAllowed
+          hintText: @model.l.get 'compose.postHintText'

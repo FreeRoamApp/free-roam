@@ -20,10 +20,12 @@ module.exports = class UploadImagePreview
       isUploading: false
       windowSize: @model.window.getSize()
 
-  render: =>
+  render: ({iconName} = {}) =>
     {imageData, isUploading, windowSize} = @state.getValue()
 
     imageData ?= {}
+
+    iconName ?= 'upload'
 
     if imageData.width
       imageAspectRatio = imageData.width / imageData.height
@@ -57,7 +59,7 @@ module.exports = class UploadImagePreview
           colors:
             c500: colors.$primary500
           $icon: z @$uploadIcon, {
-            icon: if isUploading then 'ellipsis' else 'send'
+            icon: if isUploading then 'ellipsis' else iconName
             isTouchTarget: false
             color: colors.$primary500Text
           }

@@ -9,6 +9,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
 # Sticker = require '../sticker'
+ImageViewOverlay = require '../image_view_overlay'
 EmbeddedVideo = require '../embedded_video'
 config = require '../../config'
 
@@ -17,14 +18,14 @@ if window?
 
 module.exports = class FormattedText
   constructor: (options) ->
-    {text, @imageWidth, model, @router, @skipImages, @mentionedUsers,
+    {text, @imageWidth, @model, @router, @skipImages, @mentionedUsers, @overlay$,
       @selectedProfileDialogUser, @isFullWidth, @embedVideos,
       @useThumbnails} = options
 
     if text?.map
-      $el = text.map((text) => @get$ {text, model})
+      $el = text.map((text) => @get$ {text, @model})
     else
-      @$el = @get$ {text, model} # use right away
+      @$el = @get$ {text, @model} # use right away
       $el = null
 
     @state = z.state {
@@ -108,12 +109,16 @@ module.exports = class FormattedText
                 height: if imageAspectRatio and @imageWidth isnt 'auto' \
                         then imageWidth / imageAspectRatio
                         else undefined
-                onclick: (e) ->
+                onclick: (e) =>
                   e?.stopPropagation()
                   e?.preventDefault()
-                  model.imageViewOverlay.setImageData {
-                    url: largeImageSrc
-                    aspectRatio: imageAspectRatio
+                  @overlay$?.next new ImageViewOverlay {
+                    @model
+                    @router
+                    @overlay$
+                    imageData:
+                      url: largeImageSrc
+                      aspectRatio: imageAspectRatio
                   }
               }
           else

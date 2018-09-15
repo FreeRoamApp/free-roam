@@ -51,8 +51,9 @@ module.exports = class EmbeddedVideo
           src: "https://www.youtube.com/embed/#{video.sourceId}"
           frameborder: 0
           allow: 'autoplay; encrypted-media'
-          allowfullscreen: true
-          webkitallowfullscreen: true
+          attributes:
+            allowfullscreen: true
+            webkitallowfullscreen: true
       # if video.mp4Src
       #   z 'video.video', {
       #     width: width

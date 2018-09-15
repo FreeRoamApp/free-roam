@@ -6,9 +6,26 @@
   overflow: auto
   -webkit-overflow-scrolling: touch
 
+  &.is-loading
+    > .g-grid
+      display: none
+
+    > .spinner
+      display: block
+
+  > .spinner
+    display: none
+
   > .g-grid
     > .title
       font-title()
+
+    > .location
+      font-body1()
+      margin-bottom: 4px
+
+    > .rating
+      margin-bottom: 16px
 
     > .g-cols
       > .g-col
