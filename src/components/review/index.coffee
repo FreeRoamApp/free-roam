@@ -11,6 +11,7 @@ require 'rxjs/add/observable/of'
 Avatar = require '../avatar'
 Author = require '../author'
 Icon = require '../icon'
+ImageViewOverlay = require '../image_view_overlay'
 Rating = require '../rating'
 FormatService = require '../../services/format'
 colors = require '../../colors'
@@ -50,8 +51,6 @@ module.exports = class Review
     {isMe, review, windowSize} = @state.getValue()
 
     {title, user, groupUser, attachments, time} = review
-
-    console.log review
 
     avatarSize = if windowSize.width > 840 \
                  then '40px'
@@ -97,7 +96,18 @@ module.exports = class Review
         z '.body',
           @$body
         z '.attachments',
-          _map attachments, (attachment) ->
+          _map attachments, (attachment) =>
+            console.log attachment
             z '.attachment',
+              onclick: =>
+                console.log 'click'
+                @overlay$?.next new ImageViewOverlay {
+                  @model
+                  @router
+                  @overlay$
+                  imageData:
+                    url: attachment.largeSrc
+                    aspectRatio: attachment.aspectRatio
+                }
               style:
                 backgroundImage: "url(#{attachment.smallSrc})"

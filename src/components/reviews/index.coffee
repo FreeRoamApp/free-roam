@@ -17,7 +17,8 @@ if window?
   require './index.styl'
 
 module.exports = class Reviews extends Base
-  constructor: ({@model, @router, parent, selectedProfileDialogUser}) ->
+  constructor: (options) ->
+    {@model, @router, overlay$, parent, selectedProfileDialogUser} = options
     @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
@@ -37,7 +38,7 @@ module.exports = class Reviews extends Base
               @overlay$
             }
             $el = @getCached$ reviewCacheKey, Review, {
-              review, @model, @router, @overlay$,
+              review, @model, @router, overlay$,
               selectedProfileDialogUser, $body
             }
             $el
@@ -48,16 +49,17 @@ module.exports = class Reviews extends Base
 
     z '.z-reviews',
       z '.g-grid',
-        z '.search',
-          z @$searchInput, {
-            isSearchIconRight: true
-            placeholder: @model.l.get 'reviews.searchPlaceholder'
-            onsubmit: =>
-              @router.go 'itemsBySearch', {query: @searchValue.getValue()}
-          }
+        # z '.search',
+        #   z @$searchInput, {
+        #     isSearchIconRight: true
+        #     placeholder: @model.l.get 'reviews.searchPlaceholder'
+        #     onsubmit: =>
+        #       @router.go 'itemsBySearch', {query: @searchValue.getValue()}
+        #   }
         z '.reviews',
           if _isEmpty reviews
             z '.empty', @model.l.get 'reviews.empty'
           else
             _map reviews, ($review) ->
-              z $review
+              z '.review',
+                z $review

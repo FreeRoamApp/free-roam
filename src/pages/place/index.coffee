@@ -13,15 +13,21 @@ if window?
 module.exports = class PlacePage extends BasePage
   hideDrawer: true
 
-  constructor: ({@model, @router, requests, serverData, group, @isOverlayed}) ->
+  constructor: (options) ->
+    {@model, @router, requests, serverData,
+      group, @isOverlayed, overlay$} = options
+
     @place = @clearOnUnmount requests.switchMap ({route}) =>
       type = route.src.split('/')[1]
       type = if type in ['campground', 'amenity'] then type else 'campground'
       @model[type].getBySlug route.params.slug
 
+    tab = requests.map ({route}) ->
+      route.params.tab
+
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$place = new Place {@model, @router, @place}
+    @$place = new Place {@model, @router, @place, tab, overlay$}
 
     @state = z.state
       me: @model.user.getMe()

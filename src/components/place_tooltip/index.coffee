@@ -9,10 +9,8 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-# directionsUrl = "https://maps.apple.com/?saddr=Current%20Location&daddr=#{place.location.lat},#{place.location.lon}"
-
 module.exports = class PlaceTooltip
-  constructor: ({@model, @router, @place, @position, @mapSize}) ->
+  constructor: ({@model, @router, @place, @position, @mapSize, @isDisabled}) ->
     @$closeIcon = new Icon()
 
     @state = z.state {
@@ -88,11 +86,12 @@ module.exports = class PlaceTooltip
     transform = @getTransform place?.position, anchor
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
-      href: @router.get place?.type, {slug: place?.slug}
+      href: if not @isDisabled then @router.get place?.type, {slug: place?.slug}
       className: z.classKebab {isVisible: Boolean place}
       onclick: (e) =>
-        e?.preventDefault()
-        @router.goOverlay place.type, {slug: place.slug}
+        unless @isDisabled
+          e?.preventDefault()
+          @router.goOverlay place.type, {slug: place.slug}
       style:
         transform: transform
         webkitTransform: transform

@@ -1,8 +1,9 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
 
-Map = require '../map'
-Spinner = require '../spinner'
+PlacesMapContainer = require '../places_map_container'
+PlacesList = require '../places_list'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -10,26 +11,52 @@ if window?
   require './index.styl'
 
 module.exports = class CampgroundNearby
-  constructor: ({@model, @router, place}) ->
+  constructor: ({@model, @router, @overlay$, @place}) ->
 
-    places = place.map (place) ->
-      if place then [place] else null
+    addPlaces = @place.map (place) =>
+      unless place
+        return []
+      [{
+        name: place.name
+        slug: place.slug
+        type: place.type
+        location:
+          lon: place.location[0]
+          lat: place.location[1]
+      }]
 
-    @place = new RxBehaviorSubject null
-    @placePosition = new RxBehaviorSubject null
-    @mapSize = new RxBehaviorSubject null
+    mapBounds = @place.switchMap (place) =>
+      unless place
+        return RxObservable.of {}
+      @model.campground.getAmenityBoundsById place.id
 
-    @$map = new Map {
-      @model, @router, places
-      @place, @placePosition, @mapSize
-      setFilterByField: -> null # FIXME rm
+    @$placesMapContainer = new PlacesMapContainer {
+      @model, @router, @overlay$, placeModel: @model.amenity, initialZoom: 9
+      showScale: true, addPlaces, mapBounds, filters: @getFilters()
+      isTooltipDisabled: true
+    }
+    # TODO: better solution than @$placesMapContainer.getPlacesStream()?
+    @$placesList = new PlacesList {
+      @model, @router, places: @$placesMapContainer.getPlacesStream()
     }
 
-    @state = z.state
-      place: place
+    @state = z.state {}
+
+  getFilters: =>
+    [
+      {
+        field: 'location'
+        type: 'geo'
+        onclick: => null
+        valueSubject: new RxBehaviorSubject null
+      }
+    ]
 
   render: =>
-    {place} = @state.getValue()
+    {} = @state.getValue()
 
     z '.z-campground-nearby',
-      z @$map
+      z '.map',
+        z @$placesMapContainer
+      z '.places-list',
+        z @$placesList

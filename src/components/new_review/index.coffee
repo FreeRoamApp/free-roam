@@ -75,10 +75,8 @@ module.exports = class NewReview
     z '.z-new-review',
       z @$composeReview,
         onDone: (e) =>
-          console.log 'go'
           @model.signInDialog.openIfGuest me
           .then =>
-            console.log 'go2'
             @model.campgroundReview.upsert {
               id: review?.id
               type: review?.type or type
@@ -89,6 +87,7 @@ module.exports = class NewReview
               rating: ratingValue
             }
             .then (newReview) =>
-              console.log 'newreview', newReview
               @resetValueStreams()
-              # TODO: route back to place page
+              @router.go 'campgroundWithTab', {
+                slug: parent?.slug, tab: 'reviews'
+              }, {reset: true}

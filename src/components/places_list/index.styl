@@ -1,0 +1,30 @@
+@require '../../vars'
+
+.z-places-list
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .place
+    padding: 8px 16px
+
+    > .name
+      font-title()
+
+    > .amenities
+      display: flex
+      whitespace: nowrap
+      overflow-x: auto
+      -webkit-overflow-scrolling: touch
+
+      > .amenity
+        font-caption2()
+        display: flex
+        margin-right: 4px
+        padding: 0 8px
+        height: 20px
+        box-sizing: border-box
+        border-radius: 10px
+
+        > .icon
+          margin-right: 8px

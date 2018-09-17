@@ -31,6 +31,7 @@ Nps = require './nps'
 CampgroundReview = require './campground_review'
 
 # places
+Amenity = require './amenity'
 Campground = require './campground'
 
 Product = require './product'
@@ -138,6 +139,7 @@ module.exports = class Model
     @campgroundReview = new CampgroundReview {@auth, @exoid, proxy}
 
     # places
+    @amenity = new Amenity {@auth}
     @campground = new Campground {@auth}
 
     @product = new Product {@auth}

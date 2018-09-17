@@ -222,7 +222,7 @@
 
 
   "levelText.roadDifficulty1": "No problems with any vehicle",
-  "levelText.roadDifficulty2": "",
+  "levelText.roadDifficulty2": "Take it a little slow, but any vehicle should be fine",
   "levelText.roadDifficulty3": "Mostly accessible, some spots can be hard to get to",
   "levelText.roadDifficulty4": "RV with high clearance and 4x4 tow vehicle",
   "levelText.roadDifficulty5": "No RVs, just 4x4 tent campers and some 4x4 vans",
@@ -240,9 +240,9 @@
   "levelText.noise5": "Constant man-made noise (trains, cars, etc...)",
 
   "levelText.fullness1": "Almost every spot is open",
-  "levelText.fullness2": "",
+  "levelText.fullness2": "A quarter of spots are open",
   "levelText.fullness3": "Half of spots are available",
-  "levelText.fullness4": "",
+  "levelText.fullness4": "Almost full",
   "levelText.fullness5": "Nearly impossible to find a spot",
 
   "levelText.shade1": "Zero shade",
@@ -252,9 +252,9 @@
   "levelText.shade5": "Completely shaded, no sunlight",
 
   "levelText.safety1": "Very safe",
-  "levelText.safety2": "",
+  "levelText.safety2": "Feels a little unsafe",
   "levelText.safety3": "Some sketchy people",
-  "levelText.safety4": "",
+  "levelText.safety4": "Feels pretty unsafe",
   "levelText.safety5": "Not safe at all",
 
   "error.usernameTaken": "Username is taken",
