@@ -17,26 +17,32 @@ if window?
   require './index.styl'
 
 module.exports = class Place
-  constructor: ({@model, @router, place}) ->
+  constructor: ({@model, @router, place, @tab, overlay$}) ->
     me = @model.user.getMe()
 
-    selectedIndex = new RxBehaviorSubject 0
+    @selectedIndex = new RxBehaviorSubject 0
 
     @$fab = new Fab()
     @$addIcon = new Icon()
-    @$tabs = new Tabs {@model, selectedIndex}
+    @$tabs = new Tabs {@model, @selectedIndex}
     @$placeInfo = new CampgroundInfo {@model, @router, place}
-    @$reviews = new Reviews {@model, @router, parent: place}
+    @$reviews = new Reviews {@model, @router, overlay$, parent: place}
     @$nearby = new CampgroundNearby {@model, @router, place}
 
     @state = z.state
-      selectedIndex: selectedIndex
+      selectedIndex: @selectedIndex
       place: place
+
+  afterMount: =>
+    @tab.take(1).subscribe (tab) =>
+      if tab is 'reviews'
+        @selectedIndex.next 1
+
+  beforeUnmount: =>
+    @selectedIndex.next 0
 
   render: =>
     {place, selectedIndex} = @state.getValue()
-
-    console.log 'place', place
 
     z '.z-place',
       z @$tabs,
@@ -70,4 +76,4 @@ module.exports = class Place
             onclick: =>
               @router.go 'campgroundNewReview', {
                 slug: place.slug
-              }
+              }, {ignoreHistory: true}

@@ -197,6 +197,12 @@ colors = _defaults {
   '$green50026': 'rgba(76, 175, 80, 0.26)'
   '$red50026': 'rgba(244, 67, 54, 0.26)'
 
+  '$amenitygroceries': '#549a4a'
+  '$amenitydump': '#864319'
+  '$amenitywater': '#3b7ac1'
+  '$amenitypropane': '#cc4040'
+  '$amenitygas': '#dbad49'
+
   '$tabSelected': materialColors.$white
   '$tabUnselected': '#1a1a1a'
 

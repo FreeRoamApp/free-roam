@@ -38,12 +38,15 @@ module.exports = class ComposeReview
       @model
       @overlay$
       uploadFn
-      onUpload: ({smallUrl, largeUrl, key, width, height}) =>
+      onUpload: ({smallUrl, largeUrl, key, width, height, aspectRatio}) =>
         {attachments} = @state.getValue()
 
         attachments or= []
         @attachmentsValueStreams.next RxObservable.of(attachments.concat [
-          {type: 'image', src: smallUrl, smallSrc: smallUrl, largeSrc: largeUrl}
+          {
+            type: 'image', aspectRatio, src: smallUrl
+            smallSrc: smallUrl, largeSrc: largeUrl
+          }
         ])
     }
 

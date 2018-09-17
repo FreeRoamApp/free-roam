@@ -243,15 +243,14 @@ module.exports = class App
     route 'groupSettings', 'GroupSettingsPage'
     route 'groupThread', 'ThreadPage'
     route 'groupThreadEdit', 'EditThreadPage'
-    route 'home', 'GroupChatPage'
     route 'item', 'ItemPage'
     route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
     # new review
     route ['campgroundNewReview'], 'NewReviewPage'
     route 'partners', 'PartnersPage'
     # place
-    route ['amenity', 'campground'], 'PlacePage'
-    route 'places', 'PlacesPage'
+    route ['amenity', 'campground', 'campgroundWithTab'], 'PlacePage'
+    route ['home', 'places'], 'PlacesPage'
     route 'product', 'ProductPage'
     route 'policies', 'PoliciesPage'
     route 'termsOfService', 'TosPage'

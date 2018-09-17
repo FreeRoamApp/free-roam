@@ -42,10 +42,6 @@ module.exports = class ThreadListItem
 
   getImageUrl: (thread) ->
     mediaAttachment = thread?.attachments?[0]
-    # FIXME rm after 3/1/2018
-    if mediaAttachment?[0]
-      mediaAttachment = mediaAttachment[0]
-
     mediaSrc = mediaAttachment?.previewSrc or mediaAttachment?.src
     mediaSrc = mediaSrc?.split(' ')[0]
 

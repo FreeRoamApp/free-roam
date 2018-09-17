@@ -14,8 +14,10 @@ module.exports = class Map
   type: 'Widget'
 
   constructor: (options) ->
-    {@model, @router, @places, @setFilterByField,
-      @place, @placePosition, @mapSize} = options
+    {@model, @router, @places, @setFilterByField, @showScale, @mapBounds,
+      @place, @placePosition, @mapSize, @initialZoom} = options
+
+    @initialZoom ?= 4
 
     @$spinner = new Spinner()
 
@@ -26,27 +28,43 @@ module.exports = class Map
   getClosestPixelRatio: ->
     if window.devicePixelRatio > 1.5 then 2 else 1
 
-  afterMount: (@$$el) =>
-    pixelRatio = @getClosestPixelRatio()
+  setCenter: (coordinates) =>
+    @map?.setCenter coordinates
 
+  addIcons: =>
+    pixelRatio = @getClosestPixelRatio()
+    icons = ['default', 'groceries', 'dump', 'water', 'gas', 'propane']
+    Promise.all _map icons, (icon) =>
+      new Promise (resolve, reject) =>
+        markerSrc = "#{config.CDN_URL}/maps/markers/#{icon}@#{pixelRatio}x.png?1"
+        @map.loadImage markerSrc, (err, image) =>
+          if err
+            reject()
+          else
+            @map.addImage icon, image, {pixelRatio: pixelRatio}
+            resolve()
+
+  afterMount: (@$$el) =>
     @state.set isLoading: true
 
-    # TODO update after this is resolved
-    # https://github.com/mapbox/mapbox-gl-js/issues/6722
+    fitBounds = null
+
     @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.css'
     @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.js'
     .then =>
+      console.log '%cNEW MAPBOX MAP', 'color: red'
       @map = new mapboxgl.Map {
         container: @$$el
         style: tile
         center: [-109.283071, 34.718803]
-        zoom: 4
+        zoom: @initialZoom
       }
 
+      if @mapBounds
+        @subscribeToMapBounds()
+
       @map.on 'load', =>
-        markerSrc = "#{config.CDN_URL}/maps/markers/default@#{pixelRatio}x.png"
-        @map.loadImage markerSrc, (err, image) =>
-          @map.addImage 'marker', image, {pixelRatio: pixelRatio}
+        @addIcons().then =>
           @resizeSubscription = @model.window.getSize().subscribe =>
             setImmediate =>
               @map.resize()
@@ -69,7 +87,7 @@ module.exports = class Map
             layout:
               # there is a bug where markers don't show if zoomed in on another area then zoom out.
               # not sure how to fix
-              'icon-image': 'marker' # uses spritesheet defined in tilejson.coffee
+              'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
               'icon-allow-overlap': true
               # 'icon-ignore-placement': true
               'icon-size': 1
@@ -95,18 +113,23 @@ module.exports = class Map
               #  stops: [[8, 3], [11, 10], [16, 50]]
           }
 
-          @updateMapBounds()
+          @updateMapLocation()
           @subscribeToPlaces()
           @state.set isLoading: false
 
       @map.on 'move', @onMapMove
-      @map.on 'moveend', @updateMapBounds
+      @map.on 'moveend', @updateMapLocation
 
       @map.addControl new mapboxgl.GeolocateControl {
         positionOptions:
           enableHighAccuracy: true
         trackUserLocation: true
       }
+      if @showScale
+        @map.addControl new mapboxgl.ScaleControl {
+          maxWidth: 100
+          unit: 'imperial'
+        }
 
       @map.on 'click', 'places', (e) =>
         coordinates = e.features[0].geometry.coordinates.slice()
@@ -137,15 +160,31 @@ module.exports = class Map
       @map.on 'mouseleave', 'places', =>
         @map.getCanvas().style.cursor = ''
 
-    , 3000
-
   beforeUnmount: =>
     @disposable?.unsubscribe()
+    @mapBoundsDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
+    @map.remove()
+    @map = null
+
+  subscribeToMapBounds: =>
+    @mapBoundsDisposable = @mapBounds.subscribe ({x1, y1, x2, y2}) =>
+      if x1?
+        @map.fitBounds(
+          [[x1, y1], [x2, y2]]
+          {
+            duration: 0 # no animation
+            padding:
+              top: 100
+              left: 10
+              right: 100
+              bottom: 10
+          }
+        )
 
   subscribeToPlaces: =>
     @disposable = @places.subscribe (places) =>
-      @map.getSource('places').setData {
+      @map.getSource('places')?.setData {
         type: 'FeatureCollection'
         features: _map places, (place) ->
           {
@@ -154,6 +193,7 @@ module.exports = class Map
               name: place.name
               slug: place.slug
               type: place.type
+              icon: place.icon or 'default'
             geometry:
               type: 'Point'
               coordinates: [
@@ -168,7 +208,7 @@ module.exports = class Map
     if place = @place.getValue()
       @placePosition.next @map.project place.location
 
-  updateMapBounds: =>
+  updateMapLocation: =>
     @setFilterByField 'location', @map.getBounds()
 
   render: =>

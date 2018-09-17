@@ -68,8 +68,8 @@ module.exports = class UploadImagePreview
               @isUploading = true # instant, w/o we sometimes get 2 uploads
               @state.set isUploading: true
               @uploadFn imageData.file
-              .then ({smallUrl, largeUrl, key}) =>
-                @onUpload arguments[0]
+              .then (image) =>
+                @onUpload image
                 @state.set isUploading: false
                 @isUploading = false
                 @imageData.next null

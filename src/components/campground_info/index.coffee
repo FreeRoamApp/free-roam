@@ -69,12 +69,15 @@ module.exports = class CampgroundInfo
       z '.g-grid',
         z '.location',
           "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+
         z '.rating',
           z @$rating, {size: '20px'}
+
         if place?.drivingInstructions
-          z '.title', @model.l.get 'campground.drivingInstructions'
-          place?.drivingInstructions
-        # TODO distances to amenities
+          z '.driving-instructions',
+            z '.title', @model.l.get 'campground.drivingInstructions'
+            place?.drivingInstructions
+
         z '.g-cols',
           z '.g-col.g-xs-12.g-md-6',
             z '.title', @model.l.get 'campground.crowds'

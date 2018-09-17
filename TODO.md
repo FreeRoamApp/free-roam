@@ -1,3 +1,17 @@
+- Cell signals
+x Get reviews working / updating place score
+x View review images full-size
+- Add filters
+- force at least 1 star
+- Map doesn't show after locking and unlocking phone?
+- Don't load nearby map until tab is active
+x Add review redirect back to reviews
+- Reviews add to photos
+- Show photos on place page
+
+
+
+
 - Update Google Play & iOS descriptions
 - Onboarding in chat. The community for Boondockers
 - "Find me a WALMART!", maybe some people-of-walmart personality here while it's loading

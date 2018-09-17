@@ -86,6 +86,14 @@ module.exports = class NavDrawer
 
         _filter([
           {
+            path: @router.get 'places'
+            title: @model.l.get 'general.places'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'map'
+            isDefault: true
+          }
+          {
             path: @router.get 'categories'
             title: @model.l.get 'drawer.productGuide'
             $icon: new Icon()
@@ -98,7 +106,6 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'chat'
-            isDefault: true
           }
           {
             path: @router.get 'conversations'
@@ -113,13 +120,6 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'rss'
-          }
-          {
-            path: @router.get 'places'
-            title: @model.l.get 'general.places'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'map'
           }
           {
             path: @router.get 'about'
