@@ -56,7 +56,7 @@ module.exports = class Map
       @map = new mapboxgl.Map {
         container: @$$el
         style: tile
-        center: [-109.283071, 34.718803]
+        center: [-112.045697, 35.214012]
         zoom: @initialZoom
       }
 

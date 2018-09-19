@@ -21,7 +21,7 @@ if window?
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, @overlay$, @placeModel, @filters, showScale, mapBounds
-      @addPlaces, initialZoom, isTooltipDisabled} = options
+      @showFilters, @addPlaces, initialZoom, isTooltipDisabled} = options
 
     @placeModel ?= @model.campground
     @addPlaces ?= RxObservable.of []
@@ -36,7 +36,6 @@ module.exports = class PlacesMapContainer
         addPlaces
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
-    @filterDialogField = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
 
     @$map = new Map {
@@ -47,21 +46,19 @@ module.exports = class PlacesMapContainer
       @model, @router, @place, position: @placePosition, @mapSize
       isDisabled: isTooltipDisabled
     }
-    @$filterDialog = new FilterDialog {
-      @model, @router, @filterDialogField, @setFilterByField, @overlay$
-    }
 
     @state = z.state
       filters: @filtersStream
       place: @place
-      filterDialogField: @filterDialogField
 
   setFilterByField: (field, value) =>
     @filtersStream.take(1).subscribe (filters) =>
       _find(filters, {field}).valueSubject.next value
 
-  showFilterDialog: =>
-    @overlay$.next @$filterDialog
+  showFilterDialog: (filter) =>
+    @overlay$.next new FilterDialog {
+      @model, @router, @overlay$, filter
+    }
 
   getFiltersStream: =>
     RxObservable.combineLatest(
@@ -86,7 +83,32 @@ module.exports = class PlacesMapContainer
             {
               range:
                 "#{filter.field}":
-                  lt: filter.value
+                  lte: filter.value
+            }
+          when 'minInt'
+            {
+              range:
+                "#{filter.field}":
+                  gte: filter.value
+            }
+          when 'maxIntSeasonal'
+            {
+              range:
+                "#{filter.field}.#{filter.value.season}":
+                  lte: filter.value.value
+            }
+          when 'maxIntDayNight'
+            {
+              range:
+                "#{filter.field}.#{filter.value.dayNight}":
+                  lte: filter.value.value
+            }
+          when 'cellSignal'
+            {
+              range:
+                "#{filter.field}.#{filter.value.carrier}.signal":
+                  gte: filter.value.signal
+
             }
           when 'geo'
             {
@@ -100,6 +122,8 @@ module.exports = class PlacesMapContainer
                     lon: filter.value._ne.lng
             }
 
+      console.log filter
+
       @placeModel.search {
         query:
           bool:
@@ -107,18 +131,20 @@ module.exports = class PlacesMapContainer
       }
 
   render: =>
-    {filters, filterDialogField, place} = @state.getValue()
+    {filters, place} = @state.getValue()
 
     z '.z-places-map-container',
-      # z '.filters',
-      #   _map filters, (filter) ->
-      #     if filter.name
-      #       z '.filter', {
-      #         className: z.classKebab {
-      #           hasMore: true, hasValue: filter.value?
-      #         }
-      #         onclick: filter.onclick
-      #       }, filter.name
+      if @showFilters
+        z '.filters',
+          _map filters, (filter) =>
+            if filter.name
+              z '.filter', {
+                className: z.classKebab {
+                  hasMore: true, hasValue: filter.value?
+                }
+                onclick: =>
+                  @showFilterDialog filter
+              }, filter.name
 
       z @$map
 

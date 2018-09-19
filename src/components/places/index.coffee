@@ -13,42 +13,64 @@ module.exports = class Places
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, @overlay$
       filters: @getFilters()
+      showFilters: true
     }
 
     @state = z.state {}
 
   getFilters: =>
+    currentSeason = @model.time.getCurrentSeason()
+
     [
       {
         field: 'roadDifficulty'
         type: 'maxInt'
-        name: @model.l.get 'roadDifficulty.title'
-        onclick: =>
-          @filterDialogField.next 'roadDifficulty'
-          @showFilterDialog()
+        name: @model.l.get 'campground.roadDifficulty'
         valueSubject: new RxBehaviorSubject null
       }
       {
         field: 'crowds'
-        type: 'maxInt'
+        type: 'maxIntSeasonal'
         name: @model.l.get 'campground.crowds'
         onclick: => null
         valueSubject: new RxBehaviorSubject null
       }
       {
-        field: 'cellSignal.att.signal'
-        type: 'maxInt'
+        field: 'cellSignal'
+        type: 'cellSignal'
         name: @model.l.get 'campground.cellSignal'
-        onclick: =>
-          # modal, set carrier, min signal, 4g or 3g
-          @setFilterByField 'cellSignal.att.signal', 6
-          null
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'safety'
+        type: 'minInt'
+        name: @model.l.get 'campground.safety'
+        onclick: => null
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'noise'
+        type: 'maxIntDayNight'
+        name: @model.l.get 'campground.noise'
+        onclick: => null
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'fullness'
+        type: 'maxIntSeasonal'
+        name: @model.l.get 'campground.fullness'
+        onclick: => null
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'shade'
+        type: 'maxInt'
+        name: @model.l.get 'campground.shade'
         valueSubject: new RxBehaviorSubject null
       }
       {
         field: 'location'
         type: 'geo'
-        onclick: => null
         valueSubject: new RxBehaviorSubject null
       }
     ]

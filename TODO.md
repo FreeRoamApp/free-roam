@@ -1,9 +1,11 @@
 - Cell signals
 x Get reviews working / updating place score
 x View review images full-size
-- Add filters
+x Add filters
 - force at least 1 star
 - Map doesn't show after locking and unlocking phone?
+  - probably webgl losing context https://github.com/mapbox/mapbox-gl-js/issues/2656
+  - can plugin to inspect after it happens?
 - Don't load nearby map until tab is active
 x Add review redirect back to reviews
 - Reviews add to photos

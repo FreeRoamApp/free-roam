@@ -1,0 +1,13 @@
+@require '../../vars'
+
+.z-cell-bars
+  display: flex
+  align-items: flex-end
+
+  > .bar
+    width: 15%
+    margin: 0 2.5%
+    background: getColor('$primary100')
+
+    &.is-visible
+      background: getColor('$primary500')
