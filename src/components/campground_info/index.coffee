@@ -2,6 +2,7 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 
+CellBars = require '../cell_bars'
 Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
 InfoLevel = require '../info_level'
@@ -22,7 +23,7 @@ module.exports = class CampgroundInfo
       {key: 'fall', text: @model.l.get 'seasons.fall'}
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
-    currentSeason = 'fall' # TODO
+    currentSeason = @model.time.getCurrentSeason()
     @$crowdsInfoLevelTabs = new InfoLevelTabs {
       @model, @router, tabs: seasons
       selectedTab: currentSeason, key: 'crowds'
@@ -56,12 +57,18 @@ module.exports = class CampgroundInfo
           place
           $videos: _map place?.videos, (video) =>
             new EmbeddedVideo {@model, video}
+          cellCarriers: _map place?.cellSignal, (value, carrier) ->
+            {
+              carrier: carrier
+              type: value.type
+              $bars: new CellBars {value: value.signal}
+            }
         }
 
   render: =>
     {place} = @state.getValue()
 
-    {place, $videos} = place or {}
+    {place, $videos, cellCarriers} = place or {}
 
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
@@ -79,6 +86,16 @@ module.exports = class CampgroundInfo
             place?.drivingInstructions
 
         z '.g-cols',
+          z '.g-col.g-xs-12.g-md-6',
+            z '.title', @model.l.get 'campground.cellSignal'
+            z '.carriers',
+              _map cellCarriers, ({$bars, carrier, type}) =>
+                z '.carrier',
+                  z '.name', @model.l.get "carriers.#{carrier}"
+                  z '.bars',
+                    z $bars, widthPx: 40
+                  z '.type', type
+
           z '.g-col.g-xs-12.g-md-6',
             z '.title', @model.l.get 'campground.crowds'
             z @$crowdsInfoLevelTabs, {
@@ -113,6 +130,7 @@ module.exports = class CampgroundInfo
               value: place?.safety
               min: 1
               max: 5
+              isReversed: true # 5 is bad 1 is good
             }
           z '.g-col.g-xs-12.g-md-6',
             z '.title', @model.l.get 'campground.roadDifficulty'

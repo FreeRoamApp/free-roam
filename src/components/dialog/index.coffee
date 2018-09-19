@@ -13,6 +13,7 @@ module.exports = class Dialog
   constructor: ({@onLeave} = {}) ->
     @onLeave ?= (-> null)
     @$cancelButton = new FlatButton()
+    @$resetButton = new FlatButton()
     @$submitButton = new FlatButton()
 
   afterMount: =>
@@ -27,7 +28,7 @@ module.exports = class Dialog
       @onLeave()
 
   render: (props) =>
-    {$content, $title, cancelButton, submitButton, isVanilla,
+    {$content, $title, cancelButton, resetButton, submitButton, isVanilla,
       isWide} = props
     $content ?= ''
 
@@ -50,6 +51,13 @@ module.exports = class Dialog
                 className: z.classKebab {isFullWidth: cancelButton.isFullWidth}
               },
                 z @$cancelButton, _defaults cancelButton, {
+                  colors: {cText: colors.$primary500}
+                }
+            if resetButton
+              z '.action', {
+                className: z.classKebab {isFullWidth: resetButton.isFullWidth}
+              },
+                z @$resetButton, _defaults resetButton, {
                   colors: {cText: colors.$primary500}
                 }
             if submitButton

@@ -9,7 +9,7 @@ module.exports = class InfoLevel
   constructor: ({@model, @router, key}) ->
     @state = z.state {key}
 
-  render: ({value, min, max}) =>
+  render: ({value, min, max, isReversed}) =>
     {key} = @state.getValue()
 
     value ?= 1
@@ -23,6 +23,7 @@ module.exports = class InfoLevel
       z '.flavor-text', @model.l.get "levelText.#{key}#{value}"
       z '.bar',
         z ".fill.has-#{value}",
+          className: z.classKebab {isReversed}
           style:
             width: "#{fillWidth}%"
       z '.bottom',

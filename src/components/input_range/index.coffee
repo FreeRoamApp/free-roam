@@ -10,7 +10,7 @@ module.exports = class InputRange
     @state = z.state
       value: @value
 
-  render: ({label, minFlavorText, maxFlavorText} = {}) =>
+  render: ({label} = {}) =>
     {value} = @state.getValue()
 
     value = parseInt(value)
@@ -34,7 +34,3 @@ module.exports = class InputRange
             },
               if number in [@minValue, @maxValue / 2, @maxValue, value]
                 number
-
-        z '.flavor-text',
-          z '.min', minFlavorText
-          z '.max', maxFlavorText
