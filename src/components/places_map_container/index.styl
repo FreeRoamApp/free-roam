@@ -4,6 +4,7 @@
   flex: 1
   display: flex
   flex-direction: column
+  position: relative
 
   > .filters
     background: getColor('$bg500')
@@ -13,6 +14,7 @@
     position: absolute
     width: 100%
     z-index: 99
+    border-bottom: 1px solid getColor('$black12')
 
     > .filter
       font-caption1(false)
@@ -42,3 +44,26 @@
           border-left: 4px solid transparent
           border-right: 4px solid transparent
           border-top: 4px solid getColor('$primary500')
+
+  > .types
+    position: absolute
+    display: none
+    top: 36px
+    left: 4px
+    background: getColor('$bg500')
+    border: 1px solid getColor('$black12')
+    border-top: none
+    z-index: 99
+
+    &.is-visible
+      display: block
+
+    > .type
+      font-caption1()
+      padding: 4px 8px
+      display: flex
+      align-items: center
+
+      > .checkbox
+        margin-right: 4px
+        display: flex

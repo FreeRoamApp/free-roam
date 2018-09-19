@@ -96,7 +96,7 @@ module.exports = class FilterDialog
                   {value: 'sprint', text: @model.l.get 'carriers.sprint'}
                 ]
             z '.label', @model.l.get 'filterDialog.minSignal'
-            z '.bars', z @$cellBars, {widthPx: '200px'}
+            z '.bars', z @$cellBars, {widthPx: 200}
 
     resetButton = {
       text: @model.l.get 'general.reset'

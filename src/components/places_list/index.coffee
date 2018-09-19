@@ -26,17 +26,18 @@ module.exports = class PlacesList
     {places} = @state.getValue()
 
     z '.z-places-list',
-      _map places, ({place, amenities}) ->
-        z '.place',
-          z '.name', place.name
-          z '.amenities',
-            _map amenities, ({amenity, $icon}) ->
-              z '.amenity',
-                z '.icon',
-                  z $icon,
-                    icon: amenity
-                    isTouchTarget: false
-                    size: '12px'
-                    color: colors["$amenity#{amenity}"]
+      z '.g-grid',
+        _map places, ({place, amenities}) ->
+          z '.place',
+            z '.name', place.name
+            z '.amenities',
+              _map amenities, ({amenity, $icon}) ->
+                z '.amenity',
+                  z '.icon',
+                    z $icon,
+                      icon: amenity
+                      isTouchTarget: false
+                      size: '12px'
+                      color: colors["$amenity#{amenity}"]
 
-                z '.name', amenity
+                  z '.name', amenity
