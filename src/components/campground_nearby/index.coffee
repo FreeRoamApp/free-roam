@@ -31,9 +31,19 @@ module.exports = class CampgroundNearby
       @model.campground.getAmenityBoundsById place.id
 
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router, @overlay$, placeModel: @model.amenity, initialZoom: 9
-      showScale: true, addPlaces, mapBounds, filters: @getFilters()
-      isTooltipDisabled: true
+      @model, @router, @overlay$, initialZoom: 9
+      showScale: true, addPlaces, mapBounds
+      dataTypes: [
+        {
+          dataType: 'amenity'
+          filters: @getAmenityFilters()
+          isChecked: true
+        }
+        {
+          dataType: 'cellTower'
+          filters: @getCellTowerFilters()
+        }
+      ]
     }
     # TODO: better solution than @$placesMapContainer.getPlacesStream()?
     @$placesList = new PlacesList {
@@ -42,15 +52,11 @@ module.exports = class CampgroundNearby
 
     @state = z.state {}
 
-  getFilters: =>
-    [
-      {
-        field: 'location'
-        type: 'geo'
-        onclick: => null
-        valueSubject: new RxBehaviorSubject null
-      }
-    ]
+  getAmenityFilters: =>
+    []
+
+  getCellTowerFilters: =>
+    []
 
   render: =>
     {} = @state.getValue()

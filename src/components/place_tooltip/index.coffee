@@ -10,7 +10,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceTooltip
-  constructor: ({@model, @router, @place, @position, @mapSize, @isDisabled}) ->
+  constructor: ({@model, @router, @place, @position, @mapSize}) ->
     @$closeIcon = new Icon()
 
     @state = z.state {
@@ -85,11 +85,13 @@ module.exports = class PlaceTooltip
     anchor = @getAnchor place?.position, mapSize
     transform = @getTransform place?.position, anchor
 
+    isDisabled = place?.type isnt 'campground'
+
     z "a.z-place-tooltip.anchor-#{anchor}", {
-      href: if not @isDisabled then @router.get place?.type, {slug: place?.slug}
+      href: if not isDisabled then @router.get place?.type, {slug: place?.slug}
       className: z.classKebab {isVisible: Boolean place}
       onclick: (e) =>
-        unless @isDisabled
+        unless isDisabled
           e?.preventDefault()
           @router.goOverlay place.type, {slug: place.slug}
       style:

@@ -14,7 +14,7 @@ module.exports = class Map
   type: 'Widget'
 
   constructor: (options) ->
-    {@model, @router, @places, @setFilterByField, @showScale, @mapBounds,
+    {@model, @router, @places, @showScale, @mapBounds, @currentLocation
       @place, @placePosition, @mapSize, @initialZoom} = options
 
     @initialZoom ?= 4
@@ -209,7 +209,7 @@ module.exports = class Map
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>
-    @setFilterByField 'location', @map.getBounds()
+    @currentLocation.next @map.getBounds()
 
   render: =>
     {windowSize, isLoading} = @state.getValue()

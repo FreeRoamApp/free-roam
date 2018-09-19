@@ -33,6 +33,7 @@ CampgroundReview = require './campground_review'
 # places
 Amenity = require './amenity'
 Campground = require './campground'
+CellTower = require './cell_tower'
 
 Product = require './product'
 PushToken = require './push_token'
@@ -141,6 +142,7 @@ module.exports = class Model
     # places
     @amenity = new Amenity {@auth}
     @campground = new Campground {@auth}
+    @cellTower = new CellTower {@auth}
 
     @product = new Product {@auth}
     @pushToken = new PushToken {@auth, pushToken}

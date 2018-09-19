@@ -1,3 +1,5 @@
+Figure out how to show multiple place model results on 1 places_map_container (eg amenities and campgrounds)
+
 - Cell signals
 x Get reviews working / updating place score
 x View review images full-size
@@ -11,6 +13,9 @@ x Add review redirect back to reviews
 - Reviews add to photos
 - Show photos on place page
 
+
+Feedback:
+- Maybe 'nearby' is hard to get to? Seems like some people never see it
 
 
 

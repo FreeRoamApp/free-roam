@@ -8,17 +8,38 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+###
+location should be its own filter.
+
+pass in [
+  {type: ['amenity', 'campground', 'cellTower'], filters}
+
+]
+###
+
 module.exports = class Places
   constructor: ({@model, @router, @overlay$}) ->
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, @overlay$
-      filters: @getFilters()
-      showFilters: true
+      dataTypes: [
+        {
+          dataType: 'campground'
+          filters: @getCampgroundFilters()
+          isChecked: true
+        }
+        {
+          dataType: 'amenity'
+          filters: @getAmenityFilters()
+        }
+      ]
     }
 
     @state = z.state {}
 
-  getFilters: =>
+  getAmenityFilters: =>
+    []
+
+  getCampgroundFilters: =>
     currentSeason = @model.time.getCurrentSeason()
 
     [
@@ -66,11 +87,6 @@ module.exports = class Places
         field: 'shade'
         type: 'maxInt'
         name: @model.l.get 'campground.shade'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'location'
-        type: 'geo'
         valueSubject: new RxBehaviorSubject null
       }
     ]

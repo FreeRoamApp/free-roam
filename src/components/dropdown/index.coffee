@@ -29,7 +29,7 @@ module.exports = class Dropdown
     if isFirstOptionEmpty
       options = [{value: '', text: ''}].concat options
 
-    z '.zp-dropdown',
+    z '.z-dropdown',
       # vdom doesn't key defaultValue correctly if elements are switched
       # key: _kebabCase hintText
       className: z.classKebab {

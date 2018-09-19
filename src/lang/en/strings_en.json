@@ -144,6 +144,7 @@
   "partners.text5": "To apply, send an email to austin@freeroam.app",
   "partners.requirement1": "5,000+ followers across social media",
   "partners.requirement2": "Full-time RVer / Vanlifer",
+  "placesMapContainer.types": "Types",
   "product.buyAmazon": "View on Amazon",
   "product.addToPack": "Save in backpack",
   "product.reviewersLiked": "Reviewers Liked:",
@@ -232,6 +233,9 @@
   "campground.safety": "Safety",
   "campground.shade": "Shade",
 
+  "placeTypes.campground": "Campgrounds",
+  "placeTypes.amenity": "Amenities",
+  "placeTypes.cellTower": "Cell Towers",
 
   "levelText.roadDifficulty1": "No problems with any vehicle",
   "levelText.roadDifficulty2": "Take it a little slow, but any vehicle should be fine",
