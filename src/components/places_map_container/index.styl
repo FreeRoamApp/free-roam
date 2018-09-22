@@ -63,7 +63,20 @@
       padding: 4px 8px
       display: flex
       align-items: center
+      cursor: pointer
+
+      &.is-selected
+        background: getColor('$tertiary100')
 
       > .checkbox
         margin-right: 4px
         display: flex
+
+      > .name
+        display: flex
+        align-items: center
+
+        > .key
+          width: 10px
+          height: 10px
+          margin-right: 4px

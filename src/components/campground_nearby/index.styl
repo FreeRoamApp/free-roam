@@ -9,6 +9,19 @@
     flex: 1
     min-height: 0
     display: flex
+    position: relative
+
+    > .toggle-cell-towers
+      font-caption1()
+      cursor: pointer
+      position: absolute
+      top: 8px
+      left: 8px
+      z-index: 100
+      background: getColor('$tertiary100')
+      padding: 0 4px
+      border-radius: 2px
+
 
   > .places-list
     flex: 1

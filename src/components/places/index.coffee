@@ -2,6 +2,7 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 PlacesMapContainer = require '../places_map_container'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -32,16 +33,51 @@ module.exports = class Places
           filters: @getAmenityFilters()
         }
       ]
+      optionalLayers: [
+        {
+          name: @model.l.get 'placesMapContainer.layerBlm'
+          color: colors.$mapLayerBlm
+          layer: {
+            id: 'us-blm'
+            type: 'fill'
+            source:
+              type: 'vector'
+              url: 'https://tileserver.freeroam.app/data/free-roam-us-blm.json'
+            'source-layer': 'us_pad'
+            layout: {}
+            paint:
+              'fill-color': colors.$mapLayerBlm
+              'fill-opacity': 0.4
+          }
+          insertBeneathLabels: true
+        }
+
+        {
+          name: @model.l.get 'placesMapContainer.layerUsfs'
+          color: colors.$mapLayerUsfs
+          layer: {
+            id: 'us-usfs'
+            type: 'fill'
+            source:
+              type: 'vector'
+              url: 'https://tileserver.freeroam.app/data/free-roam-us-usfs.json'
+            'source-layer': 'us_pad'
+            layout: {}
+            paint:
+              'fill-color': colors.$mapLayerUsfs
+              'fill-opacity': 0.4
+          }
+          insertBeneathLabels: true
+        }
+      ]
     }
 
     @state = z.state {}
 
   getAmenityFilters: =>
-    []
+    MapService.getAmenityFilters {@model}
 
   getCampgroundFilters: =>
-    currentSeason = @model.time.getCurrentSeason()
-
     [
       {
         field: 'roadDifficulty'

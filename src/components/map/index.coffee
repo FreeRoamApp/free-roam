@@ -18,7 +18,7 @@ module.exports = class Map
       @place, @placePosition, @mapSize, @initialZoom} = options
 
     @initialZoom ?= 4
-
+    @layers = []
     @$spinner = new Spinner()
 
     @state = z.state
@@ -31,18 +31,38 @@ module.exports = class Map
   setCenter: (coordinates) =>
     @map?.setCenter coordinates
 
-  addIcons: =>
-    pixelRatio = @getClosestPixelRatio()
-    icons = ['default', 'groceries', 'dump', 'water', 'gas', 'propane']
-    Promise.all _map icons, (icon) =>
-      new Promise (resolve, reject) =>
-        markerSrc = "#{config.CDN_URL}/maps/markers/#{icon}@#{pixelRatio}x.png?1"
-        @map.loadImage markerSrc, (err, image) =>
-          if err
-            reject()
-          else
-            @map.addImage icon, image, {pixelRatio: pixelRatio}
-            resolve()
+  getFirstSymbolId: =>
+    layers = @map.getStyle().layers
+    # Find the index of the first symbol layer in the map style
+    firstSymbolId = undefined
+    i = 0
+    while i < layers.length
+      if layers[i].type == 'symbol'
+        firstSymbolId = layers[i].id
+        break
+      i++
+    return firstSymbolId
+
+  addLayer: (layer, {insertBeneathLabels} = {}) =>
+    if @layers.indexOf(layer.id) is -1
+      @layers.push layer.id
+      layerId = if insertBeneathLabels then @getFirstSymbolId() else undefined
+      @map.addLayer layer, layerId
+
+  removeLayerById: (id) =>
+    index = @layers.indexOf(id)
+    if index isnt -1
+      @layers.splice index, 1
+    layer = @map.getLayer id
+    source = layer.source
+    @map.removeLayer id
+    @map.removeSource source
+
+  toggleLayer: (layer, options) =>
+    if @layers.indexOf(layer.id) is -1
+      @addLayer layer, options
+    else
+      @removeLayerById layer.id
 
   afterMount: (@$$el) =>
     @state.set isLoading: true
@@ -64,13 +84,12 @@ module.exports = class Map
         @subscribeToMapBounds()
 
       @map.on 'load', =>
-        @addIcons().then =>
-          @resizeSubscription = @model.window.getSize().subscribe =>
-            setImmediate =>
-              @map.resize()
-              @mapSize.next {
-                width: @$$el.offsetWidth, height: @$$el.offsetHeight
-              }
+        @resizeSubscription = @model.window.getSize().subscribe =>
+          setImmediate =>
+            @map.resize()
+            @mapSize.next {
+              width: @$$el.offsetWidth, height: @$$el.offsetHeight
+            }
           @map.addLayer {
             id: 'places'
             type: 'symbol'

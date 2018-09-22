@@ -7,6 +7,8 @@ _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _groupBy = require 'lodash/groupBy'
 _isEmpty = require 'lodash/isEmpty'
+_debounce = require 'lodash/debounce'
+_some = require 'lodash/some'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
@@ -26,7 +28,7 @@ if window?
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, @overlay$, @dataTypes, showScale, mapBounds
-      @addPlaces, initialZoom} = options
+      @addPlaces, optionalLayers, initialZoom, @isFilterBarHidden} = options
 
     @addPlaces ?= RxObservable.of []
 
@@ -53,6 +55,12 @@ module.exports = class PlacesMapContainer
       @model, @router, @place, position: @placePosition, @mapSize
     }
 
+    @optionalLayers = _map optionalLayers, (optionalLayer) ->
+      {
+        optionalLayer
+        $checkbox: new Checkbox()
+      }
+
     @state = z.state
       filterTypes: @filterTypesStream
       types: @dataTypesStream
@@ -66,8 +74,9 @@ module.exports = class PlacesMapContainer
     }
 
   getDataTypesStreams: (dataTypes) =>
-    dataTypes = _map dataTypes, ({dataType, filters, isChecked}) ->
-      isCheckedSubject = new RxBehaviorSubject isChecked
+    dataTypes = _map dataTypes, (options) ->
+      {dataType, filters, isChecked, isCheckedSubject} = options
+      isCheckedSubject ?= new RxBehaviorSubject isChecked
       {
         dataType: dataType
         filters: filters
@@ -126,41 +135,51 @@ module.exports = class PlacesMapContainer
         _flatten values
 
   getQueryFilterFromFilters: (filters, currentLocation) ->
-    filter = _filter _map filters, (filter) ->
-      unless filter.value
+    groupedFilters = _groupBy filters, 'field'
+    filter = _filter _map groupedFilters, (fieldFilters, field) ->
+      unless _some fieldFilters, 'value'
         return
+
+      filter = fieldFilters[0]
+
       switch filter.type
         when 'maxInt'
           {
             range:
-              "#{filter.field}":
+              "#{field}":
                 lte: filter.value
           }
         when 'minInt'
           {
             range:
-              "#{filter.field}":
+              "#{field}":
                 gte: filter.value
           }
         when 'maxIntSeasonal'
           {
             range:
-              "#{filter.field}.#{filter.value.season}":
+              "#{field}.#{filter.value.season}":
                 lte: filter.value.value
           }
         when 'maxIntDayNight'
           {
             range:
-              "#{filter.field}.#{filter.value.dayNight}":
+              "#{field}.#{filter.value.dayNight}":
                 lte: filter.value.value
           }
         when 'cellSignal'
           {
             range:
-              "#{filter.field}.#{filter.value.carrier}.signal":
+              "#{field}.#{filter.value.carrier}.signal":
                 gte: filter.value.signal
-
           }
+        when 'booleanArray'
+          arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'
+          {
+            terms:
+              "#{field}": arrayValues
+              # minimum_should_match: 1
+            }
 
     filter.push {
       geo_bounding_box:
@@ -177,38 +196,64 @@ module.exports = class PlacesMapContainer
   render: =>
     {filterTypes, types, currentType, place, isTypesVisible} = @state.getValue()
 
-    console.log 'filterTypes', filterTypes, currentType
-
     z '.z-places-map-container',
-      z '.filters',
-        z '.filter', {
-          onclick: =>
-            @state.set isTypesVisible: not isTypesVisible
-        },
-          @model.l.get 'placesMapContainer.types'
-        _map filterTypes?[currentType], (filter) =>
-          if filter.name
-            z '.filter', {
-              className: z.classKebab {
-                hasMore: true, hasValue: filter.value?
-              }
-              onclick: =>
-                @showFilterDialog filter
-            }, filter.name
-      z '.types', {
-        className: z.classKebab {isVisible: isTypesVisible}
-      },
-        _map types, ({dataType, $checkbox, isCheckedSubject}) =>
-          z '.type', {
-            onclick: =>
-              @state.set currentType: dataType
-              isCheckedSubject.next true
-          },
-            z '.checkbox',
-              z $checkbox
-            z '.name', @model.l.get "placeTypes.#{dataType}"
+      [
+        unless @isFilterBarHidden
+          [
+            z '.filters',
+              z '.filter.has-more', {
+                onclick: =>
+                  @state.set isTypesVisible: not isTypesVisible
+              },
+                @model.l.get 'placesMapContainer.show'
+              _map filterTypes?[currentType], (filter) =>
+                if filter.name
+                  z '.filter', {
+                    className: z.classKebab {
+                      hasMore: filter.type isnt 'booleanArray'
+                      hasValue: filter.value?
+                    }
+                    onclick: =>
+                      if filter.type is 'booleanArray'
+                        filter.valueSubject.next (not filter.value) or null
+                      else
+                        @showFilterDialog filter
+                  }, filter.name
+            z '.types', {
+              className: z.classKebab {isVisible: isTypesVisible}
+            },
+              [
+                _map types, ({dataType, $checkbox, isCheckedSubject, layer}) =>
+                  z '.type', {
+                    className: z.classKebab {
+                      isSelected: currentType is dataType
+                    }
+                    onclick: =>
+                      @state.set currentType: dataType
+                      isCheckedSubject.next true
+                  },
+                    z '.checkbox', z $checkbox
+                    z '.name', @model.l.get "placeTypes.#{dataType}"
+                _map @optionalLayers, ({optionalLayer, $checkbox}) =>
+                  {name, color, layer, insertBeneathLabels} = optionalLayer
+                  z 'label.type', {
+                    # TODO: figure out why debounce is necessary (2 clicks instead of 1)
+                    onclick: _debounce =>
+                      @$map.toggleLayer layer, {insertBeneathLabels}
+                    , 100
+                  },
+                      z '.checkbox', z $checkbox
+                      z '.name',
+                        z '.key', {
+                          style:
+                            backgroundColor: color
+                        }
+                        name
+              ]
+          ]
 
-      z @$map
+        z @$map
 
-      if place
-        z @$placeTooltip
+        if place
+          z @$placeTooltip
+      ]

@@ -30,9 +30,11 @@ module.exports = class CampgroundNearby
         return RxObservable.of {}
       @model.campground.getAmenityBoundsById place.id
 
+    @isCellTowersChecked = new RxBehaviorSubject false
+
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, @overlay$, initialZoom: 9
-      showScale: true, addPlaces, mapBounds
+      showScale: true, addPlaces, mapBounds, isFilterBarHidden: true
       dataTypes: [
         {
           dataType: 'amenity'
@@ -42,6 +44,7 @@ module.exports = class CampgroundNearby
         {
           dataType: 'cellTower'
           filters: @getCellTowerFilters()
+          isCheckedSubject: @isCellTowersChecked
         }
       ]
     }
@@ -50,7 +53,9 @@ module.exports = class CampgroundNearby
       @model, @router, places: @$placesMapContainer.getPlacesStream()
     }
 
-    @state = z.state {}
+    @state = z.state {
+      @isCellTowersChecked
+    }
 
   getAmenityFilters: =>
     []
@@ -59,10 +64,18 @@ module.exports = class CampgroundNearby
     []
 
   render: =>
-    {} = @state.getValue()
+    {isCellTowersChecked} = @state.getValue()
 
     z '.z-campground-nearby',
       z '.map',
         z @$placesMapContainer
+        z '.toggle-cell-towers', {
+          onclick: =>
+            @isCellTowersChecked.next not isCellTowersChecked
+        },
+          if isCellTowersChecked
+            @model.l.get 'campgroundNearby.hideCellTowers'
+          else
+            @model.l.get 'campgroundNearby.showCellTowers'
       z '.places-list',
         z @$placesList
