@@ -203,6 +203,14 @@ colors = _defaults {
   '$amenitypropane': '#cc4040'
   '$amenitygas': '#dbad49'
 
+  '$att': '#0098d6'
+  '$sprint': '#f7c810'
+  '$tmobile': '#dc0070'
+  '$verizon': '#ea0b13'
+
+  '$mapLayerBlm': '#edd100'
+  '$mapLayerUsfs': '#0c6000'
+
   '$tabSelected': materialColors.$white
   '$tabUnselected': '#1a1a1a'
 

@@ -1,6 +1,10 @@
 Figure out how to show multiple place model results on 1 places_map_container (eg amenities and campgrounds)
 
-- Cell signals
+Allow people to contribute cell information:
+  - https://github.com/Esri/cordova-plugin-advanced-geolocation
+  - Get carrier, band, strength, maybe download speed?
+
+x Cell signals
 x Get reviews working / updating place score
 x View review images full-size
 x Add filters
@@ -12,11 +16,12 @@ x Add filters
 x Add review redirect back to reviews
 - Reviews add to photos
 - Show photos on place page
+- Add gyms
 
 
 Feedback:
 - Maybe 'nearby' is hard to get to? Seems like some people never see it
-
+- Map of places you've been. Roads you traveled would be cool too, if possible
 
 
 - Update Google Play & iOS descriptions

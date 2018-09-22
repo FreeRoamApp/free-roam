@@ -46,6 +46,8 @@ module.exports = class About
         z 'img.home',
           src: "#{config.CDN_URL}/home.jpg"
 
+        z 'p', @model.l.get 'about.opencellid'
+
         # Goals:
         # 1. Make enough to support ourselves
         # 2. Give others ways to support themselves
