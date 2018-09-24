@@ -5,6 +5,7 @@
   display: flex
   flex-direction: column
   position: relative
+  user-select: none
 
   > .filters
     background: getColor('$bg500')
@@ -80,3 +81,9 @@
           width: 10px
           height: 10px
           margin-right: 4px
+
+  > .place
+    display: none
+
+    &.is-visible
+      display: block

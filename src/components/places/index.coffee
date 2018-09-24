@@ -9,15 +9,6 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-###
-location should be its own filter.
-
-pass in [
-  {type: ['amenity', 'campground', 'cellTower'], filters}
-
-]
-###
-
 module.exports = class Places
   constructor: ({@model, @router, @overlay$}) ->
     @$placesMapContainer = new PlacesMapContainer {

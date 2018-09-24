@@ -64,8 +64,10 @@ module.exports = class Map
     else
       @removeLayerById layer.id
 
-  afterMount: (@$$el) =>
+  afterMount: ($$el) =>
     @state.set isLoading: true
+
+    $$mapEl = $$el.querySelector('.map')
 
     fitBounds = null
 
@@ -74,7 +76,7 @@ module.exports = class Map
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'
       @map = new mapboxgl.Map {
-        container: @$$el
+        container: $$mapEl
         style: tile
         center: [-112.045697, 35.214012]
         zoom: @initialZoom
@@ -88,7 +90,7 @@ module.exports = class Map
           setImmediate =>
             @map.resize()
             @mapSize.next {
-              width: @$$el.offsetWidth, height: @$$el.offsetHeight
+              width: $$mapEl.offsetWidth, height: $$mapEl.offsetHeight
             }
           @map.addLayer {
             id: 'places'
@@ -122,7 +124,7 @@ module.exports = class Map
                   [6, 0]
                   [6.001, 12]
                 ]
-              'text-font': ['Klokantech Noto Sans Regular'] # must exist in tilejson
+              'text-font': ['Open Sans Regular'] # must exist in tilejson
 
             paint:
               'text-translate': [12, -4]

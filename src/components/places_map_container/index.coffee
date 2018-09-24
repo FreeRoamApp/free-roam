@@ -254,6 +254,5 @@ module.exports = class PlacesMapContainer
 
         z @$map
 
-        if place
-          z @$placeTooltip
+        z @$placeTooltip, {isVisible: Boolean place}
       ]
