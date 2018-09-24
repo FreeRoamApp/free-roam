@@ -79,8 +79,10 @@ module.exports = class PlaceTooltip
     yPx = position?.y
     "translate(#{xPercent}%, #{yPercent}%) translate(#{xPx}px, #{yPx}px)"
 
-  render: =>
+  render: ({isVisible} = {}) =>
     {place, mapSize} = @state.getValue()
+
+    isVisible ?= Boolean place
 
     anchor = @getAnchor place?.position, mapSize
     transform = @getTransform place?.position, anchor
@@ -89,7 +91,7 @@ module.exports = class PlaceTooltip
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
       href: if not isDisabled then @router.get place?.type, {slug: place?.slug}
-      className: z.classKebab {isVisible: Boolean place}
+      className: z.classKebab {isVisible}
       onclick: (e) =>
         unless isDisabled
           e?.preventDefault()
