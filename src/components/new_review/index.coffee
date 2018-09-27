@@ -1,5 +1,7 @@
 z = require 'zorium'
 _defaults = require 'lodash/defaults'
+_find = require 'lodash/find'
+_filter = require 'lodash/filter'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
@@ -68,26 +70,39 @@ module.exports = class NewReview
       @titleValueStreams.next new RxBehaviorSubject ''
       @bodyValueStreams.next new RxBehaviorSubject ''
 
+  submit: (e) =>
+    {me} = @state.getValue()
+    @model.signInDialog.openIfGuest me
+    .then =>
+      {titleValue, bodyValue, ratingValue, attachmentsValue,
+        type, review, language, parent} = @state.getValue()
+
+      if _find attachmentsValue, {isUploading: true}
+        isReady = confirm @model.l.get 'newReview.pendingUpload'
+      else
+        isReady = true
+
+      attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
+      console.log 'submit', attachments
+
+      if isReady
+        @model.campgroundReview.upsert {
+          id: review?.id
+          type: review?.type or type
+          parentId: parent?.id
+          title: titleValue
+          body: bodyValue
+          attachments: attachments
+          rating: ratingValue
+        }
+        .then (newReview) =>
+          @resetValueStreams()
+          @router.go 'campgroundWithTab', {
+            slug: parent?.slug, tab: 'reviews'
+          }, {reset: true}
+
   render: =>
-    {me, titleValue, bodyValue, ratingValue, attachmentsValue,
-      type, review, language, parent} = @state.getValue()
 
     z '.z-new-review',
       z @$composeReview,
-        onDone: (e) =>
-          @model.signInDialog.openIfGuest me
-          .then =>
-            @model.campgroundReview.upsert {
-              id: review?.id
-              type: review?.type or type
-              parentId: parent?.id
-              title: titleValue
-              body: bodyValue
-              attachments: attachmentsValue
-              rating: ratingValue
-            }
-            .then (newReview) =>
-              @resetValueStreams()
-              @router.go 'campgroundWithTab', {
-                slug: parent?.slug, tab: 'reviews'
-              }, {reset: true}
+        onDone: @submit

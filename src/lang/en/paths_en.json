@@ -20,6 +20,7 @@
   "backpack": "/backpack",
   "home": "",
   "campground": "/campground/:slug",
+  "campgroundAttachments": "/campground/:slug/attachments",
   "campgroundWithTab": "/campground/:slug/:tab",
   "campgroundNewReview": "/campground/:slug/new-review",
   "categories": "/product-guides",
@@ -32,7 +33,7 @@
   "places": "/places",
   "policies": "/policies",
   "privacy": "/privacy",
-  "product": "/product/:nameKebab/:slug",
+  "product": "/product/:slug",
   "termsOfService": "/tos",
   "home": "/",
   "404": "/*"

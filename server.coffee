@@ -89,6 +89,12 @@ app.use '/healthcheck', (req, res, next) ->
       res.status(500).json _defaults {healthy: isHealthy}, result
   .catch next
 
+app.use '/sitemap.txt', (req, res, next) ->
+  request(config.API_URL + '/sitemap')
+  .then (paths) ->
+    res.setHeader 'Content-Type', 'text/plain'
+    res.send (_map paths, (path) -> "https://#{config.HOST}#{path}").join "\n"
+
 app.use '/ping', (req, res) ->
   res.send 'pong'
 

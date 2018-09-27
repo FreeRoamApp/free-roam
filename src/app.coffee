@@ -53,6 +53,7 @@ Pages =
   NewThreadPage: require './pages/new_thread'
   PartnersPage: require './pages/partners'
   PlacePage: require './pages/place'
+  PlaceAttachmentsPage: require './pages/place_attachments'
   PlacesPage: require './pages/places'
   ProductPage: require './pages/product'
   PoliciesPage: require './pages/policies'
@@ -226,7 +227,10 @@ module.exports = class App
     isiOSApp = Environment.isiOS({userAgent}) and
                 Environment.isNativeApp('freeroam', {userAgent})
     route 'about', 'AboutPage'
+    route ['campgroundAttachments'], 'PlaceAttachmentsPage'
+    route ['amenity', 'campground', 'campgroundWithTab'], 'PlacePage'
     route 'backpack', 'BackpackPage'
+    route ['campgroundNewReview'], 'NewReviewPage'
     route 'categories', 'CategoriesPage'
     route 'conversation', 'ConversationPage'
     route 'conversations', 'ConversationsPage'
@@ -245,12 +249,8 @@ module.exports = class App
     route 'groupThreadEdit', 'EditThreadPage'
     route 'item', 'ItemPage'
     route ['itemsByCategory', 'itemsBySearch'], 'ItemsPage'
-    # new review
-    route ['campgroundNewReview'], 'NewReviewPage'
     route 'partners', 'PartnersPage'
-    # place
-    route ['amenity', 'campground', 'campgroundWithTab'], 'PlacePage'
-    route ['home', 'places'], 'PlacesPage'
+    route ['places', 'home'], 'PlacesPage'
     route 'product', 'ProductPage'
     route 'policies', 'PoliciesPage'
     route 'termsOfService', 'TosPage'

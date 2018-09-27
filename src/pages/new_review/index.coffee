@@ -8,6 +8,8 @@ if window?
   require './index.styl'
 
 module.exports = class NewReviewPage
+  hideDrawer: true
+
   constructor: ({@model, requests, @router, overlay$, serverData, parent}) ->
     type = requests.map ({route}) =>
       type = route.src.split('/')[1]

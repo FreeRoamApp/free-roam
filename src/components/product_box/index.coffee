@@ -18,7 +18,6 @@ module.exports = class Product
 
     @router.link z 'a.z-product-box', {
       href: @router.get 'product', {
-        nameKebab: product.nameKebab
         slug: product.slug
       }
     },

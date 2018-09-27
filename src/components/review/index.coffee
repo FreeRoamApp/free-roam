@@ -58,10 +58,10 @@ module.exports = class Review
 
     onclick = =>
       unless @isTextareaFocused?.getValue()
-        openProfileDialogFn id, user, groupUser
+        @selectedProfileDialogUser.next user
 
-    oncontextmenu = ->
-      openProfileDialogFn id, user, groupUser
+    oncontextmenu = =>
+      @selectedProfileDialogUser.next user
 
     isModerator = groupUser?.roleNames and
                   (
@@ -97,10 +97,9 @@ module.exports = class Review
           @$body
         z '.attachments',
           _map attachments, (attachment) =>
-            console.log attachment
             z '.attachment',
+              title: attachment.caption
               onclick: =>
-                console.log 'click'
                 @overlay$?.next new ImageViewOverlay {
                   @model
                   @router

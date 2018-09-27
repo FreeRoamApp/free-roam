@@ -4,13 +4,14 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
+_findIndex = require 'lodash/findIndex'
 
 Icon = require '../icon'
 ActionBar = require '../action_bar'
 Rating = require '../rating'
 Textarea = require '../textarea'
 UploadOverlay = require '../upload_overlay'
-UploadImagePreview = require '../upload_image_preview'
+UploadImagesPreview = require '../upload_images_preview'
 colors = require '../../colors'
 
 if window?
@@ -31,23 +32,34 @@ module.exports = class ComposeReview
     @attachmentsValueStreams ?= new RxReplaySubject 1
     @$textarea = new Textarea {valueStreams: @bodyValueStreams, @error}
 
-    @imageData = new RxBehaviorSubject null
+    @multiImageData = new RxBehaviorSubject null
     @$uploadOverlay = new UploadOverlay {@model}
-    @$uploadImagePreview = new UploadImagePreview {
-      @imageData
+    @$uploadImagePreview = new UploadImagesPreview {
+      @multiImageData
       @model
       @overlay$
       uploadFn
-      onUpload: ({smallUrl, largeUrl, key, width, height, aspectRatio}) =>
+      onUploading: (dataUrl, {clientId}) =>
         {attachments} = @state.getValue()
 
         attachments or= []
         @attachmentsValueStreams.next RxObservable.of(attachments.concat [
           {
-            type: 'image', aspectRatio, src: smallUrl
-            smallSrc: smallUrl, largeSrc: largeUrl
+            type: 'image', isUploading: true, dataUrl, clientId
           }
         ])
+      onUpload: (response, {clientId}) =>
+        {caption, tags, smallUrl, largeUrl, key, location,
+          width, height, aspectRatio} = response
+
+        {attachments} = @state.getValue()
+
+        attachmentIndex = _findIndex attachments, {clientId}
+        attachments[attachmentIndex] = {
+          type: 'image', aspectRatio, caption, tags, location, src: smallUrl
+          smallSrc: smallUrl, largeSrc: largeUrl
+        }
+        @attachmentsValueStreams.next RxObservable.of attachments
     }
 
     @state = z.state
@@ -72,11 +84,11 @@ module.exports = class ComposeReview
       z @$actionBar, {
         isSaving: isLoading
         cancel:
-          text: 'Discard'
+          text: @model.l.get 'general.discard'
           onclick: =>
             @router.back()
         save:
-          text: 'Done'
+          text: @model.l.get 'general.done'
           onclick: (e) =>
             unless isLoading
               @state.set isLoading: true
@@ -118,19 +130,25 @@ module.exports = class ComposeReview
 
             z '.upload-overlay',
               z @$uploadOverlay, {
-                onSelect: ({file, dataUrl}) =>
-                  img = new Image()
-                  img.src = dataUrl
-                  img.onload = =>
-                    @imageData.next {
-                      file
-                      dataUrl
-                      width: img.width
-                      height: img.height
-                    }
+                isMulti: true
+                onSelect: ({files, dataUrls}) =>
+                  Promise.all _map files, (file, i) ->
+                    new Promise (resolve) ->
+                      img = new Image()
+                      img.src = dataUrls[i]
+                      img.onload = =>
+                        resolve {
+                          file
+                          dataUrl: dataUrls[i]
+                          width: img.width
+                          height: img.height
+                        }
+                  .then (multiImageData) =>
+                    @multiImageData.next multiImageData
                     @overlay$.next @$uploadImagePreview
               }
-          _map attachments, (attachment) ->
+          _map attachments, ({dataUrl, smallSrc, isUploading}) ->
             z '.attachment',
+              className: z.classKebab {isUploading}
               style:
-                backgroundImage: "url(#{attachment.smallSrc})"
+                backgroundImage: "url(#{dataUrl or smallSrc})"

@@ -44,6 +44,8 @@ module.exports = class ProfileDialog
     @$deleteChevronIcon = new Icon()
     @$closeIcon = new Icon()
     @$copyIcon = new Icon()
+    @$instagramIcon = new Icon()
+    @$webIcon = new Icon()
 
     me = @model.user.getMe()
 
@@ -61,6 +63,13 @@ module.exports = class ProfileDialog
 
     @state = z.state
       me: me
+      $links: @selectedProfileDialogUser.map (user) ->
+        _map user?.links, (link, type) ->
+          {
+            $icon: new Icon()
+            type: type
+            link: link
+          }
       meGroupUser: groupAndMe.switchMap ([group, me]) =>
         if group and me
           @model.groupUser.getByGroupIdAndUserId group.id, me.id
@@ -275,15 +284,15 @@ module.exports = class ProfileDialog
     isMe = user?.id is me?.id
 
     _filter [
-      {
-        icon: 'profile'
-        $icon: @$profileIcon
-        text: @model.l.get 'general.profile'
-        isVisible: not isMe
-        onclick: =>
-          @router.go 'userById', {id: user?.id}
-          @selectedProfileDialogUser.next null
-      }
+      # {
+      #   icon: 'profile'
+      #   $icon: @$profileIcon
+      #   text: @model.l.get 'general.profile'
+      #   isVisible: not isMe
+      #   onclick: =>
+      #     @router.go 'userById', {id: user?.id}
+      #     @selectedProfileDialogUser.next null
+      # }
       {
         icon: 'chat-bubble'
         $icon: @$messageIcon
@@ -376,7 +385,7 @@ module.exports = class ProfileDialog
 
 
   render: =>
-    {me, user, group, windowSize} = @state.getValue()
+    {me, user, group, windowSize, $links} = @state.getValue()
 
     isMe = user?.id is me?.id
 
@@ -397,6 +406,19 @@ module.exports = class ProfileDialog
                 z '.name', @model.user.getDisplayName user
                 if not _isEmpty user?.groupUser?.roleNames
                   z '.roles', user?.groupUser?.roleNames.join ', '
+                z '.links',
+                  _map $links, ({$icon, link, type}) ->
+                    z 'a.link', {
+                      href: link
+                      target: '_system'
+                      rel: 'nofollow'
+                    },
+                      z $icon, {
+                        icon: type
+                        size: '18px'
+                        isTouchTarget: false
+                        color: colors.$primary500
+                      }
               z '.close',
                 z '.icon',
                   z @$closeIcon,

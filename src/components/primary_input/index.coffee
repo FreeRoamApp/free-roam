@@ -29,6 +29,7 @@ module.exports = class PrimaryInput extends Input
         isFloating: true
         isDark: true
         colors:
+          background: colors.$tertiary100
           c200: colors.$tertiary200Text
           c500: colors.$bgText
           c600: colors.$tertiary600Text

@@ -1,5 +1,6 @@
 z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _map = require 'lodash/map'
 
 tile = require './tilejson'
@@ -15,8 +16,9 @@ module.exports = class Map
 
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBounds, @currentLocation
-      @place, @placePosition, @mapSize, @initialZoom} = options
+      @place, @placePosition, @mapSize, @initialZoom, @center} = options
 
+    @place ?= new RxBehaviorSubject null
     @initialZoom ?= 4
     @layers = []
     @$spinner = new Spinner()
@@ -27,9 +29,6 @@ module.exports = class Map
 
   getClosestPixelRatio: ->
     if window.devicePixelRatio > 1.5 then 2 else 1
-
-  setCenter: (coordinates) =>
-    @map?.setCenter coordinates
 
   getFirstSymbolId: =>
     layers = @map.getStyle().layers
@@ -89,7 +88,7 @@ module.exports = class Map
         @resizeSubscription = @model.window.getSize().subscribe =>
           setImmediate =>
             @map.resize()
-            @mapSize.next {
+            @mapSize?.next {
               width: $$mapEl.offsetWidth, height: $$mapEl.offsetHeight
             }
           @map.addLayer {
@@ -136,6 +135,7 @@ module.exports = class Map
 
           @updateMapLocation()
           @subscribeToPlaces()
+          @subscribeToCenter()
           @state.set isLoading: false
 
       @map.on 'move', @onMapMove
@@ -184,6 +184,7 @@ module.exports = class Map
   beforeUnmount: =>
     @disposable?.unsubscribe()
     @mapBoundsDisposable?.unsubscribe()
+    @centerDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
     @map.remove()
     @map = null
@@ -203,8 +204,14 @@ module.exports = class Map
           }
         )
 
+  subscribeToCenter: =>
+    @centerDisposable = @center?.subscribe (longLatArray) =>
+      if longLatArray
+        @map.setCenter longLatArray
+
   subscribeToPlaces: =>
     @disposable = @places.subscribe (places) =>
+      console.log 'places', places
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'
         features: _map places, (place) ->
@@ -230,7 +237,7 @@ module.exports = class Map
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>
-    @currentLocation.next @map.getBounds()
+    @currentLocation?.next @map.getBounds()
 
   render: =>
     {windowSize, isLoading} = @state.getValue()

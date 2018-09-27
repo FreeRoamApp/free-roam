@@ -61,7 +61,7 @@ module.exports = class Input
         attributes:
           disabled: if isDisabled then true else undefined
           type: type
-          value: value or ''
+        value: value or ''
         oninput: z.ev (e, $$el) =>
           if @valueStreams
             @valueStreams.next RxObservable.of $$el.value
