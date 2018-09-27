@@ -1,0 +1,73 @@
+@require '../../vars'
+
+.z-upload-images-preview
+  background: getColor('$bg500')
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+  position: fixed
+  top: 0
+  left: 0
+  z-index: 9999
+
+  > .g-grid
+    padding: 16px
+    box-sizing: border-box
+    flex: 1
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+
+    > .caption
+      max-width: 600px
+
+    > .tags
+      max-width: 600px
+      display: flex
+      align-items: center
+      margin-top: 8px
+
+      > .input
+        max-width: 300px
+
+      > .button
+        margin-left: 8px
+
+      > .tags
+        display: flex
+        margin-left: 16px
+
+        > .tag
+          font-caption1()
+          margin: 0 4px
+
+    > img
+      margin-top: 16px
+      width: 100%
+      height: auto
+      max-width: 600px
+
+    > .location
+      width: 100%
+      max-width: 600px
+      height: 200px
+      display: flex
+      flex-direction: column
+      margin-top: 16px
+      display: none
+
+      &.is-visible
+        display: block
+
+      > .map
+        height: 100%
+        flex: 1
+        display: flex
+
+      > .include-location
+        margin-bottom: 8px
+
+        > label
+          > .checkbox
+            margin-right: 8px
+            display: inline-block

@@ -10,9 +10,14 @@ require 'rxjs/add/operator/take'
 
 Auth = require './auth'
 Ad = require './ad'
+Amenity = require './amenity'
 AdditionalScript = require './additional_script'
 Ban = require './ban'
+Campground = require './campground'
+CampgroundAttachment = require './campground_attachment'
+CampgroundReview = require './campground_review'
 Category = require './category'
+CellTower = require './cell_tower'
 ConversationMessage = require './conversation_message'
 Conversation = require './conversation'
 Cookie = require './cookie'
@@ -27,14 +32,6 @@ Item = require './item'
 Language = require './language'
 Notification = require './notification'
 Nps = require './nps'
-# reviews
-CampgroundReview = require './campground_review'
-
-# places
-Amenity = require './amenity'
-Campground = require './campground'
-CellTower = require './cell_tower'
-
 Product = require './product'
 PushToken = require './push_token'
 Thread = require './thread'
@@ -118,8 +115,13 @@ module.exports = class Model
     @userFollower = new UserFollower {@auth}
     @ad = new Ad {@portal, @cookie, userAgent}
     @additionalScript = new AdditionalScript()
+    @amenity = new Amenity {@auth}
     @ban = new Ban {@auth}
     @category = new Category {@auth}
+    @campground = new Campground {@auth}
+    @campgroundAttachment = new CampgroundAttachment {@auth}
+    @campgroundReview = new CampgroundReview {@auth, @exoid, proxy}
+    @cellTower = new CellTower {@auth}
     @conversationMessage = new ConversationMessage {@auth, proxy, @exoid}
     @conversation = new Conversation {@auth}
     @experiment = new Experiment {@cookie}
@@ -135,18 +137,10 @@ module.exports = class Model
     @threadVote = new ThreadVote {@auth}
     @notification = new Notification {@auth}
     @nps = new Nps {@auth}
-
-    # reviews
-    @campgroundReview = new CampgroundReview {@auth, @exoid, proxy}
-
-    # places
-    @amenity = new Amenity {@auth}
-    @campground = new Campground {@auth}
-    @cellTower = new CellTower {@auth}
-
     @product = new Product {@auth}
     @pushToken = new PushToken {@auth, pushToken}
     @time = new Time({@auth})
+
     @drawer = new Drawer()
     @signInDialog = new SignInDialog()
     @getAppDialog = new GetAppDialog()

@@ -1,4 +1,7 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
+
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 
@@ -52,6 +55,10 @@ module.exports = class CampgroundInfo
     @$spinner = new Spinner()
 
     @state = z.state
+      attachments: place.switchMap (place) =>
+        unless place
+          return RxObservable.of null
+        @model.campgroundAttachment.getAllByParentId place.id
       place: place.map (place) =>
         {
           place
@@ -66,13 +73,27 @@ module.exports = class CampgroundInfo
         }
 
   render: =>
-    {place} = @state.getValue()
+    {place, attachments} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
 
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
     z '.z-campground-info', {className: z.classKebab {isLoading}},
+      unless _isEmpty attachments
+        z '.cover', {
+          style:
+            backgroundImage:
+              "url(#{attachments[0].largeSrc})"
+        },
+          @router.link z 'a.see-more', {
+            href: @router.get 'campgroundAttachments', {
+              slug: place?.slug
+            }
+          },
+            @model.l.get 'campgroundInfo.seeAll', {
+              replacements: {count: attachments.length}
+            }
       z '.g-grid',
         z '.location',
           "#{place?.address?.locality}, #{place?.address?.administrativeArea}"

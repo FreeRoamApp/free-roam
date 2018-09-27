@@ -33,21 +33,30 @@
       flex: 1
 
     > .attachments
-      display: flex
       padding: 16px
+      white-space: nowrap
+      overflow-x: auto
+      -webkit-overflow-scrolling: touch
 
       > .attachment
         width: 64px
         height: 64px
         margin-left: 8px
-        background-size: 100%
+        background-size: cover
         background-position: center
+        display: inline-block
+        vertical-align: top
+
+        &.is-uploading
+          opacity: 0.12
 
       > .add-image
         background: getColor('$tertiary100')
         padding: 16px
         cursor: pointer
         position: relative
+        display: inline-block
+        vertical-align: top
 
         > .upload-overlay
           position: absolute

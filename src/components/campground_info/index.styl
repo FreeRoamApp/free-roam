@@ -1,10 +1,26 @@
 @require '../../vars'
 
 .z-campground-info
-  padding: 16px
   flex: 1
   overflow: auto
   -webkit-overflow-scrolling: touch
+
+  > .cover
+    width: 100%
+    height: 200px
+    background-size: cover // this might slow down browser a bit, could find alternative solution (might need to use js)
+    background-position: center
+    position: relative
+
+    > .see-more
+      font-caption1()
+      position: absolute
+      bottom: 16px
+      right: 16px
+      padding: 4px 8px
+      border-radius: 4px
+      background: getColor('$white70')
+      color: getColor('$black')
 
   &.is-loading
     > .g-grid
@@ -17,6 +33,8 @@
     display: none
 
   > .g-grid
+    padding: 16px
+    box-sizing: border-box
 
     > .driving-instructions
       margin-bottom: 8px

@@ -8,6 +8,7 @@ _isEmpty = require 'lodash/isEmpty'
 Base = require '../base'
 Icon = require '../icon'
 FormattedText = require '../formatted_text'
+ProfileDialog = require '../profile_dialog'
 Review = require '../review'
 SearchInput = require '../search_input'
 colors = require '../../colors'
@@ -18,12 +19,18 @@ if window?
 
 module.exports = class Reviews extends Base
   constructor: (options) ->
-    {@model, @router, overlay$, parent, selectedProfileDialogUser} = options
+    {@model, @router, overlay$, parent} = options
     @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
+    selectedProfileDialogUser = new RxBehaviorSubject null
+    @$profileDialog = new ProfileDialog {
+      @model, @router, selectedProfileDialogUser
+    }
+
     @state = z.state {
       parent: parent
+      selectedProfileDialogUser: selectedProfileDialogUser
       reviews: parent.switchMap (parent) =>
         unless parent?.type
           return RxObservable.of null
@@ -45,7 +52,7 @@ module.exports = class Reviews extends Base
     }
 
   render: =>
-    {reviews, parent} = @state.getValue()
+    {reviews, parent, selectedProfileDialogUser} = @state.getValue()
 
     z '.z-reviews',
       z '.g-grid',
@@ -63,3 +70,6 @@ module.exports = class Reviews extends Base
             _map reviews, ($review) ->
               z '.review',
                 z $review
+
+      if selectedProfileDialogUser
+        z @$profileDialog

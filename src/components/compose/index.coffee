@@ -50,11 +50,11 @@ module.exports = class Compose
       z @$actionBar, {
         isSaving: isLoading
         cancel:
-          text: 'Discard'
+          text: @model.l.get 'general.discard'
           onclick: =>
             @router.back()
         save:
-          text: 'Done'
+          text: @model.l.get 'general.done'
           onclick: (e) =>
             unless isLoading
               @state.set isLoading: true

@@ -16,11 +16,19 @@ module.exports = class StepBar
       step: @step
       isLoading: false
 
-  render: ({save, steps, isStepCompleted, isLoading, onComplete}) =>
+  render: ({cancel, save, steps, isStepCompleted, isLoading}) =>
     {step} = @state.getValue()
 
+    cancel = _defaults cancel, {
+      text: if step is 0 \
+            then @model.l.get 'general.cancel'
+            else @model.l.get 'general.back'
+      onclick: -> null
+    }
     save = _defaults save, {
-      text: @model.l.get 'general.save'
+      text: if step is steps - 1 \
+            then @model.l.get 'general.save'
+            else @model.l.get 'general.next'
       onclick: -> null
     }
 
@@ -28,28 +36,27 @@ module.exports = class StepBar
       z '.g-grid',
         z '.previous', {
           onclick: =>
-            if step > 1
+            if step > 0
               @step.next step - 1
+            else
+              cancel.onclick()
         },
-          if step isnt 1
-            @model.l.get 'stepBar.back'
+          cancel.text
 
         z '.step-counter',
           _map _range(steps), (i) ->
             z '.step-dot',
-              className: z.classKebab {isActive: step is i + 1}
+              className: z.classKebab {isActive: step is i}
 
         z '.next', {
           className: z.classKebab {canContinue: isStepCompleted}
           onclick: =>
             if isStepCompleted
-              if step is steps
+              if step is steps - 1
                 save.onclick()
               else
                 @step.next step + 1
         },
           if isLoading
           then @model.l.get 'general.loading'
-          else if step is steps
-          then save.text
-          else @model.l.get 'stepBar.next'
+          else save.text
