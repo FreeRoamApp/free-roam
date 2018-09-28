@@ -22,16 +22,20 @@ module.exports = class Review
       invalidateAll: true
     }
 
-  uploadImage: (file) =>
+  uploadImage: (file, {onProgress}) =>
     formData = new FormData()
     formData.append 'file', file, file.name
 
-    @proxy config.API_URL + '/upload', {
+    requestPromise = @proxy config.API_URL + '/upload', {
       method: 'post'
-      qs:
+      beforeSend: (xhr) ->
+        xhr.upload.addEventListener 'progress', onProgress, false
+      query:
         path: "#{@namespace}.uploadImage"
       body: formData
     }
+
+    requestPromise
     .then (response) =>
       @exoid.invalidateAll()
       response

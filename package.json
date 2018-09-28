@@ -104,6 +104,7 @@
     "vdom-parser": "^1.4.1",
     "virtual-dom": "^2.1.1",
     "whatwg-fetch": "^0.10.1",
+    "xhr-request": "^1.1.0",
     "zorium": "git://github.com/claydotio/zorium.git"
   },
   "directories": {

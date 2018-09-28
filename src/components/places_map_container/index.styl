@@ -7,67 +7,114 @@
   position: relative
   user-select: none
 
-  > .filters
+  > .top-bar
     background: getColor('$bg500')
-    white-space: nowrap
-    overflow-x: auto
-    -webkit-overflow-scrolling: touch
-    position: absolute
     width: 100%
-    z-index: 99
+    height: 40px
     border-bottom: 1px solid getColor('$black12')
+    box-sizing: border-box
+    display: flex
 
-    > .filter
-      font-caption1(false)
+    > .show
+      font-caption2(false)
       cursor: pointer
-      display: inline-block
-      background: getColor('$tertiary100')
-      border: 1px solid getColor('$tertiary100')
-      padding: 0 8px
-      border-radius: 10px
-      margin: 8px 4px
+      background: getColor('$bg600')
+      padding: 0 32px 0 12px
+      border-right: 1px solid getColor('$black12')
+      margin-right: 4px
       position: relative
+      display: flex
+      align-items: center
 
-      &.has-value
-        border: 1px solid getColor('$primary500')
+      &:after
+        content: ''
+        position: absolute
+        top: 50%
+        margin-top: -2px
+        right: 12px
+        width: 0
+        height: 0
+        border-left: 4px solid transparent
+        border-right: 4px solid transparent
+        border-top: 4px solid getColor('$bgText70')
 
-      &.has-more
-        padding-right: 24px
+    > .filters
+      flex: 1
+      white-space: nowrap
+      overflow-x: auto
+      -webkit-overflow-scrolling: touch
 
-        &:after
-          content: ''
-          position: absolute
-          top: 50%
-          margin-top: -2px
-          right: 8px
-          width: 0
-          height: 0
-          border-left: 4px solid transparent
-          border-right: 4px solid transparent
-          border-top: 4px solid getColor('$primary500')
+      &.amenity
+        > .filter
+          background: getColor('$tertiary100')
+          border: 1px solid getColor('$blue50026')
+
+          &.has-value
+            background: getColor('$blue50026')
+            border: 1px solid getColor('$blue500')
+
+      > .filter
+        font-caption2(false)
+        cursor: pointer
+        display: inline-block
+        background: getColor('$tertiary100')
+        border: 1px solid getColor('$primary100')
+        padding: 0 8px
+        border-radius: 10px
+        margin: 8px 4px
+        position: relative
+
+        &.has-value
+          background: getColor('$primary50')
+          border: 1px solid getColor('$primary500')
+
+        &.has-more
+          padding-right: 24px
+
+          &:after
+            content: ''
+            position: absolute
+            top: 50%
+            margin-top: -2px
+            right: 8px
+            width: 0
+            height: 0
+            border-left: 4px solid transparent
+            border-right: 4px solid transparent
+            border-top: 4px solid getColor('$primary500')
 
   > .types
     position: absolute
     display: none
-    top: 36px
-    left: 4px
-    background: getColor('$bg500')
+    top: 40px
+    left: 0
+    min-width: 180px
+    background: getColor('$tertiary100')
     border: 1px solid getColor('$black12')
+    border-left: none
     border-top: none
-    z-index: 99
+    z-index: 1000 // nav bar grip is 999, this needs to be higher
+    padding-bottom: 4px
 
     &.is-visible
       display: block
 
+    > .title
+      font-caption3(false)
+      padding: 8px
+
     > .type
-      font-caption1()
-      padding: 4px 8px
+      font-caption2(false)
+      padding: 6px 8px
       display: flex
       align-items: center
       cursor: pointer
 
       &.is-selected
-        background: getColor('$tertiary100')
+        background: getColor('$primary50')
+
+      &.is-selected.amenity
+        background: getColor('$blue50026')
 
       > .checkbox
         margin-right: 8px
@@ -82,8 +129,60 @@
           height: 10px
           margin-right: 4px
 
-  > .place
-    display: none
+  > .map
+    flex: 1
+    display: flex
+    position: relative
 
-    &.is-visible
-      display: block
+    > .layers-fab
+      position: absolute
+      top: 16px
+      right: 16px
+
+    > .layers
+      position: absolute
+      top: 16px
+      right: 16px
+      background: getColor('$tertiary100')
+      border-radius: 8px
+      padding: 8px 16px
+      z-index: 99
+
+      > .title
+        margin-bottom: 8px
+
+      > .layer-icons
+        display: flex
+
+        > .layer-icon
+          text-align: center
+          margin-right: 16px
+          cursor: pointer
+
+          &.is-visible
+            > .icon
+              border: 1px solid getColor('$primary500')
+
+            > .name
+              color: getColor('$primary500')
+
+          &:last-child
+            margin-right: 0
+
+          > .icon
+            width: 48px
+            height: 48px
+            background-size: 100%
+            border-radius: 8px
+            border: 1px solid getColor('$black54')
+
+          > .name
+            font-tiny(false)
+
+          &.us-blm
+            > .icon
+              background-image: url($cdnUrl + '/maps/blm_overlay.png')
+
+          &.us-usfs
+            > .icon
+              background-image: url($cdnUrl + '/maps/usfs_overlay.png')

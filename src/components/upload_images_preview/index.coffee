@@ -31,7 +31,7 @@ if window?
 module.exports = class UploadImagesPreview
   constructor: (options) ->
     {@multiImageData, @model, @overlay$,
-      @onUpload, @onUploading, @uploadFn} = options
+      @onUpload, @onUploading, @onProgress, @uploadFn} = options
 
     @$appBar = new AppBar {@model}
 
@@ -201,7 +201,11 @@ module.exports = class UploadImagesPreview
                          else undefined
 
               @onUploading imageData.dataUrl, {clientId}
-              @uploadFn imageData.file
+              @uploadFn imageData.file, {
+                onProgress: (response) =>
+                  console.log 'onprogress', response
+                  @onProgress response, {clientId}
+              }
               .then (response) =>
                 @onUpload(
                   _defaults(response, {caption, location, tags})

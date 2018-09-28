@@ -154,7 +154,21 @@ font-caption1(scale = yes)
 
 font-caption2(scale = yes)
   font-caption1(scale)
-  color: getColor('$black54')
+  color: getColor('$bgText70')
+
+font-caption3(scale = yes)
+  font-caption1(scale)
+  color: getColor('$bgText54')
+
+font-tiny(scale = yes)
+  font-family: Maven Pro
+  color: getColor('$bgText87')
+  font-weight: 400
+  font-size: 10px
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 12px
 
 font-micro(scale = yes)
   font-size: 8px

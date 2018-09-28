@@ -7,7 +7,6 @@ _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _groupBy = require 'lodash/groupBy'
 _isEmpty = require 'lodash/isEmpty'
-_debounce = require 'lodash/debounce'
 _some = require 'lodash/some'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
@@ -15,10 +14,12 @@ require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 require 'rxjs/add/observable/forkJoin'
 
-Checkbox = require '../../components/checkbox'
-Map = require '../../components/map'
-PlaceTooltip = require '../../components/place_tooltip'
-FilterDialog = require '../../components/filter_dialog'
+Checkbox = require '../checkbox'
+Map = require '../map'
+PlaceTooltip = require '../place_tooltip'
+FilterDialog = require '../filter_dialog'
+Fab = require '../fab'
+Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -28,7 +29,7 @@ if window?
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, @overlay$, @dataTypes, showScale, mapBounds
-      @addPlaces, optionalLayers, initialZoom, @isFilterBarHidden} = options
+      @addPlaces, @optionalLayers, initialZoom, @isFilterBarHidden} = options
 
     @addPlaces ?= RxObservable.of []
 
@@ -47,6 +48,8 @@ module.exports = class PlacesMapContainer
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
 
+    @$fab = new Fab()
+    @$layersIcon = new Icon()
     @$map = new Map {
       @model, @router, places, @setFilterByField, initialZoom, showScale
       @place, @placePosition, @mapSize, mapBounds, @currentLocation
@@ -55,18 +58,14 @@ module.exports = class PlacesMapContainer
       @model, @router, @place, position: @placePosition, @mapSize
     }
 
-    @optionalLayers = _map optionalLayers, (optionalLayer) ->
-      {
-        optionalLayer
-        $checkbox: new Checkbox()
-      }
-
     @state = z.state
       filterTypes: @filterTypesStream
       types: @dataTypesStream
       currentType: @dataTypes[0].dataType
       place: @place
       isTypesVisible: false
+      isLayersPickerVisible: false
+      layersVisible: []
 
   showFilterDialog: (filter) =>
     @overlay$.next new FilterDialog {
@@ -194,65 +193,103 @@ module.exports = class PlacesMapContainer
     filter
 
   render: =>
-    {filterTypes, types, currentType, place, isTypesVisible} = @state.getValue()
+    {filterTypes, types, currentType, place, layersVisible,
+      isTypesVisible, isLayersPickerVisible} = @state.getValue()
 
-    z '.z-places-map-container',
+    z '.z-places-map-container', {
+      onclick: =>
+        if isLayersPickerVisible
+          @state.set isLayersPickerVisible: false
+    },
       [
         unless @isFilterBarHidden
           [
-            z '.filters',
-              z '.filter.has-more', {
+            z '.top-bar',
+              z '.show', {
                 onclick: =>
                   @state.set isTypesVisible: not isTypesVisible
               },
                 @model.l.get 'placesMapContainer.show'
-              _map filterTypes?[currentType], (filter) =>
-                if filter.name
-                  z '.filter', {
-                    className: z.classKebab {
-                      hasMore: filter.type isnt 'booleanArray'
-                      hasValue: filter.value?
-                    }
-                    onclick: =>
-                      if filter.type is 'booleanArray'
-                        filter.valueSubject.next (not filter.value) or null
-                      else
-                        @showFilterDialog filter
-                  }, filter.name
+              z '.filters', {
+                className: z.classKebab {"#{currentType}": true}
+              },
+                _map filterTypes?[currentType], (filter) =>
+                  if filter.name
+                    z '.filter', {
+                      className: z.classKebab {
+                        hasMore: filter.type isnt 'booleanArray'
+                        hasValue: filter.value?
+                      }
+                      onclick: =>
+                        if filter.type is 'booleanArray'
+                          filter.valueSubject.next (not filter.value) or null
+                        else
+                          @showFilterDialog filter
+                    }, filter.name
             z '.types', {
               className: z.classKebab {isVisible: isTypesVisible}
             },
-              [
-                _map types, ({dataType, $checkbox, isCheckedSubject, layer}) =>
-                  z '.type', {
-                    className: z.classKebab {
-                      isSelected: currentType is dataType
-                    }
-                    onclick: =>
-                      @state.set currentType: dataType
-                      isCheckedSubject.next true
+              z '.title', @model.l.get 'placesMapContainer.typesTitle'
+              _map types, ({dataType, $checkbox, isCheckedSubject, layer}) =>
+                z '.type', {
+                  className: z.classKebab {
+                    isSelected: currentType is dataType
+                    "#{dataType}": true
+                  }
+                  onclick: =>
+                    @state.set currentType: dataType
+                    isCheckedSubject.next true
+                },
+                  z '.checkbox', {
+                    onclick: (e) ->
+                      # if they're unchecking, don't switch to these filters
+                      unless $checkbox.isChecked()
+                        e.stopPropagation()
                   },
-                    z '.checkbox', z $checkbox
-                    z '.name', @model.l.get "placeTypes.#{dataType}"
-                _map @optionalLayers, ({optionalLayer, $checkbox}) =>
-                  {name, color, layer, insertBeneathLabels} = optionalLayer
-                  z 'label.type', {
-                    # TODO: figure out why debounce is necessary (2 clicks instead of 1)
-                    onclick: _debounce =>
-                      @$map.toggleLayer layer, {insertBeneathLabels}
-                    , 100
-                  },
-                      z '.checkbox', z $checkbox
-                      z '.name',
-                        z '.key', {
-                          style:
-                            backgroundColor: color
-                        }
-                        name
-              ]
+                    z $checkbox
+                  z '.name', @model.l.get "placeTypes.#{dataType}"
           ]
 
-        z @$map
+        z '.map',
+          z @$map
+          z @$placeTooltip, {isVisible: Boolean place}
+          unless _isEmpty @optionalLayers
+            z '.layers-fab',
+              z @$fab,
+                colors:
+                  c500: colors.$tertiary100
+                  ripple: colors.$bgText70
+                $icon: z @$layersIcon, {
+                  icon: 'layers'
+                  isTouchTarget: false
+                  color: colors.$bgText70
+                }
+                onclick: =>
+                  @state.set isLayersPickerVisible: true
 
-        z @$placeTooltip, {isVisible: Boolean place}
+          if isLayersPickerVisible
+            z '.layers', {
+              onclick: (e) ->
+                e?.stopPropagation()
+            },
+              z '.title', @model.l.get 'placesMapContainer.layers'
+              z '.layer-icons',
+                _map @optionalLayers, (optionalLayer) =>
+                  {name, color, layer, insertBeneathLabels} = optionalLayer
+                  index = layersVisible.indexOf(layer.id)
+                  isVisible = index isnt -1
+                  z ".layer-icon.#{layer.id}", {
+                    className: z.classKebab {isVisible}
+                    onclick: =>
+                      if isVisible
+                        layersVisible.splice index, 1
+                      else
+                        layersVisible.push layer.id
+                      @state.set {layersVisible}
+
+                      @$map.toggleLayer layer, {insertBeneathLabels}
+
+                  },
+                    z '.icon'
+                    z '.name', name
       ]

@@ -14,6 +14,7 @@ module.exports = class Fab
     isMini ?= false
     colors ?= {
       c500: colors.$black
+      ripple: colors.$white
     }
 
     z '.z-fab', {
@@ -25,3 +26,4 @@ module.exports = class Fab
         $icon
       z @$ripple,
         onComplete: onclick
+        color: colors.ripple

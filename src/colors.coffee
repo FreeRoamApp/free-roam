@@ -85,7 +85,9 @@ colors = _defaults {
     '--tertiary-800-text': materialColors.$black
     '--tertiary-900-text': materialColors.$black
 
-    '--bg-500': '#f0efed'
+    # '--bg-500': '#f0efed'
+    '--bg-500': '#f4f4f4'
+    '--bg-600': '#ececec'
     '--bg-700': '#e4e4e4'
 
     '--bg-text': '#B62E00' # primary900
@@ -174,6 +176,7 @@ colors = _defaults {
   '$tertiary900Text': 'var(--tertiary-900-text)'
 
   '$bg500': 'var(--bg-500)'
+  '$bg600': 'var(--bg-600)'
   '$bg700': 'var(--bg-700)'
 
   '$bgText': 'var(--bg-text)'

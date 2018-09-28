@@ -1,5 +1,4 @@
 Exoid = require 'exoid'
-request = require 'clay-request'
 _isEmpty = require 'lodash/isEmpty'
 _isPlainObject = require 'lodash/isPlainObject'
 _defaults = require 'lodash/defaults'
@@ -47,6 +46,7 @@ SignInDialog = require './sign_in_dialog'
 PushNotificationSheet = require './push_notification_sheet'
 InstallOverlay = require './install_overlay'
 Window = require './window'
+request = require '../services/request'
 
 config = require '../config'
 
@@ -88,7 +88,8 @@ module.exports = class Model
         'x-forwarded-for'
       ]
       request url, _merge {
-        qs: if accessToken? then {accessToken} else {}
+        responseType: 'json'
+        query: if accessToken? then {accessToken} else {}
         headers: if _isPlainObject opts?.body
           _merge {
             # Avoid CORS preflight

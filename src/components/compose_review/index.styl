@@ -47,8 +47,17 @@
         display: inline-block
         vertical-align: top
 
+        > .progress
+          display: none
+
         &.is-uploading
-          opacity: 0.12
+          opacity: 0.7
+
+          > .progress
+            display: block
+            height: 100%
+            background: getColor('$primary500')
+            opacity: 0.54
 
       > .add-image
         background: getColor('$tertiary100')
