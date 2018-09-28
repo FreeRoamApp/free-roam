@@ -4,10 +4,12 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- compress images before upload
 - 4g/3g toggle for signal
-- coordinates from images
-- tags for images
-- Link to instagram, website, etc.. from review
+- Mark low overhangs, sharp turns
+x coordinates from images
+x tags for images
+x Link to instagram, website, etc.. from review
 x Cell signals
 x Get reviews working / updating place score
 x View review images full-size

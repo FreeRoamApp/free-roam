@@ -57,7 +57,7 @@ module.exports = class NotificationsOverlay
                 @overlay$.next null
                 @router.go(
                   notification.data.path.key, notification.data.path.params
-                  {qs: notification.data.path.qs}
+                  {query: notification.data.path.qs}
                 )
             },
               z '.content',

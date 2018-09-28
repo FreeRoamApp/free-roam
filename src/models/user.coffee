@@ -32,7 +32,7 @@ module.exports = class User
 
     @proxy config.API_URL + '/upload', {
       method: 'post'
-      qs:
+      query:
         path: "#{@namespace}.setAvatarImage"
       body: formData
     }

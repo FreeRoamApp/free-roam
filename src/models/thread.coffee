@@ -62,7 +62,7 @@ module.exports = class Thread
 
     @proxy config.API_URL + '/upload', {
       method: 'post'
-      qs:
+      query:
         path: "#{@namespace}.uploadImage"
       body: formData
     }

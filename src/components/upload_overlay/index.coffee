@@ -20,7 +20,8 @@ module.exports = class UploadOverlay
     z '.z-upload-overlay',
       z 'input#image.overlay',
         type: 'file'
-        accept: '.jpg, .jpeg, .png'
+        # this doesn't work in native app. causes file picker to not show at all
+        # accept: '.jpg, .jpeg, .png'
         multiple: if isMulti then true else undefined
         onchange: (e) =>
           e?.preventDefault()

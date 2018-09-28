@@ -9,7 +9,6 @@ log = require 'loga'
 helmet = require 'helmet'
 z = require 'zorium'
 Promise = require 'bluebird'
-request = require 'clay-request'
 cookieParser = require 'cookie-parser'
 fs = require 'fs'
 socketIO = require 'socket.io-client'
@@ -26,6 +25,7 @@ gulpPaths = require './gulp_paths'
 App = require './src/app'
 Model = require './src/models'
 RouterService = require './src/services/router'
+request = require './src/services/request'
 
 MIN_TIME_REQUIRED_FOR_HSTS_GOOGLE_PRELOAD_MS = 10886400000 # 18 weeks
 HEALTHCHECK_TIMEOUT = 200
@@ -90,7 +90,7 @@ app.use '/healthcheck', (req, res, next) ->
   .catch next
 
 app.use '/sitemap.txt', (req, res, next) ->
-  request(config.API_URL + '/sitemap')
+  request(config.API_URL + '/sitemap', {json: true})
   .then (paths) ->
     res.setHeader 'Content-Type', 'text/plain'
     res.send (_map paths, (path) -> "https://#{config.HOST}#{path}").join "\n"

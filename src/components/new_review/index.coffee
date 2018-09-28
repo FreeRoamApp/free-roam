@@ -83,7 +83,6 @@ module.exports = class NewReview
         isReady = true
 
       attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
-      console.log 'submit', attachments
 
       if isReady
         @model.campgroundReview.upsert {

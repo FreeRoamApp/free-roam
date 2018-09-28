@@ -34,11 +34,12 @@ module.exports = class ComposeReview
 
     @multiImageData = new RxBehaviorSubject null
     @$uploadOverlay = new UploadOverlay {@model}
-    @$uploadImagePreview = new UploadImagesPreview {
+    @$uploadImagesPreview = new UploadImagesPreview {
       @multiImageData
       @model
       @overlay$
       uploadFn
+      # TODO: there's probably a much cleaner way to do this and onProgress....
       onUploading: (dataUrl, {clientId}) =>
         {attachments} = @state.getValue()
 
@@ -48,6 +49,12 @@ module.exports = class ComposeReview
             type: 'image', isUploading: true, dataUrl, clientId
           }
         ])
+      onProgress: (response, {clientId}) =>
+        {attachments} = @state.getValue()
+
+        attachmentIndex = _findIndex attachments, {clientId}
+        attachments[attachmentIndex].progress = response.loaded / response.total
+        @attachmentsValueStreams.next RxObservable.of attachments
       onUpload: (response, {clientId}) =>
         {caption, tags, smallUrl, largeUrl, key, location,
           width, height, aspectRatio} = response
@@ -145,10 +152,15 @@ module.exports = class ComposeReview
                         }
                   .then (multiImageData) =>
                     @multiImageData.next multiImageData
-                    @overlay$.next @$uploadImagePreview
+                    @overlay$.next @$uploadImagesPreview
               }
-          _map attachments, ({dataUrl, smallSrc, isUploading}) ->
-            z '.attachment',
+          _map attachments, ({dataUrl, smallSrc, isUploading, progress}) ->
+            z '.attachment', {
               className: z.classKebab {isUploading}
               style:
                 backgroundImage: "url(#{dataUrl or smallSrc})"
+            },
+              z '.progress', {
+                style:
+                  width: "#{100 * (progress or 0)}%"
+              }

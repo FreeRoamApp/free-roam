@@ -160,7 +160,7 @@ class RouterService
       @go 'toolByKey', {
         key: _kebabCase(addon.key)
       }, {
-        qs:
+        query:
           replacements: JSON.stringify replacements
       }
 
