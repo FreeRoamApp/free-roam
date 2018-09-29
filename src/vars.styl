@@ -101,10 +101,21 @@ font-title2(scale = yes)
   font-title(scale)
   color: getColor('$bgText54')
 
+// TODO: rm all instances / replace with subhead2?
 font-subhead(scale = yes)
   font-title()
   font-weight: 700
   text-transform: uppercase
+
+font-subhead2(scale = yes)
+  font-family: Maven Pro
+  color: getColor('$bgText87')
+  font-weight: 500
+  font-size: 12px
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 14px
 
 font-button(scale = yes)
   font-family: Maven Pro

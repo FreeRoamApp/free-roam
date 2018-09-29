@@ -140,49 +140,74 @@
       right: 16px
 
     > .layers
+      shadow-1()
       position: absolute
       top: 16px
       right: 16px
       background: getColor('$tertiary100')
       border-radius: 8px
-      padding: 8px 16px
+      padding: 12px 16px
       z-index: 99
+      opacity: 0
+      min-width: 148px
+      min-height: 114px
+      box-sizing: border-box
+      transform: scale(0.5)
+      opacity: 0
+      pointer-events: none
+      transform-origin: top right
 
-      > .title
-        margin-bottom: 8px
+      &.is-visible
+        pointer-events: all
+        opacity: 1
+        transform: scale(1)
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
-      > .layer-icons
-        display: flex
+        > .content
+          opacity: 1
+          transition: opacity 0.2s
+          transition-delay: 0.2s
 
-        > .layer-icon
-          text-align: center
-          margin-right: 16px
-          cursor: pointer
+      > .content
+        opacity: 0
 
-          &.is-visible
+        > .title
+          font-subhead2()
+          margin-bottom: 8px
+
+        > .layer-icons
+          display: flex
+
+          > .layer-icon
+            text-align: center
+            margin-right: 32px
+            cursor: pointer
+
+            &.is-visible
+              > .icon
+                border: 2px solid getColor('$primary500')
+
+              > .name
+                color: getColor('$primary500')
+
+            &:last-child
+              margin-right: 0
+
             > .icon
-              border: 1px solid getColor('$primary500')
+              width: 48px
+              height: 48px
+              background-size: 100%
+              border-radius: 8px
+              border: 2px solid getColor('$black26')
 
             > .name
-              color: getColor('$primary500')
+              font-tiny(false)
+              margin-top: 4px
 
-          &:last-child
-            margin-right: 0
+            &.us-blm
+              > .icon
+                background-image: url($cdnUrl + '/maps/blm_overlay.png')
 
-          > .icon
-            width: 48px
-            height: 48px
-            background-size: 100%
-            border-radius: 8px
-            border: 1px solid getColor('$black54')
-
-          > .name
-            font-tiny(false)
-
-          &.us-blm
-            > .icon
-              background-image: url($cdnUrl + '/maps/blm_overlay.png')
-
-          &.us-usfs
-            > .icon
-              background-image: url($cdnUrl + '/maps/usfs_overlay.png')
+            &.us-usfs
+              > .icon
+                background-image: url($cdnUrl + '/maps/usfs_overlay.png')

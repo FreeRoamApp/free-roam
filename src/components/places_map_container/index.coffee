@@ -198,8 +198,8 @@ module.exports = class PlacesMapContainer
 
     z '.z-places-map-container', {
       onclick: =>
-        if isLayersPickerVisible
-          @state.set isLayersPickerVisible: false
+        if isLayersPickerVisible or isTypesVisible
+          @state.set isLayersPickerVisible: false, isTypesVisible: false
     },
       [
         unless @isFilterBarHidden
@@ -228,6 +228,8 @@ module.exports = class PlacesMapContainer
                     }, filter.name
             z '.types', {
               className: z.classKebab {isVisible: isTypesVisible}
+              onclick: (e) ->
+                e?.stopPropagation()
             },
               z '.title', @model.l.get 'placesMapContainer.typesTitle'
               _map types, ({dataType, $checkbox, isCheckedSubject, layer}) =>
@@ -264,32 +266,35 @@ module.exports = class PlacesMapContainer
                   isTouchTarget: false
                   color: colors.$bgText70
                 }
+                isImmediate: true
                 onclick: =>
                   @state.set isLayersPickerVisible: true
 
-          if isLayersPickerVisible
-            z '.layers', {
-              onclick: (e) ->
-                e?.stopPropagation()
-            },
+          z '.layers', {
+            className: z.classKebab {isVisible: isLayersPickerVisible}
+            onclick: (e) ->
+              e?.stopPropagation()
+          },
+            z '.content',
               z '.title', @model.l.get 'placesMapContainer.layers'
               z '.layer-icons',
-                _map @optionalLayers, (optionalLayer) =>
-                  {name, color, layer, insertBeneathLabels} = optionalLayer
-                  index = layersVisible.indexOf(layer.id)
-                  isVisible = index isnt -1
-                  z ".layer-icon.#{layer.id}", {
-                    className: z.classKebab {isVisible}
-                    onclick: =>
-                      if isVisible
-                        layersVisible.splice index, 1
-                      else
-                        layersVisible.push layer.id
-                      @state.set {layersVisible}
+                if isLayersPickerVisible
+                  _map @optionalLayers, (optionalLayer) =>
+                    {name, color, layer, insertBeneathLabels} = optionalLayer
+                    index = layersVisible.indexOf(layer.id)
+                    isVisible = index isnt -1
+                    z ".layer-icon.#{layer.id}", {
+                      className: z.classKebab {isVisible}
+                      onclick: =>
+                        if isVisible
+                          layersVisible.splice index, 1
+                        else
+                          layersVisible.push layer.id
+                        @state.set {layersVisible}
 
-                      @$map.toggleLayer layer, {insertBeneathLabels}
+                        @$map.toggleLayer layer, {insertBeneathLabels}
 
-                  },
-                    z '.icon'
-                    z '.name', name
+                    },
+                      z '.icon'
+                      z '.name', name
       ]
