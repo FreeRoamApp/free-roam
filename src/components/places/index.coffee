@@ -27,37 +27,103 @@ module.exports = class Places
       optionalLayers: [
         {
           name: @model.l.get 'placesMapContainer.layerBlm'
-          color: colors.$mapLayerBlm
-          layer: {
+          source:
+            type: 'vector'
+            url: 'https://tileserver.freeroam.app/data/free-roam-us-blm.json'
+          layer:
             id: 'us-blm'
             type: 'fill'
-            source:
-              type: 'vector'
-              url: 'https://tileserver.freeroam.app/data/free-roam-us-blm.json'
+            source: 'us-blm'
             'source-layer': 'us_pad'
             layout: {}
             paint:
               'fill-color': colors.$mapLayerBlm
-              'fill-opacity': 0.4
-          }
+              'fill-opacity': 0.5
           insertBeneathLabels: true
         }
 
         {
           name: @model.l.get 'placesMapContainer.layerUsfs'
-          color: colors.$mapLayerUsfs
-          layer: {
+          source:
+            type: 'vector'
+            url: 'https://tileserver.freeroam.app/data/free-roam-us-usfs.json'
+          layer:
             id: 'us-usfs'
             type: 'fill'
-            source:
-              type: 'vector'
-              url: 'https://tileserver.freeroam.app/data/free-roam-us-usfs.json'
+            source: 'us-usfs'
             'source-layer': 'us_pad'
             layout: {}
             paint:
               'fill-color': colors.$mapLayerUsfs
-              'fill-opacity': 0.4
-          }
+              'fill-opacity': 0.5
+          insertBeneathLabels: true
+        }
+
+        {
+          name: @model.l.get 'placesMapContainer.layerVerizon4g'
+          source:
+            type: 'vector'
+            url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-verizon.json'
+          layer:
+            id: 'us-cell-verizon'
+            type: 'fill'
+            source: 'us-cell-verizon'
+            'source-layer': 'us_cell_verizon'
+            layout: {}
+            paint:
+              'fill-color': colors.$verizon
+              'fill-opacity': 0.3
+          insertBeneathLabels: true
+        }
+
+        {
+          name: @model.l.get 'placesMapContainer.layerAtt4g'
+          source:
+            type: 'vector'
+            url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-att.json'
+          layer:
+            id: 'us-cell-att'
+            type: 'fill'
+            source: 'us-cell-att'
+            'source-layer': 'us_cell_att'
+            layout: {}
+            paint:
+              'fill-color': colors.$att
+              'fill-opacity': 0.3
+          insertBeneathLabels: true
+        }
+
+        {
+          name: @model.l.get 'placesMapContainer.layerTmobile4g'
+          source:
+            type: 'vector'
+            url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-tmobile.json'
+          layer:
+            id: 'us-cell-tmobile'
+            type: 'fill'
+            source: 'us-cell-tmobile'
+            'source-layer': 'us_cell_tmobile'
+            layout: {}
+            paint:
+              'fill-color': colors.$tmobile
+              'fill-opacity': 0.3
+          insertBeneathLabels: true
+        }
+
+        {
+          name: @model.l.get 'placesMapContainer.layerSprint4g'
+          source:
+            type: 'vector'
+            url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-sprint.json'
+          layer:
+            id: 'us-cell-sprint'
+            type: 'fill'
+            source: 'us-cell-sprint'
+            'source-layer': 'us_cell_sprint'
+            layout: {}
+            paint:
+              'fill-color': colors.$sprint
+              'fill-opacity': 0.3
           insertBeneathLabels: true
         }
       ]

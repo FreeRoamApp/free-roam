@@ -213,7 +213,7 @@ colors = _defaults {
   '$tmobile': '#dc0070'
   '$verizon': '#ea0b13'
 
-  '$mapLayerBlm': '#edd100'
+  '$mapLayerBlm': '#e28b2d'
   '$mapLayerUsfs': '#0c6000'
 
   '$tabSelected': materialColors.$white

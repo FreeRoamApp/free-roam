@@ -149,65 +149,84 @@
       padding: 12px 16px
       z-index: 99
       opacity: 0
-      min-width: 148px
-      min-height: 114px
+      min-width: 240px
+      min-height: 220px
       box-sizing: border-box
       transform: scale(0.5)
       opacity: 0
       pointer-events: none
       transform-origin: top right
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
       &.is-visible
         pointer-events: all
         opacity: 1
         transform: scale(1)
-        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
         > .content
           opacity: 1
-          transition: opacity 0.2s
-          transition-delay: 0.2s
 
       > .content
         opacity: 0
+        transition: opacity 0.2s
+        transition-delay: 0.2s
 
         > .title
           font-subhead2()
           margin-bottom: 8px
 
         > .layer-icons
-          display: flex
+          > .g-grid
+            > .g-cols
 
-          > .layer-icon
-            text-align: center
-            margin-right: 32px
-            cursor: pointer
+              > .layer-icon
+                text-align: center
+                cursor: pointer
+                display: flex
+                flex-direction: column
+                align-items: center
 
-            &.is-visible
-              > .icon
-                border: 2px solid getColor('$primary500')
+                &.is-visible
+                  > .icon
+                    border: 2px solid getColor('$primary500')
 
-              > .name
-                color: getColor('$primary500')
+                  > .name
+                    color: getColor('$primary500')
 
-            &:last-child
-              margin-right: 0
+                &:last-child
+                  margin-right: 0
 
-            > .icon
-              width: 48px
-              height: 48px
-              background-size: 100%
-              border-radius: 8px
-              border: 2px solid getColor('$black26')
+                > .icon
+                  width: 48px
+                  height: 48px
+                  background-size: 100%
+                  border-radius: 8px
+                  border: 2px solid getColor('$black26')
 
-            > .name
-              font-tiny(false)
-              margin-top: 4px
+                > .name
+                  font-tiny(false)
+                  margin-top: 4px
 
-            &.us-blm
-              > .icon
-                background-image: url($cdnUrl + '/maps/blm_overlay.png')
+                &.us-blm
+                  > .icon
+                    background-image: url($cdnUrl + '/maps/blm_overlay.png')
 
-            &.us-usfs
-              > .icon
-                background-image: url($cdnUrl + '/maps/usfs_overlay.png')
+                &.us-usfs
+                  > .icon
+                    background-image: url($cdnUrl + '/maps/usfs_overlay.png')
+
+                &.us-cell-att
+                  > .icon
+                    background-image: url($cdnUrl + '/maps/att_overlay.png')
+
+                &.us-cell-sprint
+                  > .icon
+                    background-image: url($cdnUrl + '/maps/sprint_overlay.png')
+
+                &.us-cell-tmobile
+                  > .icon
+                    background-image: url($cdnUrl + '/maps/tmobile_overlay.png')
+
+                &.us-cell-verizon
+                  > .icon
+                    background-image: url($cdnUrl + '/maps/verizon_overlay.png')

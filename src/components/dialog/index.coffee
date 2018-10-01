@@ -16,10 +16,14 @@ module.exports = class Dialog
     @$resetButton = new FlatButton()
     @$submitButton = new FlatButton()
 
+    @state = z.state {isMounted: false}
+
   afterMount: =>
+    @state.set isMounted: true
     window.addEventListener 'keydown', @keyListener
 
   beforeUnmount: =>
+    @state.set isMounted: false
     window.removeEventListener 'keydown', @keyListener
 
   keyListener: (e) =>
@@ -32,7 +36,9 @@ module.exports = class Dialog
       isWide} = props
     $content ?= ''
 
-    z '.z-dialog', {className: z.classKebab {isVanilla, isWide}},
+    {isMounted} = @state.getValue()
+
+    z '.z-dialog', {className: z.classKebab {isVanilla, isWide, isMounted}},
       z '.backdrop', {
         onclick: =>
           @onLeave()
