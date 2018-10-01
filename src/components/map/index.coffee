@@ -42,10 +42,14 @@ module.exports = class Map
       i++
     return firstSymbolId
 
-  addLayer: (layer, {insertBeneathLabels} = {}) =>
+  addLayer: (layer, {source, insertBeneathLabels} = {}) =>
     if @layers.indexOf(layer.id) is -1
       @layers.push layer.id
       layerId = if insertBeneathLabels then @getFirstSymbolId() else undefined
+      try
+        @map.addSource layer.id, source
+      catch err
+        console.log 'source exists', err
       @map.addLayer layer, layerId
 
   removeLayerById: (id) =>
@@ -55,7 +59,7 @@ module.exports = class Map
     layer = @map.getLayer id
     source = layer.source
     @map.removeLayer id
-    @map.removeSource source
+    # @map.removeSource source
 
   toggleLayer: (layer, options) =>
     if @layers.indexOf(layer.id) is -1

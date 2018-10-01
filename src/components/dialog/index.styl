@@ -11,6 +11,15 @@
   justify-content: center
   z-index: 1000000
 
+  &.is-mounted
+    > .dialog
+      opacity: 1
+      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
+    > .backdrop
+      opacity: 1
+      transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1)
+
   &.is-vanilla
     > .dialog
       background: getColor('$tertiary700')
@@ -47,6 +56,7 @@
     height: 100%
     background: getColor('$black54')
     z-index: 1000000
+    opacity: 0
 
   > .dialog
     shadow-3()
@@ -57,3 +67,4 @@
     overflow-y: auto
     overflow-x: hidden
     -webkit-overflow-scrolling: touch
+    opacity: 0

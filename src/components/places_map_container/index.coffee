@@ -278,23 +278,28 @@ module.exports = class PlacesMapContainer
             z '.content',
               z '.title', @model.l.get 'placesMapContainer.layers'
               z '.layer-icons',
-                if isLayersPickerVisible
-                  _map @optionalLayers, (optionalLayer) =>
-                    {name, color, layer, insertBeneathLabels} = optionalLayer
-                    index = layersVisible.indexOf(layer.id)
-                    isVisible = index isnt -1
-                    z ".layer-icon.#{layer.id}", {
-                      className: z.classKebab {isVisible}
-                      onclick: =>
-                        if isVisible
-                          layersVisible.splice index, 1
-                        else
-                          layersVisible.push layer.id
-                        @state.set {layersVisible}
+                z '.g-grid',
+                  z '.g-cols',
+                    if isLayersPickerVisible
+                      _map @optionalLayers, (optionalLayer) =>
+                        {name, source, layer, insertBeneathLabels} = optionalLayer
+                        index = layersVisible.indexOf(layer.id)
+                        isVisible = index isnt -1
+                        z ".layer-icon.#{layer.id}.g-col.g-xs-4.g-md-4", {
+                          className: z.classKebab {isVisible}
+                          onclick: =>
+                            if isVisible
+                              layersVisible.splice index, 1
+                            else
+                              layersVisible.push layer.id
+                            @state.set {layersVisible}
 
-                        @$map.toggleLayer layer, {insertBeneathLabels}
+                            @$map.toggleLayer layer, {
+                              insertBeneathLabels
+                              source: source
+                            }
 
-                    },
-                      z '.icon'
-                      z '.name', name
+                        },
+                          z '.icon'
+                          z '.name', name
       ]
