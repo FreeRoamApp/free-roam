@@ -58,7 +58,10 @@ module.exports = class Review
 
     onclick = =>
       unless @isTextareaFocused?.getValue()
-        @selectedProfileDialogUser.next user
+        @selectedProfileDialogUser.next _defaults user, {
+          onDeleteMessage: =>
+            @model["#{review.type}Review"].deleteById review.id
+        }
 
     oncontextmenu = =>
       @selectedProfileDialogUser.next user

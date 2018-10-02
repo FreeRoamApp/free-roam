@@ -1,40 +1,139 @@
 z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+_mapValues = require 'lodash/mapValues'
+_isEmpty = require 'lodash/isEmpty'
+_keys = require 'lodash/keys'
 
-Icon = require '../icon'
+NewCampgroundInitialInfo = require '../new_campground_initial_info'
+NewCampgroundSliders = require '../new_campground_sliders'
+StepBar = require '../step_bar'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
+# editing can probably be its own component. Editing just needs name, text fields, # of sites, and location
+# auto-generated: cell, all sliders
+# new campground is trying to source a lot more
+
 module.exports = class NewCampground
-  constructor: ({@model, @router}) ->
+  constructor: ({@model, @router, @overlay$}) ->
     me = @model.user.getMe()
 
-    @state = z.state {}
+    @step = new RxBehaviorSubject 0
+    @$stepBar = new StepBar {@model, @step}
+
+    @season = new RxBehaviorSubject @model.time.getCurrentSeason()
+
+    @fields =
+      name:
+        valueSubject: new RxBehaviorSubject ''
+        errorSubject: new RxBehaviorSubject null
+      location:
+        valueSubject: new RxBehaviorSubject ''
+        errorSubject: new RxBehaviorSubject null
+      siteCount:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      crowds:
+        isSeasonal: true
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      fullness:
+        isSeasonal: true
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      noise:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      shade:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      roadDifficulty:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      cellSignal:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      safety:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      minPrice:
+        valueSubject: new RxBehaviorSubject 'free'
+        errorSubject: new RxBehaviorSubject null
+      maxDays:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      restrooms:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      videos:
+        valueSubject: new RxBehaviorSubject []
+        errorSubject: new RxBehaviorSubject null
+
+    @$steps = [
+      new NewCampgroundInitialInfo {
+        @model, @router, @fields, @season, @overlay$
+      }
+      new NewCampgroundSliders {
+        @model, @router, @fields, @season, @overlay$
+      }
+    ]
+
+    @state = z.state {
+      @step
+      isStepCompleted: @step.map (step) ->
+    }
+
+  upsert: =>
+    # @model.campgroundReview.upsert
+    console.log _mapValues @fields, ({valueSubject, isSeasonal}) =>
+      value = valueSubject.getValue()
+      if isSeasonal and not _isEmpty _keys(value)
+        season = @season.getValue()
+        {"#{season}": value}
+      else
+        value
 
   render: =>
-    {} = @state.getValue()
+    {step, isStepCompleted} = @state.getValue()
+
+    console.log 'render', _mapValues @fields, ({valueSubject, isSeasonal}) =>
+      value = valueSubject.getValue()
+      if isSeasonal and value?
+        season = @season.getValue()
+        {"#{season}": value}
+      else if not isSeasonal
+        value
 
     z '.z-new-campground',
-      z '.g-grid',
-        'new camp'
-        ###
-        name
-        location
-        address?
-        siteCount?
-        crowds
-        fullness
-        noise
-        shade
-        roadDifficulty
-        cellSignal
-        safety
-        minPrice (free)
-        maxDays
-        restrooms
-        videos
+      z @$steps[step]
 
-        -> nearby amenities?
-        ###
+      z @$stepBar, {
+        isSaving: false
+        steps: 3
+        isStepCompleted: @$steps[step]?.isCompleted?()
+        save:
+          icon: 'arrow-right'
+          onclick: (e) => null
+      }
+    ###
+    name
+    location
+    address?
+    siteCount?
+    crowds
+    fullness
+    noise
+    shade
+    roadDifficulty
+    cellSignal
+    safety
+    minPrice (free)
+    maxDays
+    restrooms
+    videos
+
+    -> nearby amenities?
+    ###

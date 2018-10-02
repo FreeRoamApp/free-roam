@@ -20,9 +20,11 @@ module.exports = class StepBar
     {step} = @state.getValue()
 
     cancel = _defaults cancel, {
-      text: if step is 0 \
+      text: if step is 0 and cancel?.onclick \
             then @model.l.get 'general.cancel'
-            else @model.l.get 'general.back'
+            else if step > 0
+            then @model.l.get 'general.back'
+            else ''
       onclick: -> null
     }
     save = _defaults save, {
