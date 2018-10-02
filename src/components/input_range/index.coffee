@@ -13,9 +13,13 @@ module.exports = class InputRange
   render: ({label} = {}) =>
     {value} = @state.getValue()
 
-    value = parseInt(value)
+    value = if value? then parseInt(value) else null
 
-    z '.z-input-range',
+    # FIXME: handle null starting value better (clicking on mid should set value)
+
+    z '.z-input-range', {
+      className: z.classKebab {hasValue: value?}
+    },
       z 'label.label',
         label
         z '.range-container',
@@ -24,13 +28,17 @@ module.exports = class InputRange
             min: "#{@minValue}"
             max: "#{@maxValue}"
             value: "#{value}"
-            onchange: (e) =>
-              @value.next e.currentTarget.value
-        z '.numbers',
-          _map _range(@minValue, @maxValue + 1), (number) =>
-            z '.number', {
-              onclick: =>
-                @value.next number
-            },
-              if number in [@minValue, @maxValue / 2, @maxValue, value]
-                number
+            onclick: (e) =>
+              @value.next parseInt(e.currentTarget.value)
+            oninput: (e) =>
+              @value.next parseInt(e.currentTarget.value)
+        z '.info',
+          z '.unset', 'Drag to set value'
+          z '.numbers',
+            _map _range(@minValue, @maxValue + 1), (number) =>
+              z '.number', {
+                onclick: =>
+                  @value.next parseInt(number)
+              },
+                if number in [@minValue, @maxValue / 2, @maxValue, value]
+                  number

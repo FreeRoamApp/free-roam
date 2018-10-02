@@ -16,7 +16,8 @@ module.exports = class Map
 
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBounds, @currentLocation
-      @place, @placePosition, @mapSize, @initialZoom, @center} = options
+      @place, @placePosition, @mapSize, @initialZoom, @center,
+      @onclick} = options
 
     @place ?= new RxBehaviorSubject null
     @initialZoom ?= 4
@@ -156,26 +157,28 @@ module.exports = class Map
           unit: 'imperial'
         }
 
-      @map.on 'click', 'places', (e) =>
-        coordinates = e.features[0].geometry.coordinates.slice()
-        name = e.features[0].properties.name
-        slug = e.features[0].properties.slug
-        type = e.features[0].properties.type
-        # Ensure that if the map is zoomed out such that multiple
-        # copies of the feature are visible, the popup appears
-        # over the copy being pointed to.
-        while Math.abs(e.lngLat.lng - (coordinates[0])) > 180
-          coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
-        position = @map.project coordinates
-        @placePosition.next position
-        @place.next {
-          slug: slug
-          type: type
-          name: name
-          position: position
-          location: coordinates
-        }
-        # (new mapboxgl.Popup({offset: 25})).setLngLat(coordinates).setHTML(description).addTo @map
+      if @onclick
+        @map.on 'click', @onclick
+      else
+        @map.on 'click', 'places', (e) =>
+          coordinates = e.features[0].geometry.coordinates.slice()
+          name = e.features[0].properties.name
+          slug = e.features[0].properties.slug
+          type = e.features[0].properties.type
+          # Ensure that if the map is zoomed out such that multiple
+          # copies of the feature are visible, the popup appears
+          # over the copy being pointed to.
+          while Math.abs(e.lngLat.lng - (coordinates[0])) > 180
+            coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
+          position = @map.project coordinates
+          @placePosition.next position
+          @place.next {
+            slug: slug
+            type: type
+            name: name
+            position: position
+            location: coordinates
+          }
 
       # Change the cursor to a pointer when the mouse is over the places layer.
       @map.on 'mouseenter', 'places', =>
