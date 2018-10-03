@@ -2,6 +2,8 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 
+AppBar = require '../../components/app_bar'
+ButtonBack = require '../../components/button_back'
 NewReview = require '../../components/new_review'
 
 if window?
@@ -22,6 +24,8 @@ module.exports = class NewReviewPage
     id = requests.map ({route}) ->
       route.params.id
 
+    @$appBar = new AppBar {@model}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$newReview = new NewReview {@model, @router, overlay$, id, type, parent}
 
     @state = z.state
@@ -39,4 +43,9 @@ module.exports = class NewReviewPage
       style:
         height: "#{windowSize.height}px"
     },
+      z @$appBar, {
+        title: @model.l.get 'newReviewPage.title'
+        style: 'primary'
+        $topLeftButton: z @$buttonBack
+      }
       @$newReview

@@ -5,7 +5,7 @@ _isEmpty = require 'lodash/isEmpty'
 _keys = require 'lodash/keys'
 
 NewCampgroundInitialInfo = require '../new_campground_initial_info'
-NewCampgroundSliders = require '../new_campground_sliders'
+NewReviewExtras = require '../new_review_extras'
 StepBar = require '../step_bar'
 colors = require '../../colors'
 config = require '../../config'
@@ -17,11 +17,14 @@ if window?
 # auto-generated: cell, all sliders
 # new campground is trying to source a lot more
 
+# step 1 is add new campsite, then just go through review steps, but all are mandatory
+
+
 module.exports = class NewCampground
   constructor: ({@model, @router, @overlay$}) ->
     me = @model.user.getMe()
 
-    @step = new RxBehaviorSubject 0
+    @step = new RxBehaviorSubject 2
     @$stepBar = new StepBar {@model, @step}
 
     @season = new RxBehaviorSubject @model.time.getCurrentSeason()
@@ -76,28 +79,27 @@ module.exports = class NewCampground
       new NewCampgroundInitialInfo {
         @model, @router, @fields, @season, @overlay$
       }
-      new NewCampgroundSliders {
+      new NewReviewExtras {
         @model, @router, @fields, @season, @overlay$
       }
     ]
 
     @state = z.state {
       @step
-      isStepCompleted: @step.map (step) ->
     }
 
   upsert: =>
     # @model.campgroundReview.upsert
     console.log _mapValues @fields, ({valueSubject, isSeasonal}) =>
       value = valueSubject.getValue()
-      if isSeasonal and not _isEmpty _keys(value)
+      if isSeasonal and value?
         season = @season.getValue()
         {"#{season}": value}
-      else
+      else if not isSeasonal
         value
 
   render: =>
-    {step, isStepCompleted} = @state.getValue()
+    {step} = @state.getValue()
 
     console.log 'render', _mapValues @fields, ({valueSubject, isSeasonal}) =>
       value = valueSubject.getValue()

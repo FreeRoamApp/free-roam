@@ -7,7 +7,6 @@ _map = require 'lodash/map'
 _findIndex = require 'lodash/findIndex'
 
 Icon = require '../icon'
-ActionBar = require '../action_bar'
 Rating = require '../rating'
 Textarea = require '../textarea'
 UploadOverlay = require '../upload_overlay'
@@ -17,13 +16,14 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-module.exports = class ComposeReview
+module.exports = class NewReviewCompose
   constructor: (options) ->
-    {@model, @router, @titleValueStreams, @overlay$, @ratingValueStreams
-      @bodyValueStreams, @attachmentsValueStreams, uploadFn} = options
+    {@model, @router, @overlay$, fields, uploadFn} = options
     me = @model.user.getMe()
 
-    @$actionBar = new ActionBar {@model}
+    {@titleValueStreams, @bodyValueStreams, @attachmentsValueStreams,
+      @ratingValueStreams} = fields
+
     @$rating = new Rating {
       valueStreams: @ratingValueStreams, isInteractive: true
     }
@@ -72,8 +72,14 @@ module.exports = class ComposeReview
     @state = z.state
       me: me
       isLoading: false
-      titleValue: @titleValueStreams?.switch()
+      title: @titleValueStreams.switch()
+      body: @bodyValueStreams.switch()
       attachments: @attachmentsValueStreams.switch()
+      rating: @ratingValueStreams.switch()
+
+  isCompleted: =>
+    {title, body, rating} = @state.getValue()
+    title and body and rating
 
   setTitle: (e) =>
     @titleValueStreams.next RxObservable.of e.target.value
@@ -85,25 +91,9 @@ module.exports = class ComposeReview
     @attachmentsValueStreams.next new RxBehaviorSubject []
 
   render: ({onDone}) =>
-    {attachments, me, isLoading, titleValue} = @state.getValue()
+    {attachments, me, isLoading, title} = @state.getValue()
 
-    z '.z-compose-review',
-      z @$actionBar, {
-        isSaving: isLoading
-        cancel:
-          text: @model.l.get 'general.discard'
-          onclick: =>
-            @router.back()
-        save:
-          text: @model.l.get 'general.done'
-          onclick: (e) =>
-            unless isLoading
-              @state.set isLoading: true
-              onDone e
-              .catch -> null
-              .then =>
-                @state.set isLoading: false
-      }
+    z '.z-new-review-compose',
       z '.g-grid',
         z '.rating',
           z @$rating, {size: '40px'}
@@ -112,7 +102,7 @@ module.exports = class ComposeReview
           onkeyup: @setTitle
           onchange: @setTitle
           # bug where cursor goes to end w/ just value
-          defaultValue: titleValue or ''
+          defaultValue: title or ''
           placeholder: @model.l.get 'compose.titleHintText'
 
         z '.divider'
