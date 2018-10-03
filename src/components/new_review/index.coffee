@@ -1,76 +1,119 @@
 z = require 'zorium'
-_defaults = require 'lodash/defaults'
-_find = require 'lodash/find'
-_filter = require 'lodash/filter'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
-RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/switch'
 require 'rxjs/add/operator/switchMap'
 require 'rxjs/add/operator/map'
+_defaults = require 'lodash/defaults'
+_find = require 'lodash/find'
+_filter = require 'lodash/filter'
+_mapValues = require 'lodash/mapValues'
 
-ComposeReview = require '../compose_review'
-Spinner = require '../spinner'
+NewReviewCompose = require '../new_review_compose'
+NewReviewExtras = require '../new_review_extras'
+StepBar = require '../step_bar'
+colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
+# editing can probably be its own component. Editing just needs name, text fields, # of sites, and location
+# auto-generated: cell, all sliders
+# new campground is trying to source a lot more
+
+# step 1 is add new campsite, then just go through review steps, but all are mandatory
+
+
 module.exports = class NewReview
-  constructor: ({@model, @router, overlay$, type, @review, id, parent}) ->
-    @titleValueStreams ?= new RxReplaySubject 1
-    @bodyValueStreams ?= new RxReplaySubject 1
-    @ratingValueStreams ?= new RxReplaySubject 0
-    @ratingValueStreams.next new RxBehaviorSubject null
-    @attachmentsValueStreams ?= new RxReplaySubject 1
-    @attachmentsValueStreams.next new RxBehaviorSubject []
+  constructor: ({@model, @router, @overlay$, type, @review, id, parent}) ->
+    me = @model.user.getMe()
+
     type ?= RxObservable.of null
+
+    @season = new RxBehaviorSubject @model.time.getCurrentSeason()
+
+    @reviewFields =
+      titleValueStreams: new RxReplaySubject 1
+      bodyValueStreams: new RxReplaySubject 1
+      ratingValueStreams: new RxReplaySubject 1
+      attachmentsValueStreams: new RxReplaySubject 1
+
+    @reviewExtraFields =
+      crowds:
+        isSeasonal: true
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      fullness:
+        isSeasonal: true
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      noise:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      shade:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      roadDifficulty:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      cellSignal:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
+      safety:
+        valueSubject: new RxBehaviorSubject null
+        errorSubject: new RxBehaviorSubject null
 
     @resetValueStreams()
 
-    @$spinner = new Spinner()
+    @step = new RxBehaviorSubject 0
+    @$stepBar = new StepBar {@model, @step}
 
-    @$composeReview = new ComposeReview {
-      @model
-      @router
-      overlay$
-      @titleValueStreams
-      @bodyValueStreams
-      @ratingValueStreams
-      @attachmentsValueStreams
-      uploadFn: (args...) ->
-        type.take(1).toPromise().then (type) =>
-          @model[type + 'Review'].uploadImage.apply(
-            @model[type + 'Review'].uploadImage
-            args
-          )
-    }
+    @$steps = [
+      new NewReviewCompose {
+        @model, @router, fields: @reviewFields, @season, @overlay
+        uploadFn: (args...) ->
+          type.take(1).toPromise().then (type) =>
+            @model[type + 'Review'].uploadImage.apply(
+              @model[type + 'Review'].uploadImage
+              args
+            )
+      }
+      new NewReviewExtras {
+        @model, @router, fields: @reviewExtraFields, @season, @overlay$
+      }
+    ]
 
-    @state = z.state
+    @state = z.state {
+      @step
       me: @model.user.getMe()
-      titleValue: @titleValueStreams.switch()
-      bodyValue: @bodyValueStreams.switch()
-      attachmentsValue: @attachmentsValueStreams.switch()
-      ratingValue: @ratingValueStreams.switch()
+      titleValue: @reviewFields.titleValueStreams.switch()
+      bodyValue: @reviewFields.bodyValueStreams.switch()
+      attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
+      ratingValue: @reviewFields.ratingValueStreams.switch()
       language: @model.l.getLanguage()
       type: type
       review: @review
       parent: parent
+    }
 
   beforeUnmount: =>
     @resetValueStreams()
 
   resetValueStreams: =>
     if @review
-      @titleValueStreams.next @review.map (review) -> review?.title or ''
-      @bodyValueStreams.next @review.map (review) -> review?.body or ''
+      @reviewFields.titleValueStreams.next @review.map (review) -> review?.title or ''
+      @reviewFields.bodyValueStreams.next @review.map (review) -> review?.body or ''
     else
-      @titleValueStreams.next new RxBehaviorSubject ''
-      @bodyValueStreams.next new RxBehaviorSubject ''
+      @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
+      @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
 
-  submit: (e) =>
+    @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
+    @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
+
+  upsert: (e) =>
     {me} = @state.getValue()
     @model.signInDialog.openIfGuest me
     .then =>
@@ -84,6 +127,25 @@ module.exports = class NewReview
 
       attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
 
+      extras = _mapValues @reviewExtraFields, ({valueSubject, isSeasonal}) =>
+        value = valueSubject.getValue()
+        if isSeasonal and value?
+          season = @season.getValue()
+          {"#{season}": value}
+        else if not isSeasonal
+          value
+
+      return console.log 'upsert', {
+        id: review?.id
+        type: review?.type or type
+        parentId: parent?.id
+        title: titleValue
+        body: bodyValue
+        attachments: attachments
+        rating: ratingValue
+        extras: extras
+      }
+
       if isReady
         @model.campgroundReview.upsert {
           id: review?.id
@@ -93,6 +155,7 @@ module.exports = class NewReview
           body: bodyValue
           attachments: attachments
           rating: ratingValue
+          extras: extras
         }
         .then (newReview) =>
           @resetValueStreams()
@@ -100,8 +163,18 @@ module.exports = class NewReview
             slug: parent?.slug, tab: 'reviews'
           }, {reset: true}
 
+
   render: =>
+    {step} = @state.getValue()
 
     z '.z-new-review',
-      z @$composeReview,
-        onDone: @submit
+      z @$steps[step]
+
+      z @$stepBar, {
+        isSaving: false
+        steps: 2
+        isStepCompleted: @$steps[step]?.isCompleted?()
+        save:
+          icon: 'arrow-right'
+          onclick: @upsert
+      }

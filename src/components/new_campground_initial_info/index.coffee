@@ -12,7 +12,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewCampgroundInitialInfo
-  constructor: ({@model, @router, @fields, @season, @overlay$}) ->
+  constructor: ({@model, @router, @fields, @overlay$}) ->
     me = @model.user.getMe()
 
     @$nameInput = new PrimaryInput
@@ -25,42 +25,17 @@ module.exports = class NewCampgroundInitialInfo
 
     @$mapButton = new PrimaryButton()
 
-    @seasons =  [
-      {key: 'spring', text: @model.l.get 'seasons.spring'}
-      {key: 'summer', text: @model.l.get 'seasons.summer'}
-      {key: 'fall', text: @model.l.get 'seasons.fall'}
-      {key: 'winter', text: @model.l.get 'seasons.winter'}
-    ]
-
-    @state = z.state {
-      @season
-    }
-
   isCompleted: =>
     @fields.name.valueSubject.getValue() and
-      @fields.location.valueSubject.getValue() and
-      @season.getValue()
-
+      @fields.location.valueSubject.getValue()
 
   render: =>
-    {season} = @state.getValue()
-
     z '.z-new-campground-initial-info',
       z '.g-grid',
         z 'label.field',
           z '.name', @model.l.get 'newCampgroundInitialInfo.campgroundName'
           z @$nameInput,
             hintText: @model.l.get 'newCampgroundInitialInfo.campgroundName'
-
-        z '.field.when',
-          z '.name', @model.l.get 'newCampgroundInitialInfo.whenVisit'
-          z '.seasons',
-            _map @seasons, ({key, text}) =>
-              z '.season', {
-                className: z.classKebab {isSelected: key is season}
-                onclick: =>
-                  @season.next key
-              }, text
 
         z 'label.field.where',
           z '.name', @model.l.get 'newCampgroundInitialInfo.where'

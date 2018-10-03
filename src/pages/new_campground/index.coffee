@@ -24,7 +24,7 @@ module.exports = class NewCampgroundPage
   render: =>
     {windowSize} = @state.getValue()
 
-    z '.p-new-thread', {
+    z '.p-new-campground', {
       style:
         height: "#{windowSize.height}px"
     },

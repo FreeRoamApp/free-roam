@@ -1,0 +1,32 @@
+@require '../../vars'
+
+.z-new-review-extras
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .g-grid
+    > .field
+      padding: 16px
+      display: block
+
+      > .name
+        font-title()
+        margin-bottom: 4px
+
+    > .when
+      > .seasons
+        display: flex
+        background: getColor('$tertiary100')
+        border: 1px solid getColor('$bg700')
+        border-radius: 4px
+
+        > .season
+          cursor: pointer
+          flex: 1
+          text-align: center
+          padding: 4px 0
+
+          &.is-selected
+            background: getColor('$tertiary500')
+            font-title()
