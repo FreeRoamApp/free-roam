@@ -8,3 +8,6 @@ module.exports = class PlaceBase
 
   search: ({query}) =>
     @auth.stream "#{@namespace}.search", {query}
+
+  upsert: (options) =>
+    @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}

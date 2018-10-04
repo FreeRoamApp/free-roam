@@ -81,14 +81,14 @@ module.exports = class NewReviewCompose
     {title, body, rating} = @state.getValue()
     title and body and rating
 
+  getTitle: =>
+    @model.l.get 'newReviewPage.title'
+
   setTitle: (e) =>
     @titleValueStreams.next RxObservable.of e.target.value
 
   setBody: (e) =>
     @bodyValueStreams.next RxObservable.of e.target.value
-
-  beforeUnmount: =>
-    @attachmentsValueStreams.next new RxBehaviorSubject []
 
   render: ({onDone}) =>
     {attachments, me, isLoading, title} = @state.getValue()
@@ -116,10 +116,7 @@ module.exports = class NewReviewCompose
         z '.divider'
 
         z '.attachments',
-          z '.add-image', {
-            onclick: =>
-              null
-          },
+          z '.add-image',
             z @$addImageIcon,
               icon: 'photo-add'
               isTouchTarget: false
@@ -133,7 +130,7 @@ module.exports = class NewReviewCompose
                     new Promise (resolve) ->
                       img = new Image()
                       img.src = dataUrls[i]
-                      img.onload = =>
+                      img.onload = ->
                         resolve {
                           file
                           dataUrl: dataUrls[i]

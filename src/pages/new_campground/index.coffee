@@ -1,7 +1,5 @@
 z = require 'zorium'
 
-AppBar = require '../../components/app_bar'
-ButtonBack = require '../../components/button_back'
 NewCampground = require '../../components/new_campground'
 
 if window?
@@ -9,8 +7,6 @@ if window?
 
 module.exports = class NewCampgroundPage
   constructor: ({@model, requests, @router, overlay$, serverData}) ->
-    @$appBar = new AppBar {@model}
-    @$buttonBack = new ButtonBack {@model, @router}
     @$newCampground = new NewCampground {@model, @router, overlay$}
 
     @state = z.state
@@ -28,9 +24,4 @@ module.exports = class NewCampgroundPage
       style:
         height: "#{windowSize.height}px"
     },
-      z @$appBar, {
-        title: @model.l.get 'newCampgroundPage.title'
-        style: 'primary'
-        $topLeftButton: z @$buttonBack
-      }
       @$newCampground

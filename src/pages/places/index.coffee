@@ -22,7 +22,7 @@ module.exports = class PlacesPage
       me: @model.user.getMe()
       windowSize: @model.window.getSize()
 
-  getMeta: ->
+  getMeta: =>
     {
       title: @model.l.get 'general.places'
     }

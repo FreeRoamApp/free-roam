@@ -14,7 +14,6 @@ module.exports = class StepBar
 
     @state = z.state
       step: @step
-      isLoading: false
 
   render: ({cancel, save, steps, isStepCompleted, isLoading}) =>
     {step} = @state.getValue()

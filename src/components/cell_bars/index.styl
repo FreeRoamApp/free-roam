@@ -3,6 +3,7 @@
 .z-cell-bars
   display: flex
   align-items: flex-end
+  position: relative
 
   > .bar
     width: 15%
@@ -11,3 +12,8 @@
 
     &.is-visible
       background: getColor('$primary500')
+
+  > .no-signal
+    position: absolute
+    left: 0
+    top: 0

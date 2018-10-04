@@ -5,7 +5,7 @@
   overflow: auto
   -webkit-overflow-scrolling: touch
 
-  > .g-grid
+  > .g-grid, > .g-grid > .g-grid > .g-cols > .g-col
     > .field
       padding: 16px
       display: block
@@ -13,6 +13,28 @@
       > .name
         font-title()
         margin-bottom: 4px
+
+    > .cell
+
+      > .carriers
+        display: flex
+        align-items: center
+
+        > .carrier
+          margin-right: 16px
+
+          > .bars
+            margin: 16px 0
+
+          > .lte
+            display: flex
+            align-items: center
+
+            > .checkbox
+              margin-right: 8px
+
+        > .add-carrier
+          margin-left: 32px
 
     > .when
       > .seasons

@@ -29,6 +29,9 @@ module.exports = class NewCampgroundInitialInfo
     @fields.name.valueSubject.getValue() and
       @fields.location.valueSubject.getValue()
 
+  getTitle: =>
+    @model.l.get 'newCampgroundPage.title'
+
   render: =>
     z '.z-new-campground-initial-info',
       z '.g-grid',

@@ -12,7 +12,7 @@ module.exports = class InfoLevel
   render: ({value, min, max, isReversed}) =>
     {key} = @state.getValue()
 
-    value ?= 1
+    value = value?.value or 1
 
     fillWidth = Math.floor(100 * (value - 1) / (max - min))
     fillWidth = Math.max(fillWidth, 4)
