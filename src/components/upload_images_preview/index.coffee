@@ -88,14 +88,17 @@ module.exports = class UploadImagesPreview
 
 
   getLocation: (file, locationValueSubject) =>
-    @model.additionalScript.add 'js', 'https://fdn.uno/d/scripts/exif-parser.min.js'
-    .then =>
+    @model.additionalScript.add(
+      'js', 'https://fdn.uno/d/scripts/exif-parser.min.js'
+    ).then ->
       reader = new FileReader()
       reader.onload = (e) ->
         parser = window.ExifParser.create(e.target.result)
         parser.enableSimpleValues true
         result = parser.parse()
-        location = [result.tags.GPSLatitude, result.tags.GPSLongitude]
+        location = if result.tags.GPSLatitude \
+                   then [result.tags.GPSLatitude, result.tags.GPSLongitude]
+                   else null
         locationValueSubject.next location
       reader.readAsArrayBuffer file
 

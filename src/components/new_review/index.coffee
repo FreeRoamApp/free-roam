@@ -73,7 +73,7 @@ module.exports = class NewReview
 
     @$steps = [
       new NewReviewCompose {
-        @model, @router, fields: @reviewFields, @season, @overlay
+        @model, @router, fields: @reviewFields, @season, @overlay$
         uploadFn: (args...) ->
           type.take(1).toPromise().then (type) =>
             @model[type + 'Review'].uploadImage.apply(
@@ -83,6 +83,7 @@ module.exports = class NewReview
       }
       new NewReviewExtras {
         @model, @router, fields: @reviewExtraFields, @season, @overlay$
+        isOptional: true
       }
     ]
 
@@ -93,13 +94,13 @@ module.exports = class NewReview
       bodyValue: @reviewFields.bodyValueStreams.switch()
       attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
       ratingValue: @reviewFields.ratingValueStreams.switch()
-      language: @model.l.getLanguage()
       type: type
       review: @review
       parent: parent
     }
 
   beforeUnmount: =>
+    @step.next 0
     @resetValueStreams()
 
   resetValueStreams: =>
@@ -118,7 +119,7 @@ module.exports = class NewReview
     @model.signInDialog.openIfGuest me
     .then =>
       {titleValue, bodyValue, ratingValue, attachmentsValue,
-        type, review, language, parent} = @state.getValue()
+        type, review, parent} = @state.getValue()
 
       if _find attachmentsValue, {isUploading: true}
         isReady = confirm @model.l.get 'newReview.pendingUpload'
@@ -134,17 +135,6 @@ module.exports = class NewReview
           {"#{season}": value}
         else if not isSeasonal
           value
-
-      return console.log 'upsert', {
-        id: review?.id
-        type: review?.type or type
-        parentId: parent?.id
-        title: titleValue
-        body: bodyValue
-        attachments: attachments
-        rating: ratingValue
-        extras: extras
-      }
 
       if isReady
         @model.campgroundReview.upsert {

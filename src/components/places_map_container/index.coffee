@@ -168,8 +168,9 @@ module.exports = class PlacesMapContainer
           }
         when 'cellSignal'
           {
+            # TODO: for non-4g, check w/o 4g postfix and with
             range:
-              "#{field}.#{filter.value.carrier}.signal":
+              "#{field}.#{filter.value.carrier}_lte.signal":
                 gte: filter.value.signal
           }
         when 'booleanArray'

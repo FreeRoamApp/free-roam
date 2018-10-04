@@ -1,6 +1,8 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
+Fab = require '../fab'
+Icon = require '../icon'
 PlacesMapContainer = require '../places_map_container'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -11,6 +13,9 @@ if window?
 
 module.exports = class Places
   constructor: ({@model, @router, @overlay$}) ->
+    @$fab = new Fab()
+    @$addIcon = new Icon()
+
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, @overlay$
       dataTypes: [
@@ -60,7 +65,7 @@ module.exports = class Places
         }
 
         {
-          name: @model.l.get 'placesMapContainer.layerVerizon4g'
+          name: @model.l.get 'placesMapContainer.layerVerizonLte'
           source:
             type: 'vector'
             url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-verizon.json'
@@ -77,7 +82,7 @@ module.exports = class Places
         }
 
         {
-          name: @model.l.get 'placesMapContainer.layerAtt4g'
+          name: @model.l.get 'placesMapContainer.layerAttLte'
           source:
             type: 'vector'
             url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-att.json'
@@ -94,7 +99,7 @@ module.exports = class Places
         }
 
         {
-          name: @model.l.get 'placesMapContainer.layerTmobile4g'
+          name: @model.l.get 'placesMapContainer.layerTmobileLte'
           source:
             type: 'vector'
             url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-tmobile.json'
@@ -111,7 +116,7 @@ module.exports = class Places
         }
 
         {
-          name: @model.l.get 'placesMapContainer.layerSprint4g'
+          name: @model.l.get 'placesMapContainer.layerSprintLte'
           source:
             type: 'vector'
             url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-sprint.json'
@@ -146,7 +151,6 @@ module.exports = class Places
         field: 'crowds'
         type: 'maxIntSeasonal'
         name: @model.l.get 'campground.crowds'
-        onclick: => null
         valueSubject: new RxBehaviorSubject null
       }
       {
@@ -159,21 +163,18 @@ module.exports = class Places
         field: 'safety'
         type: 'minInt'
         name: @model.l.get 'campground.safety'
-        onclick: => null
         valueSubject: new RxBehaviorSubject null
       }
       {
         field: 'noise'
         type: 'maxIntDayNight'
         name: @model.l.get 'campground.noise'
-        onclick: => null
         valueSubject: new RxBehaviorSubject null
       }
       {
         field: 'fullness'
         type: 'maxIntSeasonal'
         name: @model.l.get 'campground.fullness'
-        onclick: => null
         valueSubject: new RxBehaviorSubject null
       }
       {
@@ -189,3 +190,16 @@ module.exports = class Places
 
     z '.z-places',
       z @$placesMapContainer
+
+      z '.fab',
+        z @$fab,
+          colors:
+            c500: colors.$tertiary100
+            ripple: colors.$bgText70
+          $icon: z @$addIcon, {
+            icon: 'add'
+            isTouchTarget: false
+            color: colors.$bgText70
+          }
+          onclick: =>
+            @router.go 'newCampground'
