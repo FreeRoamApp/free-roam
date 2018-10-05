@@ -150,7 +150,7 @@ module.exports = class Map
         positionOptions:
           enableHighAccuracy: true
         trackUserLocation: true
-      }), 'bottom-right'
+      }), 'bottom-left'
       if @showScale
         @map.addControl new mapboxgl.ScaleControl {
           maxWidth: 100

@@ -10,6 +10,7 @@ _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 _filter = require 'lodash/filter'
 _mapValues = require 'lodash/mapValues'
+_forEach = require 'lodash/forEach'
 
 NewReviewCompose = require '../new_review_compose'
 NewReviewExtras = require '../new_review_extras'
@@ -113,6 +114,9 @@ module.exports = class NewReview
 
     @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
     @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
+
+    _forEach @reviewExtraFields, (field) ->
+      field.valueSubject.next null
 
   upsert: (e) =>
     {me} = @state.getValue()

@@ -15,13 +15,9 @@
         margin-bottom: 4px
 
     > .cell
-
       > .carriers
-        display: flex
-        align-items: center
-
         > .carrier
-          margin-right: 16px
+          margin-bottom: 16px
 
           > .bars
             margin: 16px 0
@@ -52,3 +48,14 @@
           &.is-selected
             background: getColor('$tertiary500')
             font-title()
+
+  @media (min-width: $breakPointLarge)
+    > .g-grid
+      > .cell
+        > .carriers
+          display: flex
+          align-items: center
+
+          > .carrier
+            margin-bottom: 0
+            margin-right: 16px
