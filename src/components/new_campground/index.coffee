@@ -7,6 +7,7 @@ _keys = require 'lodash/keys'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 _filter = require 'lodash/filter'
+_forEach = require 'lodash/forEach'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
@@ -51,6 +52,9 @@ module.exports = class NewCampground
         errorSubject: new RxBehaviorSubject null
       location:
         valueSubject: new RxBehaviorSubject ''
+        errorSubject: new RxBehaviorSubject null
+      videos:
+        valueSubject: new RxBehaviorSubject []
         errorSubject: new RxBehaviorSubject null
 
     @reviewExtraFields =
@@ -119,6 +123,7 @@ module.exports = class NewCampground
       @model.campground.upsert {
         name: @fields.name.valueSubject.getValue()
         location: @fields.location.valueSubject.getValue()
+        videos: @fields.videos.valueSubject.getValue()
       }
       .then @upsertReview
       .catch ->
@@ -150,9 +155,14 @@ module.exports = class NewCampground
     }
     .then (newReview) =>
       @resetValueStreams()
-      @router.go 'campgroundWithTab', {
-        slug: parent?.slug, tab: 'reviews'
-      }, {reset: true}
+
+      # FIXME FIXME: rm HACK. for some reason thread is empty initially?
+      # still unsure why
+      setTimeout =>
+        @router.go 'campgroundWithTab', {
+          slug: parent?.slug, tab: 'reviews'
+        }, {reset: true}
+      , 200
 
   beforeUnmount: =>
     @step.next 0
@@ -168,6 +178,13 @@ module.exports = class NewCampground
 
     @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
     @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
+
+    @fields.name.valueSubject.next ''
+    @fields.location.valueSubject.next ''
+    @fields.videos.valueSubject.next []
+
+    _forEach @reviewExtraFields, (field) ->
+      field.valueSubject.next null
 
   render: =>
     {step, isLoading} = @state.getValue()
