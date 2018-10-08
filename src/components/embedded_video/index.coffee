@@ -34,7 +34,7 @@ module.exports = class EmbeddedVideo
         z '.thumbnail', {
           onclick: =>
             @model.portal.call 'browser.openWindow', {
-              url: "https://www.youtube.com/watch?v=#{video.sourceId}"
+              url: "https://www.youtube.com/watch?v=#{video.sourceId}&t=#{video.timestamp}"
               target: '_system'
             }
         },
@@ -48,7 +48,7 @@ module.exports = class EmbeddedVideo
         z 'iframe',
           width: width
           height: height
-          src: "https://www.youtube.com/embed/#{video.sourceId}"
+          src: "https://www.youtube.com/embed/#{video.sourceId}?start=#{video.timestamp}"
           frameborder: 0
           allow: 'autoplay; encrypted-media'
           attributes:

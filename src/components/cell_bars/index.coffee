@@ -48,8 +48,7 @@ module.exports = class CellBars
             icon: 'close'
             isTouchTarget: false
             size: "#{widthPx / 5}px"
-            onclick: =>
-              @setCellBars 0
+            onclick: if @isInteractive then (=> @setCellBars 0)
             color: if cellBars is 0 \
                    then colors.$primary500
                    else colors.$primary100

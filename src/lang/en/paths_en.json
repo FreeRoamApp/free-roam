@@ -29,6 +29,7 @@
   "item": "/item/:slug",
   "itemsByCategory": "/product-guides/:category",
   "itemsBySearch": "/product-guides/search/:query",
+  "newAmenity": "/new-amenity",
   "newCampground": "/new-campground",
   "partners": "/partners",
   "places": "/places",

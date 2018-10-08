@@ -4,6 +4,11 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- Swipe / tap through gallery of images
+- "We don't have any data for this season yet, but here\'s what it was like in *season*"
+- no reviews -> loading
+x method to input sliders for other seasons w/o adding review score
+- pad types, mark seasonal campgrounds (checkbox when creating + dates its open / link)
 - compress images before upload
 - 4g/3g toggle for signal
 - Mark low overhangs, sharp turns

@@ -153,9 +153,13 @@ module.exports = class NewReview
         }
         .then (newReview) =>
           @resetValueStreams()
-          @router.go 'campgroundWithTab', {
-            slug: parent?.slug, tab: 'reviews'
-          }, {reset: true}
+          # FIXME FIXME: rm HACK. for some reason thread is empty initially?
+          # still unsure why
+          setTimeout =>
+            @router.go 'campgroundWithTab', {
+              slug: parent?.slug, tab: 'reviews'
+            }, {reset: true}
+          , 200
 
 
   render: =>

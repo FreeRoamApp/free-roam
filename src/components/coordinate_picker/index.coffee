@@ -8,14 +8,15 @@ if window?
   require './index.styl'
 
 module.exports = class CoordinatePicker
-  constructor: ({@model, @router, @coordinates, @overlay$}) ->
+  constructor: ({@model, @router, @coordinates, center, @overlay$, initialZoom}) ->
     @$actionBar = new ActionBar {@model}
 
     @places = new RxBehaviorSubject []
-    @mapCenter = new RxBehaviorSubject null
+    @mapCenter = new RxBehaviorSubject center
+    initialZoom ?= 4
 
     @$map = new Map {
-      @model, @router, @places, center: @mapCenter, initialZoom: 4
+      @model, @router, @places, center: @mapCenter, initialZoom
       onclick: (e) =>
         lat = Math.round(1000 * e.lngLat.lat) / 1000
         lon = Math.round(1000 * e.lngLat.lng) / 1000

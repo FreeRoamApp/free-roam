@@ -68,7 +68,7 @@ module.exports = class CampgroundInfo
             {
               carrier: carrier
               type: value.type
-              $bars: new CellBars {value: value.signal}
+              $bars: new CellBars {value: value.signal, includeNoSignal: true}
             }
         }
 
@@ -159,6 +159,13 @@ module.exports = class CampgroundInfo
               value: place?.roadDifficulty
               min: 1
               max: 5
+            }
+
+          z '.g-col.g-xs-12.g-md-6',
+            z '.title', @model.l.get 'campgroundInfo.averageWeather'
+            z 'img.graph', {
+              src:
+                "#{config.USER_CDN_URL}/weather/campground_#{place?.id}.svg?12"
             }
 
           unless _isEmpty $videos

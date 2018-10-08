@@ -12,6 +12,7 @@ if window?
 module.exports = class PlacesList
   constructor: ({@model, @router, places}) ->
     @state = z.state
+      me: @model.user.getMe()
       places: places.map (places) ->
         _filter _map places, (place) ->
           if place.type isnt 'cellTower'
@@ -25,12 +26,16 @@ module.exports = class PlacesList
             }
 
   render: =>
-    {places} = @state.getValue()
+    {me, places} = @state.getValue()
 
     z '.z-places-list',
       z '.g-grid',
         _map places, ({place, amenities}) ->
-          z '.place',
+          z '.place', {
+            onclick: =>
+              if me?.username is 'austin' and confirm 'Delete?'
+                @model.amenity.deleteByRow place
+          },
             z '.name', place.name
             z '.amenities',
               _map amenities, ({amenity, $icon}) ->

@@ -4,10 +4,13 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 _map = require 'lodash/map'
 _range = require 'lodash/range'
+_startCase = require 'lodash/startCase'
 
 Dialog = require '../dialog'
 Dropdown = require '../dropdown'
+Checkbox = require '../checkbox'
 CellBars = require '../cell_bars'
+PrimaryInput = require '../primary_input'
 InputRange = require '../input_range'
 colors = require '../../colors'
 config = require '../../config'
@@ -55,17 +58,61 @@ module.exports = class FilterDialog
           {dayNight, value}
       when 'cellSignal'
         initialCarrier = @model.cookie.get('cellCarrier') or 'verizon'
-        @carrierDropdownValue = new RxBehaviorSubject(initialCarrier).do (carrier) =>
+        @carrierDropdownValue = new RxBehaviorSubject(initialCarrier)
+        .do (carrier) =>
           @model.cookie.set 'cellCarrier', carrier
         @$carrierDropdown = new Dropdown {value: @carrierDropdownValue}
+
+        @isLteValue = new RxBehaviorSubject(
+          if @filter.value?.isLte?
+          then @filter.value?.isLte
+          else true # default true
+        )
+        @$isLteCheckbox = new Checkbox {value: @isLteValue}
 
         @cellBarsValue = new RxBehaviorSubject @filter.value?.signal or 3
         @$cellBars = new CellBars {value: @cellBarsValue, isInteractive: true}
 
         filterValue = RxObservable.combineLatest(
-          @carrierDropdownValue, @cellBarsValue, (vals...) -> vals
-        ).map ([carrier, signal]) ->
-          {carrier, signal}
+          @carrierDropdownValue
+          @cellBarsValue
+          @isLteValue
+          (vals...) -> vals
+        ).map ([carrier, signal, isLte]) ->
+          {carrier, signal, isLte}
+      when 'weather'
+        @monthDropdownValue = new RxBehaviorSubject(
+          if @filter.value?.month?
+          then @filter.value?.month
+          else new Date().getMonth()
+        )
+        @$monthDropdown = new Dropdown {value: @monthDropdownValue}
+
+        @metricDropdownValue = new RxBehaviorSubject(
+          @filter.value?.metric or 'tmin'
+        ).do (metric) =>
+          switch metric
+            when 'tmin' then @operatorDropdownValue.next 'gt'
+            when 'tmax' then @operatorDropdownValue.next 'lt'
+            when 'precip' then @operatorDropdownValue.next 'lt'
+        @$metricDropdown = new Dropdown {value: @metricDropdownValue}
+
+        @operatorDropdownValue = new RxBehaviorSubject(
+          @filter.value?.operator or 'gt'
+        )
+        @$operatorDropdown = new Dropdown {value: @operatorDropdownValue}
+
+        @numberValue = new RxBehaviorSubject @filter.value?.number or ''
+        @$numberInput = new PrimaryInput {value: @numberValue}
+
+        filterValue = RxObservable.combineLatest(
+          @monthDropdownValue
+          @metricDropdownValue
+          @operatorDropdownValue
+          @numberValue
+          (vals...) -> vals
+        ).map ([month, metric, operator, number]) ->
+          {month, metric, operator, number}
 
     @state = z.state
       filterValue: filterValue
@@ -86,7 +133,7 @@ module.exports = class FilterDialog
       when 'cellSignal'
         $content =
           z '.content',
-            z '.label', @model.l.get 'filterDialog.cellCarrier'
+            z '.div', @model.l.get 'filterDialog.cellCarrier'
             z '.carrier',
               z @$carrierDropdown,
                 options: [
@@ -97,6 +144,53 @@ module.exports = class FilterDialog
                 ]
             z '.label', @model.l.get 'filterDialog.minSignal'
             z '.bars', z @$cellBars, {widthPx: 200}
+            z 'label.is-lte',
+              z '.checkbox',
+                z @$isLteCheckbox
+              z '.text', @model.l.get 'filterDialog.requireLte'
+      when 'weather'
+        metric = filterValue?.metric
+        $content =
+          z '.content',
+            z '.label', @model.l.get 'general.weather'
+            z '.month',
+              z @$monthDropdown,
+                options: _map _range(12), (i) =>
+                  {value: "#{i}", text: @model.l.get "months.#{i}"}
+            z '.metric',
+              z @$metricDropdown,
+                options: [
+                  {
+                    value: 'tmin'
+                    text: @model.l.get 'filterDialog.weatherTmin'
+                  }
+                  {
+                    value: 'tmax'
+                    text: @model.l.get 'filterDialog.weatherTmax'
+                  }
+                  {
+                    value: 'precip'
+                    text: @model.l.get 'filterDialog.weatherPrecip'
+                  }
+                ]
+            z '.operator',
+              z @$operatorDropdown,
+                options: [
+                  {
+                    value: 'gt'
+                    text: @model.l.get 'general.gt'
+                  }
+                  {
+                    value: 'lt'
+                    text: @model.l.get 'general.lt'
+                  }
+                ]
+            z '.number',
+              z @$numberInput, {
+                type: 'number'
+                hintText:
+                  @model.l.get "filterDialog.weather#{_startCase(metric)}"
+              }
 
     resetButton = {
       text: @model.l.get 'general.reset'
