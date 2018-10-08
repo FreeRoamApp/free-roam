@@ -44,12 +44,6 @@ module.exports = class NewReviewExtras
 
     @carrierCount = new RxBehaviorSubject 1
 
-    # FIXME FIXME rm
-    # setInterval =>
-    #   console.log 'cell change'
-    #   @onCellChange()
-    # , 1000
-
     @carrierCache = []
     @disposables = []
 
@@ -83,6 +77,12 @@ module.exports = class NewReviewExtras
           }
     }
 
+  reset: =>
+    _map @disposables, (disposable) -> disposable?.unsubscribe?()
+    @disposables = []
+    @carrierCache = []
+    @carrierCount.next 1
+
   onCellChange: =>
     setImmediate =>
       {carriers} = @state.getValue()
@@ -110,9 +110,6 @@ module.exports = class NewReviewExtras
       return true
     @season.getValue() and _every @sliders, ({valueSubject}) ->
       valueSubject.getValue()
-
-  beforeUnmount: =>
-    _map @disposables, (disposable) -> disposable?.unsubscribe?()
 
   getTitle: =>
     @model.l.get 'newReviewExtras.title'

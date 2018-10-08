@@ -1,0 +1,43 @@
+@require '../../vars'
+
+.z-new-amenity
+  flex: 1
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .g-grid
+    > .field
+      padding: 16px
+      display: block
+
+      > .name
+        font-body1()
+        margin-bottom: 4px
+
+      > .form
+        display: flex
+        align-items: center
+
+        > .input
+          flex: 1
+          max-width: 300px
+
+        > .button
+          margin-left: 8px
+
+    > .amenities
+      > .amenity
+        > .label
+          display: flex
+          align-items: center
+
+          > .name
+            margin-left: 8px
+
+        > .price-input
+          display: none
+          width: 100px
+          margin: 16px 0
+
+          &.is-visible
+            display: block

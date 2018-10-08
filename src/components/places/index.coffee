@@ -142,6 +142,12 @@ module.exports = class Places
   getCampgroundFilters: =>
     [
       {
+        field: 'cellSignal'
+        type: 'cellSignal'
+        name: @model.l.get 'campground.cellSignal'
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
         field: 'roadDifficulty'
         type: 'maxInt'
         name: @model.l.get 'campground.roadDifficulty'
@@ -154,9 +160,9 @@ module.exports = class Places
         valueSubject: new RxBehaviorSubject null
       }
       {
-        field: 'cellSignal'
-        type: 'cellSignal'
-        name: @model.l.get 'campground.cellSignal'
+        field: 'weather'
+        type: 'weather'
+        name: @model.l.get 'general.weather'
         valueSubject: new RxBehaviorSubject null
       }
       {

@@ -231,7 +231,7 @@ module.exports = class Map
               icon: place.icon or 'default'
             geometry:
               type: 'Point'
-              coordinates: [
+              coordinates: [ # reverse of typical lat, lon
                 place.location.lon
                 place.location.lat
               ]

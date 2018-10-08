@@ -186,6 +186,8 @@ module.exports = class NewCampground
     _forEach @reviewExtraFields, (field) ->
       field.valueSubject.next null
 
+    @$steps?[1].reset()
+
   render: =>
     {step, isLoading} = @state.getValue()
 
@@ -209,22 +211,3 @@ module.exports = class NewCampground
             unless isLoading
               @upsert()
       }
-    ###
-    name
-    location
-    address?
-    siteCount?
-    crowds
-    fullness
-    noise
-    shade
-    roadDifficulty
-    cellSignal
-    safety
-    minPrice (free)
-    maxDays
-    restrooms
-    videos
-
-    -> nearby amenities?
-    ###

@@ -26,6 +26,9 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
+          'oct', 'nov', 'dec']
+
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, @overlay$, @dataTypes, showScale, mapBounds
@@ -72,7 +75,7 @@ module.exports = class PlacesMapContainer
       @model, @router, @overlay$, filter
     }
 
-  getDataTypesStreams: (dataTypes) =>
+  getDataTypesStreams: (dataTypes) ->
     dataTypes = _map dataTypes, (options) ->
       {dataType, filters, isChecked, isCheckedSubject} = options
       isCheckedSubject ?= new RxBehaviorSubject isChecked
@@ -87,7 +90,7 @@ module.exports = class PlacesMapContainer
       _map dataTypes, 'isCheckedSubject'
       (vals...) -> vals
     )
-    .map (values) =>
+    .map (values) ->
       dataTypesWithValue = _zipWith dataTypes, values, (dataType, isChecked) ->
         _defaults {isChecked}, dataType
 
@@ -102,7 +105,7 @@ module.exports = class PlacesMapContainer
       _map filters, 'valueSubject'
       (vals...) -> vals
     )
-    .map (values) =>
+    .map (values) ->
       filtersWithValue = _zipWith filters, values, (filter, value) ->
         _defaults {value}, filter
       _groupBy filtersWithValue, 'dataType'
@@ -167,11 +170,34 @@ module.exports = class PlacesMapContainer
                 lte: filter.value.value
           }
         when 'cellSignal'
+          carrier = filter.value.carrier
+          if filter.value.isLte
+            {
+              range:
+                "#{field}.#{carrier}_lte.signal":
+                  gte: filter.value.signal
+            }
+          else
+            # check for lte and non lte
+            bool:
+              should: [
+                {
+                  range:
+                    "#{field}.#{carrier}.signal":
+                      gte: filter.value.signal
+                }
+                {
+                  range:
+                    "#{field}.#{carrier}_lte.signal":
+                      gte: filter.value.signal
+                }
+              ]
+        when 'weather'
+          month = MONTHS[filter.value.month]
           {
-            # TODO: for non-4g, check w/o 4g postfix and with
             range:
-              "#{field}.#{filter.value.carrier}_lte.signal":
-                gte: filter.value.signal
+              "#{field}.months.#{month}.#{filter.value.metric}":
+                "#{filter.value.operator}": parseFloat(filter.value.number)
           }
         when 'booleanArray'
           arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'

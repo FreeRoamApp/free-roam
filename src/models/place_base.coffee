@@ -11,3 +11,6 @@ module.exports = class PlaceBase
 
   upsert: (options) =>
     @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
+
+  deleteByRow: (row) =>
+    @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}

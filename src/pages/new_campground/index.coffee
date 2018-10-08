@@ -6,6 +6,8 @@ if window?
   require './index.styl'
 
 module.exports = class NewCampgroundPage
+  hideDrawer: true
+
   constructor: ({@model, requests, @router, overlay$, serverData}) ->
     @$newCampground = new NewCampground {@model, @router, overlay$}
 

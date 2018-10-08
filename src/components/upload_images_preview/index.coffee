@@ -97,20 +97,18 @@ module.exports = class UploadImagesPreview
         parser.enableSimpleValues true
         result = parser.parse()
         location = if result.tags.GPSLatitude \
-                   then [result.tags.GPSLatitude, result.tags.GPSLongitude]
+                   then {lat: result.tags.GPSLatitude, lon: result.tags.GPSLongitude}
                    else null
         locationValueSubject.next location
       reader.readAsArrayBuffer file
 
   afterMount: =>
     @disposable = @location.subscribe (location) =>
-      if location?[0]
+      if location?.lon
         @places.next [{
-          location:
-            lat: location[0]
-            lon: location[1]
+          location: location
         }]
-        @mapCenter.next [location[1], location[0]]
+        @mapCenter.next [location.lon, location.lat]
 
   beforeUnmount: =>
     @disposable?.unsubscribe()
@@ -169,7 +167,7 @@ module.exports = class UploadImagesPreview
               z '.tag', "##{tag}"
         z '.location', {
           className: z.classKebab {
-            isVisible: Boolean location?[0]
+            isVisible: Boolean location?.lon
           }
         },
           z '.include-location',

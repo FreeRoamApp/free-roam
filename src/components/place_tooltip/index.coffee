@@ -104,9 +104,7 @@ module.exports = class PlaceTooltip
         z @$closeIcon,
           icon: 'close'
           size: '16px'
-          isTouchTarget: true
-          isAlignedTop: true
-          isAlignedRight: true
+          isTouchTarget: false
           color: colors.$bgText54
           onclick: (e) =>
             e?.stopPropagation()
