@@ -4,6 +4,8 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- overlay$ -> model. get all overlay, sheet, dialog components
+- Ask for rig information on first review
 - Swipe / tap through gallery of images
 - "We don't have any data for this season yet, but here\'s what it was like in *season*"
 - no reviews -> loading

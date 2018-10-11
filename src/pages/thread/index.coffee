@@ -18,7 +18,7 @@ if window?
 module.exports = class ThreadPage
   hideDrawer: true
 
-  constructor: ({@model, requests, @router, @overlay$, serverData, group}) ->
+  constructor: ({@model, requests, @router, serverData, group}) ->
     # allow reset beforeUnmount so stale thread doesn't show when loading new
     @thread = new RxBehaviorSubject null
     loadedThread = requests.switchMap ({route}) =>
@@ -28,7 +28,7 @@ module.exports = class ThreadPage
       group, thread, (vals...) -> vals
     )
 
-    @$thread = new Thread {@model, @router, @overlay$, thread, group}
+    @$thread = new Thread {@model, @router, thread, group}
 
     @state = z.state
       windowSize: @model.window.getSize()

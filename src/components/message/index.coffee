@@ -21,7 +21,7 @@ DESCRIPTION_LENGTH = 100
 
 module.exports = class Message
   constructor: (options) ->
-    {message, @$body, isGrouped, isMe, @model, @overlay$, @isTextareaFocused
+    {message, @$body, isGrouped, isMe, @model, @isTextareaFocused
       @selectedProfileDialogUser, @router, @messageBatchesStreams} = options
 
     @$avatar = new Avatar()

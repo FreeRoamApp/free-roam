@@ -14,7 +14,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewCampgroundInitialInfo
-  constructor: ({@model, @router, @fields, @overlay$}) ->
+  constructor: ({@model, @router, @fields}) ->
     me = @model.user.getMe()
 
     @$nameInput = new PrimaryInput
@@ -68,9 +68,8 @@ module.exports = class NewCampgroundInitialInfo
                 text: @model.l.get 'newCampgroundInitialInfo.coordinatesFromMap'
                 isFullWidth: false
                 onclick: =>
-                  @overlay$.next new CoordinatePicker {
-                    @model, @router, @overlay$
-                    coordinates: @fields.location.valueSubject
+                  @model.overlay.open new CoordinatePicker {
+                    @model, @router, coordinates: @fields.location.valueSubject
                   }
 
         z 'label.field',

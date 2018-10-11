@@ -22,7 +22,7 @@ MAX_COMMENT_DEPTH = 3
 
 module.exports = class ThreadComment
   constructor: (options) ->
-    {@threadComment, @depth, @isMe, @model, @overlay$,
+    {@threadComment, @depth, @isMe, @model,
       @selectedProfileDialogUser, @router, @commentStreams,
       @group} = options
 
@@ -43,7 +43,7 @@ module.exports = class ThreadComment
         @model, @router
       }
       messageBatchesStreams: @commentStreams
-      @group, @isMe, @model, @overlay$, @selectedProfileDialogUser, @router
+      @group, @isMe, @model, @selectedProfileDialogUser, @router
     }
 
     @$upvoteButton = new ThreadVoteButton {@model}
@@ -59,7 +59,6 @@ module.exports = class ThreadComment
         depth: @depth + 1
         @isMe
         @model
-        @overlay$
         @selectedProfileDialogUser
         @router
         @group
@@ -86,7 +85,6 @@ module.exports = class ThreadComment
           depth: @depth + 1
           @isMe
           @model
-          @overlay$
           @selectedProfileDialogUser
           @router
           @group
@@ -110,7 +108,7 @@ module.exports = class ThreadComment
     body = @reply.getValue()
     @isPostLoading.next true
 
-    @model.signInDialog.openIfGuest me
+    @model.user.requestLoginIfGuest me
     .then =>
       @model.threadComment.create {
         body: body
@@ -182,7 +180,6 @@ module.exports = class ThreadComment
                     @model
                     @router
                     message: @reply
-                    @overlay$
                     @isPostLoading
                     onPost: @postReply
                     group: @group

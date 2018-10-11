@@ -131,6 +131,7 @@
   "filterThreadsDialog.sortPopular": "Popular",
   "filterThreadsDialog.sortNew": "New",
   "filterThreadsDialog.filterAll": "All",
+  "getAppDialog.title": "Native apps",
   "getAppDialog.text": "Get the app on Android or iOS!",
   "groupSettings.groupName": "Group name",
   "groupSettings.leaveGroup": "Leave group",
@@ -234,6 +235,7 @@
   "uploadImagesOverlay.addTag": "Add tag",
   "uploadImagesOverlay.includeLocation": "Include location?",
   "uploadImagesOverlay.title": "Add a caption",
+  "welcomeDialog.title": "Welcome to FreeRoam!",
 
   "categoriesPage.title": "Boondocking products",
   "groupChatPage.title": "Boondocking chat",

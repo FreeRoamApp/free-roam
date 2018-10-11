@@ -13,9 +13,9 @@ if window?
   require './index.styl'
 
 module.exports = class CampgroundNearby
-  constructor: ({@model, @router, @overlay$, @place}) ->
+  constructor: ({@model, @router, @place}) ->
 
-    addPlaces = @place.map (place) =>
+    addPlaces = @place.map (place) ->
       unless place
         return []
       [{
@@ -35,7 +35,7 @@ module.exports = class CampgroundNearby
     @$fab = new Fab()
     @$addIcon = new Icon()
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router, @overlay$, initialZoom: 9
+      @model, @router, initialZoom: 9
       showScale: true, addPlaces, mapBounds, isFilterBarHidden: true
       dataTypes: [
         {

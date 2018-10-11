@@ -19,7 +19,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewReviewExtras
-  constructor: ({@model, @router, @fields, @season, @overlay$, @isOptional}) ->
+  constructor: ({@model, @router, @fields, @season, @isOptional}) ->
     me = @model.user.getMe()
 
     @$addCarrierButton = new PrimaryButton()

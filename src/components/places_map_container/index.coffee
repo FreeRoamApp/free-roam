@@ -31,7 +31,7 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, @overlay$, @dataTypes, showScale, mapBounds
+    {@model, @router, @dataTypes, showScale, mapBounds
       @addPlaces, @optionalLayers, initialZoom, @isFilterBarHidden} = options
 
     @addPlaces ?= RxObservable.of []
@@ -71,8 +71,8 @@ module.exports = class PlacesMapContainer
       layersVisible: []
 
   showFilterDialog: (filter) =>
-    @overlay$.next new FilterDialog {
-      @model, @router, @overlay$, filter
+    @model.overlay.open new FilterDialog {
+      @model, @router, filter
     }
 
   getDataTypesStreams: (dataTypes) ->

@@ -3,7 +3,7 @@ config = require '../config'
 module.exports = class User
   namespace: 'users'
 
-  constructor: ({@auth, @proxy, @exoid, @cookie, @l}) -> null
+  constructor: ({@auth, @proxy, @exoid, @cookie, @l, @overlay, @portal}) -> null
 
   getMe: =>
     @auth.stream "#{@namespace}.getMe"
@@ -43,3 +43,14 @@ module.exports = class User
 
   getDisplayName: (user) =>
     user?.username or @l.get 'general.anonymous'
+
+  requestLoginIfGuest: (user) =>
+    new Promise (resolve, reject) =>
+      if user?.username
+        resolve true
+      else
+        @overlay.open new SignInDialog {
+          model: {@l, @auth, @overlay, @portal, user: this}
+        }
+        @overlay.onComplete resolve
+        @overlay.onCancel reject

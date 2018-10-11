@@ -30,7 +30,7 @@ if window?
 
 module.exports = class UploadImagesPreview
   constructor: (options) ->
-    {@multiImageData, @model, @overlay$,
+    {@multiImageData, @model,
       @onUpload, @onUploading, @onProgress, @uploadFn} = options
 
     @$appBar = new AppBar {@model}
@@ -185,7 +185,7 @@ module.exports = class UploadImagesPreview
         cancel:
           onclick: =>
             @multiImageData.next null
-            @overlay$.next null
+            @model.overlay.close()
         # TODO: trash icon?
         save:
           icon: 'arrow-right'
@@ -213,5 +213,5 @@ module.exports = class UploadImagesPreview
                   {clientId}
                 )
             @multiImageData.next null
-            @overlay$.next null
+            @model.overlay.close()
       }

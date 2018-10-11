@@ -15,7 +15,7 @@ module.exports = class PlaceAttachmentsPage extends BasePage
 
   constructor: (options) ->
     {@model, @router, requests, serverData,
-      group, @isOverlayed, overlay$} = options
+      group, @isOverlayed} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
       type = route.src.split('/')[1]
@@ -25,7 +25,7 @@ module.exports = class PlaceAttachmentsPage extends BasePage
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
     @$placeAttachments = new PlaceAttachments {
-      @model, @router, @place, overlay$
+      @model, @router, @place
     }
 
     @state = z.state

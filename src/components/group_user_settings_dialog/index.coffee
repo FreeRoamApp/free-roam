@@ -17,7 +17,7 @@ if window?
   require './index.styl'
 
 module.exports = class GroupUserSettingsDialog
-  constructor: ({@model, @router, group, @overlay$}) ->
+  constructor: ({@model, @router, group}) ->
     notificationTypes = [
       {
         name: @model.l.get 'groupSettings.chatMessage'
@@ -37,7 +37,7 @@ module.exports = class GroupUserSettingsDialog
     @$leaveIcon = new Icon()
     @$dialog = new Dialog {
       onLeave: =>
-        @overlay$.next null
+        @model.overlay.close()
     }
 
     groupAndMe = RxObservable.combineLatest(group, me, (vals...) -> vals)
@@ -71,7 +71,7 @@ module.exports = class GroupUserSettingsDialog
       .then =>
         @state.set isLeaveGroupLoading: false
         @router.go 'home'
-        @overlay$.next null
+        @model.overlay.close()
 
   render: =>
     {me, notificationTypes, group, isLeaveGroupLoading,
@@ -124,4 +124,4 @@ module.exports = class GroupUserSettingsDialog
         cancelButton:
           text: @model.l.get 'general.close'
           onclick: =>
-            @overlay$.next null
+            @model.overlay.close()

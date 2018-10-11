@@ -1,0 +1,22 @@
+@require '../../vars'
+
+.z-get-app-dialog_dialog
+  > .badge
+    display: block
+    width: 135px
+    height: 40px
+    background-size: 100%
+    margin: 0 auto
+    cursor: pointer
+
+    margin-bottom: 16px
+
+    &.ios
+      background-image: url('https://fdn.uno/d/images/app_store.svg')
+
+    &.android
+      background-image: url('https://fdn.uno/d/images/google_play.svg')
+
+  > .text
+    font-body1()
+    margin-top: 8px

@@ -8,25 +8,20 @@ if window?
   require './index.styl'
 
 module.exports = class GetAppDialog
-  constructor: ({@model, group}) ->
+  constructor: ({@model}) ->
     @$dialog = new Dialog {
       onLeave: =>
-        @model.getAppDialog.close()
+        @model.overlay.close()
     }
 
-    @state = z.state
-      group: group
-
   render: =>
-    {group} = @state.getValue()
-
     iosAppUrl = config.IOS_APP_URL
     googlePlayAppUrl = config.GOOGLE_PLAY_APP_URL
 
     z '.z-get-app-dialog',
       z @$dialog,
         isVanilla: true
-        $title: group?.name
+        $title: @model.l.get 'getAppDialog.title'
         $content:
           z '.z-get-app-dialog_dialog',
             z '.badge.ios', {
@@ -46,4 +41,4 @@ module.exports = class GetAppDialog
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>
-            @model.getAppDialog.close()
+            @model.overlay.close()

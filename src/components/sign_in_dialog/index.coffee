@@ -13,7 +13,7 @@ if window?
   require './index.styl'
 
 module.exports = class SignInDialog
-  constructor: ({@model, @router, group}) ->
+  constructor: ({@model}) ->
 
     @usernameValue = new RxBehaviorSubject ''
     @usernameError = new RxBehaviorSubject null
@@ -41,9 +41,8 @@ module.exports = class SignInDialog
     }
 
     @state = z.state
-      mode: @model.signInDialog.getMode()
+      data: @model.overlay.getData()
       isLoading: false
-      group: group
 
   join: (e) =>
     e?.preventDefault()
@@ -62,8 +61,8 @@ module.exports = class SignInDialog
       # give time for invalidate to work
       setTimeout =>
         @model.user.getMe().take(1).subscribe =>
-          @model.signInDialog.loggedIn()
-          @model.signInDialog.close()
+          @model.overlay.complete()
+          @model.overlay.close()
       , 0
     .catch (err) =>
       err = try
@@ -92,8 +91,8 @@ module.exports = class SignInDialog
       # give time for invalidate to work
       setTimeout =>
         @model.user.getMe().take(1).subscribe =>
-          @model.signInDialog.loggedIn()
-          @model.signInDialog.close()
+          @model.overlay.complete()
+          @model.overlay.close()
       , 0
     .catch (err) =>
       err = try
@@ -108,11 +107,11 @@ module.exports = class SignInDialog
       @state.set isLoading: false
 
   cancel: =>
-    @model.signInDialog.cancel()
-    @model.signInDialog.close()
+    @model.overlay.cancel()
+    @model.overlay.close()
 
-  render: ({mode}) =>
-    {isLoading, group} = @state.getValue()
+  render: ({data}) =>
+    {isLoading} = @state.getValue()
 
     z '.z-sign-in-dialog',
       z @$dialog,
@@ -120,16 +119,16 @@ module.exports = class SignInDialog
           z '.z-sign-in-dialog_dialog',
             z '.header',
               z '.title',
-                if mode is 'join'
+                if data is 'join'
                 then @model.l.get 'signInDialog.join'
                 else @model.l.get 'signInDialog.signIn'
               z '.button', {
                 onclick: =>
-                  @model.signInDialog.setMode(
-                    if mode is 'join' then 'signIn' else 'join'
+                  @model.overlay.setData(
+                    if data is 'join' then 'signIn' else 'join'
                   )
               },
-                if mode is 'join'
+                if data is 'join'
                 then @model.l.get 'general.signIn'
                 else @model.l.get 'general.signUp'
 
@@ -138,7 +137,7 @@ module.exports = class SignInDialog
                 z @$usernameInput, {
                   hintText: @model.l.get 'general.username'
                 }
-              if mode is 'join'
+              if data is 'join'
                 z '.input',
                   z @$emailInput, {
                     hintText: @model.l.get 'general.email'
@@ -149,7 +148,7 @@ module.exports = class SignInDialog
                   hintText: @model.l.get 'general.password'
                 }
 
-              if mode is 'join'
+              if data is 'join'
                 z '.terms',
                   @model.l.get 'signInDialog.terms', {
                     replacements: {tos: ' '}
@@ -158,9 +157,9 @@ module.exports = class SignInDialog
                     href: ''
                     onclick: (e) =>
                       e?.preventDefault()
-                      @router.openInAppBrowser {
-                        url: "https://#{config.HOST}/policies?isIab=1"
-                        key: ''
+                      @model.portal.call 'browser.openWindow', {
+                        url: "https://#{config.HOST}/policies"
+                        target: '_system'
                       }
                   }, 'TOS'
               z '.actions',
@@ -168,13 +167,13 @@ module.exports = class SignInDialog
                   z @$submitButton,
                     text: if isLoading \
                           then @model.l.get 'general.loading'
-                          else if mode is 'join'
+                          else if data is 'join'
                           then @model.l.get 'signInDialog.createAccount'
                           else @model.l.get 'general.signIn'
                     colors:
                       cText: colors.$primary500
                     onclick: (e) =>
-                      if mode is 'signIn'
+                      if data is 'signIn'
                         @signIn e
                       else
                         @join e

@@ -11,7 +11,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceAttachments
-  constructor: ({@model, @router, place, @overlay$}) ->
+  constructor: ({@model, @router, place}) ->
     @state = z.state
       place: place
       attachments: place.switchMap (place) =>
@@ -29,10 +29,9 @@ module.exports = class PlaceAttachments
             z '.g-col.g-xs-4.g-md-2',
               z '.attachment', {
                 onclick: =>
-                  @overlay$?.next new ImageViewOverlay {
+                  @model.overlay.open new ImageViewOverlay {
                     @model
                     @router
-                    @overlay$
                     imageData:
                       url: attachment.largeSrc
                       aspectRatio: attachment.aspectRatio

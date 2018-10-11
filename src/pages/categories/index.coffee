@@ -41,20 +41,6 @@ module.exports = class CategoriesPage
         title: @model.l.get 'categoriesPage.title'
         style: 'primary'
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
-        $topRightButton:
-          z '.p-group-home_top-right',
-            z @$notificationsIcon,
-              icon: 'notifications'
-              color: colors.$header500Icon
-              onclick: =>
-                @overlay$.next @$notificationsOverlay
-            z @$settingsIcon,
-              icon: 'settings'
-              color: colors.$header500Icon
-              onclick: =>
-                @overlay$.next new SetLanguageDialog {
-                  @model, @router, @overlay$, @group
-                }
       }
       @$categories
       @$bottomBar

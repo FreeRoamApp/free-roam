@@ -6,7 +6,7 @@ PushService = require '../../services/push'
 module.exports = class PushNotificationsSheet
   constructor: ({@model, router}) ->
     @$sheet = new Sheet {
-      @model, router, isVisible: @model.pushNotificationSheet.isOpen()
+      @model, router
     }
 
   render: =>
@@ -20,6 +20,6 @@ module.exports = class PushNotificationsSheet
             PushService.register {@model}
             .catch -> null
             .then =>
-              @model.pushNotificationSheet.complete()
-            @model.pushNotificationSheet.close()
+              @model.overlay.complete()
+            @model.overlay.close()
       }

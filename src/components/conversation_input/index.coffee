@@ -24,7 +24,7 @@ if window?
 module.exports = class ConversationInput
   constructor: (options) ->
     {@model, @router, @message, @onPost, @onResize, meGroupUser,
-      @inputTranslateY, allowedPanels, @isTextareaFocused, @overlay$, group,
+      @inputTranslateY, allowedPanels, @isTextareaFocused, group,
       isPostLoading, conversation} = options
 
     allowedPanels ?= RxObservable.of [
@@ -38,7 +38,6 @@ module.exports = class ConversationInput
 
     @$uploadImagePreview = new UploadImagePreview {
       @imageData
-      @overlay$
       @model
       uploadFn: @model.conversationMessage.uploadImage
       onUpload: ({key, width, height}) =>
@@ -126,7 +125,7 @@ module.exports = class ConversationInput
     if me?.username
       post()
     else
-      @model.signInDialog.openIfGuest me
+      @model.user.requestLoginIfGuest me
       .then =>
         # SUPER HACK:
         # stream doesn't update while cache is being invalidated, for whatever
@@ -191,7 +190,7 @@ module.exports = class ConversationInput
                           width: img.width
                           height: img.height
                         }
-                        @overlay$.next z @$uploadImagePreview, {
+                        @model.overlay.open z @$uploadImagePreview, {
                           iconName: 'send'
                         }
                   }

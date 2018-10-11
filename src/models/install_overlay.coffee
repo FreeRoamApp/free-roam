@@ -1,23 +1,17 @@
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
-module.exports = class InstallOverlay
-  constructor: ->
-    @_isOpen = new RxBehaviorSubject false
-    @onActionFn = null
+InstallOverlay = require '../components/install_overlay'
 
-  isOpen: =>
-    @_isOpen
-
-  onAction: (@onActionFn) => null
+module.exports = class InstallOverlayModel
+  constructor: ({@l, @overlay}) -> null
 
   setPrompt: (@prompt) => null
 
   open: =>
-    @_isOpen.next true
+    @overlay.open new InstallOverlay {model: {@l, @overlay}}
     # prevent body scrolling while viewing menu
     document.body.style.overflow = 'hidden'
 
   close: =>
-    @_isOpen.next false
-    @onAction null
+    @overlay.close()
     document.body.style.overflow = 'auto'

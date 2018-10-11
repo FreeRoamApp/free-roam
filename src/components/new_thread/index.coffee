@@ -17,7 +17,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewThread
-  constructor: ({@model, @router, overlay$, category, @thread, id, group}) ->
+  constructor: ({@model, @router, category, @thread, id, group}) ->
     @titleValueStreams ?= new RxReplaySubject 1
     @bodyValueStreams ?= new RxReplaySubject 1
     @attachmentsValueStreams ?= new RxReplaySubject 1
@@ -31,7 +31,6 @@ module.exports = class NewThread
     @$compose = new Compose {
       @model
       @router
-      overlay$
       @titleValueStreams
       @bodyValueStreams
       @attachmentsValueStreams
@@ -78,7 +77,7 @@ module.exports = class NewThread
       z @$compose,
         imagesAllowed: true
         onDone: (e) =>
-          @model.signInDialog.openIfGuest me
+          @model.user.requestLoginIfGuest me
           .then =>
             newThread = {
               thread:

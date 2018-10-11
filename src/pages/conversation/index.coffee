@@ -20,7 +20,6 @@ module.exports = class ConversationPage
     .publishReplay(1).refCount()
 
     selectedProfileDialogUser = new RxBehaviorSubject null
-    overlay$ = new RxBehaviorSubject null
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
@@ -28,14 +27,13 @@ module.exports = class ConversationPage
       @model, @router, selectedProfileDialogUser
     }
     @$conversation = new Conversation {
-      @model, @router, conversation, selectedProfileDialogUser, overlay$, group
+      @model, @router, conversation, selectedProfileDialogUser, group
     }
 
     @state = z.state
       me: @model.user.getMe()
       conversation: conversation
       selectedProfileDialogUser: selectedProfileDialogUser
-      overlay$: overlay$
       windowSize: @model.window.getSize()
 
   getMeta: =>
@@ -45,7 +43,7 @@ module.exports = class ConversationPage
 
   render: =>
     {conversation, me, selectedProfileDialogUser,
-      windowSize, overlay$} = @state.getValue()
+      windowSize} = @state.getValue()
 
     toUser = _find conversation?.users, (user) ->
       me?.id isnt user.id
@@ -61,9 +59,6 @@ module.exports = class ConversationPage
         isFullWidth: true
       }
       @$conversation
-
-      if overlay$
-        z '.overlay', overlay$
 
       if selectedProfileDialogUser
         z @$profileDialog, {user: selectedProfileDialogUser}

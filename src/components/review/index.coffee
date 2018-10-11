@@ -25,7 +25,7 @@ DESCRIPTION_LENGTH = 100
 
 module.exports = class Review
   constructor: (options) ->
-    {review, @$body, isGrouped, isMe, @model, @overlay$, @isTextareaFocused
+    {review, @$body, isGrouped, isMe, @model, @isTextareaFocused
       @selectedProfileDialogUser, @router} = options
 
     @$avatar = new Avatar()
@@ -103,10 +103,9 @@ module.exports = class Review
             z '.attachment',
               title: attachment.caption
               onclick: =>
-                @overlay$?.next new ImageViewOverlay {
+                @model.overlay.open new ImageViewOverlay {
                   @model
                   @router
-                  @overlay$
                   imageData:
                     url: attachment.largeSrc
                     aspectRatio: attachment.aspectRatio

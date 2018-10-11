@@ -41,9 +41,7 @@ User = require './user'
 UserBlock = require './user_block'
 UserFollower = require './user_follower'
 Drawer = require './drawer'
-GetAppDialog = require './get_app_dialog'
-SignInDialog = require './sign_in_dialog'
-PushNotificationSheet = require './push_notification_sheet'
+Overlay = require './overlay'
 InstallOverlay = require './install_overlay'
 Window = require './window'
 request = require '../services/request'
@@ -109,9 +107,10 @@ module.exports = class Model
 
     @cookie = new Cookie {initialCookies, setCookie, host}
     @l = new Language {language, @cookie}
+    @overlay = new Overlay()
 
     @auth = new Auth {@exoid, @cookie, pushToken, @l, userAgent, @portal}
-    @user = new User {@auth, proxy, @exoid, @cookie, @l}
+    @user = new User {@auth, proxy, @exoid, @cookie, @l, @overlay, @portal}
     @userBlock = new UserBlock {@auth}
     @userFollower = new UserFollower {@auth}
     @ad = new Ad {@portal, @cookie, userAgent}
@@ -143,12 +142,9 @@ module.exports = class Model
     @time = new Time({@auth})
 
     @drawer = new Drawer()
-    @signInDialog = new SignInDialog()
-    @getAppDialog = new GetAppDialog()
-    @installOverlay = new InstallOverlay()
-    @pushNotificationSheet = new PushNotificationSheet()
+    @installOverlay = new InstallOverlay {@l, @overlay}
     @portal?.setModels {
-      @user, @modal, @installOverlay, @getAppDialog, @pushToken
+      @user, @pushToken, @l, @overlay
     }
     @window = new Window {@cookie, @experiment, userAgent}
 

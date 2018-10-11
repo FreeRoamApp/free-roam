@@ -13,10 +13,10 @@ if window?
   require './index.styl'
 
 module.exports = class SetLanguageDialog
-  constructor: ({@model, @router, @overlay$}) ->
+  constructor: ({@model, @router}) ->
     @$dialog = new Dialog {
       onLeave: =>
-        @overlay$.next null
+        @model.overlay.close()
     }
 
     @languageStreams = new RxReplaySubject null
@@ -51,12 +51,12 @@ module.exports = class SetLanguageDialog
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>
-            @overlay$.next null
+            @model.overlay.close()
 
         submitButton:
           text: @model.l.get 'general.save'
           onclick: =>
             @model.l.setLanguage currentLanguage
             @model.user.setLanguage currentLanguage
-            @overlay$.next null
+            @model.overlay.close()
             window.location.reload()

@@ -17,7 +17,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewAmenity
-  constructor: ({@model, @router, center, @overlay$}) ->
+  constructor: ({@model, @router, center}) ->
     me = @model.user.getMe()
 
     @$actionBar = new ActionBar {@model}
@@ -130,8 +130,8 @@ module.exports = class NewAmenity
                 text: @model.l.get 'newCampgroundInitialInfo.coordinatesFromMap'
                 isFullWidth: false
                 onclick: =>
-                  @overlay$.next new CoordinatePicker {
-                    @model, @router, @overlay$, center
+                  @model.overlay.open new CoordinatePicker {
+                    @model, @router, center
                     coordinates: @locationValue
                     initialZoom: 9
                   }

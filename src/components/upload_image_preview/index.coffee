@@ -9,7 +9,7 @@ if window?
   require './index.styl'
 
 module.exports = class UploadImagePreview
-  constructor: ({@imageData, @model, @overlay$, @onUpload, @uploadFn}) ->
+  constructor: ({@imageData, @model, @onUpload, @uploadFn}) ->
     @$sendIcon = new Icon()
     @$closeImagePreviewIcon = new Icon()
     @$uploadImageFab = new Fab()
@@ -53,7 +53,7 @@ module.exports = class UploadImagePreview
           isTouchTarget: true
           onclick: =>
             @imageData.next null
-            @overlay$.next null
+            @model.overlay.close()
       z '.fab',
         z @$uploadImageFab,
           colors:
@@ -73,4 +73,4 @@ module.exports = class UploadImagePreview
                 @state.set isUploading: false
                 @isUploading = false
                 @imageData.next null
-                @overlay$.next null
+                @model.overlay.close()
