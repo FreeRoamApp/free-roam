@@ -12,7 +12,7 @@ if window?
   require './index.styl'
 
 module.exports = class NotificationsOverlay
-  constructor: ({@model, @router, @overlay$, group}) ->
+  constructor: ({@model, @router, group}) ->
     @$emptyIcon = new Icon()
 
     @state = z.state
@@ -21,7 +21,7 @@ module.exports = class NotificationsOverlay
 
   afterMount: =>
     @router.onBack =>
-      @overlay$.next null
+      @model.overlay.close()
 
   beforeUnmount: =>
     @router.onBack null
@@ -34,7 +34,7 @@ module.exports = class NotificationsOverlay
     z '.z-notifications-overlay', {
       className: z.classKebab {isEmpty}
       onclick: =>
-        @overlay$.next null
+        @model.overlay.close()
     },
       z '.content', {
         onclick: (e) =>
@@ -54,7 +54,7 @@ module.exports = class NotificationsOverlay
             console.log 'not', notification
             z '.notification', {
               onclick: =>
-                @overlay$.next null
+                @model.overlay.close()
                 @router.go(
                   notification.data.path.key, notification.data.path.params
                   {query: notification.data.path.qs}

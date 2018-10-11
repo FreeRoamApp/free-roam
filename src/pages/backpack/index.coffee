@@ -40,13 +40,13 @@ module.exports = class BackpackPage
               icon: 'notifications'
               color: colors.$header500Icon
               onclick: =>
-                @overlay$.next @$notificationsOverlay
+                @model.overlay.open @$notificationsOverlay
             z @$settingsIcon,
               icon: 'settings'
               color: colors.$header500Icon
               onclick: =>
-                @overlay$.next new SetLanguageDialog {
-                  @model, @router, @overlay$, @group
+                @model.overlay.open.next new SetLanguageDialog {
+                  @model, @router, @group
                 }
       }
       @$backpack

@@ -26,6 +26,7 @@ FormattedText = require '../formatted_text'
 PrimaryButton = require '../primary_button'
 ConversationInput = require '../conversation_input'
 ConversationMessage = require '../conversation_message'
+PushNotificationsSheet = require '../push_notifications_sheet'
 config = require '../../config'
 
 if window?
@@ -44,7 +45,7 @@ DELAY_BETWEEN_LOAD_MORE_MS = 250
 
 module.exports = class Conversation extends Base
   constructor: (options) ->
-    {@model, @router, @error, @conversation, isActive, @overlay$,
+    {@model, @router, @error, @conversation, isActive,
       selectedProfileDialogUser, @scrollYOnly, @isGroup, isLoading, @onScrollUp,
       @onScrollDown, @minId, hasBottomBar, group} = options
 
@@ -136,7 +137,6 @@ module.exports = class Conversation extends Base
       @message
       @isTextareaFocused
       @isPostLoading
-      @overlay$
       @inputTranslateY
       @conversation
       group: group
@@ -213,12 +213,11 @@ module.exports = class Conversation extends Base
 
               $body = @getCached$ bodyCacheKey, FormattedText, {
                 @model, @router, text: message.body, selectedProfileDialogUser
-                @overlay$
                 mentionedUsers: message.mentionedUsers
                 useThumbnails: true
               }
               $el = @getCached$ messageCacheKey, ConversationMessage, {
-                message, @model, @router, @overlay$, isMe, @isTextareaFocused,
+                message, @model, @router, isMe, @isTextareaFocused,
                 isGrouped, selectedProfileDialogUser, $body,
                 @messageBatchesStreams
               }
@@ -524,10 +523,10 @@ module.exports = class Conversation extends Base
     {me, group} = @state.getValue()
     @state.set isJoinLoading: true
 
-    @model.signInDialog.openIfGuest me
+    @model.user.requestLoginIfGuest me
     .then =>
       unless @model.cookie.get 'isPushTokenStored'
-        @model.pushNotificationSheet.open()
+        @model.overlay.open new PushNotificationsSheet {@model, @router}
       Promise.all _filter [
         @model.group.joinById group.id
         if group.star

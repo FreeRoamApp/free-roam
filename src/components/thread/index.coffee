@@ -41,7 +41,7 @@ SCROLL_COMMENT_LOAD_COUNT = 30
 TIME_UNTIL_WIGGLE_MS = 2000
 
 module.exports = class Thread extends Base
-  constructor: ({@model, @router, @overlay$, thread, @isInline, group}) ->
+  constructor: ({@model, @router, thread, @isInline, group}) ->
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@router}
 
@@ -72,7 +72,7 @@ module.exports = class Thread extends Base
       filter, thread, (vals...) -> vals
     ).publishReplay(1).refCount()
     @$filterCommentsDialog = new FilterCommentsDialog {
-      @model, filter, @overlay$
+      @model, filter
     }
 
     @commentStreams = new RxReplaySubject(1)
@@ -91,7 +91,6 @@ module.exports = class Thread extends Base
       @model
       @router
       @message
-      @overlay$
       @isPostLoading
       onPost: @postMessage
       group: group
@@ -205,7 +204,7 @@ module.exports = class Thread extends Base
     messageBody = @message.getValue()
     @isPostLoading.next true
 
-    @model.signInDialog.openIfGuest me
+    @model.user.requestLoginIfGuest me
     .then =>
       @model.threadComment.create {
         body: messageBody
@@ -355,7 +354,7 @@ module.exports = class Thread extends Base
                 isTouchTarget: false
                 color: colors.$bgText
                 onclick: =>
-                  @overlay$.next @$filterCommentsDialog
+                  @model.overlay.open @$filterCommentsDialog
 
 
         z '.comments-wrapper',

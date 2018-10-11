@@ -19,10 +19,10 @@ if window?
   require './index.styl'
 
 module.exports = class FilterDialog
-  constructor: ({@model, @overlay$, @filter}) ->
+  constructor: ({@model, @filter}) ->
     @$dialog = new Dialog {
       onLeave: =>
-        @overlay$.next null
+        @model.overlay.close()
     }
 
     switch @filter.type
@@ -196,7 +196,7 @@ module.exports = class FilterDialog
       text: @model.l.get 'general.reset'
       onclick: =>
         @filter.valueSubject.next null
-        @overlay$.next null
+        @model.overlay.close()
     }
 
     z '.z-filter-dialog',
@@ -209,10 +209,10 @@ module.exports = class FilterDialog
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>
-            @overlay$.next null
+            @model.overlay.close()
         resetButton: if @filter.value then resetButton else null
         submitButton:
           text: @model.l.get 'general.done'
           onclick: =>
             @filter.valueSubject.next filterValue
-            @overlay$.next null
+            @model.overlay.close()

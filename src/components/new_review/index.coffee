@@ -29,7 +29,7 @@ if window?
 
 
 module.exports = class NewReview
-  constructor: ({@model, @router, @overlay$, type, @review, id, parent}) ->
+  constructor: ({@model, @router, type, @review, id, parent}) ->
     me = @model.user.getMe()
 
     type ?= RxObservable.of null
@@ -74,7 +74,7 @@ module.exports = class NewReview
 
     @$steps = [
       new NewReviewCompose {
-        @model, @router, fields: @reviewFields, @season, @overlay$
+        @model, @router, fields: @reviewFields, @season
         uploadFn: (args...) ->
           type.take(1).toPromise().then (type) =>
             @model[type + 'Review'].uploadImage.apply(
@@ -83,7 +83,7 @@ module.exports = class NewReview
             )
       }
       new NewReviewExtras {
-        @model, @router, fields: @reviewExtraFields, @season, @overlay$
+        @model, @router, fields: @reviewExtraFields, @season
         isOptional: true
       }
     ]
@@ -120,7 +120,7 @@ module.exports = class NewReview
 
   upsert: (e) =>
     {me} = @state.getValue()
-    @model.signInDialog.openIfGuest me
+    @model.user.requestLoginIfGuest me
     .then =>
       {titleValue, bodyValue, ratingValue, attachmentsValue,
         type, review, parent} = @state.getValue()

@@ -12,12 +12,12 @@ if window?
   require './index.styl'
 
 module.exports = class FilterCommentsDialog
-  constructor: ({@model, @overlay$, @filter}) ->
+  constructor: ({@model, @filter}) ->
     @selectedSort = new RxBehaviorSubject 'popular'
 
     @$dialog = new Dialog {
       onLeave: =>
-        @overlay$.next null
+        @model.overlay.close()
     }
 
     @state = z.state
@@ -64,9 +64,9 @@ module.exports = class FilterCommentsDialog
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>
-            @overlay$.next null
+            @model.overlay.close()
         submitButton:
           text: @model.l.get 'general.done'
           onclick: =>
             @updateFilter()
-            @overlay$.next null
+            @model.overlay.close()

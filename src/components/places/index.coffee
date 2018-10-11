@@ -12,12 +12,12 @@ if window?
   require './index.styl'
 
 module.exports = class Places
-  constructor: ({@model, @router, @overlay$}) ->
+  constructor: ({@model, @router}) ->
     @$fab = new Fab()
     @$addIcon = new Icon()
 
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router, @overlay$
+      @model, @router
       dataTypes: [
         {
           dataType: 'campground'

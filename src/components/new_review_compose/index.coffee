@@ -18,7 +18,7 @@ if window?
 
 module.exports = class NewReviewCompose
   constructor: (options) ->
-    {@model, @router, @overlay$, fields, uploadFn} = options
+    {@model, @router, fields, uploadFn} = options
     me = @model.user.getMe()
 
     {@titleValueStreams, @bodyValueStreams, @attachmentsValueStreams,
@@ -37,7 +37,6 @@ module.exports = class NewReviewCompose
     @$uploadImagesPreview = new UploadImagesPreview {
       @multiImageData
       @model
-      @overlay$
       uploadFn
       # TODO: there's probably a much cleaner way to do this and onProgress....
       onUploading: (dataUrl, {clientId}) =>
@@ -139,7 +138,7 @@ module.exports = class NewReviewCompose
                         }
                   .then (multiImageData) =>
                     @multiImageData.next multiImageData
-                    @overlay$.next @$uploadImagesPreview
+                    @model.overlay.open @$uploadImagesPreview
               }
           _map attachments, ({dataUrl, smallSrc, isUploading, progress}) ->
             z '.attachment', {

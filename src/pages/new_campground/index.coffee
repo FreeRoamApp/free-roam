@@ -8,8 +8,8 @@ if window?
 module.exports = class NewCampgroundPage
   hideDrawer: true
 
-  constructor: ({@model, requests, @router, overlay$, serverData}) ->
-    @$newCampground = new NewCampground {@model, @router, overlay$}
+  constructor: ({@model, requests, @router, serverData}) ->
+    @$newCampground = new NewCampground {@model, @router}
 
     @state = z.state
       windowSize: @model.window.getSize()

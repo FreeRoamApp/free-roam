@@ -8,7 +8,7 @@ if window?
   require './index.styl'
 
 module.exports = class CoordinatePicker
-  constructor: ({@model, @router, @coordinates, center, @overlay$, initialZoom}) ->
+  constructor: ({@model, @router, @coordinates, center, initialZoom}) ->
     @$actionBar = new ActionBar {@model}
 
     @places = new RxBehaviorSubject []
@@ -46,12 +46,12 @@ module.exports = class CoordinatePicker
         cancel:
           text: @model.l.get 'general.discard'
           onclick: =>
-            @overlay$.next null
+            @model.overlay.close()
         save:
           text: @model.l.get 'general.done'
           onclick: (e) =>
             @coordinates.next coordinates
-            @overlay$.next null
+            @model.overlay.close()
       }
       z '.map',
         z @$map

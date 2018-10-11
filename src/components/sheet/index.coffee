@@ -10,23 +10,23 @@ if window?
   require './index.styl'
 
 module.exports = class Sheet
-  constructor: ({@model, @router, @isVisible}) ->
+  constructor: ({@model, @router}) ->
     @$icon = new Icon()
     @$closeButton = new FlatButton()
     @$submitButton = new FlatButton()
 
   afterMount: =>
     @router.onBack =>
-      @isVisible.next false
+      @model.overlay.close()
 
   # beforeUnmount: =>
-  #   @isVisible.next false
+  #   @model.overlay.close()
 
   render: ({icon, message, submitButton, $content}) =>
     z '.z-sheet',
       z '.overlay',
         onclick: =>
-          @isVisible.next false
+          @model.overlay.close()
       z '.sheet',
         z '.inner',
           if $content
@@ -45,7 +45,7 @@ module.exports = class Sheet
                   text: @model.l.get 'general.notNow'
                   isFullWidth: false
                   onclick: =>
-                    @isVisible.next false
+                    @model.overlay.close()
                 z @$submitButton, _defaults submitButton, {
                   isFullWidth: false
                   colors: {cText: colors.$primary500}

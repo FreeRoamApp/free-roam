@@ -15,7 +15,7 @@ module.exports = class PlacePage extends BasePage
 
   constructor: (options) ->
     {@model, @router, requests, serverData,
-      group, @isOverlayed, overlay$} = options
+      group, @isOverlayed} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
       type = route.src.split('/')[1]
@@ -27,7 +27,7 @@ module.exports = class PlacePage extends BasePage
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$place = new Place {@model, @router, @place, tab, overlay$}
+    @$place = new Place {@model, @router, @place, tab}
 
     @state = z.state
       me: @model.user.getMe()

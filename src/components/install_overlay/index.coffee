@@ -9,16 +9,16 @@ if window?
   require './index.styl'
 
 module.exports = class InstallOverlay
-  constructor: ({@model, @router}) ->
+  constructor: ({@model}) ->
     @$overflowIcon = new Icon()
     @$closeButton = new PrimaryButton()
 
-  afterMount: =>
-    @router.onBack =>
-      @model.installOverlay.close()
-
-  beforeUnmount: =>
-    @router.onBack null
+  # afterMount: =>
+  #   @router.onBack =>
+  #     @model.overlay.close()
+  #
+  # beforeUnmount: =>
+  #   @router.onBack null
 
   render: =>
     z '.z-install-overlay',
@@ -45,6 +45,6 @@ module.exports = class InstallOverlay
                 c600: colors.$tertiary600
                 c700: colors.$tertiary700
               onclick: =>
-                @model.installOverlay.close()
+                @model.overlay.close()
           }
         z '.arrow'

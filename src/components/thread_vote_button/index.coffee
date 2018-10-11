@@ -34,7 +34,7 @@ module.exports = class ThreadVoteButton
           e?.preventDefault()
           unless hasVoted
             onclick?()
-            @model.signInDialog.openIfGuest me
+            @model.user.requestLoginIfGuest me
             .then =>
               @model.threadVote.upsertByParent(
                 parent

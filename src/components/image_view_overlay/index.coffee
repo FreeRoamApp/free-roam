@@ -10,7 +10,7 @@ if window?
   require './index.styl'
 
 module.exports = class ImageViewOverlay
-  constructor: ({@model, @router, imageData, @overlay$}) ->
+  constructor: ({@model, @router, imageData}) ->
     @$buttonBack = new ButtonBack {@router}
     @$appBar = new AppBar {@model}
 
@@ -21,7 +21,7 @@ module.exports = class ImageViewOverlay
 
   afterMount: =>
     @router.onBack =>
-      @overlay$.next null
+      @model.overlay.close()
 
   beforeUnmount: =>
     @router.onBack null
@@ -53,7 +53,7 @@ module.exports = class ImageViewOverlay
         $topLeftButton: z @$buttonBack, {
           color: colors.$header500Icon
           onclick: =>
-            @overlay$.next null
+            @model.overlay.close()
         }
       }
       z 'img',

@@ -14,7 +14,7 @@ if window?
 
 module.exports = class Compose
   constructor: (options) ->
-    {@model, @router, @titleValueStreams, overlay$,
+    {@model, @router, @titleValueStreams,
       @bodyValueStreams, @attachmentsValueStreams, uploadFn} = options
     me = @model.user.getMe()
 
@@ -24,7 +24,6 @@ module.exports = class Compose
     @$markdownEditor = new MarkdownEditor {
       @model
       uploadFn
-      overlay$
       valueStreams: @bodyValueStreams
       attachmentsValueStreams: @attachmentsValueStreams
     }

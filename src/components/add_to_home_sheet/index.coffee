@@ -7,7 +7,8 @@ module.exports = class AddToHomeSheet
     @$sheet = new Sheet {@model, router, @isVisible}
 
 
-  render: ({message}) =>
+  render: ({message} = {}) =>
+    message ?= @model.l.get 'app.defaultInstallMessage'
     z '.z-add-to-home-sheet',
       z @$sheet, {
         message: message

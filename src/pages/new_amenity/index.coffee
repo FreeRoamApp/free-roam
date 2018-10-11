@@ -8,14 +8,14 @@ if window?
 module.exports = class NewAmenityPage
   hideDrawer: true
 
-  constructor: ({@model, requests, @router, overlay$, serverData}) ->
+  constructor: ({@model, requests, @router, serverData}) ->
     center = requests.map ({req}) ->
       center = req.query.center
       if center
         coordinates = center.split ','
         {lat: coordinates[0], lng: coordinates[1]}
 
-    @$newAmenity = new NewAmenity {@model, @router, overlay$, center}
+    @$newAmenity = new NewAmenity {@model, @router, center}
 
     @state = z.state
       windowSize: @model.window.getSize()

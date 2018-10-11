@@ -13,10 +13,10 @@ module.exports = class PlacesPage
   # hideDrawer: true
   @hasBottomBar: true
 
-  constructor: ({@model, @router, requests, serverData, group, @$bottomBar, @overlay$}) ->
+  constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
-    @$places = new Places {@model, @router, @overlay$}
+    @$places = new Places {@model, @router}
 
     @state = z.state
       me: @model.user.getMe()

@@ -30,7 +30,7 @@ module.exports = class PlacesList
 
     z '.z-places-list',
       z '.g-grid',
-        _map places, ({place, amenities}) ->
+        _map places, ({place, amenities}) =>
           z '.place', {
             onclick: =>
               if me?.username is 'austin' and confirm 'Delete?'

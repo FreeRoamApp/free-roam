@@ -27,7 +27,7 @@ module.exports = class GroupChatPage
 
   constructor: (options) ->
     {@model, requests, @router, serverData,
-      @overlay$, @group, @$bottomBar} = options
+      @group, @$bottomBar} = options
 
     conversationId = requests.map ({route}) ->
       route.params.conversationId
@@ -93,7 +93,6 @@ module.exports = class GroupChatPage
       @router
       @group
       selectedProfileDialogUser
-      @overlay$
       @group
       isLoading: isLoading
       conversation: conversation
@@ -115,7 +114,6 @@ module.exports = class GroupChatPage
       @router
       @group
       @group
-      @overlay$
     }
 
     @$channelDrawer = new ChannelDrawer {
@@ -204,7 +202,7 @@ module.exports = class GroupChatPage
             #     icon: 'settings'
             #     color: colors.$header500Icon
             #     onclick: =>
-            #       @overlay$.next @$groupUserSettingsDialog
+            #       @model.overlay.open @$groupUserSettingsDialog
             z '.channels-icon',
               z @$channelsIcon,
                 icon: 'channels'

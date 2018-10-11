@@ -18,11 +18,7 @@ require 'rxjs/add/operator/publishReplay'
 Head = require './components/head'
 NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
-SignInDialog = require './components/sign_in_dialog'
-InstallOverlay = require './components/install_overlay'
-GetAppDialog = require './components/get_app_dialog'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
-PushNotificationsSheet = require './components/push_notifications_sheet'
 OfflineOverlay = require './components/offline_overlay'
 Nps = require './components/nps'
 Environment = require './services/environment'
@@ -142,21 +138,15 @@ module.exports = class App
 
     addToHomeSheetIsVisible = new RxBehaviorSubject false
 
-    # TODO: have all other component overlays use this
-    @overlay$ = new RxBehaviorSubject null
-
     @$offlineOverlay = new OfflineOverlay {@model, isOffline}
-    @$navDrawer = new NavDrawer {@model, @router, @group, @overlay$}
-    @$signInDialog = new SignInDialog {@model, @router, @group}
-    @$getAppDialog = new GetAppDialog {@model, @router, @group}
-    @$installOverlay = new InstallOverlay {@model, @router}
+    @$navDrawer = new NavDrawer {@model, @router, @group}
     @$addToHomeSheet = new AddToHomeScreenSheet {
       @model
       @router
-      isVisible: addToHomeSheetIsVisible
     }
-    @$pushNotificationsSheet = new PushNotificationsSheet {@model, @router}
-    @$bottomBar = new BottomBar {@model, @router, @requests, @group, @serverData}
+    @$bottomBar = new BottomBar {
+      @model, @router, @requests, @group, @serverData
+    }
     @$head = new Head({
       @model
       @requests
@@ -169,24 +159,18 @@ module.exports = class App
     me = @model.user.getMe()
 
     if localStorage? and not localStorage['lastAddToHomePromptTime']
-      setTimeout ->
+      setTimeout =>
         isNative = Environment.isNativeApp('freeroam')
         if not isNative and not localStorage['lastAddToHomePromptTime'] and false # FIXME TODO
-          addToHomeSheetIsVisible.next true
+          @model.overlay.open @$addToHomeSheet
           localStorage['lastAddToHomePromptTime'] = Date.now()
       , TIME_UNTIL_ADD_TO_HOME_PROMPT_MS
 
     @state = z.state {
       $backupPage: $backupPage
       me: me
-      $overlay: @overlay$
+      $overlays: @model.overlay.get$()
       isOffline: isOffline
-      addToHomeSheetIsVisible: addToHomeSheetIsVisible
-      signInDialogIsOpen: @model.signInDialog.isOpen()
-      signInDialogMode: @model.signInDialog.getMode()
-      getAppDialogIsOpen: @model.getAppDialog.isOpen()
-      pushNotificationSheetIsOpen: @model.pushNotificationSheet.isOpen()
-      installOverlayIsOpen: @model.installOverlay.isOpen()
       hideDrawer: @requests.switchMap (request) ->
         hideDrawer = request.$page?.hideDrawer
         if hideDrawer?.map
@@ -217,7 +201,6 @@ module.exports = class App
               @model
               @router
               @serverData
-              @overlay$
               @group
               $bottomBar: if Page.hasBottomBar then @$bottomBar
               requests: @requests.filter ({$page}) ->
@@ -264,16 +247,13 @@ module.exports = class App
     routes
 
   render: =>
-    {request, $backupPage, $modal, me, hideDrawer
-      installOverlayIsOpen, signInDialogIsOpen, signInDialogMode,
-      pushNotificationSheetIsOpen, getAppDialogIsOpen,
-      addToHomeSheetIsVisible, $overlay, isOffline} = @state.getValue()
+    {request, $backupPage, me, hideDrawer,
+      $overlays, isOffline} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
     isAndroid = Environment.isAndroid {userAgent}
     isNative = Environment.isNativeApp 'freeroam', {userAgent}
-    defaultInstallMessage = @model.l.get 'app.defaultInstallMessage'
 
     if @router.preservedRequest
       $page = @router.preservedRequest?.$page
@@ -294,18 +274,6 @@ module.exports = class App
             z '.page', {key: 'page'},
               $page
 
-            if signInDialogIsOpen
-              z @$signInDialog, {mode: signInDialogMode}
-            if getAppDialogIsOpen
-              z @$getAppDialog
-            if installOverlayIsOpen
-              z @$installOverlay
-            if addToHomeSheetIsVisible
-              z @$addToHomeSheet, {
-                message: request?.$page?.installMessage or defaultInstallMessage
-              }
-            if pushNotificationSheetIsOpen
-              z @$pushNotificationsSheet
             if isOffline
               z @$offlineOverlay
             if @$nps.shouldBeShown()
@@ -318,8 +286,7 @@ module.exports = class App
               z '.overlay-page', {key: 'overlay-page'},
                 z $overlayPage
 
-            if $overlay
-              # can be array of components or component
+            _map $overlays, ($overlay) ->
               z $overlay
             # if not window?
             #   z '#server-loading', {

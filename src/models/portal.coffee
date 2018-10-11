@@ -4,6 +4,7 @@ getUuidByString = require 'uuid-by-string'
 
 Environment = require '../services/environment'
 PushService = require '../services/push'
+GetAppDialog = require '../components/get_app_dialog'
 config = require '../config'
 
 if window?
@@ -32,7 +33,7 @@ module.exports = class Portal
     WEB: 'web'
 
   setModels: (props) =>
-    {@user, @pushToken, @modal, @installOverlay, @getAppDialog} = props
+    {@user, @pushToken, @l, @installOverlay, @overlay} = props
     null
 
   call: (args...) =>
@@ -149,7 +150,7 @@ module.exports = class Portal
 
     window.addEventListener 'visibilitychange', @appResumeHandler
 
-  appInstall: ({group} = {}) =>
+  appInstall: =>
     iosAppUrl = config.IOS_APP_URL
     googlePlayAppUrl = config.GOOGLE_PLAY_APP_URL
 
@@ -171,7 +172,7 @@ module.exports = class Portal
         target: '_system'
 
     else
-      @getAppDialog.open()
+      @overlay.open new GetAppDialog {model: {@l, @overlay, portal: this}}
 
   twitterShare: ({text}) =>
     @call 'browser.openWindow', {

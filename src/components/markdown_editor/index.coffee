@@ -20,13 +20,11 @@ module.exports = class MarkdownEditor
       @value, @error, @uploadFn} = options
     @value ?= new RxBehaviorSubject ''
     @error ?= new RxBehaviorSubject null
-    @overlay$ = new RxBehaviorSubject null
     @imageData = new RxBehaviorSubject null
 
     @$uploadImagePreview = new UploadImagePreview {
       @imageData
       @model
-      @overlay$
       @uploadFn
       onUpload: ({smallUrl, largeUrl, key, width, height}) =>
         console.log 'upload', arguments
@@ -79,14 +77,9 @@ module.exports = class MarkdownEditor
 
     @$textarea = new Textarea {@valueStreams, @error}
 
-    @state = z.state {
-      overlay$: @overlay$
-    }
 
   render: ({hintText, imagesAllowed} = {}) =>
     imagesAllowed ?= true
-
-    {overlay$} = @state.getValue()
 
     z '.z-markdown-editor',
       z '.textarea',
@@ -125,7 +118,5 @@ module.exports = class MarkdownEditor
                         width: img.width
                         height: img.height
                       }
-                      @overlay$.next @$uploadImagePreview
+                      @model.overlay.close() @$uploadImagePreview
                 }
-
-      overlay$

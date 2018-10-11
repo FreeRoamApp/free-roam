@@ -12,7 +12,7 @@ if window?
 module.exports = class NewReviewPage
   hideDrawer: true
 
-  constructor: ({@model, requests, @router, overlay$, serverData, parent}) ->
+  constructor: ({@model, requests, @router, serverData, parent}) ->
     type = requests.map ({route}) =>
       type = route.src.split('/')[1]
       if type in ['campground', 'amenity'] then type else 'campground'
@@ -26,7 +26,7 @@ module.exports = class NewReviewPage
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$newReview = new NewReview {@model, @router, overlay$, id, type, parent}
+    @$newReview = new NewReview {@model, @router, id, type, parent}
 
     @state = z.state
       windowSize: @model.window.getSize()

@@ -18,7 +18,7 @@ if window?
 
 module.exports = class FormattedText
   constructor: (options) ->
-    {text, @imageWidth, @model, @router, @skipImages, @mentionedUsers, @overlay$,
+    {text, @imageWidth, @model, @router, @skipImages, @mentionedUsers,
       @selectedProfileDialogUser, @isFullWidth, @embedVideos,
       @useThumbnails} = options
 
@@ -112,10 +112,9 @@ module.exports = class FormattedText
                 onclick: (e) =>
                   e?.stopPropagation()
                   e?.preventDefault()
-                  @overlay$?.next new ImageViewOverlay {
+                  @model.overlay.open new ImageViewOverlay {
                     @model
                     @router
-                    @overlay$
                     imageData:
                       url: largeImageSrc
                       aspectRatio: imageAspectRatio

@@ -13,6 +13,7 @@ require 'rxjs/add/operator/map'
 Icon = require '../icon'
 FlatButton = require '../flat_button'
 Drawer = require '../drawer'
+SignInDialog = require '../sign_in_dialog'
 Environment = require '../../services/environment'
 SemverService = require '../../services/semver'
 Ripple = require '../ripple'
@@ -24,8 +25,9 @@ if window?
   require './index.styl'
 
 module.exports = class NavDrawer
-  constructor: ({@model, @router, group, @overlay$}) ->
+  constructor: ({@model, @router, group}) ->
     @$socialIcon = new Icon()
+    @$signInDialog = new SignInDialog {@model}
     @$drawer = new Drawer {
       @model
       isOpen: @model.drawer.isOpen()
@@ -291,11 +293,11 @@ module.exports = class NavDrawer
                       z 'li.sign-in-buttons',
                         z '.button', {
                           onclick: =>
-                            @model.signInDialog.open 'signIn'
+                            @model.overlay.open @$signInDialog, 'signIn'
                         }, @model.l.get 'general.signIn'
                         z '.button', {
                           onclick: =>
-                            @model.signInDialog.open()
+                            @model.overlay.open @$signInDialog, 'join'
                         }, @model.l.get 'general.signUp'
                       z 'li.divider'
                     ]

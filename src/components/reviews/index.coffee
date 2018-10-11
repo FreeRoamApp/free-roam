@@ -19,7 +19,7 @@ if window?
 
 module.exports = class Reviews extends Base
   constructor: (options) ->
-    {@model, @router, overlay$, parent} = options
+    {@model, @router, parent} = options
     @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
@@ -42,10 +42,9 @@ module.exports = class Reviews extends Base
 
             $body = @getCached$ bodyCacheKey, FormattedText, {
               @model, @router, text: review.body, selectedProfileDialogUser
-              @overlay$
             }
             $el = @getCached$ reviewCacheKey, Review, {
-              review, @model, @router, overlay$,
+              review, @model, @router,
               selectedProfileDialogUser, $body
             }
             $el

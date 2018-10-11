@@ -29,7 +29,7 @@ if window?
 
 
 module.exports = class NewCampground
-  constructor: ({@model, @router, @overlay$}) ->
+  constructor: ({@model, @router}) ->
     me = @model.user.getMe()
 
     @$appBar = new AppBar {@model}
@@ -86,13 +86,13 @@ module.exports = class NewCampground
 
     @$steps = [
       new NewCampgroundInitialInfo {
-        @model, @router, @fields, @season, @overlay$
+        @model, @router, @fields, @season
       }
       new NewReviewExtras {
-        @model, @router, fields: @reviewExtraFields, @season, @overlay$
+        @model, @router, fields: @reviewExtraFields, @season
       }
       new NewReviewCompose {
-        @model, @router, fields: @reviewFields, @season, @overlay$
+        @model, @router, fields: @reviewFields, @season
         uploadFn: (args...) ->
           @model['campgroundReview'].uploadImage.apply(
             @model['campgroundReview'].uploadImage
