@@ -30,7 +30,7 @@ class RouterService
 
   goPath: (path, {ignoreHistory, reset, keepPreserved} = {}) =>
     unless keepPreserved
-      @preservedRequest = null
+      @removeOverlay()
     unless ignoreHistory
       @history.push(path or window?.location.pathname)
 
@@ -57,7 +57,18 @@ class RouterService
       route = route.replace ":#{key}", value
     route
 
+  removeOverlay: =>
+    @preservedRequest = null
+    if @overlayListener
+      window.removeEventListener 'popstate', @overlayOnBack
+      @overlayListener = null
+
+  overlayOnBack: =>
+    @removeOverlay()
+
   goOverlay: (routeKey, replacements, options = {}) =>
+    @overlayListener = window.addEventListener 'popstate', @overlayOnBack
+
     @requests.take(1).subscribe (request) =>
       @preservedRequest = request
       @go routeKey, replacements, _defaults({keepPreserved: true}, options)
@@ -81,7 +92,7 @@ class RouterService
       }
 
   back: ({fromNative, fallbackPath} = {}) =>
-    @preservedRequest = null
+    @removeOverlay()
     if @onBackFn
       fn = @onBackFn()
       @onBack null

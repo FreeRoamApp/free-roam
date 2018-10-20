@@ -66,7 +66,7 @@ module.exports = class ChannelDrawer
                 z '.divider'
                 z '.manage-channels', {
                   onclick: =>
-                    @model.group.goPath group, 'groupManageChannels', {
+                    @model.group.goPath group, 'groupAdminManageChannels', {
                       @router
                     }
                 },

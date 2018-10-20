@@ -33,7 +33,7 @@ module.exports = class GroupManageChannels
     z '.z-group-manage-channels',
       z @$channelList, {
         onclick: (e, {id}) =>
-          @model.group.goPath group, 'groupEditChannel', {
+          @model.group.goPath group, 'groupAdminEditChannel', {
             @router
             replacements:
               conversationId: id
@@ -50,4 +50,4 @@ module.exports = class GroupManageChannels
             color: colors.$primary500Text
           }
           onclick: =>
-            @model.group.goPath group, 'groupNewChannel', {@router}
+            @model.group.goPath group, 'groupAdminNewChannel', {@router}

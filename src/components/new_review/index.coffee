@@ -98,6 +98,7 @@ module.exports = class NewReview
       type: type
       review: @review
       parent: parent
+      isLoading: false
     }
 
   beforeUnmount: =>
@@ -119,9 +120,14 @@ module.exports = class NewReview
       field.valueSubject.next null
 
   upsert: (e) =>
+    console.log 'up1'
     {me} = @state.getValue()
+    console.log 'up2'
+    @state.set isLoading: true
+    console.log 'up3'
     @model.user.requestLoginIfGuest me
     .then =>
+      console.log 'up4'
       {titleValue, bodyValue, ratingValue, attachmentsValue,
         type, review, parent} = @state.getValue()
 
@@ -140,7 +146,9 @@ module.exports = class NewReview
         else if not isSeasonal
           value
 
+      console.log '3'
       if isReady
+        console.log '4'
         @model.campgroundReview.upsert {
           id: review?.id
           type: review?.type or type
@@ -152,6 +160,7 @@ module.exports = class NewReview
           extras: extras
         }
         .then (newReview) =>
+          @state.set isLoading: false
           @resetValueStreams()
           # FIXME FIXME: rm HACK. for some reason thread is empty initially?
           # still unsure why
@@ -160,16 +169,18 @@ module.exports = class NewReview
               slug: parent?.slug, tab: 'reviews'
             }, {reset: true}
           , 200
+    .catch =>
+      @state.set isLoading: false
 
 
   render: =>
-    {step} = @state.getValue()
+    {step, isLoading} = @state.getValue()
 
     z '.z-new-review',
       z @$steps[step]
 
       z @$stepBar, {
-        isSaving: false
+        isLoading: isLoading
         steps: 2
         isStepCompleted: @$steps[step]?.isCompleted?()
         save:

@@ -3,7 +3,15 @@ module.exports = class PushTopic
 
   constructor: ({@auth}) -> null
 
-  subscribe: ({groupId, appId, sourceType, sourceId}) =>
+  subscribe: ({groupId, sourceType, sourceId}) =>
     @auth.call "#{@namespace}.subscribe", {
-      groupId, appId, sourceType, sourceId
+      groupId, sourceType, sourceId
     }
+
+  unsubscribe: ({groupId, sourceType, sourceId}) =>
+    @auth.call "#{@namespace}.unsubscribe", {
+      groupId, sourceType, sourceId
+    }, {invalidateAll: true}
+
+  getAll: =>
+    @auth.stream "#{@namespace}.getAll", {}

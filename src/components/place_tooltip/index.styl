@@ -7,12 +7,13 @@
   opacity: 0
   pointer-events: none
   background: getColor('$tertiary100')
-  max-width: 220px
+  max-width: 300px
+  min-height: 72px
   will-change: transform
-  padding: 16px
   box-sizing: border-box
   cursor: pointer
-  display: block
+  display: flex
+  align-items: center
 
   // @media (min-width: $breakPointMedium)
   //   max-width: 300px
@@ -72,7 +73,16 @@
     top: 4px
     right: 4px
 
-  > .title
-    font-title()
+  > .thumbnail
+    width: 72px
+    height: 72px
+    background-size: cover
+
+  > .content
+    padding: 0 16px
+    flex: 1
+
+    > .title
+      font-title()
 
   // > .rating

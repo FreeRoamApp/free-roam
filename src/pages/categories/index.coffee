@@ -19,15 +19,13 @@ module.exports = class CategoriesPage
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$categories = new Categories {@model, @router}
 
-    console.log @$bottomBar
-
     @state = z.state
       me: @model.user.getMe()
       windowSize: @model.window.getSize()
 
   getMeta: ->
     {
-      title: "The best products for Boondocking"
+      title: 'The best products for Boondocking'
     }
 
   render: =>

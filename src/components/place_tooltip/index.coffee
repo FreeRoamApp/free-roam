@@ -1,9 +1,11 @@
 z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 require 'rxjs/add/observable/combineLatest'
 _find = require 'lodash/find'
 
 Icon = require '../icon'
+Rating = require '../rating'
 colors = require '../../colors'
 
 if window?
@@ -12,27 +14,34 @@ if window?
 module.exports = class PlaceTooltip
   constructor: ({@model, @router, @place, @position, @mapSize}) ->
     @$closeIcon = new Icon()
+    @$rating = new Rating {
+      value: @place.map (place) -> place?.rating
+    }
+
+    @size = new RxBehaviorSubject {width: 0, height: 0}
 
     @state = z.state {
       @place
       @mapSize
+      @size
     }
 
   afterMount: (@$$el) =>
-    # update manually so we don't have to rerender
-    @width = @$$el.offsetWidth
-    @height = @$$el.offsetHeight
-    setTimeout =>
-      @width = @$$el.offsetWidth
-      @height = @$$el.offsetHeight
-    , 1000
+    @disposable = @place.subscribe (place) =>
+      if place
+        setImmediate =>
+          @size.next {width: @$$el.offsetWidth, height: @$$el.offsetHeight}
+      else
+        @size.next {width: 0, height: 0}
 
-    positionAndMapSize = RxObservable.combineLatest(
-      @position, @mapSize, (vals...) -> vals
+    # update manually so we don't have to rerender
+    positionAndMapSizeAndSize = RxObservable.combineLatest(
+      @position, @mapSize, @size, (vals...) -> vals
     ).publishReplay(1).refCount()
     lastAnchor = null
-    @disposable = positionAndMapSize.subscribe ([position, mapSize]) =>
-      anchor = @getAnchor position, mapSize
+    @disposableMap = positionAndMapSizeAndSize.subscribe (options) =>
+      [position, mapSize, size] = options
+      anchor = @getAnchor position, mapSize, size
       transform = @getTransform position, anchor
       @$$el.style.transform = transform
       @$$el.style.webkitTransform = transform
@@ -45,16 +54,17 @@ module.exports = class PlaceTooltip
 
   beforeUnmount: =>
     @disposable?.unsubscribe()
+    @disposableMap?.unsubscribe()
 
-  getAnchor: (position, mapSize) =>
+  getAnchor: (position, mapSize, size) ->
     mapWidth = mapSize?.width
     mapHeight = mapSize?.height
-    xAnchor = if position?.x < @width / 2 \
+    xAnchor = if position?.x < size.width / 2 \
               then 'left'
-              else if position?.x > mapWidth - @width / 2
+              else if position?.x > mapWidth - size.width / 2
               then 'right'
               else 'center'
-    yAnchor = if position?.y < @height \
+    yAnchor = if position?.y < size.height \
               then 'top'
               else if position?.y > mapHeight or xAnchor is 'center'
               then 'bottom'
@@ -63,7 +73,7 @@ module.exports = class PlaceTooltip
       xAnchor = 'center'
     "#{yAnchor}-#{xAnchor}"
 
-  getTransform: (position, anchor) =>
+  getTransform: (position, anchor) ->
     anchorParts = anchor.split('-')
     xPercent = if anchorParts[1] is 'left' \
                then 0
@@ -80,11 +90,11 @@ module.exports = class PlaceTooltip
     "translate(#{xPercent}%, #{yPercent}%) translate(#{xPx}px, #{yPx}px)"
 
   render: ({isVisible} = {}) =>
-    {place, mapSize} = @state.getValue()
+    {place, mapSize, size} = @state.getValue()
 
-    isVisible ?= Boolean place
+    isVisible ?= Boolean place and Boolean size.width
 
-    anchor = @getAnchor place?.position, mapSize
+    anchor = @getAnchor place?.position, mapSize, size
     transform = @getTransform place?.position, anchor
 
     isDisabled = place?.type isnt 'campground'
@@ -93,7 +103,14 @@ module.exports = class PlaceTooltip
       href: if not isDisabled then @router.get place?.type, {slug: place?.slug}
       className: z.classKebab {isVisible}
       onclick: (e) =>
-        unless isDisabled
+        e?.stopPropagation()
+        if place?.type is 'lowClearance'
+          [lon, lat] = place.location
+          @model.portal.call 'browser.openWindow', {
+            url:
+              "https://maps.google.com/maps?z=18&t=k&ll=#{lat},#{lon}"
+          }
+        else if not isDisabled
           e?.preventDefault()
           @router.goOverlay place.type, {slug: place.slug}
       style:
@@ -110,6 +127,13 @@ module.exports = class PlaceTooltip
             e?.stopPropagation()
             e?.preventDefault()
             @place.next null
-      z '.title', place?.name
-      # z '.rating',
-      #   z @$starRating, {rating: place?.rating}
+      if place?.thumbnailUrl
+        z '.thumbnail',
+          style:
+            backgroundImage: "url(#{place?.thumbnailUrl})"
+      z '.content',
+        z '.title', place?.name
+        if place?.description
+          z '.description', place?.description
+        z '.rating',
+          z @$rating

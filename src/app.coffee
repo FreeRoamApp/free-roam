@@ -19,6 +19,7 @@ Head = require './components/head'
 NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
+WelcomeDialog = require './components/welcome_dialog'
 OfflineOverlay = require './components/offline_overlay'
 Nps = require './components/nps'
 Environment = require './services/environment'
@@ -32,6 +33,7 @@ Pages =
   ConversationPage: require './pages/conversation'
   ConversationsPage: require './pages/conversations'
   EditThreadPage: require './pages/edit_thread'
+  EditProfilePage: require './pages/edit_profile'
   GroupAddChannelPage: require './pages/group_add_channel'
   GroupAuditLogPage: require './pages/group_audit_log'
   GroupBannedUsersPage: require './pages/group_banned_users'
@@ -158,13 +160,17 @@ module.exports = class App
 
     me = @model.user.getMe()
 
-    if localStorage? and not localStorage['lastAddToHomePromptTime']
+    if window? and not @model.cookie.get 'lastAddToHomePromptTime'
       setTimeout =>
         isNative = Environment.isNativeApp('freeroam')
-        if not isNative and not localStorage['lastAddToHomePromptTime'] and false # FIXME TODO
+        if not isNative and not @model.cookie.get('lastAddToHomePromptTime') and false # FIXME TODO
           @model.overlay.open @$addToHomeSheet
-          localStorage['lastAddToHomePromptTime'] = Date.now()
+          @model.cookie.set 'lastAddToHomePromptTime', Date.now()
       , TIME_UNTIL_ADD_TO_HOME_PROMPT_MS
+
+    if window? and not @model.cookie.get 'hasSeenWelcome'
+      @model.cookie.set 'hasSeenWelcome', 1
+      @model.overlay.open new WelcomeDialog {@model, @router}
 
     @state = z.state {
       $backupPage: $backupPage
@@ -219,17 +225,18 @@ module.exports = class App
     route 'categories', 'CategoriesPage'
     route 'conversation', 'ConversationPage'
     route 'conversations', 'ConversationsPage'
-    route 'groupBannedUsers', 'GroupBannedUsersPage'
-    route 'groupAuditLog', 'GroupAuditLogPage'
+    route 'editProfile', 'EditProfilePage'
+    route 'groupAdminBannedUsers', 'GroupBannedUsersPage'
+    route 'groupAdminAuditLog', 'GroupAuditLogPage'
     route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
-    route 'groupEditChannel', 'GroupEditChannelPage'
+    route 'groupAdminEditChannel', 'GroupEditChannelPage'
     route 'groupForum', 'GroupForumPage'
-    route 'groupManage', 'GroupManageMemberPage'
-    route 'groupManageChannels', 'GroupManageChannelsPage'
-    route 'groupManageRoles', 'GroupManageRolesPage'
-    route 'groupNewChannel', 'GroupAddChannelPage'
+    route 'groupAdminManage', 'GroupManageMemberPage'
+    route 'groupAdminManageChannels', 'GroupManageChannelsPage'
+    route 'groupAdminManageRoles', 'GroupManageRolesPage'
+    route 'groupAdminNewChannel', 'GroupAddChannelPage'
     route ['groupNewThread', 'groupNewThreadWithCategory'], 'NewThreadPage'
-    route 'groupSettings', 'GroupSettingsPage'
+    route 'groupAdminSettings', 'GroupSettingsPage'
     route 'groupThread', 'ThreadPage'
     route 'groupThreadEdit', 'EditThreadPage'
     route 'item', 'ItemPage'

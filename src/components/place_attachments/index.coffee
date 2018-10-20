@@ -13,6 +13,7 @@ if window?
 module.exports = class PlaceAttachments
   constructor: ({@model, @router, place}) ->
     @state = z.state
+      me: @model.user.getMe()
       place: place
       attachments: place.switchMap (place) =>
         unless place
@@ -20,7 +21,7 @@ module.exports = class PlaceAttachments
         @model.campgroundAttachment.getAllByParentId place.id
 
   render: =>
-    {place, attachments} = @state.getValue()
+    {me, place, attachments} = @state.getValue()
 
     z '.z-place-attachments',
       z '.g-grid',
@@ -36,6 +37,11 @@ module.exports = class PlaceAttachments
                       url: attachment.largeSrc
                       aspectRatio: attachment.aspectRatio
                   }
+                # FIXME: rm after 10/31/2018, or just enable for austin
+                oncontextmenu: (e) =>
+                  if (attachment.userId is me.id or me.username is 'austin') and confirm 'Delete?'
+                    e?.preventDefault()
+                    @model.campgroundAttachment.deleteByRow attachment
               },
                 z '.image',
                   style:

@@ -160,11 +160,18 @@ module.exports = class Map
       if @onclick
         @map.on 'click', @onclick
       else
+        @map.on 'click', =>
+          @place.next null
         @map.on 'click', 'places', (e) =>
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
+          description = e.features[0].properties.description
           slug = e.features[0].properties.slug
           type = e.features[0].properties.type
+          rating = if e.features[0].properties.rating is 'null' \
+                   then 0
+                   else e.features[0].properties.rating
+          thumbnailUrl = e.features[0].properties.thumbnailUrl
           # Ensure that if the map is zoomed out such that multiple
           # copies of the feature are visible, the popup appears
           # over the copy being pointed to.
@@ -176,6 +183,9 @@ module.exports = class Map
             slug: slug
             type: type
             name: name
+            description: description
+            rating: rating
+            thumbnailUrl: thumbnailUrl
             position: position
             location: coordinates
           }
@@ -227,6 +237,9 @@ module.exports = class Map
             properties:
               name: place.name
               slug: place.slug
+              rating: place.rating
+              description: place.description
+              thumbnailUrl: place.thumbnailUrl
               type: place.type
               icon: place.icon or 'default'
             geometry:

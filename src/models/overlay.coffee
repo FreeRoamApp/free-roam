@@ -1,7 +1,7 @@
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _filter = require 'lodash/filter'
 
-module.exports = class Dialog
+module.exports = class Overlay
   constructor: ->
     @overlay$ = new RxBehaviorSubject null
     @_data = new RxBehaviorSubject null
@@ -32,6 +32,7 @@ module.exports = class Dialog
     @overlay$
 
   open: ($, data) =>
+    console.log 'open'
     @overlay$.next _filter (@overlay$.getValue() or []).concat $
     @setData data
     # prevent body scrolling while viewing menu

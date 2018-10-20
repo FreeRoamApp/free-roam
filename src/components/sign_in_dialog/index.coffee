@@ -110,8 +110,8 @@ module.exports = class SignInDialog
     @model.overlay.cancel()
     @model.overlay.close()
 
-  render: ({data}) =>
-    {isLoading} = @state.getValue()
+  render: =>
+    {isLoading, data} = @state.getValue()
 
     z '.z-sign-in-dialog',
       z @$dialog,
@@ -173,10 +173,10 @@ module.exports = class SignInDialog
                     colors:
                       cText: colors.$primary500
                     onclick: (e) =>
-                      if data is 'signIn'
-                        @signIn e
-                      else
+                      if data is 'join'
                         @join e
+                      else
+                        @signIn e
                     type: 'submit'
                 z '.button',
                   z @$cancelButton,

@@ -15,7 +15,7 @@ module.exports = class PlacePage extends BasePage
 
   constructor: (options) ->
     {@model, @router, requests, serverData,
-      group, @isOverlayed} = options
+      group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
       type = route.src.split('/')[1]
@@ -34,10 +34,20 @@ module.exports = class PlacePage extends BasePage
       place: @place
       windowSize: @model.window.getSize()
 
-  getMeta: ->
-    @place.map (place) ->
+  getMeta: =>
+    @place.map (place) =>
       {
-        title: "Boondocking #{place?.name}"
+        title: @model.l.get 'placePage.title', {replacements: name: place?.name}
+        description: @model.l.get 'placePage.description', {
+          replacements:
+            name: place?.name
+            location:  "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+        }
+        structuredData:
+          type: 'LocalBusiness'
+          name: place?.name
+          ratingValue: place?.rating
+          ratingCount: place?.ratingCount
       }
 
   render: =>
@@ -52,7 +62,7 @@ module.exports = class PlacePage extends BasePage
         isFlat: true
         style: 'primary'
         $topLeftButton: z @$buttonBack, {
-          @isOverlayed, color: colors.$header500Icon
+          color: colors.$header500Icon
         }
       }
       @$place

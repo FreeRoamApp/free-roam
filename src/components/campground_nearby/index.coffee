@@ -1,6 +1,10 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/combineLatest'
+_defaults = require 'lodash/defaults'
+_map = require 'lodash/map'
+_reduce = require 'lodash/reduce'
 
 Fab = require '../fab'
 Icon = require '../icon'
@@ -51,8 +55,25 @@ module.exports = class CampgroundNearby
       ]
     }
     # TODO: better solution than @$placesMapContainer.getPlacesStream()?
+    placesStream = @$placesMapContainer.getPlacesStream()
+    placeAndPlacesStream = RxObservable.combineLatest(
+      @place, placesStream, (vals...) -> vals
+    )
     @$placesList = new PlacesList {
-      @model, @router, places: @$placesMapContainer.getPlacesStream()
+      @model, @router
+      places: placeAndPlacesStream.map ([place, places]) ->
+        knownTimes = _reduce place?.distanceTo, (obj, {id, time}) ->
+          obj[id] = time
+          obj
+        , {}
+        _map places, (nearbyPlace) ->
+          if knownTime = knownTimes[nearbyPlace.id]
+            _defaults {
+              name: "#{nearbyPlace.name} (#{knownTime} min away)"
+            }, nearbyPlace
+          else
+            nearbyPlace
+
     }
 
     @state = z.state {

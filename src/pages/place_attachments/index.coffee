@@ -15,7 +15,7 @@ module.exports = class PlaceAttachmentsPage extends BasePage
 
   constructor: (options) ->
     {@model, @router, requests, serverData,
-      group, @isOverlayed} = options
+      group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
       type = route.src.split('/')[1]
@@ -33,10 +33,13 @@ module.exports = class PlaceAttachmentsPage extends BasePage
       place: @place
       windowSize: @model.window.getSize()
 
-  getMeta: ->
-    @place.map (place) ->
+  getMeta: =>
+    @place.map (place) =>
       {
-        title: "Boondocking #{place?.name} pictures"
+        title: @model.l.get 'placeAttachmentsPage.title', {
+          replacements:
+            name: place?.name
+          }
       }
 
   render: =>
@@ -54,7 +57,7 @@ module.exports = class PlaceAttachmentsPage extends BasePage
         isFlat: true
         style: 'primary'
         $topLeftButton: z @$buttonBack, {
-          @isOverlayed, color: colors.$header500Icon
+          color: colors.$header500Icon
         }
       }
       @$placeAttachments

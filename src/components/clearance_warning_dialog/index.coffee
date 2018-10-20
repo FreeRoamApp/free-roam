@@ -8,7 +8,7 @@ if window?
   require './index.styl'
 
 
-module.exports = class WelcomeDialog
+module.exports = class ClearanceWarningDialog
   constructor: ({@model}) ->
     @$dialog = new Dialog {
       onLeave: =>
@@ -16,19 +16,18 @@ module.exports = class WelcomeDialog
     }
 
   render: =>
-    z '.z-welcome-dialog',
+    z '.z-clearance-warning-dialog',
       z @$dialog,
         isWide: true
         isVanilla: true
-        $title: @model.l.get 'welcomeDialog.title'
+        $title: @model.l.get 'clearanceWarningDialog.title'
         $content:
-          z '.z-welcome-dialog_dialog',
-            z '.block', @model.l.get 'welcomeDialog.text1'
-            z '.block', @model.l.get 'welcomeDialog.text2'
-            z '.block', @model.l.get 'welcomeDialog.text3'
-            z '.block',
-              z 'div', @model.l.get 'welcomeDialog.text4'
-              z 'div', @model.l.get 'welcomeDialog.text5'
+          z '.z-clearance-warning-dialog_dialog',
+            z '.block', @model.l.get 'clearanceWarningDialog.text1'
+            z '.block', @model.l.get 'clearanceWarningDialog.text2', {
+              replacements:
+                name: @model.l.get 'lowClearance.maxClearance'
+            }
         cancelButton:
           text: @model.l.get 'installOverlay.closeButtonText'
           onclick: =>

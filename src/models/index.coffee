@@ -29,6 +29,7 @@ GroupRole = require './group_role'
 Image = require './image'
 Item = require './item'
 Language = require './language'
+LowClearance = require './low_clearance'
 Notification = require './notification'
 Nps = require './nps'
 Product = require './product'
@@ -135,6 +136,7 @@ module.exports = class Model
     @thread = new Thread {@auth, @l, @group, @exoid, proxy}
     @threadComment = new ThreadComment {@auth}
     @threadVote = new ThreadVote {@auth}
+    @lowClearance = new LowClearance {@auth}
     @notification = new Notification {@auth}
     @nps = new Nps {@auth}
     @product = new Product {@auth}
@@ -144,7 +146,7 @@ module.exports = class Model
     @drawer = new Drawer()
     @installOverlay = new InstallOverlay {@l, @overlay}
     @portal?.setModels {
-      @user, @pushToken, @l, @overlay
+      @user, @pushToken, @l, @installOverlay, @overlay
     }
     @window = new Window {@cookie, @experiment, userAgent}
 
