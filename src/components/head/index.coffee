@@ -140,8 +140,6 @@ module.exports = class Head
     isNative = Environment.isNativeApp('freeroam', {userAgent})
     host = serverData?.req?.headers.host or window?.location?.host
 
-    console.log 'meta', meta
-
     z 'head',
       z 'title', "#{meta.title}"
       z 'meta', {name: 'description', content: "#{meta.description}"}
@@ -189,22 +187,6 @@ module.exports = class Head
       #   content: "#{twitter.description or meta.description}"
       # }
       # z 'meta', {name: 'twitter:image', content: "#{twitter.image}"}
-
-      if meta.structuredData
-        z 'script#structured-data.structured-data', {
-          key: 'structured-data'
-          type: 'application/ld+json'
-          innerHTML: JSON.stringify {
-            '@context': 'http://schema.org'
-            '@type': meta.structuredData.type or 'LocalBusiness'
-            'name': meta.structuredData.name
-            'aggregateRating': {
-              '@type': 'AggregateRating'
-              'ratingValue': meta.structuredData.ratingValue
-              'ratingCount': meta.structuredData.ratingCount
-            }
-          }
-        }
 
       # Open Graph
       z 'meta', {property: 'og:title', content: "#{openGraph.title}"}
@@ -291,7 +273,26 @@ module.exports = class Head
         src: if isInliningSource then @bundlePath \
              else "#{webpackDevUrl}/bundle.js"
 
-      z 'link' # FIXME: this is a hack. the additionalCss stylesheets don't
+      # any conditional scripts need to be at end or else they interfere with others
+      if meta.structuredData
+        z 'script#structured-data', {
+          key: 'structured-data'
+          type: 'application/ld+json'
+          innerHTML: JSON.stringify {
+            '@context': 'http://schema.org'
+            '@type': meta.structuredData.type or 'LocalBusiness'
+            'name': meta.structuredData.name
+            'aggregateRating': {
+              '@type': 'AggregateRating'
+              'ratingValue': meta.structuredData.ratingValue
+              'ratingCount': meta.structuredData.ratingCount
+            }
+          }
+        }
+
+
+      # z 'link' # FIXME: this is a hack. the additionalCss stylesheets don't
+      # z 'script' # FIXME: this is a hack. sometimes the above conditional script acts weird w/o this
       # get bound to an element without this here.
 
 
