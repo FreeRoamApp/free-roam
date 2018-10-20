@@ -92,7 +92,7 @@ module.exports = class Head
         replacements:
           groupName: group?.name or ''
       }
-      icon256: 'http://fdn.uno/d/images/web_icon_256.png'
+      icon256: "#{config.CDN_URL}/web_icon_256.png"
       twitter:
         siteHandle: '@freeroamapp'
         creatorHandle: '@freeroamapp'
@@ -139,6 +139,8 @@ module.exports = class Head
     webpackDevUrl = config.WEBPACK_DEV_URL
     isNative = Environment.isNativeApp('freeroam', {userAgent})
     host = serverData?.req?.headers.host or window?.location?.host
+
+    console.log 'meta', meta
 
     z 'head',
       z 'title', "#{meta.title}"
@@ -187,6 +189,22 @@ module.exports = class Head
       #   content: "#{twitter.description or meta.description}"
       # }
       # z 'meta', {name: 'twitter:image', content: "#{twitter.image}"}
+
+      if meta.structuredData
+        z 'script#structured-data.structured-data', {
+          key: 'structured-data'
+          type: 'application/ld+json'
+          innerHTML: JSON.stringify {
+            '@context': 'http://schema.org'
+            '@type': meta.structuredData.type or 'LocalBusiness'
+            'name': meta.structuredData.name
+            'aggregateRating': {
+              '@type': 'AggregateRating'
+              'ratingValue': meta.structuredData.ratingValue
+              'ratingCount': meta.structuredData.ratingCount
+            }
+          }
+        }
 
       # Open Graph
       z 'meta', {property: 'og:title', content: "#{openGraph.title}"}

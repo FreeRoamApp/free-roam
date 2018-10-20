@@ -97,6 +97,14 @@ module.exports = class CampgroundInfo
       z '.g-grid',
         z '.location',
           "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+          ' ('
+          z 'a', {
+            href:
+              'https://maps.google.com/?saddr=My+Location&daddr=' +
+              place?.location?.lat + ',' + place?.location?.lon
+            target: '_system'
+          }, @model.l.get 'general.directions'
+          ')'
 
         z '.rating',
           z @$rating, {size: '20px'}

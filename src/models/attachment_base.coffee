@@ -11,3 +11,6 @@ module.exports = class Attachment
 
   getById: (id) =>
     @auth.stream "#{@namespace}.getById", {id}
+
+  deleteByRow: (row) =>
+    @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}

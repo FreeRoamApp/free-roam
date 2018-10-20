@@ -47,5 +47,15 @@ class MapService
       }
     ]
 
+  getLowClearanceFilters: ({model}) ->
+    [
+      {
+        field: 'heightInches'
+        type: 'maxClearance'
+        name: model.l.get 'lowClearance.maxClearance'
+        valueSubject: new RxBehaviorSubject null
+      }
+    ]
+
 
 module.exports = new MapService()

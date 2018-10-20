@@ -113,7 +113,7 @@ module.exports = class ProfileDialog
 
     isMe = user?.id is me?.id
 
-    hasDeleteMessagePermission = @model.groupUser.hasPermission {
+    hasDeleteMessagePermission = isMe or @model.groupUser.hasPermission {
       group, meGroupUser, me
       permissions: ['deleteMessage']
     }
@@ -269,7 +269,7 @@ module.exports = class ProfileDialog
           text: @model.l.get 'general.manage'
           isVisible: true
           onclick: =>
-            @model.group.goPath group, 'groupManage', {
+            @model.group.goPath group, 'groupAdminManage', {
               @router, replacements: {userId: user?.id}
             }
             @selectedProfileDialogUser.next null

@@ -70,6 +70,9 @@ module.exports = class PlacesMapContainer
       isLayersPickerVisible: false
       layersVisible: []
 
+  beforeUnmount: =>
+    @place.next null
+
   showFilterDialog: (filter) =>
     @model.overlay.open new FilterDialog {
       @model, @router, filter
@@ -77,11 +80,12 @@ module.exports = class PlacesMapContainer
 
   getDataTypesStreams: (dataTypes) ->
     dataTypes = _map dataTypes, (options) ->
-      {dataType, filters, isChecked, isCheckedSubject} = options
+      {dataType, onclick, filters, isChecked, isCheckedSubject} = options
       isCheckedSubject ?= new RxBehaviorSubject isChecked
       {
         dataType: dataType
         filters: filters
+        onclick: onclick
         isCheckedSubject: isCheckedSubject
         $checkbox: new Checkbox {value: isCheckedSubject}
       }
@@ -163,6 +167,19 @@ module.exports = class PlacesMapContainer
               "#{field}.#{filter.value.season}":
                 lte: filter.value.value
           }
+        when 'maxClearance'
+          feet = parseInt filter.value.feet
+          if isNaN feet
+            feet = 0
+          inches = parseInt filter.value.inches
+          if isNaN inches
+            feet = 0
+          inches = feet * 12 + inches
+          {
+            range:
+              heightInches:
+                lt: inches
+          }
         when 'maxIntDayNight'
           {
             range:
@@ -199,6 +216,12 @@ module.exports = class PlacesMapContainer
               "#{field}.months.#{month}.#{filter.value.metric}":
                 "#{filter.value.operator}": parseFloat(filter.value.number)
           }
+        when 'distanceTo'
+          {
+            range:
+              "#{field}.#{filter.value.amenity}.time":
+                lte: parseInt(filter.value.time)
+          }
         when 'booleanArray'
           arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'
           {
@@ -217,6 +240,7 @@ module.exports = class PlacesMapContainer
             lat: currentLocation._sw.lat
             lon: currentLocation._ne.lng
     }
+    console.log filter
     filter
 
   render: =>
@@ -259,13 +283,15 @@ module.exports = class PlacesMapContainer
                 e?.stopPropagation()
             },
               z '.title', @model.l.get 'placesMapContainer.typesTitle'
-              _map types, ({dataType, $checkbox, isCheckedSubject, layer}) =>
+              _map types, (type) =>
+                {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
                 z '.type', {
                   className: z.classKebab {
                     isSelected: currentType is dataType
                     "#{dataType}": true
                   }
                   onclick: =>
+                    onclick?()
                     @state.set currentType: dataType
                     isCheckedSubject.next true
                 },
@@ -281,7 +307,7 @@ module.exports = class PlacesMapContainer
 
         z '.map',
           z @$map
-          z @$placeTooltip, {isVisible: Boolean place}
+          z @$placeTooltip
           unless _isEmpty @optionalLayers
             z '.layers-fab',
               z @$fab,

@@ -74,7 +74,7 @@ module.exports = class GroupEditChannel
     .then (newConversation) =>
       conversation or= newConversation
       @state.set isSaving: false
-      @model.group.goPath group, 'groupManageChannels', {@router}
+      @model.group.goPath group, 'groupAdminManageChannels', {@router}
 
   render: ({isNewChannel} = {}) =>
     {me, isSaving, group, name, description} = @state.getValue()

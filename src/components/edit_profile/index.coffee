@@ -49,10 +49,6 @@ module.exports = class EditProfile
       avatarDataUrl: null
       avatarUploadError: null
       group: group
-      connections: @model.connection.getAll()
-      players: @model.player.getAllByMe().map (players) ->
-        _map players, (player) ->
-          {player, $removeIcon: new Icon()}
       username: @usernameValueStreams.switch()
       isSaving: false
 
@@ -88,10 +84,8 @@ module.exports = class EditProfile
       @state.set avatarUploadError: err?.detail or JSON.stringify err
 
   render: =>
-    {me, avatarUploadError, avatarDataUrl, connections, group
+    {me, avatarUploadError, avatarDataUrl, group
       players, isSaving} = @state.getValue()
-
-    isTwitchConnected = _find connections, {site: 'twitch'}
 
     z '.z-edit-profile',
       z @$actionBar, {
@@ -103,10 +97,10 @@ module.exports = class EditProfile
           onclick: @save
       }
 
-      z '.section',
-        z '.input',
-          z @$usernameInput,
-            hintText: @model.l.get 'general.username'
+      # z '.section',
+      #   z '.input',
+      #     z @$usernameInput,
+      #       hintText: @model.l.get 'general.username'
 
       z '.section',
         z '.title', @model.l.get 'editProfile.changeAvatar'

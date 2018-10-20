@@ -1,3 +1,4 @@
+SignInDialog = require '../components/sign_in_dialog'
 config = require '../config'
 
 module.exports = class User
@@ -39,7 +40,8 @@ module.exports = class User
     # this (exoid.update) doesn't actually work... it'd be nice
     # but it doesn't update existing streams
     # .then @exoid.update
-    .then @exoid.invalidateAll
+    .then =>
+      setImmediate @exoid.invalidateAll
 
   getDisplayName: (user) =>
     user?.username or @l.get 'general.anonymous'

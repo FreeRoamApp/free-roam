@@ -3,6 +3,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Fab = require '../fab'
 Icon = require '../icon'
+ClearanceWarningDialog = require '../clearance_warning_dialog'
 PlacesMapContainer = require '../places_map_container'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -27,6 +28,14 @@ module.exports = class Places
         {
           dataType: 'amenity'
           filters: @getAmenityFilters()
+        }
+        {
+          dataType: 'lowClearance'
+          filters: @getLowClearanceFilters()
+          onclick: =>
+            unless @model.cookie.get('hasSeenLowClearanceWarning')
+              @model.cookie.set 'hasSeenLowClearanceWarning', '1'
+              @model.overlay.open new ClearanceWarningDialog {@model}
         }
       ]
       optionalLayers: [
@@ -139,6 +148,9 @@ module.exports = class Places
   getAmenityFilters: =>
     MapService.getAmenityFilters {@model}
 
+  getLowClearanceFilters: =>
+    MapService.getLowClearanceFilters {@model}
+
   getCampgroundFilters: =>
     [
       {
@@ -163,6 +175,12 @@ module.exports = class Places
         field: 'weather'
         type: 'weather'
         name: @model.l.get 'general.weather'
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'distanceTo'
+        type: 'distanceTo'
+        name: @model.l.get 'campground.distanceTo'
         valueSubject: new RxBehaviorSubject null
       }
       {

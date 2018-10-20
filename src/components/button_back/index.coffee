@@ -7,7 +7,7 @@ module.exports = class ButtonBack
   constructor: ({@router}) ->
     @$backIcon = new Icon()
 
-  render: ({color, onclick, fallbackPath, isOverlayed} = {}) =>
+  render: ({color, onclick, fallbackPath} = {}) =>
     z '.z-button-back',
       z @$backIcon,
         isAlignedLeft: true
@@ -17,10 +17,7 @@ module.exports = class ButtonBack
         onclick: (e) =>
           e.preventDefault()
           setImmediate =>
-            if isOverlayed
-              @router.overlayPage$.next null
-              window.history.back()
-            else if onclick
+            if onclick
               onclick()
             else
               @router.back {fallbackPath}

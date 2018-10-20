@@ -86,6 +86,8 @@ module.exports = class NavDrawer
                   not Environment.isNativeApp('freeroam', {userAgent}) and
                   not window?.matchMedia('(display-mode: standalone)').matches
 
+        isMember = Boolean me?.username
+
         _filter([
           {
             path: @router.get 'places'
@@ -144,6 +146,14 @@ module.exports = class NavDrawer
             $ripple: new Ripple()
             iconName: 'star'
           }
+          if isMember
+            {
+              path: @router.get 'editProfile'
+              title: @model.l.get 'editProfilePage.title'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'profile'
+            }
           # {
           #   path: @model.group.getPath group, 'groupPeople', {@router}
           #   title: @model.l.get 'people.title'
@@ -162,7 +172,7 @@ module.exports = class NavDrawer
             meGroupUser, me, permissions: ['manageRole']
           }
             {
-              # path: @model.group.getPath group, 'groupSettings', {@router}
+              # path: @model.group.getPath group, 'groupAdminSettings', {@router}
               expandOnClick: true
               title: @model.l.get 'groupSettingsPage.title'
               $icon: new Icon()
@@ -171,13 +181,13 @@ module.exports = class NavDrawer
               $chevronIcon: new Icon()
               children: _filter [
                 {
-                  path: @model.group.getPath group, 'groupManageChannels', {
+                  path: @model.group.getPath group, 'groupAdminManageChannels', {
                     @router
                   }
                   title: @model.l.get 'groupManageChannelsPage.title'
                 }
                 {
-                  path: @model.group.getPath group, 'groupManageRoles', {
+                  path: @model.group.getPath group, 'groupAdminManageRoles', {
                     @router
                   }
                   title: @model.l.get 'groupManageRolesPage.title'
@@ -186,13 +196,13 @@ module.exports = class NavDrawer
                   meGroupUser, me, permissions: ['readAuditLog']
                 }
                   {
-                    path: @model.group.getPath group, 'groupAuditLog', {
+                    path: @model.group.getPath group, 'groupAdminAuditLog', {
                       @router
                     }
                     title: @model.l.get 'groupAuditLogPage.title'
                   }
                 {
-                  path: @model.group.getPath group, 'groupBannedUsers', {
+                  path: @model.group.getPath group, 'groupAdminBannedUsers', {
                     @router
                   }
                   title: @model.l.get 'groupBannedUsersPage.title'

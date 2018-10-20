@@ -46,10 +46,12 @@ module.exports = class Portal
       args[1].path = args[1].path.replace '/g/fortnitees', ''
 
     @portal.call args...
-    .catch ->
+    .catch (err) ->
       # if we don't catch, zorium freaks out if a portal call is in state
       # (infinite errors on page load/route)
       console.log 'missing portal call', args
+      unless err.message is 'Method not found'
+        console.log err
       null
 
   callWithError: (args...) =>

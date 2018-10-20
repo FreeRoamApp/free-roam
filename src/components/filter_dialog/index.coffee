@@ -56,6 +56,19 @@ module.exports = class FilterDialog
           dayNight, rangeValue, (vals...) -> vals
         ).map ([dayNight, value]) ->
           {dayNight, value}
+      when 'maxClearance'
+        feetValue = new RxBehaviorSubject @filter.value?.feet or '14'
+        @$feetInput = new PrimaryInput {value: feetValue}
+
+        inchesValue = new RxBehaviorSubject @filter.value?.inches or '6'
+        @$inchesInput = new PrimaryInput {value: inchesValue}
+
+        filterValue = RxObservable.combineLatest(
+          feetValue
+          inchesValue
+          (vals...) -> vals
+        ).map ([feet, inches]) ->
+          {feet, inches}
       when 'cellSignal'
         initialCarrier = @model.cookie.get('cellCarrier') or 'verizon'
         @carrierDropdownValue = new RxBehaviorSubject(initialCarrier)
@@ -113,6 +126,23 @@ module.exports = class FilterDialog
           (vals...) -> vals
         ).map ([month, metric, operator, number]) ->
           {month, metric, operator, number}
+      when 'distanceTo'
+        @amenityDropdownValue = new RxBehaviorSubject(
+          if @filter.value?.amenity?
+          then @filter.value?.amenity
+          else 'dump'
+        )
+        @$amenityDropdown = new Dropdown {value: @amenityDropdownValue}
+
+        @timeValue = new RxBehaviorSubject @filter.value?.time or ''
+        @$timeInput = new PrimaryInput {value: @timeValue}
+
+        filterValue = RxObservable.combineLatest(
+          @amenityDropdownValue
+          @timeValue
+          (vals...) -> vals
+        ).map ([amenity, time]) ->
+          {amenity, time}
 
     @state = z.state
       filterValue: filterValue
@@ -120,7 +150,6 @@ module.exports = class FilterDialog
   render: =>
     {filterValue} = @state.getValue()
 
-    $title = @model.l.get "campground.#{@filter.field}"
     switch @filter.type
       when 'maxInt', 'maxIntSeasonal', 'minInt', 'maxIntDayNight'
         value = filterValue?.value or filterValue
@@ -130,6 +159,22 @@ module.exports = class FilterDialog
               label: @model.l.get "filterDialog.#{@filter.field}Label"
             }
             @model.l.get "levelText.#{@filter.field}#{value}"
+      when 'maxClearance'
+        $title = @model.l.get 'lowClearance.maxClearance'
+        $content =
+          z '.content',
+            z '.label', @model.l.get 'filterDialog.maxClearance'
+            z '.fields',
+              z @$feetInput, {
+                type: 'number'
+                hintText:
+                  @model.l.get 'filterDialog.feet'
+              }
+              z @$inchesInput, {
+                type: 'number'
+                hintText:
+                  @model.l.get 'filterDialog.inches'
+              }
       when 'cellSignal'
         $content =
           z '.content',
@@ -191,6 +236,26 @@ module.exports = class FilterDialog
                 hintText:
                   @model.l.get "filterDialog.weather#{_startCase(metric)}"
               }
+      when 'distanceTo'
+        $content =
+          z '.content',
+            z '.label', @model.l.get 'general.amenity'
+            z '.amenity',
+              z @$amenityDropdown,
+                options: [
+                  {value: 'dump', text: 'Dump Station'}
+                  {value: 'water', text: 'Fresh Water'}
+                  {value: 'groceries', text: 'Groceries'}
+                ]
+            z 'label.label.time',
+              @model.l.get 'filterDialog.timeLabel'
+              z @$timeInput, {
+                type: 'number'
+                hintText:
+                  @model.l.get 'filterDialog.time'
+              }
+
+    $title ?= @model.l.get "campground.#{@filter.field}"
 
     resetButton = {
       text: @model.l.get 'general.reset'
