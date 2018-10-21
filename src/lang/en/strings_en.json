@@ -217,6 +217,7 @@
   "profileDialog.ipBan": "IP Ban",
   "profileDialog.chatBanned": "Banned",
   "profileDialog.unban": "Unban",
+  "profileDialog.edit": "Edit",
   "profileDialog.delete": "Delete",
   "profileDialog.deleteMessage": "Delete message",
   "profileDialog.deleteMessagesLast24hr": "Delete messages in last 24hr",

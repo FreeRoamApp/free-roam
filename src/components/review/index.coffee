@@ -47,6 +47,17 @@ module.exports = class Review
           username and username is me?.username
       windowSize: @model.window.getSize()
 
+  openProfileDialog: (user, review) =>
+    @selectedProfileDialogUser.next _defaults user, {
+      onDeleteMessage: =>
+        @model["#{review.type}Review"].deleteById review.id
+      onEditMessage: =>
+        @router.go "#{review.type}ReviewEdit", {
+          slug: review.parentId # TODO use slug
+          reviewId: review.id
+        }
+    }
+
   render: ({openProfileDialogFn, isTimeAlignedLeft}) =>
     {isMe, review, windowSize} = @state.getValue()
 
@@ -58,13 +69,10 @@ module.exports = class Review
 
     onclick = =>
       unless @isTextareaFocused?.getValue()
-        @selectedProfileDialogUser.next _defaults user, {
-          onDeleteMessage: =>
-            @model["#{review.type}Review"].deleteById review.id
-        }
+        @openProfileDialog user, review
 
     oncontextmenu = =>
-      @selectedProfileDialogUser.next user
+      @openProfileDialog user, review
 
     isModerator = groupUser?.roleNames and
                   (

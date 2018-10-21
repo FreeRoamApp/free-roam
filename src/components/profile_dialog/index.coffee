@@ -40,6 +40,7 @@ module.exports = class ProfileDialog
     @$delete1Icon = new Icon()
     @$delete24hIcon = new Icon()
     @$delete7dIcon = new Icon()
+    @$editIcon = new Icon()
     @$banChevronIcon = new Icon()
     @$deleteChevronIcon = new Icon()
     @$closeIcon = new Icon()
@@ -200,47 +201,38 @@ module.exports = class ProfileDialog
         }
       if hasDeleteMessagePermission and user?.onDeleteMessage
         {
-          icon: 'delete'
+          icon: 'edit'
           $icon: @$deleteIcon
           $chevronIcon: @$deleteChevronIcon
-          text: @model.l.get 'profileDialog.delete'
+          text: @model.l.get 'profileDialog.edit'
           isVisible: true
           children: _filter [
             {
+              icon: 'edit'
+              $icon: @$editIcon
+              text: if @isLoadingByText @model.l.get 'profileDialog.edit' \
+                    then @model.l.get 'general.loading'
+                    else @model.l.get 'profileDialog.edit'
+              isVisible: true
+              onclick: ->
+                user.onEditMessage()
+            }
+            {
               icon: 'delete'
               $icon: @$delete1Icon
-              text: if @isLoadingByText @model.l.get 'profileDialog.deleteMessage' \
-                    then @model.l.get 'general.loading'
-                    else @model.l.get 'profileDialog.deleteMessage'
+              text: 'FIXME'
+              # text: if @isLoadingByText @model.l.get 'profileDialog.deleteMessage' \
+              #       then @model.l.get 'general.loading'
+              #       else @model.l.get 'profileDialog.deleteMessage'
               isVisible: true
               onclick: =>
-                @setLoadingByText @model.l.get 'profileDialog.deleteMessage'
+                return # FIXME
+                @setLoadingByText @model.l.get 'profileDialog.delete'
                 user.onDeleteMessage()
                 .then =>
-                  @unsetLoadingByText @model.l.get 'profileDialog.deleteMessage'
+                  @unsetLoadingByText @model.l.get 'profileDialog.delete'
                   @selectedProfileDialogUser.next null
             }
-            # TODO: backend for doing 24h instead of ~1wk
-            # {
-            #   icon: 'delete'
-            #   $icon: @$delete24hIcon
-            #   text: if @isLoadingByText @model.l.get 'profileDialog.deleteMessagesLast24hr' \
-            #         then @model.l.get 'general.loading'
-            #         else @model.l.get 'profileDialog.deleteMessagesLast24hr'
-            #   isVisible: true
-            #   onclick: =>
-            #     @setLoadingByText(
-            #       @model.l.get 'profileDialog.deleteMessagesLast24hr'
-            #     )
-            #     @model.conversationMessage.deleteAllByGroupIdAndUserId(
-            #       group.id, user.id, {duration: '24h'}
-            #     )
-            #     .then =>
-            #       @unsetLoadingByText(
-            #         @model.l.get 'profileDialog.deleteMessagesLast24hr'
-            #       )
-            #       @selectedProfileDialogUser.next null
-            # }
             if group
               {
                 icon: 'delete'
