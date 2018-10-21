@@ -291,11 +291,6 @@ module.exports = class Head
         }
 
 
-      # z 'link' # FIXME: this is a hack. the additionalCss stylesheets don't
-      # z 'script' # FIXME: this is a hack. sometimes the above conditional script acts weird w/o this
-      # get bound to an element without this here.
-
-
        # TODO: have these update with the router, not just on pageload
        # maybe route should do a head re-render, so it doesn't ave to do it for
        # every render

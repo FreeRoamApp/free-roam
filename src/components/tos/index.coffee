@@ -93,6 +93,21 @@ module.exports = class Tos
           third-party trademarks.
           '''
         z 'li',
+          z 'div.is-bold', 'Your rights'
+          '''
+          You retain your rights to any Content you submit, post or display on or through FreeRoam. By submitting, posting or displaying content on or through FreeRoam, you grant us a worldwide, non-exclusive, royalty-free license (with the right to sublicense) to use, copy, reproduce, process, adapt, modify, publish, transmit, display and distribute such content in any and all media or distribution methods (now known or later developed).
+
+          You agree that this license includes the right for FreeRoam to provide, promote, and improve FreeRoam and to make content submitted to or through FreeRoam available to other companies, organizations or individuals who partner with FreeRoam for the syndication, broadcast, distribution or publication of such content on other media and services, subject to our terms and conditions for such content use.
+
+          Such additional uses by FreeRoam, or other companies, organizations or individuals who partner with FreeRoam, may be made with no compensation paid to you with respect to the content that you submit, post, transmit or otherwise make available through FreeRoam.
+
+          We may modify or adapt your content in order to transmit, display or distribute it over computer networks and in various media and/or make changes to your content as are necessary to conform and adapt that content to any requirements or limitations of any networks, devices, services or media.
+
+          You are responsible for your use of FreeRoam, for any content you provide, and for any consequences thereof, including the use of your content by other users and our third party partners. You understand that your content may be syndicated, broadcast, distributed, or published by our partners and if you do not have the right to submit content for such use, it may subject you to liability. FreeRoam will not be responsible or liable for any use of your content by FreeRoam in accordance with these Terms. You represent and warrant that you have all the rights, power and authority necessary to grant the rights granted herein to any content that you submit.
+
+
+          '''
+        z 'li',
           z 'div.is-bold', 'Changes.'
           '''
           FreeRoam reserves the right, at its sole discretion, to modify or replace any part of this Agreement. It is your responsibility

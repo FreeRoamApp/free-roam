@@ -25,6 +25,7 @@
   "campgroundAttachments": "/campground/:slug/attachments",
   "campgroundWithTab": "/campground/:slug/:tab",
   "campgroundNewReview": "/campground/:slug/new-review",
+  "campgroundReviewEdit": "/campground/:slug/review/:reviewId/edit",
   "categories": "/product-guides",
   "conversation": "/conversation/:id",
   "conversations": "/conversations",
