@@ -1,6 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
+RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/switch'
@@ -9,8 +10,13 @@ require 'rxjs/add/operator/map'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 _filter = require 'lodash/filter'
+_first = require 'lodash/first'
 _mapValues = require 'lodash/mapValues'
 _forEach = require 'lodash/forEach'
+_map = require 'lodash/map'
+_keys = require 'lodash/keys'
+_values = require 'lodash/values'
+_zipObject = require 'lodash/zipObject'
 
 NewReviewCompose = require '../new_review_compose'
 NewReviewExtras = require '../new_review_extras'
@@ -29,7 +35,7 @@ if window?
 
 
 module.exports = class NewReview
-  constructor: ({@model, @router, type, @review, id, parent}) ->
+  constructor: ({@model, @router, type, @review, parent}) ->
     me = @model.user.getMe()
 
     type ?= RxObservable.of null
@@ -45,27 +51,35 @@ module.exports = class NewReview
     @reviewExtraFields =
       crowds:
         isSeasonal: true
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       fullness:
         isSeasonal: true
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       noise:
-        valueSubject: new RxBehaviorSubject null
+        isDayNight: true
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       shade:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       roadDifficulty:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       cellSignal:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       safety:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+
+    reviewExtraFieldsValues = RxObservable.combineLatest(
+      _map @reviewExtraFields, ({valueStreams}) ->
+        valueStreams.switch()
+      (vals...) =>
+        _zipObject _keys(@reviewExtraFields), vals
+    )
 
     @resetValueStreams()
 
@@ -83,7 +97,8 @@ module.exports = class NewReview
             )
       }
       new NewReviewExtras {
-        @model, @router, fields: @reviewExtraFields, @season
+        @model, @router, fields: @reviewExtraFields,
+        fieldsValues: reviewExtraFieldsValues, @season
         isOptional: true
       }
     ]
@@ -95,6 +110,7 @@ module.exports = class NewReview
       bodyValue: @reviewFields.bodyValueStreams.switch()
       attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
       ratingValue: @reviewFields.ratingValueStreams.switch()
+      reviewExtraFieldsValues
       type: type
       review: @review
       parent: parent
@@ -107,26 +123,35 @@ module.exports = class NewReview
 
   resetValueStreams: =>
     if @review
-      @reviewFields.titleValueStreams.next @review.map (review) -> review?.title or ''
-      @reviewFields.bodyValueStreams.next @review.map (review) -> review?.body or ''
+      @reviewFields.titleValueStreams.next @review.map (review) ->
+        review?.title or ''
+      @reviewFields.bodyValueStreams.next @review.map (review) ->
+        review?.body or ''
+      @reviewFields.ratingValueStreams.next @review.map (review) ->
+        review?.rating
+      @reviewFields.attachmentsValueStreams.next @review.map (review) ->
+        review?.attachments
+      _forEach @reviewExtraFields, (field, key) =>
+        {isSeasonal, isDayNight} = field
+        field.valueStreams.next @review.map (review) ->
+          value = review?.extras?[key]
+          if isSeasonal or isDayNight
+            value = _first _values(value)
+          value
     else
       @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
       @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
-
-    @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
-    @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
-
-    _forEach @reviewExtraFields, (field) ->
-      field.valueSubject.next null
+      @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
+      @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
+      _forEach @reviewExtraFields, (field) ->
+        field.valueStreams.next new RxBehaviorSubject null
 
   upsert: (e) =>
-    {me} = @state.getValue()
+    {me, reviewExtraFieldsValues, titleValue, bodyValue, ratingValue,
+      attachmentsValue, type, review, parent} = @state.getValue()
     @state.set isLoading: true
     @model.user.requestLoginIfGuest me
     .then =>
-      {titleValue, bodyValue, ratingValue, attachmentsValue,
-        type, review, parent} = @state.getValue()
-
       if _find attachmentsValue, {isUploading: true}
         isReady = confirm @model.l.get 'newReview.pendingUpload'
       else
@@ -134,8 +159,8 @@ module.exports = class NewReview
 
       attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
 
-      extras = _mapValues @reviewExtraFields, ({valueSubject, isSeasonal}) =>
-        value = valueSubject.getValue()
+      extras = _mapValues @reviewExtraFields, ({isSeasonal}, field) =>
+        value = reviewExtraFieldsValues[field]
         if isSeasonal and value?
           season = @season.getValue()
           {"#{season}": value}
@@ -163,12 +188,13 @@ module.exports = class NewReview
               slug: parent?.slug, tab: 'reviews'
             }, {reset: true}
           , 200
-    .catch =>
+    .catch (err) =>
+      console.log 'upload err', err
       @state.set isLoading: false
 
 
   render: =>
-    {step, isLoading} = @state.getValue()
+    {step, isLoading, review} = @state.getValue()
 
     z '.z-new-review',
       z @$steps[step]

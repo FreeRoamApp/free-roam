@@ -4,7 +4,7 @@ require 'rxjs/add/observable/combineLatest'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-EditReview = require '../../components/edit_review'
+EditReview = require '../../components/new_review'
 
 if window?
   require './index.styl'
@@ -13,20 +13,22 @@ module.exports = class EditReviewPage
   hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, parent}) ->
-    type = requests.map ({route}) =>
+    type = requests.map ({route}) ->
       type = route.src.split('/')[1]
       if type in ['campground', 'amenity'] then type else 'campground'
     typeAndRequests = RxObservable.combineLatest(
       type, requests, (vals...) -> vals
     )
+
     parent = typeAndRequests.switchMap ([type, {route}]) =>
       @model[type].getBySlug route.params.slug
-    id = requests.map ({route}) ->
-      route.params.id
+
+    review = typeAndRequests.switchMap ([type, {route}]) =>
+      @model["#{type}Review"].getById route.params.reviewId
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$newReview = new EditReview {@model, @router, id, type, parent}
+    @$editReview = new EditReview {@model, @router, review, type, parent}
 
     @state = z.state
       windowSize: @model.window.getSize()

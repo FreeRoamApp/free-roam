@@ -44,7 +44,7 @@ module.exports = class Reviews extends Base
               @model, @router, text: review.body, selectedProfileDialogUser
             }
             $el = @getCached$ reviewCacheKey, Review, {
-              review, @model, @router,
+              review, parent, @model, @router,
               selectedProfileDialogUser, $body
             }
             $el

@@ -25,7 +25,7 @@ DESCRIPTION_LENGTH = 100
 
 module.exports = class Review
   constructor: (options) ->
-    {review, @$body, isGrouped, isMe, @model, @isTextareaFocused
+    {review, parent, @$body, isGrouped, isMe, @model, @isTextareaFocused
       @selectedProfileDialogUser, @router} = options
 
     @$avatar = new Avatar()
@@ -38,6 +38,7 @@ module.exports = class Review
 
     @state = z.state
       review: review
+      parent: parent
       isMe: isMe
       isGrouped: isGrouped
       isMeMentioned: me.map (me) ->
@@ -47,19 +48,19 @@ module.exports = class Review
           username and username is me?.username
       windowSize: @model.window.getSize()
 
-  openProfileDialog: (user, review) =>
+  openProfileDialog: ({user, review, parent}) =>
     @selectedProfileDialogUser.next _defaults user, {
       onDeleteMessage: =>
         @model["#{review.type}Review"].deleteById review.id
       onEditMessage: =>
-        @router.go "#{review.type}ReviewEdit", {
-          slug: review.parentId # TODO use slug
+        @router.go "#{review.type}EditReview", {
+          slug: parent.slug
           reviewId: review.id
         }
     }
 
   render: ({openProfileDialogFn, isTimeAlignedLeft}) =>
-    {isMe, review, windowSize} = @state.getValue()
+    {isMe, review, parent, windowSize} = @state.getValue()
 
     {title, user, groupUser, attachments, time} = review
 
@@ -69,10 +70,10 @@ module.exports = class Review
 
     onclick = =>
       unless @isTextareaFocused?.getValue()
-        @openProfileDialog user, review
+        @openProfileDialog {user, review, parent}
 
     oncontextmenu = =>
-      @openProfileDialog user, review
+      @openProfileDialog {user, review, parent}
 
     isModerator = groupUser?.roleNames and
                   (

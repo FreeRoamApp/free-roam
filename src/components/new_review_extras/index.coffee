@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _mapValues = require 'lodash/mapValues'
 _range = require 'lodash/range'
@@ -19,7 +21,8 @@ if window?
   require './index.styl'
 
 module.exports = class NewReviewExtras
-  constructor: ({@model, @router, @fields, @season, @isOptional}) ->
+  constructor: (options) ->
+    {@model, @router, @fields, @season, @isOptional, fieldsValues} = options
     me = @model.user.getMe()
 
     @$addCarrierButton = new PrimaryButton()
@@ -31,14 +34,14 @@ module.exports = class NewReviewExtras
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
 
-    fields = ['roadDifficulty', 'crowds', 'fullness', 'noise', 'shade',
+    allowedFields = ['roadDifficulty', 'crowds', 'fullness', 'noise', 'shade',
               'safety']
-    @sliders = _map fields, (field) =>
+    @sliders = _map allowedFields, (field) =>
       {
         field: field
-        valueSubject: @fields[field].valueSubject
+        valueStreams: @fields[field].valueStreams
         $range: new InputRange {
-          value: @fields[field].valueSubject, minValue: 1, maxValue: 5
+          valueStreams: @fields[field].valueStreams, minValue: 1, maxValue: 5
         }
       }
 
@@ -49,6 +52,7 @@ module.exports = class NewReviewExtras
 
     @state = z.state {
       @season
+      fieldsValues: fieldsValues
       carrierCount: @carrierCount
       carriers: @carrierCount.map (count) =>
         _map _range(count), (i) =>
@@ -59,6 +63,7 @@ module.exports = class NewReviewExtras
           @disposables.push carrierValueSubject.subscribe (carrier) =>
             @model.cookie.set 'cellCarrier', carrier
             @onCellChange()
+          # TODO: use cellSignal valueStreams when editing review
           barsValueSubject = new RxBehaviorSubject null
           @disposables.push barsValueSubject.subscribe @onCellChange
           lteValueSubject = new RxBehaviorSubject true
@@ -101,21 +106,20 @@ module.exports = class NewReviewExtras
         obj
       , {}
 
-      console.log newCellSignal
-
-      @fields.cellSignal.valueSubject.next newCellSignal
+      @fields.cellSignal.valueStreams.next RxObservable.of newCellSignal
 
   isCompleted: =>
+    {fieldsValues} = @state.getValue()
     if @isOptional
       return true
-    @season.getValue() and _every @sliders, ({valueSubject}) ->
-      valueSubject.getValue()
+    @season.getValue() and _every @sliders, ({field}) ->
+      fieldsValues?[field]
 
   getTitle: =>
     @model.l.get 'newReviewExtras.title'
 
   render: =>
-    {season, carriers} = @state.getValue()
+    {season, carriers, fieldsValues} = @state.getValue()
 
     z '.z-new-review-extras',
       z '.g-grid',
@@ -172,5 +176,5 @@ module.exports = class NewReviewExtras
                 z '.field',
                   z '.name', @model.l.get "campground.#{field}"
                   $range
-                  if valueSubject.getValue()?
-                    @model.l.get "levelText.#{field}#{valueSubject.getValue()}"
+                  if fieldsValues?[field]
+                    @model.l.get "levelText.#{field}#{fieldsValues[field]}"
