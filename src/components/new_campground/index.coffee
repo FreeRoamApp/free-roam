@@ -1,6 +1,9 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
+require 'rxjs/add/observable/combineLatest'
 _mapValues = require 'lodash/mapValues'
 _isEmpty = require 'lodash/isEmpty'
 _keys = require 'lodash/keys'
@@ -8,6 +11,9 @@ _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 _filter = require 'lodash/filter'
 _forEach = require 'lodash/forEach'
+_map = require 'lodash/map'
+_keys = require 'lodash/keys'
+_zipObject = require 'lodash/zipObject'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
@@ -60,27 +66,35 @@ module.exports = class NewCampground
     @reviewExtraFields =
       crowds:
         isSeasonal: true
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       fullness:
         isSeasonal: true
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       noise:
-        valueSubject: new RxBehaviorSubject null
+        isDayNight: true
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       shade:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       roadDifficulty:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       cellSignal:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       safety:
-        valueSubject: new RxBehaviorSubject null
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+
+    reviewExtraFieldsValues = RxObservable.combineLatest(
+      _map @reviewExtraFields, ({valueStreams}) ->
+        valueStreams.switch()
+      (vals...) =>
+        _zipObject _keys(@reviewExtraFields), vals
+    )
 
     @resetValueStreams()
 
@@ -89,7 +103,8 @@ module.exports = class NewCampground
         @model, @router, @fields, @season
       }
       new NewReviewExtras {
-        @model, @router, fields: @reviewExtraFields, @season
+        @model, @router, fields: @reviewExtraFields,
+        fieldsValues: reviewExtraFieldsValues, @season
       }
       new NewReviewCompose {
         @model, @router, fields: @reviewFields, @season
@@ -108,6 +123,7 @@ module.exports = class NewCampground
       bodyValue: @reviewFields.bodyValueStreams.switch()
       attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
       ratingValue: @reviewFields.ratingValueStreams.switch()
+      reviewExtraFieldsValues
     }
 
   upsert: =>
@@ -126,18 +142,21 @@ module.exports = class NewCampground
         videos: @fields.videos.valueSubject.getValue()
       }
       .then @upsertReview
-      .catch ->
-        null # TODO
+      .catch (err) =>
+        console.log err
+        # TODO: err messages
+        @state.set isLoading: false
       .then =>
         @state.set isLoading: false
 
   upsertReview: (parent) =>
-    {titleValue, bodyValue, ratingValue, attachmentsValue} = @state.getValue()
+    {titleValue, bodyValue, ratingValue, attachmentsValue,
+      reviewExtraFieldsValues} = @state.getValue()
 
     attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
 
-    extras = _mapValues @reviewExtraFields, ({valueSubject, isSeasonal}) =>
-      value = valueSubject.getValue()
+    extras = _mapValues @reviewExtraFields, ({isSeasonal}, field) =>
+      value = reviewExtraFieldsValues[field]
       if isSeasonal and value?
         season = @season.getValue()
         {"#{season}": value}
@@ -169,22 +188,16 @@ module.exports = class NewCampground
     @resetValueStreams()
 
   resetValueStreams: =>
-    if @review
-      @reviewFields.titleValueStreams.next @review.map (review) -> review?.title or ''
-      @reviewFields.bodyValueStreams.next @review.map (review) -> review?.body or ''
-    else
-      @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
-      @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
-
-    @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
-    @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
-
     @fields.name.valueSubject.next ''
     @fields.location.valueSubject.next ''
     @fields.videos.valueSubject.next []
 
+    @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
+    @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
+    @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
+    @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
     _forEach @reviewExtraFields, (field) ->
-      field.valueSubject.next null
+      field.valueStreams.next new RxBehaviorSubject null
 
     @$steps?[1].reset()
 

@@ -12,7 +12,6 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
-require 'rxjs/add/observable/forkJoin'
 
 Checkbox = require '../checkbox'
 Map = require '../map'

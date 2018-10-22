@@ -1,4 +1,6 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _range = require 'lodash/range'
 
@@ -6,9 +8,15 @@ if window?
   require './index.styl'
 
 module.exports = class InputRange
-  constructor: ({@value, @minValue, @maxValue}) ->
+  constructor: ({@value, @valueStreams, @minValue, @maxValue}) ->
     @state = z.state
-      value: @value
+      value: @valueStreams?.switch() or @value
+
+  setValue: (value) =>
+    if @valueStreams
+      @valueStreams.next RxObservable.of value
+    else
+      @value.next $$el.value
 
   render: ({label} = {}) =>
     {value} = @state.getValue()
@@ -29,16 +37,16 @@ module.exports = class InputRange
             max: "#{@maxValue}"
             value: "#{value}"
             onclick: (e) =>
-              @value.next parseInt(e.currentTarget.value)
+              @setValue parseInt(e.currentTarget.value)
             oninput: (e) =>
-              @value.next parseInt(e.currentTarget.value)
+              @setValue parseInt(e.currentTarget.value)
         z '.info',
           z '.unset', 'Drag to set value'
           z '.numbers',
             _map _range(@minValue, @maxValue + 1), (number) =>
               z '.number', {
                 onclick: =>
-                  @value.next parseInt(number)
+                  @setValue parseInt(number)
               },
                 if number in [@minValue, @maxValue / 2, @maxValue, value]
                   number

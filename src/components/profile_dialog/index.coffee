@@ -220,13 +220,13 @@ module.exports = class ProfileDialog
             {
               icon: 'delete'
               $icon: @$delete1Icon
-              text: 'FIXME'
-              # text: if @isLoadingByText @model.l.get 'profileDialog.deleteMessage' \
-              #       then @model.l.get 'general.loading'
-              #       else @model.l.get 'profileDialog.deleteMessage'
+              text: if @isLoadingByText @model.l.get 'profileDialog.delete' \
+                    then @model.l.get 'general.loading'
+                    else @model.l.get 'profileDialog.delete'
               isVisible: true
               onclick: =>
-                return # FIXME
+                unless confirm @model.l.get 'general.confirm'
+                  return
                 @setLoadingByText @model.l.get 'profileDialog.delete'
                 user.onDeleteMessage()
                 .then =>

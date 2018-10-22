@@ -16,6 +16,7 @@ no- embed distance when getting nearby amenities? and cache for a while?
   or just closest x using getAmenityBoundsById
 - campground: {closestAmenities: {dump: {distance: 32, time: 30}}}
 
+- Edit review use initial season for value?
 - Ask for rig information on first review
 x Tooltip picture and reviews
 - Swipe / tap through gallery of images
