@@ -18,9 +18,11 @@ module.exports = class AboutPage
     @state = z.state
       windowSize: @model.window.getSize()
 
-  getMeta: ->
+  getMeta: =>
     {
-      title: 'About us'
+      title: @model.l.get 'drawer.about'
+      description:
+        "#{@model.l.get('about.text2')} #{@model.l.get 'about.text3'}"
     }
 
   render: =>

@@ -25,10 +25,11 @@ module.exports = class ProductPage
       product: @product
       windowSize: @model.window.getSize()
 
-  getMeta: ->
+  getMeta: =>
     @product.map (product) ->
       {
         title: product?.name
+        description: product?.description
       }
 
   render: =>

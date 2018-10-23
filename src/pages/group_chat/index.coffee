@@ -173,6 +173,7 @@ module.exports = class GroupChatPage
   getMeta: =>
     {
       title: @model.l.get 'groupChatPage.title'
+      description: @model.l.get 'groupChatPage.description'
     }
 
   render: =>

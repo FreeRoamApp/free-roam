@@ -17,8 +17,8 @@ BG_COLORS = [
   colors.$red50026
 ]
 
-module.exports = class Categories
-  constructor: ({@model, @router, categories}) ->
+module.exports = class ProductGuides
+  constructor: ({@model, @router}) ->
     me = @model.user.getMe()
 
     @searchValue = new RxBehaviorSubject ''
@@ -30,12 +30,12 @@ module.exports = class Categories
   render: =>
     {categories} = @state.getValue()
 
-    z '.z-categories',
+    z '.z-product-guides',
       z '.g-grid',
         z '.search',
           z @$searchInput, {
             isSearchIconRight: true
-            placeholder: @model.l.get 'categories.searchPlaceholder'
+            placeholder: @model.l.get 'productGuides.searchPlaceholder'
             onsubmit: =>
               @router.go 'itemsBySearch', {query: @searchValue.getValue()}
           }

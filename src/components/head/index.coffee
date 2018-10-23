@@ -88,10 +88,6 @@ module.exports = class Head
 
     meta = _merge {
       title: @model.l.get 'meta.defaultTitle'
-      description: @model.l.get 'meta.defaultDescription', {
-        replacements:
-          groupName: group?.name or ''
-      }
       icon256: "#{config.CDN_URL}/web_icon_256.png"
       twitter:
         siteHandle: '@freeroamapp'
@@ -140,9 +136,12 @@ module.exports = class Head
     isNative = Environment.isNativeApp('freeroam', {userAgent})
     host = serverData?.req?.headers.host or window?.location?.host
 
+    console.log meta
+
     z 'head',
       z 'title', "#{meta.title}"
-      z 'meta', {name: 'description', content: "#{meta.description}"}
+      if meta.description
+        z 'meta', {name: 'description', content: "#{meta.description}"}
 
       # Appcache
       # TODO: re-enable?
