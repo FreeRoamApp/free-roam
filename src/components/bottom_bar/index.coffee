@@ -47,7 +47,7 @@ module.exports = class BottomBar
       {
         $icon: new Icon()
         icon: 'cart'
-        route: @router.get 'categories'
+        route: @router.get 'productGuides'
         text: @model.l.get 'drawer.productGuide'
       }
       {
