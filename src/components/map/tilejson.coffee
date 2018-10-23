@@ -23,7 +23,7 @@ module.exports = {
     }
   },
   "glyphs": "https://tileserver.freeroam.app/fonts/{fontstack}/{range}.pbf",
-  "sprite": "https://fdn.uno/d/images/maps/sprite_2018_10_22",
+  "sprite": "https://fdn.uno/d/images/maps/sprite_2018_10_23",
   "layers": [{
       "id": "background",
       "type": "background",
@@ -971,6 +971,169 @@ module.exports = {
             ]
           ]
         }
+      }
+    },{
+      "id": "highway-shield",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "transportation_name",
+      "minzoom": 8,
+      "filter": [
+        "all",
+        [
+          "<=",
+          "ref_length",
+          6
+        ],
+        [
+          "==",
+          "$type",
+          "LineString"
+        ],
+        [
+          "!in",
+          "network",
+          "us-interstate",
+          "us-highway",
+          "us-state"
+        ]
+      ],
+      "layout": {
+        "text-size": 9,
+        "icon-image": "road_{ref_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [
+            [
+              10,
+              "point"
+            ],
+            [
+              11,
+              "line"
+            ]
+          ]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref}"
+      },
+      "paint": {}
+    },
+    {
+      "id": "highway-shield-us-interstate",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "transportation_name",
+      "minzoom": 7,
+      "filter": [
+        "all",
+        [
+          "<=",
+          "ref_length",
+          6
+        ],
+        [
+          "==",
+          "$type",
+          "LineString"
+        ],
+        [
+          "in",
+          "network",
+          "us-interstate"
+        ]
+      ],
+      "layout": {
+        "text-size": 9,
+        "icon-image": "{network}_{ref_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [
+            [
+              7,
+              "point"
+            ],
+            [
+              7,
+              "line"
+            ],
+            [
+              8,
+              "line"
+            ]
+          ]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref}"
+      },
+      "paint": {
+        "text-color": "rgba(0, 0, 0, 1)"
+      }
+    },
+    {
+      "id": "highway-shield-us-other",
+      "type": "symbol",
+      "source": "openmaptiles",
+      "source-layer": "transportation_name",
+      "minzoom": 9,
+      "filter": [
+        "all",
+        [
+          "<=",
+          "ref_length",
+          6
+        ],
+        [
+          "==",
+          "$type",
+          "LineString"
+        ],
+        [
+          "in",
+          "network",
+          "us-highway",
+          "us-state"
+        ]
+      ],
+      "layout": {
+        "text-size": 9,
+        "icon-image": "{network}_{ref_length}",
+        "icon-rotation-alignment": "viewport",
+        "symbol-spacing": 200,
+        "text-font": [
+          "Open Sans Regular"
+        ],
+        "symbol-placement": {
+          "base": 1,
+          "stops": [
+            [
+              10,
+              "point"
+            ],
+            [
+              11,
+              "line"
+            ]
+          ]
+        },
+        "text-rotation-alignment": "viewport",
+        "icon-size": 1,
+        "text-field": "{ref}"
+      },
+      "paint": {
+        "text-color": "rgba(0, 0, 0, 1)"
       }
     },
     {
