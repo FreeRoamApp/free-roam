@@ -18,7 +18,7 @@ module.exports = class ItemsPage extends Base
   hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group}) ->
-    filter = @clearOnUnmount requests.map ({route}) =>
+    filter = @clearOnUnmount requests.map ({route}) ->
       if route.params.category
         {type: 'category', value: route.params.category}
       else if route.params.query
@@ -30,22 +30,28 @@ module.exports = class ItemsPage extends Base
     @$buttonBack = new ButtonBack {@model, @router}
     @$items = new Items {@model, @router, filter}
 
+    @title = filter.switchMap (filter) =>
+      if filter?.type is 'category'
+        @model.category.getAll()
+        .map (categories) =>
+          name = _find(categories, {slug: filter.value})?.name
+          @model.l.get 'itemsPage.title', {replacements: {name}}
+      else
+        RxObservable.of filter?.value
+
     @state = z.state
       me: @model.user.getMe()
-      title: filter.switchMap (filter) =>
-        if filter?.type is 'category'
-          @model.category.getAll()
-          .map (categories) ->
-            _find(categories, {slug: filter.value})?.name
-        else
-          RxObservable.of filter?.value
+      title: @title
       windowSize: @model.window.getSize()
 
-  getMeta: ->
-    {title} = @state.getValue()
-    {
-      title: title
-    }
+  getMeta: =>
+    @title.map (title) =>
+      {
+        title: title
+        description: @model.l.get 'itemsPage.description', {
+          replacements: {title}
+        }
+      }
 
   render: =>
     {me, windowSize, title} = @state.getValue()

@@ -42,6 +42,7 @@ module.exports = class GroupForumPage
   getMeta: =>
     {
       title: @model.l.get 'general.forum'
+      description: @model.l.get 'groupForumPage.description'
     }
 
   render: =>

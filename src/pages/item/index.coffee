@@ -26,10 +26,11 @@ module.exports = class ItemPage extends BasePage
       item: @item
       windowSize: @model.window.getSize()
 
-  getMeta: ->
-    @item.map (item) ->
+  getMeta: =>
+    @item.map (item) =>
       {
-        title: "Boondocking #{item?.name}"
+        title: @model.l.get 'itemPage.title', {replacements: {name: item?.name}}
+        description: item?.why
       }
 
   render: =>
