@@ -98,7 +98,7 @@ module.exports = class NavDrawer
             isDefault: true
           }
           {
-            path: @router.get 'categories'
+            path: @router.get 'productGuides'
             title: @model.l.get 'drawer.productGuide'
             $icon: new Icon()
             $ripple: new Ripple()
