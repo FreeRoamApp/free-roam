@@ -136,8 +136,6 @@ module.exports = class Head
     isNative = Environment.isNativeApp('freeroam', {userAgent})
     host = serverData?.req?.headers.host or window?.location?.host
 
-    console.log meta
-
     z 'head',
       z 'title', "#{meta.title}"
       if meta.description

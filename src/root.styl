@@ -36,7 +36,7 @@ body
     display: flex
 
     > .page
-      flex: 1
+      flex1()
       min-width: 0 // so text doesn't overflow
       // http://stackoverflow.com/questions/12022288/how-to-keep-a-flex-item-from-overflowing-due-to-its-text
 
@@ -47,7 +47,7 @@ body
       height: 100%
       top: 0
       left: 0
-      flex: 1
+      flex1()
       min-width: 0 // so text doesn't overflow
       background: getColor('$bg500')
       // http://stackoverflow.com/questions/12022288/how-to-keep-a-flex-item-from-overflowing-due-to-its-text
@@ -92,7 +92,7 @@ input:-webkit-autofill:active
     height: 5px
 
   &::-webkit-scrollbar-thumb
-    background: getColor('$tertiary900Text54')
+    background: getColor('$bgText54')
     // border: 1px solid
     border-radius: 20px
 
