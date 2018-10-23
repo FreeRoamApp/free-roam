@@ -4,6 +4,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 Fab = require '../fab'
 Icon = require '../icon'
 ClearanceWarningDialog = require '../clearance_warning_dialog'
+OvernightWarningDialog = require '../overnight_warning_dialog'
 PlacesMapContainer = require '../places_map_container'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -27,15 +28,23 @@ module.exports = class Places
         }
         {
           dataType: 'amenity'
-          filters: @getAmenityFilters()
+          filters: MapService.getAmenityFilters {@model}
         }
         {
           dataType: 'lowClearance'
-          filters: @getLowClearanceFilters()
+          filters: MapService.getLowClearanceFilters {@model}
           onclick: =>
             unless @model.cookie.get('hasSeenLowClearanceWarning')
               @model.cookie.set 'hasSeenLowClearanceWarning', '1'
               @model.overlay.open new ClearanceWarningDialog {@model}
+        }
+        {
+          dataType: 'overnight'
+          filters: MapService.getOvernightFilters {@model}
+          onclick: =>
+            unless @model.cookie.get('hasSeenOvernightWarning')
+              @model.cookie.set 'hasSeenOvernightWarning', '1'
+              @model.overlay.open new OvernightWarningDialog {@model}
         }
       ]
       optionalLayers: [
@@ -144,12 +153,6 @@ module.exports = class Places
     }
 
     @state = z.state {}
-
-  getAmenityFilters: =>
-    MapService.getAmenityFilters {@model}
-
-  getLowClearanceFilters: =>
-    MapService.getLowClearanceFilters {@model}
 
   getCampgroundFilters: =>
     [
