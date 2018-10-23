@@ -257,6 +257,8 @@ module.exports = class PlacesMapContainer
             z '.top-bar',
               z '.show', {
                 onclick: =>
+                  unless isTypesVisible
+                    ga? 'send', 'event', 'map', 'showTypes'
                   @state.set isTypesVisible: not isTypesVisible
               },
                 @model.l.get 'placesMapContainer.show'
@@ -271,6 +273,7 @@ module.exports = class PlacesMapContainer
                         hasValue: filter.value?
                       }
                       onclick: =>
+                        ga? 'send', 'event', 'map', 'filterClick', filter.field
                         if filter.type is 'booleanArray'
                           filter.valueSubject.next (not filter.value) or null
                         else
@@ -290,6 +293,7 @@ module.exports = class PlacesMapContainer
                     "#{dataType}": true
                   }
                   onclick: =>
+                    ga? 'send', 'event', 'map', 'typeClick', dataType
                     onclick?()
                     @state.set currentType: dataType
                     isCheckedSubject.next true
@@ -320,6 +324,7 @@ module.exports = class PlacesMapContainer
                 }
                 isImmediate: true
                 onclick: =>
+                  ga? 'send', 'event', 'map', 'showLayers'
                   @state.set isLayersPickerVisible: true
 
           z '.layers', {
@@ -343,6 +348,7 @@ module.exports = class PlacesMapContainer
                             if isVisible
                               layersVisible.splice index, 1
                             else
+                              ga? 'send', 'event', 'map', 'showLayer', layer.id
                               layersVisible.push layer.id
                             @state.set {layersVisible}
 

@@ -35,6 +35,8 @@ module.exports = class About
           z 'a', {
             href: 'http://github.com/freeroamapp'
             target: '_system'
+            onclick: ->
+              ga? 'send', 'event', 'about', 'github'
           }, @model.l.get 'general.here'
           '.'
         z 'p', @model.l.get 'about.text5'

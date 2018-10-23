@@ -57,5 +57,30 @@ class MapService
       }
     ]
 
+  getOvernightFilters: ({model}) ->
+    [
+      {
+        field: 'subType'
+        type: 'booleanArray'
+        arrayValue: 'walmart'
+        name: model.l.get 'overnight.walmart'
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'subType'
+        type: 'booleanArray'
+        arrayValue: 'restArea'
+        name: model.l.get 'overnight.restArea'
+        valueSubject: new RxBehaviorSubject null
+      }
+      {
+        field: 'subType'
+        type: 'booleanArray'
+        arrayValue: 'casino'
+        name: model.l.get 'overnight.casino'
+        valueSubject: new RxBehaviorSubject null
+      }
+    ]
+
 
 module.exports = new MapService()

@@ -34,12 +34,15 @@ module.exports = class Place
       place: place
 
   afterMount: =>
+    @disposable = @selectedIndex.subscribe (tabIndex) ->
+      ga? 'send', 'event', 'place', 'tab', tabIndex
     @tab.take(1).subscribe (tab) =>
       if tab is 'reviews'
         @selectedIndex.next 1
 
   beforeUnmount: =>
     @selectedIndex.next 0
+    @disposable?.unsubscribe()
 
   render: =>
     {place, selectedIndex} = @state.getValue()

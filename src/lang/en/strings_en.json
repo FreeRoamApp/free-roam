@@ -185,6 +185,9 @@
   "nps.title": "Thoughts?",
   "offlineOverlay.text": "Looks like you're offline. Reconnect to the internet to resume",
   "offlineOverlay.closeButtonText": "Close this message",
+  "overnightWarningDialog.title": "Heads up",
+  "overnightWarningDialog.text1": "We try to filter out ones that don't allow overnight parking, but it's always best to call ahead of time to verify, especially if you don't see any reviews from other travelers.",
+  "overnightWarningDialog.text2": "Remember to thank these companies by being respectful and shopping there!",
   "partners.howItWorks": "How it works",
   "partners.text1": "One of our primary goals with FreeRoam is to help others make money on the road.",
   "partners.text2": "You can apply to become a FreeRoam Partner to have your Amazon affiliate link used when you refer users to the app. If you refer someone to our app, we think *you* deserve the commission - not us - so we'll use your affiliate link 100% of the time in our product guides.",
@@ -317,10 +320,15 @@
 
   "lowClearance.maxClearance": "Max Clearance",
 
-  "placeTypes.campground": "Campgrounds",
+  "overnight.casino": "Casinos",
+  "overnight.restArea": "Rest Areas",
+  "overnight.walmart": "Walmarts",
+
   "placeTypes.amenity": "Amenities",
+  "placeTypes.campground": "Campgrounds",
   "placeTypes.cellTower": "Cell towers",
   "placeTypes.lowClearance": "Low clearances",
+  "placeTypes.overnight": "Overnights",
 
   "levelText.roadDifficulty1": "No problems with any vehicle",
   "levelText.roadDifficulty2": "Take it a little slow, but any vehicle should be fine",
