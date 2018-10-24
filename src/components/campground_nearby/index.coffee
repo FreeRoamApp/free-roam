@@ -45,7 +45,7 @@ module.exports = class CampgroundNearby
         {
           dataType: 'amenity'
           filters: @getAmenityFilters()
-          isChecked: true
+          defaultValue: true
         }
         {
           dataType: 'cellTower'

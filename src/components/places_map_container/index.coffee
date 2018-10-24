@@ -5,6 +5,7 @@ _zipWith = require 'lodash/zipWith'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
+_reduce = require 'lodash/reduce'
 _groupBy = require 'lodash/groupBy'
 _isEmpty = require 'lodash/isEmpty'
 _some = require 'lodash/some'
@@ -30,9 +31,10 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, @dataTypes, showScale, mapBounds
+    {@model, @router, @dataTypes, showScale, mapBounds, @persistentCookiePrefix,
       @addPlaces, @optionalLayers, initialZoom, @isFilterBarHidden} = options
 
+    @persistentCookiePrefix ?= 'default'
     @addPlaces ?= RxObservable.of []
 
     @dataTypesStream = @getDataTypesStreams @dataTypes
@@ -77,10 +79,19 @@ module.exports = class PlacesMapContainer
       @model, @router, filter
     }
 
-  getDataTypesStreams: (dataTypes) ->
+  getDataTypesStreams: (dataTypes) =>
+    persistentCookie = "#{@persistentCookiePrefix}_savedDataTypes"
+    savedDataTypes = try
+      JSON.parse @model.cookie.get persistentCookie
+    catch
+      {}
+
     dataTypes = _map dataTypes, (options) ->
-      {dataType, onclick, filters, isChecked, isCheckedSubject} = options
-      isCheckedSubject ?= new RxBehaviorSubject isChecked
+      {dataType, onclick, filters, defaultValue, isCheckedSubject} = options
+      savedValue = savedDataTypes[dataType]
+      isCheckedSubject ?= new RxBehaviorSubject(
+        if savedValue? then savedValue else defaultValue
+      )
       {
         dataType: dataType
         filters: filters
@@ -93,13 +104,40 @@ module.exports = class PlacesMapContainer
       _map dataTypes, 'isCheckedSubject'
       (vals...) -> vals
     )
-    .map (values) ->
+    .map (values) =>
       dataTypesWithValue = _zipWith dataTypes, values, (dataType, isChecked) ->
         _defaults {isChecked}, dataType
 
+      # set cookies to persist filters
+      savedDataTypes = _reduce dataTypesWithValue, (obj, dataType) ->
+        {dataType, isChecked} = dataType
+        if isChecked?
+          obj[dataType] = isChecked
+        obj
+      , {}
+      @model.cookie.set persistentCookie, JSON.stringify savedDataTypes
+
+      dataTypesWithValue
+
   getFilterTypesStream: =>
+    persistentCookie = "#{@persistentCookiePrefix}_savedFilters"
+    savedFilters = try
+      JSON.parse @model.cookie.get persistentCookie
+    catch
+      {}
     filters = _flatten _map @dataTypes, ({dataType, filters}) ->
-      _map filters, (filter) -> _defaults {dataType}, filter
+      _map filters, (filter) ->
+        if filter.type is 'booleanArray'
+          savedValueKey = "#{dataType}.#{filter.field}.#{filter.arrayValue}"
+        else
+          savedValueKey = "#{dataType}.#{filter.field}"
+        savedValue = savedFilters[savedValueKey]
+        _defaults {
+          dataType: dataType
+          valueSubject: new RxBehaviorSubject(
+            if savedValue? then savedValue else filter.defaultValue
+          )
+        }, filter
 
     if _isEmpty filters
       return RxObservable.of {}
@@ -108,9 +146,21 @@ module.exports = class PlacesMapContainer
       _map filters, 'valueSubject'
       (vals...) -> vals
     )
-    .map (values) ->
+    .map (values) =>
       filtersWithValue = _zipWith filters, values, (filter, value) ->
         _defaults {value}, filter
+
+      # set cookie to persist filters
+      savedFilters = _reduce filtersWithValue, (obj, filter) ->
+        {dataType, field, value, type, arrayValue} = filter
+        if value? and type is 'booleanArray'
+          obj["#{dataType}.#{field}.#{arrayValue}"] = value
+        else if value?
+          obj["#{dataType}.#{field}"] = value
+        obj
+      , {}
+      @model.cookie.set persistentCookie, JSON.stringify savedFilters
+
       _groupBy filtersWithValue, 'dataType'
 
   getPlacesStream: =>
@@ -239,7 +289,6 @@ module.exports = class PlacesMapContainer
             lat: currentLocation._sw.lat
             lon: currentLocation._ne.lng
     }
-    console.log filter
     filter
 
   render: =>
