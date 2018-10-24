@@ -16,13 +16,14 @@ module.exports = class MasonryGrid
   render: ({$elements, columnCounts}) =>
     {breakpoint} = @state.getValue()
 
-    columnCount = columnCounts[breakpoint or 'mobile']
+    columnCount = columnCounts[breakpoint or 'mobile'] or columnCounts['mobile']
     if columnCount is 1
       $sortedElements = $elements
     else
       $sortedElements = _flatten _map _range(columnCount), (columnIndex) ->
         _filter $elements, (element, i) ->
           i % columnCount is columnIndex
+
 
     z '.z-masonry-grid', {
       style:
