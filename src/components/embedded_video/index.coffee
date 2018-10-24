@@ -10,16 +10,22 @@ MAX_WIDTH_PX = 700
 PADDING_PX = 16
 
 module.exports = class EmbeddedVideo
-  constructor: ({@model, video}) ->
+  constructor: ({@model, video, @useParentWidth}) ->
     unless video.map
       @video = video
     @state = z.state
       windowSize: @model.window.getSize()
       video: @video
+      selfWidth: null
+
+  afterMount: (@$$el) =>
+    if @useParentWidth and width = @$$el.offsetWidth
+      @state.set selfWidth: width
 
   render: ({width} = {}) =>
-    {windowSize, video} = @state.getValue()
+    {windowSize, video, selfWidth} = @state.getValue()
 
+    width ?= selfWidth
     width ?= Math.min MAX_WIDTH_PX, windowSize.width - 16 * 2
     heightAspect = if video?.aspectRatio \
                    then 1 / video.aspectRatio
@@ -45,7 +51,7 @@ module.exports = class EmbeddedVideo
           }
           z '.play'
       else
-        z 'iframe',
+        z 'iframe.iframe',
           width: width
           height: height
           src: "https://www.youtube.com/embed/#{video.sourceId}?start=#{video.timestamp}"

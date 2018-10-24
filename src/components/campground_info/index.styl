@@ -48,25 +48,30 @@
     > .rating
       margin-bottom: 16px
 
-    > .g-cols
-      > .g-col
-        > .title
-          font-title()
-          margin-bottom: 8px
+    > .masonry
+      margin: -4px -16px // account for padding in .section
+    // TODO: move each section into own component, so we don't have to
+    // do a broad selector like this (ie without >)
+    .section
+      padding: 4px 16px
 
-        > .graph
-          width: 100%
+      > .title
+        font-title()
+        margin-bottom: 8px
 
-        > .carriers
-          display: flex
+      > .graph
+        width: 100%
 
-          > .carrier
-            font-caption2()
-            text-align: center
-            margin-right: 16px
+      > .carriers
+        display: flex
 
-            > .bars
-              padding: 5px 10px
+        > .carrier
+          font-caption2()
+          text-align: center
+          margin-right: 16px
 
-            > .type
-              font-caption3()
+          > .bars
+            padding: 5px 10px
+
+          > .type
+            font-caption3()

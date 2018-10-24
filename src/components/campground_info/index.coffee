@@ -1,15 +1,16 @@
 z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
-
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
+_filter = require 'lodash/filter'
 
 CellBars = require '../cell_bars'
 Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
 InfoLevel = require '../info_level'
 EmbeddedVideo = require '../embedded_video'
+MasonryGrid = require '../masonry_grid'
 Spinner = require '../spinner'
 Rating = require '../rating'
 colors = require '../../colors'
@@ -27,6 +28,7 @@ module.exports = class CampgroundInfo
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
     currentSeason = @model.time.getCurrentSeason()
+    @$masonryGrid = new MasonryGrid {@model}
     @$crowdsInfoLevelTabs = new InfoLevelTabs {
       @model, @router, tabs: seasons
       selectedTab: currentSeason, key: 'crowds'
@@ -63,7 +65,7 @@ module.exports = class CampgroundInfo
         {
           place
           $videos: _map place?.videos, (video) =>
-            new EmbeddedVideo {@model, video}
+            new EmbeddedVideo {@model, video, useParentWidth: true}
           cellCarriers: _map place?.cellSignal, (value, carrier) ->
             {
               carrier: carrier
@@ -114,73 +116,80 @@ module.exports = class CampgroundInfo
             z '.title', @model.l.get 'campground.drivingInstructions'
             place?.drivingInstructions
 
-        z '.g-cols',
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.cellSignal'
-            z '.carriers',
-              _map cellCarriers, ({$bars, carrier, type}) =>
-                z '.carrier',
-                  z '.name', @model.l.get "carriers.#{carrier}"
-                  z '.bars',
-                    z $bars, widthPx: 40
-                  z '.type', type
+        z '.masonry',
+          z @$masonryGrid,
+            columnCounts:
+              mobile: 1
+              desktop: 2
+              tablet: 2
+            $elements: _filter [
+              z '.section',
+                z '.title', @model.l.get 'campground.cellSignal'
+                z '.carriers',
+                  _map cellCarriers, ({$bars, carrier, type}) =>
+                    z '.carrier',
+                      z '.name', @model.l.get "carriers.#{carrier}"
+                      z '.bars',
+                        z $bars, widthPx: 40
+                      z '.type', type
 
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.crowds'
-            z @$crowdsInfoLevelTabs, {
-              value: place?.crowds
-              min: 1
-              max: 5
-            }
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.fullness'
-            z @$fullnessInfoLevelTabs, {
-              value: place?.fullness
-              min: 1
-              max: 5
-            }
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.noise'
-            z @$noiseInfoLevelTabs, {
-              value: place?.noise
-              min: 1
-              max: 5
-            }
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.shade'
-            z @$shadeInfoLevel, {
-              value: place?.shade
-              min: 1
-              max: 5
-            }
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.safety'
-            z @$safetyInfoLevel, {
-              value: place?.safety
-              min: 1
-              max: 5
-              isReversed: true # 5 is bad 1 is good
-            }
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campground.roadDifficulty'
-            z @$roadDifficultyInfoLevel, {
-              value: place?.roadDifficulty
-              min: 1
-              max: 5
-            }
+              z '.section',
+                z '.title', @model.l.get 'campground.crowds'
+                z @$crowdsInfoLevelTabs, {
+                  value: place?.crowds
+                  min: 1
+                  max: 5
+                }
+              z '.section',
+                z '.title', @model.l.get 'campground.fullness'
+                z @$fullnessInfoLevelTabs, {
+                  value: place?.fullness
+                  min: 1
+                  max: 5
+                }
+              z '.section',
+                z '.title', @model.l.get 'campground.noise'
+                z @$noiseInfoLevelTabs, {
+                  value: place?.noise
+                  min: 1
+                  max: 5
+                }
+              z '.section',
+                z '.title', @model.l.get 'campground.shade'
+                z @$shadeInfoLevel, {
+                  value: place?.shade
+                  min: 1
+                  max: 5
+                }
+              z '.section',
+                z '.title', @model.l.get 'campground.safety'
+                z @$safetyInfoLevel, {
+                  value: place?.safety
+                  min: 1
+                  max: 5
+                  isReversed: true # 5 is bad 1 is good
+                }
+              z '.section',
+                z '.title', @model.l.get 'campground.roadDifficulty'
+                z @$roadDifficultyInfoLevel, {
+                  value: place?.roadDifficulty
+                  min: 1
+                  max: 5
+                }
 
-          z '.g-col.g-xs-12.g-md-6',
-            z '.title', @model.l.get 'campgroundInfo.averageWeather'
-            z 'img.graph', {
-              src:
-                "#{config.USER_CDN_URL}/weather/campground_#{place?.id}.svg?12"
-            }
+              z '.section',
+                z '.title', @model.l.get 'campgroundInfo.averageWeather'
+                z 'img.graph', {
+                  src:
+                    "#{config.USER_CDN_URL}/weather/campground_#{place?.id}.svg?12"
+                }
 
-          unless _isEmpty $videos
-            z '.g-col.g-xs-12.g-md-6',
-              z '.title', @model.l.get 'general.videos'
-              z '.videos'
-                _map $videos, ($video) ->
-                  z $video
+              unless _isEmpty $videos
+                z '.section',
+                  z '.title', @model.l.get 'general.videos'
+                  z '.videos'
+                    _map $videos, ($video) ->
+                      z $video
+            ]
 
       z '.spinner', z @$spinner
