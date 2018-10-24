@@ -228,7 +228,6 @@ module.exports = class Map
 
   subscribeToPlaces: =>
     @disposable = @places.subscribe (places) =>
-      console.log 'places', places
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'
         features: _map places, (place) ->

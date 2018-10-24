@@ -20,11 +20,12 @@ module.exports = class Places
 
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router
+      persistentCookiePrefix: 'home'
       dataTypes: [
         {
           dataType: 'campground'
-          filters: @getCampgroundFilters()
-          isChecked: true
+          filters: MapService.getCampgroundFilters {@model}
+          defaultValue: true
         }
         {
           dataType: 'amenity'
@@ -153,64 +154,6 @@ module.exports = class Places
     }
 
     @state = z.state {}
-
-  getCampgroundFilters: =>
-    [
-      {
-        field: 'cellSignal'
-        type: 'cellSignal'
-        name: @model.l.get 'campground.cellSignal'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'roadDifficulty'
-        type: 'maxInt'
-        name: @model.l.get 'campground.roadDifficulty'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'crowds'
-        type: 'maxIntSeasonal'
-        name: @model.l.get 'campground.crowds'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'weather'
-        type: 'weather'
-        name: @model.l.get 'general.weather'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'distanceTo'
-        type: 'distanceTo'
-        name: @model.l.get 'campground.distanceTo'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'safety'
-        type: 'minInt'
-        name: @model.l.get 'campground.safety'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'noise'
-        type: 'maxIntDayNight'
-        name: @model.l.get 'campground.noise'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'fullness'
-        type: 'maxIntSeasonal'
-        name: @model.l.get 'campground.fullness'
-        valueSubject: new RxBehaviorSubject null
-      }
-      {
-        field: 'shade'
-        type: 'maxInt'
-        name: @model.l.get 'campground.shade'
-        valueSubject: new RxBehaviorSubject null
-      }
-    ]
 
   render: =>
     {} = @state.getValue()
