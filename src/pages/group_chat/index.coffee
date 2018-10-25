@@ -56,7 +56,7 @@ module.exports = class GroupChatPage
 
       conversationId ?= @model.cookie.get(lastConversationIdCookie)
       conversationId ?= _find(conversations, ({data, isDefault}) ->
-         isDefault or data?.name is 'general'
+        isDefault or data?.name is 'general'
       )?.id
       conversationId ?= conversations?[0]?.id
 
@@ -76,8 +76,8 @@ module.exports = class GroupChatPage
         RxObservable.of _find conversations, {id: conversationId}
       else
         RxObservable.of null
-    # breaks switching groups (leaves getMessagesStream as prev val)
-    # .publishReplay(1).refCount()
+    # i think this breaks switching groups (leaves getMessagesStream as prev val)
+    .publishReplay(1).refCount()
 
     @hasBottomBarObs = @model.window.getBreakpoint().map (breakpoint) ->
       breakpoint in ['mobile', 'tablet']

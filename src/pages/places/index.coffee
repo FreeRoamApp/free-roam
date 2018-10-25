@@ -25,6 +25,7 @@ module.exports = class PlacesPage
   getMeta: =>
     {
       title: @model.l.get 'general.places'
+      description: @model.l.get 'meta.defaultDescription'
     }
 
   render: =>

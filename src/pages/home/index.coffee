@@ -16,9 +16,12 @@ module.exports = class HomePage
       me: @model.user.getMe()
       windowSize: @model.window.getSize()
 
-  getMeta: ->
-    meta:
+  getMeta: =>
+    {
       canonical: "https://#{config.HOST}"
+      title: @model.l.get 'meta.defaultTitle'
+      description: @model.l.get 'meta.defaultDescription'
+    }
 
   render: =>
     {me, windowSize} = @state.getValue()
