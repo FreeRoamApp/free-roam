@@ -27,6 +27,9 @@ module.exports = class User
   setPartner: (partner) =>
     @auth.call "#{@namespace}.setPartner", {partner}
 
+  upsert: (userDiff) =>
+    @auth.call "#{@namespace}.upsert", {userDiff}
+
   setAvatarImage: (file) =>
     formData = new FormData()
     formData.append 'file', file, file.name

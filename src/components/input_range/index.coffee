@@ -16,7 +16,7 @@ module.exports = class InputRange
     if @valueStreams
       @valueStreams.next RxObservable.of value
     else
-      @value.next $$el.value
+      @value.next value
 
   render: ({label} = {}) =>
     {value} = @state.getValue()
