@@ -204,10 +204,10 @@ module.exports = class UploadImagesPreview
               @onUploading imageData.dataUrl, {clientId}
               @uploadFn imageData.file, {
                 onProgress: (response) =>
-                  console.log 'onprogress', response
                   @onProgress response, {clientId}
               }
               .then (response) =>
+                console.log 'done', response
                 @onUpload(
                   _defaults(response, {caption, location, tags})
                   {clientId}

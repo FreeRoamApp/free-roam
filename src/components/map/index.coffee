@@ -171,7 +171,7 @@ module.exports = class Map
           rating = if e.features[0].properties.rating is 'null' \
                    then 0
                    else e.features[0].properties.rating
-          thumbnailUrl = e.features[0].properties.thumbnailUrl
+          thumbnailPrefix = e.features[0].properties.thumbnailPrefix
           # Ensure that if the map is zoomed out such that multiple
           # copies of the feature are visible, the popup appears
           # over the copy being pointed to.
@@ -185,7 +185,7 @@ module.exports = class Map
             name: name
             description: description
             rating: rating
-            thumbnailUrl: thumbnailUrl
+            thumbnailPrefix: thumbnailPrefix
             position: position
             location: coordinates
           }
@@ -238,7 +238,7 @@ module.exports = class Map
               slug: place.slug
               rating: place.rating
               description: place.description
-              thumbnailUrl: place.thumbnailUrl
+              thumbnailPrefix: place.thumbnailPrefix
               type: place.type
               icon: place.icon or 'default'
             geometry:

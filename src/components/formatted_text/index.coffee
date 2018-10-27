@@ -75,14 +75,14 @@ module.exports = class FormattedText
                        then undefined
                        else 200
 
-          imageAspectRatioRegex = /%20=([0-9.]+)x([0-9.]+)/ig
+          imageAspectRatioRegex = /%20=([0-9.]+)/ig
           localImageRegex = ///
             #{config.USER_CDN_URL.replace '/', '\/'}/cm/(.*?)\.
           ///ig
           imageSrc = props.src
 
           if matches = imageAspectRatioRegex.exec imageSrc
-            imageAspectRatio = matches[1] / matches[2]
+            imageAspectRatio = matches[1]
             imageSrc = imageSrc.replace matches[0], ''
           else
             imageAspectRatio = null

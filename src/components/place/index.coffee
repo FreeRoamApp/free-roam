@@ -25,8 +25,12 @@ module.exports = class Place
     @$fab = new Fab()
     @$addIcon = new Icon()
     @$tabs = new Tabs {@model, @selectedIndex}
+
+    # TODO: PlaceInfo? or select appropriate component here
     @$placeInfo = new CampgroundInfo {@model, @router, place}
     @$reviews = new Reviews {@model, @router, parent: place}
+
+    # TODO PlaceNearby
     @$nearby = new CampgroundNearby {@model, @router, place}
 
     @state = z.state
@@ -50,7 +54,6 @@ module.exports = class Place
     z '.z-place',
       z @$tabs,
         isBarFixed: false
-        hasAppBar: true
         tabs: [
           {
             $menuText: @model.l.get 'general.info'

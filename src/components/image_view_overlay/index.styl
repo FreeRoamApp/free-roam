@@ -19,19 +19,26 @@
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), getColor('$black'))
     z-index: $zIndexImagePreviewOverlay
 
-  > img
-    margin: auto
-    max-width: 100%
-
-  > .fab
+  > .previous, > .next
     position: absolute
-    z-index: $zIndexImagePreviewFab
-    bottom: 16px
-    left: 50%
-    margin-left: -28px
+    top: 50%
+    z-index: 99
 
-  > .close
-    position: absolute
-    z-index: $zIndexImagePreviewClose
+  > .previous
     left: 0
-    bottom: 16px
+
+  > .next
+    right: 0
+
+  > .slider
+    flex1()
+    display: flex
+    flex-direction: column
+
+.z-image-view-overlay_image
+  display: block
+  margin: auto
+  user-drag: none
+  -webkit-user-drag: none
+  -moz-user-drag: none
+  -ms-user-drag: none

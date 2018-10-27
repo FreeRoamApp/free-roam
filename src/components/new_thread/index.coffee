@@ -53,7 +53,6 @@ module.exports = class NewThread
       titleValue: @titleValueStreams.switch()
       bodyValue: @bodyValueStreams.switch()
       attachmentsValue: @attachmentsValueStreams.switch()
-      language: @model.l.getLanguage()
       category: category
       thread: @thread
       group: group
@@ -71,7 +70,7 @@ module.exports = class NewThread
 
   render: =>
     {me, titleValue, bodyValue, attachmentsValue,
-      category, thread, language, group} = @state.getValue()
+      category, thread, group} = @state.getValue()
 
     z '.z-new-thread',
       z @$compose,
@@ -86,7 +85,6 @@ module.exports = class NewThread
                 title: titleValue
                 body: bodyValue
                 attachments: attachmentsValue
-              language: language
               groupId: group.id
             }
             (if thread

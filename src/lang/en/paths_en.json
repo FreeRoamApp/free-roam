@@ -21,11 +21,13 @@
   "amenity": "/amenity/:slug",
   "backpack": "/backpack",
   "home": "",
+
   "campground": "/campground/:slug",
   "campgroundAttachments": "/campground/:slug/attachments",
   "campgroundWithTab": "/campground/:slug/:tab",
   "campgroundNewReview": "/campground/:slug/new-review",
   "campgroundEditReview": "/campground/:slug/review/:reviewId/edit",
+
   "conversation": "/conversation/:id",
   "conversations": "/conversations",
   "editProfile": "/editProfile",
@@ -34,6 +36,13 @@
   "itemsBySearch": "/product-guides/search/:query",
   "newAmenity": "/new-amenity",
   "newCampground": "/new-campground",
+
+  "overnight": "/overnight/:slug",
+  "overnightAttachments": "/overnight/:slug/attachments",
+  "overnightWithTab": "/overnight/:slug/:tab",
+  "overnightNewReview": "/overnight/:slug/new-review",
+  "overnightEditReview": "/overnight/:slug/review/:reviewId/edit",
+
   "partners": "/partners",
   "places": "/places",
   "policies": "/policies",

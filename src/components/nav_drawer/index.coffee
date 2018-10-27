@@ -21,7 +21,7 @@ colors = require '../../colors'
 config = require '../../config'
 
 if window?
-  IScroll = require 'iscroll/build/iscroll-lite-snap.js'
+  IScroll = require 'iscroll/build/iscroll-lite-snap-zoom.js'
   require './index.styl'
 
 module.exports = class NavDrawer

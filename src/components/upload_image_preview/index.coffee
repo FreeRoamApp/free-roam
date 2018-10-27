@@ -28,7 +28,9 @@ module.exports = class UploadImagePreview
     iconName ?= 'upload'
 
     if imageData.width
-      imageAspectRatio = imageData.width / imageData.height
+      imageAspectRatio = imageData.aspectRatio or (
+        imageData.width / imageData.height
+      )
       windowAspectRatio = windowSize.width / windowSize.height
       # 3:1, 1:1
       if imageAspectRatio > windowAspectRatio

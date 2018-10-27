@@ -26,16 +26,18 @@ module.exports = class MarkdownEditor
       @imageData
       @model
       @uploadFn
-      onUpload: ({smallUrl, largeUrl, key, width, height}) =>
-        console.log 'upload', arguments
+      onUpload: ({prefix, aspectRatio}) =>
         {attachments} = @state.getValue()
 
         attachments or= []
         @attachmentsValueStreams.next RxObservable.of(attachments.concat [
-          {type: 'image', src: smallUrl, smallSrc: smallUrl, largeSrc: largeUrl}
+          {type: 'image', prefix}
         ])
+
+        src = @model.image.getSrcByPrefix prefix, 'large'
+
         @$textarea.setModifier {
-          pattern: "![](<#{largeUrl} =#{width}x#{height}>)"
+          pattern: "![](<#{src} =#{aspectRatio}>)"
         }
     }
 
@@ -77,6 +79,9 @@ module.exports = class MarkdownEditor
 
     @$textarea = new Textarea {@valueStreams, @error}
 
+    @state = z.state {
+      attachments: @attachmentsValueStreams.switch()
+    }
 
   render: ({hintText, imagesAllowed} = {}) =>
     imagesAllowed ?= true
@@ -118,5 +123,5 @@ module.exports = class MarkdownEditor
                         width: img.width
                         height: img.height
                       }
-                      @model.overlay.close() @$uploadImagePreview
+                      @model.overlay.open @$uploadImagePreview
                 }

@@ -9,7 +9,19 @@ module.exports = class Base
       @cachedComponents[id] = $component
       return $component
 
-  afterMount: =>
+  fadeInWhenLoaded: (url) =>
+    console.log 'call fade'
+    @isImageLoaded = @model.image.isLoaded url
+    console.log 'check', @isImageLoaded, url
+    unless @isImageLoaded
+      @model.image.load url
+      .then =>
+        # don't want to re-render entire state every time a pic loads in
+        @$$el?.classList.add 'is-image-loaded'
+        @isImageLoaded = true
+
+  afterMount: (@$$el) =>
+    @isImageLoaded = false
     clearTimeout @clearCacheTimeout
 
   beforeUnmount: (cachedElStoreTimeMs) =>

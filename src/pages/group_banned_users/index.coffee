@@ -68,7 +68,6 @@ module.exports = class GroupBannedUsersPage
       }
       z @$tabs,
         isBarFixed: false
-        hasAppBar: true
         tabs: [
           {
             $menuText: @model.l.get 'groupBannedUsersPage.tempBanned'

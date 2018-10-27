@@ -14,19 +14,16 @@ module.exports = class Thread
   getAll: (options = {}) =>
     {groupId, category, sort, skip, maxId,
       limit, ignoreCache} = options
-    language = @l.getLanguageStr()
     @auth.stream "#{@namespace}.getAll", {
-      groupId, category, language, skip, maxId, limit, sort
+      groupId, category, skip, maxId, limit, sort
     }, {ignoreCache}
 
   getById: (id, {ignoreCache} = {}) =>
-    language = @l.getLanguageStr()
-    @auth.stream "#{@namespace}.getById", {id, language}, {ignoreCache}
+    @auth.stream "#{@namespace}.getById", {id}, {ignoreCache}
 
   getBySlug: (slug, {ignoreCache} = {}) =>
-    language = @l.getLanguageStr()
     @auth.stream "#{@namespace}.getBySlug", {
-      slug, language
+      slug
     }, {ignoreCache}
 
   updateById: (id, diff) =>

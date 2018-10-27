@@ -8808,7 +8808,7 @@
       "dev": true
     },
     "iscroll": {
-      "version": "git://github.com/claydotio/iscroll.git#618f5ea83c6310bd66043d7cff5f436e5341fd7b",
+      "version": "git://github.com/claydotio/iscroll.git#5386c3291c8f65321fb7dafbc7e5bd60790541f6",
       "from": "git://github.com/claydotio/iscroll.git"
     },
     "isemail": {
