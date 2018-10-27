@@ -5,6 +5,7 @@ _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 _filter = require 'lodash/filter'
 
+Base = require '../base'
 CellBars = require '../cell_bars'
 Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
@@ -19,8 +20,8 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class CampgroundInfo
-  constructor: ({@model, @router, place}) ->
+module.exports = class CampgroundInfo extends Base
+  constructor: ({@model, @router, @place}) ->
     seasons =  [
       {key: 'spring', text: @model.l.get 'seasons.spring'}
       {key: 'summer', text: @model.l.get 'seasons.summer'}
@@ -52,16 +53,12 @@ module.exports = class CampgroundInfo
       @model, @router, key: 'roadDifficulty'
     }
     @$rating = new Rating {
-      value: place.map (place) -> place?.rating
+      value: @place.map (place) -> place?.rating
     }
     @$spinner = new Spinner()
 
     @state = z.state
-      attachments: place.switchMap (place) =>
-        unless place
-          return RxObservable.of null
-        @model.campgroundAttachment.getAllByParentId place.id
-      place: place.map (place) =>
+      place: @place.map (place) =>
         {
           place
           $videos: _map place?.videos, (video) =>
@@ -74,19 +71,41 @@ module.exports = class CampgroundInfo
             }
         }
 
+  afterMount: =>
+    super
+    # FIXME: figure out why i can't use take(1) here...
+    # returns null for some. probably has to do with the unloading we do in
+    # pages/base
+    @disposable = @place.subscribe (place) =>
+      if place?.attachmentsPreview?.count
+        @fadeInWhenLoaded @getCoverUrl(place)
+
+  beforeUnmount: =>
+    super
+    @disposable?.unsubscribe()
+
+  getCoverUrl: (place) =>
+    @model.image.getSrcByPrefix(
+      place.attachmentsPreview.first.prefix, 'large'
+    )
+
   render: =>
-    {place, attachments} = @state.getValue()
+    {place} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
 
+    console.log 'loaded', @isImageLoaded
+
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
-    z '.z-campground-info', {className: z.classKebab {isLoading}},
-      unless _isEmpty attachments
+    z '.z-campground-info', {
+      className: z.classKebab {isLoading, @isImageLoaded}
+    },
+      if place?.attachmentsPreview?.count
+        src = @getCoverUrl place
         z '.cover', {
           style:
-            backgroundImage:
-              "url(#{attachments[0].largeSrc})"
+            backgroundImage: "url(#{src})"
         },
           @router.link z 'a.see-more', {
             href: @router.get 'campgroundAttachments', {
@@ -94,7 +113,7 @@ module.exports = class CampgroundInfo
             }
           },
             @model.l.get 'campgroundInfo.seeAll', {
-              replacements: {count: attachments.length}
+              replacements: {count: place.attachmentsPreview.count}
             }
       z '.g-grid',
         z '.location',

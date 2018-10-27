@@ -220,7 +220,9 @@ module.exports = class App
                 Environment.isNativeApp('freeroam', {userAgent})
     route 'about', 'AboutPage'
     route ['campgroundAttachments'], 'PlaceAttachmentsPage'
-    route ['amenity', 'campground', 'campgroundWithTab'], 'PlacePage'
+    route [
+      'amenity', 'campground', 'campgroundWithTab', 'overnight'
+    ], 'PlacePage'
     route 'backpack', 'BackpackPage'
     route ['campgroundNewReview'], 'NewReviewPage'
     route ['campgroundEditReview'], 'EditReviewPage'

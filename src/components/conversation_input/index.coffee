@@ -40,9 +40,9 @@ module.exports = class ConversationInput
       @imageData
       @model
       uploadFn: @model.conversationMessage.uploadImage
-      onUpload: ({key, width, height}) =>
-        @message.next "![](<#{config.USER_CDN_URL}/cm/#{key}.small.jpg" +
-                          " =#{width}x#{height}>)"
+      onUpload: ({prefix, aspectRatio}) =>
+        @message.next "![](<#{@model.image.getSrcByPrefix(prefix, 'small')}" +
+                          " =#{aspectRatio}>)"
         @onPost()
     }
 

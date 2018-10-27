@@ -6,12 +6,13 @@ _find = require 'lodash/find'
 
 Icon = require '../icon'
 Rating = require '../rating'
+Base = require '../base'
 colors = require '../../colors'
 
 if window?
   require './index.styl'
 
-module.exports = class PlaceTooltip
+module.exports = class PlaceTooltip extends Base
   constructor: ({@model, @router, @place, @position, @mapSize}) ->
     @$closeIcon = new Icon()
     @$rating = new Rating {
@@ -27,8 +28,11 @@ module.exports = class PlaceTooltip
     }
 
   afterMount: (@$$el) =>
+    super
     @disposable = @place.subscribe (place) =>
       if place
+        thumbnailUrl = @getThumbnailUrl place
+        @fadeInWhenLoaded thumbnailUrl
         setImmediate =>
           @size.next {width: @$$el.offsetWidth, height: @$$el.offsetHeight}
       else
@@ -89,6 +93,9 @@ module.exports = class PlaceTooltip
     yPx = position?.y
     "translate(#{xPercent}%, #{yPercent}%) translate(#{xPx}px, #{yPx}px)"
 
+  getThumbnailUrl: (place) =>
+    @model.image.getSrcByPrefix place?.thumbnailPrefix, 'tiny'
+
   render: ({isVisible} = {}) =>
     {place, mapSize, size} = @state.getValue()
 
@@ -97,11 +104,11 @@ module.exports = class PlaceTooltip
     anchor = @getAnchor place?.position, mapSize, size
     transform = @getTransform place?.position, anchor
 
-    isDisabled = place?.type isnt 'campground'
+    isDisabled = not place?.type in ['campground']#, 'overnight']
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
       href: if not isDisabled then @router.get place?.type, {slug: place?.slug}
-      className: z.classKebab {isVisible}
+      className: z.classKebab {isVisible, @isImageLoaded}
       onclick: (e) =>
         e?.stopPropagation()
         if place?.type is 'lowClearance'
@@ -127,10 +134,11 @@ module.exports = class PlaceTooltip
             e?.stopPropagation()
             e?.preventDefault()
             @place.next null
-      if place?.thumbnailUrl
+      if place?.thumbnailPrefix
+        src = @getThumbnailUrl place
         z '.thumbnail',
           style:
-            backgroundImage: "url(#{place?.thumbnailUrl})"
+            backgroundImage: "url(#{src})"
       z '.content',
         z '.title', place?.name
         if place?.description

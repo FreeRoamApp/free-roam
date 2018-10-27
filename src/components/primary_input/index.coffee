@@ -22,9 +22,12 @@ module.exports = class PrimaryInput extends Input
 
     opts.type = if isPasswordVisible then 'text' else opts.type
 
-    z '.z-primary-input',
+    isFullWidth = opts.isFullWidth
+
+    z '.z-primary-input', {
+      className: z.classKebab {isFullWidth}
+    },
       super _defaults opts, {
-        isFullWidth: true
         isRaised: true
         isFloating: true
         isDark: true

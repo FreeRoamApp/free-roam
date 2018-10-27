@@ -5,18 +5,21 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 TabsBar = require '../../components/tabs_bar'
 
 if window?
-  IScroll = require 'iscroll/build/iscroll-lite-snap.js'
+  IScroll = require 'iscroll/build/iscroll-lite-snap-zoom.js'
   require './index.styl'
 
+TRANSITION_TIME_MS = 500 # 0.5s
 
 module.exports = class Tabs
-  constructor: ({@model, @selectedIndex, @isPageScrolling, hideTabBar}) ->
+  constructor: (options) ->
+    {@model, @selectedIndex, @isPageScrolling, hideTabBar} = options
     @selectedIndex ?= new RxBehaviorSubject 0
     @isPageScrolling ?= new RxBehaviorSubject false
     @mountDisposable = null
     @iScrollContainer = null
     @isPaused = false
     @transformProperty = window?.getTransformProperty()
+    @transitionTime = TRANSITION_TIME_MS
 
     @$tabsBar = new TabsBar {@model, @selectedIndex}
 
@@ -49,12 +52,16 @@ module.exports = class Tabs
   # onTouchEnd: =>
   #   @isPageScrolling.next false
 
+  disableTransition: => @transitionTime = 0
+
+  enableTransition: => @transitionTime = TRANSITION_TIME_MS
+
   toggle: (mode) =>
     if mode is 'enable' and @isPaused
-      @iScrollContainer.enable()
+      @iScrollContainer?.enable()
       @isPaused = false
     else if mode is 'disable' and not @isPaused
-      @iScrollContainer.disable()
+      @iScrollContainer?.disable()
       @isPaused = true
 
   initIScroll: ($$container) =>
@@ -109,7 +116,7 @@ module.exports = class Tabs
 
     @mountDisposable = @selectedIndex.do((index) =>
       if @iScrollContainer.pages?[index]
-        @iScrollContainer.goToPage index, 0, 500
+        @iScrollContainer.goToPage index, 0, @transitionTime
       unless hideTabBar
         @$$selector = document.querySelector '.z-tabs-bar .selector'
         updateSelectorPosition()
@@ -117,7 +124,7 @@ module.exports = class Tabs
 
   render: (options) =>
     {tabs, barColor, barBgColor, barInactiveColor, isBarFixed, isBarFlat,
-      barTabWidth, hasAppBar, windowSize, vDomKey, barStyle} = options
+      barTabWidth, windowSize, vDomKey, barStyle} = options
 
     tabs ?= [{$el: ''}]
     x = @iScrollContainer?.x

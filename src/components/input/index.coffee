@@ -24,8 +24,8 @@ module.exports = class Input
     }
 
   render: (props) =>
-    {colors, hintText, type, isFloating, isDisabled,
-      isDark, isCentered} = props
+    {colors, hintText, type, isFloating, isDisabled, isFullWidth,
+      isDark, isCentered, disableAutoComplete} = props
 
     {value, error, isFocused} = @state.getValue()
 
@@ -60,6 +60,9 @@ module.exports = class Input
       z 'input.input',
         attributes:
           disabled: if isDisabled then true else undefined
+          autocomplete: if disableAutoComplete then 'off' else undefined
+          # hack to get chrome to not autofill
+          readonly: if disableAutoComplete then true else undefined
           type: type
         value: value or ''
         oninput: z.ev (e, $$el) =>
@@ -68,6 +71,8 @@ module.exports = class Input
           else
             @value.next $$el.value
         onfocus: z.ev (e, $$el) =>
+          if disableAutoComplete
+            $$el.removeAttribute 'readonly' # hack to get chrome to not autofill
           @isFocused.next true
         onblur: z.ev (e, $$el) =>
           @isFocused.next false

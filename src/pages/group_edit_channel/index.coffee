@@ -53,7 +53,6 @@ module.exports = class GroupEditChannelPage
       }
       z @$tabs,
         isBarFixed: false
-        hasAppBar: true
         tabs: [
           {
             $menuText: @model.l.get 'general.info'

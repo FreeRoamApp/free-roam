@@ -50,10 +50,12 @@ module.exports = class PlaceAttachmentsPage extends BasePage
         height: "#{windowSize.height}px"
     },
       z @$appBar, {
-        title: @model.l.get 'placeAttachmentsPage.title', {
-          replacements:
-            name: place?.name
-        }
+        title:
+          if place
+            @model.l.get 'placeAttachmentsPage.title', {
+              replacements:
+                name: place?.name
+            }
         isFlat: true
         style: 'primary'
         $topLeftButton: z @$buttonBack, {

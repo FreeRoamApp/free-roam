@@ -14,7 +14,11 @@ PLACEHOLDER_URL = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzI
 module.exports = class Avatar
   render: ({size, user, groupUser, src}) ->
     size ?= DEFAULT_SIZE
-    src or= src or user?.avatarImage?.smallUrl or PLACEHOLDER_URL
+
+    if prefix = user?.avatarImage?.prefix
+      src or= "#{config.USER_CDN_URL}/#{prefix}.small.jpg"
+    # smallUrl is legacy. can probably get rid of in 2019
+    src or= user?.avatarImage?.smallUrl or PLACEHOLDER_URL
 
     playerColors = config.PLAYER_COLORS
     lastChar = user?.id?.substr(user?.id?.length - 1, 1) or 'a'

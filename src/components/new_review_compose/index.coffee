@@ -55,15 +55,13 @@ module.exports = class NewReviewCompose
         attachments[attachmentIndex].progress = response.loaded / response.total
         @attachmentsValueStreams.next RxObservable.of attachments
       onUpload: (response, {clientId}) =>
-        {caption, tags, smallUrl, largeUrl, key, location,
-          width, height, aspectRatio} = response
+        {caption, tags, id, prefix, location, aspectRatio} = response
 
         {attachments} = @state.getValue()
 
         attachmentIndex = _findIndex attachments, {clientId}
         attachments[attachmentIndex] = {
-          type: 'image', aspectRatio, caption, tags, location, src: smallUrl
-          smallSrc: smallUrl, largeSrc: largeUrl
+          type: 'image', aspectRatio, caption, tags, location, id, prefix
         }
         @attachmentsValueStreams.next RxObservable.of attachments
     }
@@ -140,11 +138,12 @@ module.exports = class NewReviewCompose
                     @multiImageData.next multiImageData
                     @model.overlay.open @$uploadImagesPreview
               }
-          _map attachments, ({dataUrl, smallSrc, isUploading, progress}) ->
+          _map attachments, ({dataUrl, prefix, isUploading, progress}) =>
+            src = @model.image.getSrcByPrefix prefix, 'small'
             z '.attachment', {
               className: z.classKebab {isUploading}
               style:
-                backgroundImage: "url(#{dataUrl or smallSrc})"
+                backgroundImage: "url(#{dataUrl or src})"
             },
               z '.progress', {
                 style:

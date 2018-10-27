@@ -27,24 +27,26 @@ module.exports = class User
   setPartner: (partner) =>
     @auth.call "#{@namespace}.setPartner", {partner}
 
-  upsert: (userDiff) =>
-    @auth.call "#{@namespace}.upsert", {userDiff}
+  upsert: (userDiff, {file} = {}) =>
+    if file
+      formData = new FormData()
+      formData.append 'file', file, file.name
 
-  setAvatarImage: (file) =>
-    formData = new FormData()
-    formData.append 'file', file, file.name
-
-    @proxy config.API_URL + '/upload', {
-      method: 'post'
-      query:
-        path: "#{@namespace}.setAvatarImage"
-      body: formData
-    }
-    # this (exoid.update) doesn't actually work... it'd be nice
-    # but it doesn't update existing streams
-    # .then @exoid.update
-    .then =>
-      setImmediate @exoid.invalidateAll
+      @proxy config.API_URL + '/upload', {
+        method: 'post'
+        query:
+          path: "#{@namespace}.upsert"
+          body: JSON.stringify {userDiff}
+        body: formData
+      }
+      # this (exoid.update) doesn't actually work... it'd be nice
+      # but it doesn't update existing streams
+      # .then @exoid.update
+      .then (response) =>
+        setImmediate @exoid.invalidateAll
+        response
+    else
+      @auth.call "#{@namespace}.upsert", {userDiff}
 
   getDisplayName: (user) =>
     user?.username or @l.get 'general.anonymous'

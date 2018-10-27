@@ -1,0 +1,27 @@
+@require '../../vars'
+
+.z-pinch-zoom
+  flex1()
+  display: flex
+  flex-direction: column
+  // prevents iscroll screwups
+  overflow-x: hidden
+  overflow-y: auto
+  -webkit-overflow-scrolling: touch
+  -webkit-tap-highlight-color: transparent
+  position: relative
+  z-index: 1
+  left: 0
+  top: 0
+  width: 100%
+  height: 100%
+
+  > .scroller
+    flex1()
+    display: flex
+    overflow: hidden
+    touch-action: none
+
+    > .content
+      flex1()
+      display: flex

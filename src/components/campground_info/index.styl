@@ -5,12 +5,18 @@
   overflow: auto
   -webkit-overflow-scrolling: touch
 
+  &.is-image-loaded
+    > .cover
+      opacity: 1
+      transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+
   > .cover
     width: 100%
     height: 200px
     background-size: cover // this might slow down browser a bit, could find alternative solution (might need to use js)
     background-position: center
     position: relative
+    opacity: 0
 
     > .see-more
       font-caption1()

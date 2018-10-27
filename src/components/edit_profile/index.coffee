@@ -125,18 +125,22 @@ module.exports = class EditProfile
           z '.input',
             z @$usernameInput,
               hintText: @model.l.get 'general.username'
+              isFullWidth: false
 
         z '.section',
           z '.input',
             z @$newPasswordInput,
               hintText: @model.l.get 'editProfile.newPassword'
+              isFullWidth: false
               type: 'password'
+              disableAutoComplete: true
 
         if newPassword
           z '.section',
             z '.input',
               z @$currentPasswordInput,
                 hintText: @model.l.get 'editProfile.currentPassword'
+                isFullWidth: false
                 type: 'password'
 
         z '.section',
