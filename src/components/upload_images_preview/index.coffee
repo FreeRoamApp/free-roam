@@ -118,8 +118,6 @@ module.exports = class UploadImagesPreview
     {multiImageData, imageIndex, location, tags,
       isLoading, windowSize} = @state.getValue()
 
-    console.log 'tags', tags
-
     {imageData, $captionInput, $tagInput, $tagButton, $includeLocationCheckbox
       tagValueSubject, tagsValueSubject} = multiImageData?[imageIndex] or {}
     imageData ?= {}

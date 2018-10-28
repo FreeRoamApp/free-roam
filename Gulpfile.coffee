@@ -198,6 +198,7 @@ gulp.task 'dist:scripts', ['dist:clean', 'dist:sw'], ->
       ]
     }
     plugins: [
+      # new BundleAnalyzerPlugin()
       new webpack.IgnorePlugin /\.json$/, /lang/
       new MiniCssExtractPlugin {
         filename: "bundle.css"

@@ -94,11 +94,9 @@ module.exports = class CampgroundInfo extends Base
 
     {place, $videos, cellCarriers} = place or {}
 
-    console.log 'loaded', @isImageLoaded
-
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
-    z '.z-campground-info', {
+    z '.z-place-info', {
       className: z.classKebab {isLoading, @isImageLoaded}
     },
       if place?.attachmentsPreview?.count
@@ -151,57 +149,51 @@ module.exports = class CampgroundInfo extends Base
                       z '.bars',
                         z $bars, widthPx: 40
                       z '.type', type
+              if place?.type in ['campground']
+                z '.section',
+                  z '.title', @model.l.get 'campground.crowds'
+                  z @$crowdsInfoLevelTabs, {
+                    value: place?.crowds
+                  }
+              if place?.type in ['campground']
+                z '.section',
+                  z '.title', @model.l.get 'campground.fullness'
+                  z @$fullnessInfoLevelTabs, {
+                    value: place?.fullness
+                  }
+              if place?.type in ['campground', 'overnight']
+                z '.section',
+                  z '.title', @model.l.get 'campground.noise'
+                  z @$noiseInfoLevelTabs, {
+                    value: place?.noise
+                  }
+              if place?.type in ['campground']
+                z '.section',
+                  z '.title', @model.l.get 'campground.shade'
+                  z @$shadeInfoLevel, {
+                    value: place?.shade
+                  }
+              if place?.type in ['campground', 'overnight']
+                z '.section',
+                  z '.title', @model.l.get 'campground.safety'
+                  z @$safetyInfoLevel, {
+                    value: place?.safety
+                    isReversed: true # 5 is bad 1 is good
+                  }
+              if place?.type in ['campground']
+                z '.section',
+                  z '.title', @model.l.get 'campground.roadDifficulty'
+                  z @$roadDifficultyInfoLevel, {
+                    value: place?.roadDifficulty
+                  }
 
-              z '.section',
-                z '.title', @model.l.get 'campground.crowds'
-                z @$crowdsInfoLevelTabs, {
-                  value: place?.crowds
-                  min: 1
-                  max: 5
-                }
-              z '.section',
-                z '.title', @model.l.get 'campground.fullness'
-                z @$fullnessInfoLevelTabs, {
-                  value: place?.fullness
-                  min: 1
-                  max: 5
-                }
-              z '.section',
-                z '.title', @model.l.get 'campground.noise'
-                z @$noiseInfoLevelTabs, {
-                  value: place?.noise
-                  min: 1
-                  max: 5
-                }
-              z '.section',
-                z '.title', @model.l.get 'campground.shade'
-                z @$shadeInfoLevel, {
-                  value: place?.shade
-                  min: 1
-                  max: 5
-                }
-              z '.section',
-                z '.title', @model.l.get 'campground.safety'
-                z @$safetyInfoLevel, {
-                  value: place?.safety
-                  min: 1
-                  max: 5
-                  isReversed: true # 5 is bad 1 is good
-                }
-              z '.section',
-                z '.title', @model.l.get 'campground.roadDifficulty'
-                z @$roadDifficultyInfoLevel, {
-                  value: place?.roadDifficulty
-                  min: 1
-                  max: 5
-                }
-
-              z '.section',
-                z '.title', @model.l.get 'campgroundInfo.averageWeather'
-                z 'img.graph', {
-                  src:
-                    "#{config.USER_CDN_URL}/weather/campground_#{place?.id}.svg?12"
-                }
+              if place?.type in ['campground']
+                z '.section',
+                  z '.title', @model.l.get 'campgroundInfo.averageWeather'
+                  z 'img.graph', {
+                    src:
+                      "#{config.USER_CDN_URL}/weather/campground_#{place?.id}.svg?12"
+                  }
 
               unless _isEmpty $videos
                 z '.section',

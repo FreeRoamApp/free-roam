@@ -104,7 +104,7 @@ module.exports = class PlaceTooltip extends Base
     anchor = @getAnchor place?.position, mapSize, size
     transform = @getTransform place?.position, anchor
 
-    isDisabled = not place?.type in ['campground']#, 'overnight']
+    isDisabled = not place?.type in ['campground', 'overnight']
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
       href: if not isDisabled then @router.get place?.type, {slug: place?.slug}

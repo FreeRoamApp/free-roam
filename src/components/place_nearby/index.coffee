@@ -16,7 +16,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class CampgroundNearby
+module.exports = class PlaceNearby
   constructor: ({@model, @router, @place}) ->
 
     addPlaces = @place.map (place) ->
@@ -32,7 +32,7 @@ module.exports = class CampgroundNearby
     mapBounds = @place.switchMap (place) =>
       unless place
         return RxObservable.of {}
-      @model.campground.getAmenityBoundsById place.id
+      @model[place.type].getAmenityBoundsById place.id
 
     @isCellTowersChecked = new RxBehaviorSubject false
 
@@ -90,7 +90,7 @@ module.exports = class CampgroundNearby
   render: =>
     {isCellTowersChecked, place} = @state.getValue()
 
-    z '.z-campground-nearby',
+    z '.z-place-nearby',
       z '.map', {
         ontouchstart: (e) -> e.stopPropagation()
         onmousedown: (e) -> e.stopPropagation()

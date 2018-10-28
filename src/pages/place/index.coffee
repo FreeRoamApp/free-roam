@@ -2,7 +2,6 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-Place = require '../../components/place'
 BasePage = require '../base'
 colors = require '../../colors'
 config = require '../../config'
@@ -18,18 +17,14 @@ module.exports = class PlacePage extends BasePage
       group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
-      type = route.src.split('/')[1]
-      type = if type in ['campground', 'amenity', 'overnight'] \
-             then type
-             else 'campground'
-      @model[type].getBySlug route.params.slug
+      @placeModel.getBySlug route.params.slug
 
     tab = requests.map ({route}) ->
       route.params.tab
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$place = new Place {@model, @router, @place, tab}
+    @$place = new @Place {@model, @router, @place, tab}
 
     @state = z.state
       me: @model.user.getMe()

@@ -20,7 +20,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class NewReviewExtras
+module.exports = class PlaceNewReviewExtras
   constructor: (options) ->
     {@model, @router, @fields, @season, @isOptional, fieldsValues} = options
     me = @model.user.getMe()
@@ -34,9 +34,7 @@ module.exports = class NewReviewExtras
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
 
-    allowedFields = ['roadDifficulty', 'crowds', 'fullness', 'noise', 'shade',
-              'safety']
-    @sliders = _map allowedFields, (field) =>
+    @sliders = _map @allowedFields, (field) =>
       {
         field: field
         valueStreams: @fields[field].valueStreams
@@ -121,7 +119,7 @@ module.exports = class NewReviewExtras
   render: =>
     {season, carriers, fieldsValues} = @state.getValue()
 
-    z '.z-new-review-extras',
+    z '.z-place-new-review-extras',
       z '.g-grid',
         z '.field.cell',
           z '.name', @model.l.get 'newReviewExtras.cellSignal'

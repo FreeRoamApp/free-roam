@@ -19,7 +19,6 @@ _values = require 'lodash/values'
 _zipObject = require 'lodash/zipObject'
 
 NewReviewCompose = require '../new_review_compose'
-NewReviewExtras = require '../new_review_extras'
 StepBar = require '../step_bar'
 colors = require '../../colors'
 config = require '../../config'
@@ -34,11 +33,9 @@ if window?
 # step 1 is add new campsite, then just go through review steps, but all are mandatory
 
 
-module.exports = class NewReview
-  constructor: ({@model, @router, type, @review, parent}) ->
+module.exports = class NewPlaceReview
+  constructor: ({@model, @router, @review, parent}) ->
     me = @model.user.getMe()
-
-    type ?= RxObservable.of null
 
     @season = new RxBehaviorSubject @model.time.getCurrentSeason()
 
@@ -47,32 +44,6 @@ module.exports = class NewReview
       bodyValueStreams: new RxReplaySubject 1
       ratingValueStreams: new RxReplaySubject 1
       attachmentsValueStreams: new RxReplaySubject 1
-
-    @reviewExtraFields =
-      crowds:
-        isSeasonal: true
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      fullness:
-        isSeasonal: true
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      noise:
-        isDayNight: true
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      shade:
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      roadDifficulty:
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      cellSignal:
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      safety:
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
 
     reviewExtraFieldsValues = RxObservable.combineLatest(
       _map @reviewExtraFields, ({valueStreams}) ->
@@ -90,13 +61,12 @@ module.exports = class NewReview
       new NewReviewCompose {
         @model, @router, fields: @reviewFields, @season
         uploadFn: (args...) ->
-          type.take(1).toPromise().then (type) =>
-            @model[type + 'Review'].uploadImage.apply(
-              @model[type + 'Review'].uploadImage
-              args
-            )
+          @placeReviewModel.uploadImage.apply(
+            @placeReviewModel.uploadImage
+            args
+          )
       }
-      new NewReviewExtras {
+      new @NewPlaceReviewExtras {
         @model, @router, fields: @reviewExtraFields,
         fieldsValues: reviewExtraFieldsValues, @season
         isOptional: true
@@ -111,7 +81,6 @@ module.exports = class NewReview
       attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
       ratingValue: @reviewFields.ratingValueStreams.switch()
       reviewExtraFieldsValues
-      type: type
       review: @review
       parent: parent
       isLoading: false
@@ -148,7 +117,7 @@ module.exports = class NewReview
 
   upsert: (e) =>
     {me, reviewExtraFieldsValues, titleValue, bodyValue, ratingValue,
-      attachmentsValue, type, review, parent} = @state.getValue()
+      attachmentsValue, review, parent} = @state.getValue()
     @state.set isLoading: true
     @model.user.requestLoginIfGuest me
     .then =>
@@ -170,7 +139,7 @@ module.exports = class NewReview
       if isReady
         @model.campgroundReview.upsert {
           id: review?.id
-          type: review?.type or type
+          type: review?.type or @placeType
           parentId: parent?.id
           title: titleValue
           body: bodyValue
@@ -196,7 +165,7 @@ module.exports = class NewReview
   render: =>
     {step, isLoading, review} = @state.getValue()
 
-    z '.z-new-review',
+    z '.z-new-place-review',
       z @$steps[step]
 
       z @$stepBar, {

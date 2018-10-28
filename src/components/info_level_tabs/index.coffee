@@ -18,6 +18,9 @@ module.exports = class InfoLevelTabs
   render: ({value, min, max, minFlavorText, maxFlavorText}) =>
     {tabs, selectedTab} = @state.getValue()
 
+    min ?= 1
+    max ?= 5
+
     z '.z-info-level-tabs',
       z '.tabs',
         _map tabs, ({key, text}) =>
