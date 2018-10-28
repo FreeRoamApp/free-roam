@@ -14,3 +14,6 @@ module.exports = class PlaceBase
 
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}
+
+  getAmenityBoundsById: (id) =>
+    @auth.stream "#{@namespace}.getAmenityBoundsById", {id}

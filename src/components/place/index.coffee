@@ -6,8 +6,8 @@ _map = require 'lodash/map'
 
 Fab = require '../fab'
 Icon = require '../icon'
-CampgroundInfo = require '../campground_info'
-CampgroundNearby = require '../campground_nearby'
+PlaceInfo = require '../place_info'
+PlaceNearby = require '../place_nearby'
 Reviews = require '../reviews'
 Tabs = require '../tabs'
 colors = require '../../colors'
@@ -26,12 +26,9 @@ module.exports = class Place
     @$addIcon = new Icon()
     @$tabs = new Tabs {@model, @selectedIndex}
 
-    # TODO: PlaceInfo? or select appropriate component here
-    @$placeInfo = new CampgroundInfo {@model, @router, place}
+    @$placeInfo = new PlaceInfo {@model, @router, place}
     @$reviews = new Reviews {@model, @router, parent: place}
-
-    # TODO PlaceNearby
-    @$nearby = new CampgroundNearby {@model, @router, place}
+    @$nearby = new PlaceNearby {@model, @router, place}
 
     @state = z.state
       selectedIndex: @selectedIndex
@@ -80,6 +77,6 @@ module.exports = class Place
               color: colors.$primary500Text
             }
             onclick: =>
-              @router.go 'campgroundNewReview', {
+              @router.go @newReviewPath, {
                 slug: place.slug
               }, {ignoreHistory: true}

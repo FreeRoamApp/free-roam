@@ -1,15 +1,18 @@
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 
-NewPlace = require '../new_place'
-CampgroundNewReviewExtras = require '../new_campground_review_extras'
+NewPlaceReview = require '../new_place_review'
+NewCampgroundReviewExtras = require '../new_campground_review_extras'
 NewCampgroundInitialInfo = require '../new_campground_initial_info'
 
-module.exports = class NewCampground extends NewPlace
-  NewReviewExtras: CampgroundNewReviewExtras
+module.exports = class NewCampground extends NewPlaceReview
+  NewPlaceReviewExtras: NewCampgroundReviewExtras
   NewPlaceInitialInfo: NewCampgroundInitialInfo
+  placeType: 'campground'
 
-  constructor: ->
+  constructor: ({@model}) ->
+    @placeReviewModel = @model.campgroundReview
+
     @reviewExtraFields =
       crowds:
         isSeasonal: true
