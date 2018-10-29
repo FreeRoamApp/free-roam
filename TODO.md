@@ -1,30 +1,23 @@
-Figure out how to show multiple place model results on 1 places_map_container (eg amenities and campgrounds)
-
 Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
-no- embed distance when getting nearby amenities? and cache for a while?
-  no- problem is can't query based on that
-- any time an amenity is added, get all campgrounds w/in 100mi (crow fly)
-    - filter out any campgrounds where nearest amenity
-      driving is < crow fly distance
-    - get route for the remainder, filter any where nearest
-      amenity driving < route distance
-    - update db for any that remain
-- any time campground is added, get all amenities w/in 100mi?
-  or just closest x using getAmenityBoundsById
-- campground: {closestAmenities: {dump: {distance: 32, time: 30}}}
-
+- Favorite GPS points (not just campgrounds)
+  - Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)
+  - roadpickle
+- Exoid cache gets very large with all of the place.search reqs. Clear them out
+- ATV trails as a nearby amenity
+  - Filter by distance to ATV trails
+  - https://bit.ly/2JnjQBD
 - Edit review use initial season for value?
 - Ask for rig information on first review
 x Tooltip picture and reviews
-- Swipe / tap through gallery of images
+x Swipe / tap through gallery of images
 - "We don't have any data for this season yet, but here\'s what it was like in *season*"
 - no reviews -> loading
 - pad types, mark seasonal campgrounds (checkbox when creating + dates its open / link)
 - compress images before upload
-- Mark low overhangs, sharp turns
+x Mark low overhangs, sharp turns
 - Add gyms
 x overlay$ -> model. get all overlay, sheet, dialog components
 x method to input sliders for other seasons w/o adding review score
@@ -51,10 +44,10 @@ Feedback:
 - Map of places you've been. Roads you traveled would be cool too, if possible
 
 
-- Update Google Play & iOS descriptions
+x Update Google Play & iOS descriptions
 - Onboarding in chat. The community for Boondockers
-- "Find me a WALMART!", maybe some people-of-walmart personality here while it's loading
-- Nearest dump, fresh water
+x "Find me a WALMART!", maybe some people-of-walmart personality here while it's loading
+x Nearest dump, fresh water
 - Find campgrounds YouTubers have been to, link videos, Instagram posts?
   - Ask YouTuber if it's alright if we link to video from the page, explain FreeRoam
 
@@ -71,7 +64,7 @@ Maybe a social profile that brings in YouTube videos, Instagram, map of where th
 - Need a better onboarding experience, introducing to vision
 
 Boondocking
-- Nearby dumpsites, freshwater, ...
+x Nearby dumpsites, freshwater, ...
 
 Other feedback
 - partners page, link to people's social media, etc...

@@ -1,3 +1,5 @@
+colors = require '../colors'
+
 class MapService
   getAmenityFilters: ({model}) ->
     [
@@ -39,7 +41,7 @@ class MapService
       }
     ]
 
-  getCampgroundFilters: ({model}) =>
+  getCampgroundFilters: ({model}) ->
     [
       {
         field: 'cellSignal'
@@ -116,6 +118,126 @@ class MapService
         type: 'booleanArray'
         arrayValue: 'casino'
         name: model.l.get 'overnight.casino'
+      }
+    ]
+
+  getOptionalLayers: ({model}) ->
+    [
+      {
+        name: model.l.get 'placesMapContainer.layerBlm'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-us-blm.json'
+        layer:
+          id: 'us-blm'
+          type: 'fill'
+          source: 'us-blm'
+          'source-layer': 'us_pad'
+          layout: {}
+          paint:
+            'fill-color': colors.$mapLayerBlm
+            'fill-opacity': 0.5
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerUsfs'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-us-usfs.json'
+        layer:
+          id: 'us-usfs'
+          type: 'fill'
+          source: 'us-usfs'
+          'source-layer': 'us_pad'
+          layout: {}
+          paint:
+            'fill-color': colors.$mapLayerUsfs
+            'fill-opacity': 0.5
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerVerizonLte'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-verizon.json'
+        layer:
+          id: 'us-cell-verizon'
+          type: 'fill'
+          source: 'us-cell-verizon'
+          'source-layer': 'us_cell_verizon'
+          layout: {}
+          paint:
+            'fill-color': colors.$verizon
+            'fill-opacity': 0.3
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerAttLte'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-att.json'
+        layer:
+          id: 'us-cell-att'
+          type: 'fill'
+          source: 'us-cell-att'
+          'source-layer': 'us_cell_att'
+          layout: {}
+          paint:
+            'fill-color': colors.$att
+            'fill-opacity': 0.3
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerTmobileLte'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-tmobile.json'
+        layer:
+          id: 'us-cell-tmobile'
+          type: 'fill'
+          source: 'us-cell-tmobile'
+          'source-layer': 'us_cell_tmobile'
+          layout: {}
+          paint:
+            'fill-color': colors.$tmobile
+            'fill-opacity': 0.3
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerSprintLte'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-sprint.json'
+        layer:
+          id: 'us-cell-sprint'
+          type: 'fill'
+          source: 'us-cell-sprint'
+          'source-layer': 'us_cell_sprint'
+          layout: {}
+          paint:
+            'fill-color': colors.$sprint
+            'fill-opacity': 0.3
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerSatellite'
+        sourceId: 'mapbox'
+        source:
+          type: 'raster'
+          url: 'mapbox://mapbox.satellite'
+          tileSize: 256
+        layer:
+          id: 'satellite'
+          type: 'raster'
+          source: 'mapbox'
+          'source-layer': 'mapbox_satellite_full'
+        insertBeneathLabels: true
       }
     ]
 

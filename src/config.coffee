@@ -126,6 +126,7 @@ isomorphic =
   MENTION_REGEX: new RegExp MENTION_REGEX_STR, 'gi'
   YOUTUBE_ID_REGEX: new RegExp YOUTUBE_ID_REGEX_STR, 'i'
   IMGUR_ID_REGEX: /https?:\/\/(?:i\.)?imgur\.com(?:\/a)?\/(.*?)(?:[\.#\/].*|$)/i
+  MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN
 
 # Server only
 # All keys must have values at run-time (value may be null)

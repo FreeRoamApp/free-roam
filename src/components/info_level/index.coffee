@@ -13,7 +13,7 @@ module.exports = class InfoLevel
     {key} = @state.getValue()
 
     min ?= 1
-    min ?= 5
+    max ?= 5
 
     value = value?.value or 1
 

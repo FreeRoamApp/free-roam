@@ -14,7 +14,9 @@ module.exports = class NewPlacePage
 
   getMeta: =>
     {
-      title: @model.l.get 'newCampgroundPage.title'
+      title: @model.l.get 'newPlacePage.title', {
+        replacements: {@prettyType}
+      }
     }
 
   render: =>

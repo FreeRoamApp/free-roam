@@ -43,12 +43,12 @@ module.exports = class Map
       i++
     return firstSymbolId
 
-  addLayer: (layer, {source, insertBeneathLabels} = {}) =>
+  addLayer: (layer, {source, sourceId, insertBeneathLabels} = {}) =>
     if @layers.indexOf(layer.id) is -1
       @layers.push layer.id
       layerId = if insertBeneathLabels then @getFirstSymbolId() else undefined
       try
-        @map.addSource layer.id, source
+        @map.addSource sourceId or layer.id, source
       catch err
         console.log 'source exists', err
       @map.addLayer layer, layerId
@@ -79,6 +79,7 @@ module.exports = class Map
     @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.js'
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'
+      mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN
       @map = new mapboxgl.Map {
         container: $$mapEl
         style: tile
