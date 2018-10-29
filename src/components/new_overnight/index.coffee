@@ -2,18 +2,18 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 
 NewPlace = require '../new_place'
-CampgroundNewReviewExtras = require '../new_campground_review_extras'
-NewCampgroundInitialInfo = require '../new_campground_initial_info'
+OvernightNewReviewExtras = require '../new_overnight_review_extras'
+NewOvernightInitialInfo = require '../new_overnight_initial_info'
 
-module.exports = class NewCampground extends NewPlace
-  NewReviewExtras: CampgroundNewReviewExtras
-  NewPlaceInitialInfo: NewCampgroundInitialInfo
-  type: 'campground'
-  placeWithTabPath: 'campgroundWithTab'
+module.exports = class NewOvernight extends NewPlace
+  NewReviewExtras: OvernightNewReviewExtras
+  NewPlaceInitialInfo: NewOvernightInitialInfo
+  type: 'overnight'
+  placeWithTabPath: 'overnightWithTab'
 
   constructor: ({@model}) ->
-    @placeModel = @model.campground
-    @placeReviewModel = @model.campgroundReview
+    @placeModel = @model.overnight
+    @placeReviewModel = @model.overnightReview
 
     @initialInfoFields =
       name:
@@ -22,27 +22,16 @@ module.exports = class NewCampground extends NewPlace
       location:
         valueSubject: new RxBehaviorSubject ''
         errorSubject: new RxBehaviorSubject null
+      subType:
+        valueSubject: new RxBehaviorSubject 'restArea'
+        errorSubject: new RxBehaviorSubject null
       videos:
         valueSubject: new RxBehaviorSubject []
         errorSubject: new RxBehaviorSubject null
 
     @reviewExtraFields =
-      crowds:
-        isSeasonal: true
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      fullness:
-        isSeasonal: true
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
       noise:
         isDayNight: true
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      shade:
-        valueStreams: new RxReplaySubject 1
-        errorSubject: new RxBehaviorSubject null
-      roadDifficulty:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       cellSignal:

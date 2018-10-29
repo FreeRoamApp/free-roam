@@ -10,6 +10,7 @@ Fab = require '../fab'
 Icon = require '../icon'
 PlacesMapContainer = require '../places_map_container'
 PlacesList = require '../places_list'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -53,6 +54,7 @@ module.exports = class PlaceNearby
           isCheckedSubject: @isCellTowersChecked
         }
       ]
+      optionalLayers: MapService.getOptionalLayers {@model}
     }
     # TODO: better solution than @$placesMapContainer.getPlacesStream()?
     placesStream = @$placesMapContainer.getPlacesStream()

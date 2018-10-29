@@ -60,7 +60,7 @@ module.exports = class NewPlaceReview
     @$steps = [
       new NewReviewCompose {
         @model, @router, fields: @reviewFields, @season
-        uploadFn: (args...) ->
+        uploadFn: (args...) =>
           @placeReviewModel.uploadImage.apply(
             @placeReviewModel.uploadImage
             args
@@ -72,6 +72,8 @@ module.exports = class NewPlaceReview
         isOptional: true
       }
     ]
+
+    console.log @$steps
 
     @state = z.state {
       @step
@@ -137,7 +139,7 @@ module.exports = class NewPlaceReview
           value
 
       if isReady
-        @model.campgroundReview.upsert {
+        @placeReviewModel.upsert {
           id: review?.id
           type: review?.type or @placeType
           parentId: parent?.id
@@ -153,7 +155,7 @@ module.exports = class NewPlaceReview
           # FIXME FIXME: rm HACK. for some reason thread is empty initially?
           # still unsure why
           setTimeout =>
-            @router.go 'campgroundWithTab', {
+            @router.go @placeWithTabPath, {
               slug: parent?.slug, tab: 'reviews'
             }, {reset: true}
           , 200

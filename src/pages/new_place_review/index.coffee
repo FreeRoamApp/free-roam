@@ -12,7 +12,7 @@ module.exports = class NewPlaceReviewPage
   hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, parent}) ->
-    parent = requests.switchMap ({route}) ->
+    parent = requests.switchMap ({route}) =>
       @placeModel.getBySlug route.params.slug
     id = requests.map ({route}) ->
       route.params.id

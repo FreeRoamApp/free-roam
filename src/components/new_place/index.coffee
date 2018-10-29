@@ -51,17 +51,6 @@ module.exports = class NewPlace
       ratingValueStreams: new RxReplaySubject 1
       attachmentsValueStreams: new RxReplaySubject 1
 
-    @fields =
-      name:
-        valueSubject: new RxBehaviorSubject ''
-        errorSubject: new RxBehaviorSubject null
-      location:
-        valueSubject: new RxBehaviorSubject ''
-        errorSubject: new RxBehaviorSubject null
-      videos:
-        valueSubject: new RxBehaviorSubject []
-        errorSubject: new RxBehaviorSubject null
-
     reviewExtraFieldsValues = RxObservable.combineLatest(
       _map @reviewExtraFields, ({valueStreams}) ->
         valueStreams.switch()
@@ -73,7 +62,7 @@ module.exports = class NewPlace
 
     @$steps = [
       new @NewPlaceInitialInfo {
-        @model, @router, @fields, @season
+        @model, @router, fields: @initialInfoFields, @season
       }
       new @NewReviewExtras {
         @model, @router, fields: @reviewExtraFields,
@@ -81,9 +70,9 @@ module.exports = class NewPlace
       }
       new NewReviewCompose {
         @model, @router, fields: @reviewFields, @season
-        uploadFn: (args...) ->
-          @model['campgroundReview'].uploadImage.apply(
-            @model['campgroundReview'].uploadImage
+        uploadFn: (args...) =>
+          @placeReviewModel.uploadImage.apply(
+            @placeReviewModel.uploadImage
             args
           )
       }
@@ -109,10 +98,11 @@ module.exports = class NewPlace
 
     if isReady
       @state.set isLoading: true
-      @model.campground.upsert {
-        name: @fields.name.valueSubject.getValue()
-        location: @fields.location.valueSubject.getValue()
-        videos: @fields.videos.valueSubject.getValue()
+      @placeModel.upsert {
+        name: @initialInfoFields.name.valueSubject.getValue()
+        location: @initialInfoFields.location.valueSubject.getValue()
+        videos: @initialInfoFields.videos.valueSubject.getValue()
+        subType: @initialInfoFields.subType?.valueSubject.getValue()
       }
       .then @upsertReview
       .catch (err) =>
@@ -136,8 +126,8 @@ module.exports = class NewPlace
       else if not isSeasonal
         value
 
-    @model.campgroundReview.upsert {
-      type: 'campground'
+    @placeReviewModel.upsert {
+      type: @type
       parentId: parent?.id
       title: titleValue
       body: bodyValue
@@ -151,7 +141,7 @@ module.exports = class NewPlace
       # FIXME FIXME: rm HACK. for some reason thread is empty initially?
       # still unsure why
       setTimeout =>
-        @router.go 'campgroundWithTab', {
+        @router.go @placeWithTabPath, {
           slug: parent?.slug, tab: 'reviews'
         }, {reset: true}
       , 200
@@ -161,9 +151,9 @@ module.exports = class NewPlace
     @resetValueStreams()
 
   resetValueStreams: =>
-    @fields.name.valueSubject.next ''
-    @fields.location.valueSubject.next ''
-    @fields.videos.valueSubject.next []
+    @initialInfoFields.name.valueSubject.next ''
+    @initialInfoFields.location.valueSubject.next ''
+    @initialInfoFields.videos.valueSubject.next []
 
     @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
     @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
@@ -177,7 +167,7 @@ module.exports = class NewPlace
   render: =>
     {step, isLoading} = @state.getValue()
 
-    z '.z-new-campground',
+    z '.z-new-place',
       z @$appBar, {
         title: @$steps[step].getTitle()
         style: 'primary'

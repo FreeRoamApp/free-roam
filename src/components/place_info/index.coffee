@@ -94,6 +94,8 @@ module.exports = class CampgroundInfo extends Base
 
     {place, $videos, cellCarriers} = place or {}
 
+    console.log 'place', place
+
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
     z '.z-place-info', {
@@ -140,47 +142,48 @@ module.exports = class CampgroundInfo extends Base
               desktop: 2
               tablet: 2
             $elements: _filter [
-              z '.section',
-                z '.title', @model.l.get 'campground.cellSignal'
-                z '.carriers',
-                  _map cellCarriers, ({$bars, carrier, type}) =>
-                    z '.carrier',
-                      z '.name', @model.l.get "carriers.#{carrier}"
-                      z '.bars',
-                        z $bars, widthPx: 40
-                      z '.type', type
-              if place?.type in ['campground']
+              unless _isEmpty cellCarriers
+                z '.section',
+                  z '.title', @model.l.get 'campground.cellSignal'
+                  z '.carriers',
+                    _map cellCarriers, ({$bars, carrier, type}) =>
+                      z '.carrier',
+                        z '.name', @model.l.get "carriers.#{carrier}"
+                        z '.bars',
+                          z $bars, widthPx: 40
+                        z '.type', type
+              if place?.crowds
                 z '.section',
                   z '.title', @model.l.get 'campground.crowds'
                   z @$crowdsInfoLevelTabs, {
                     value: place?.crowds
                   }
-              if place?.type in ['campground']
+              if place?.fullness
                 z '.section',
                   z '.title', @model.l.get 'campground.fullness'
                   z @$fullnessInfoLevelTabs, {
                     value: place?.fullness
                   }
-              if place?.type in ['campground', 'overnight']
+              if place?.noise
                 z '.section',
                   z '.title', @model.l.get 'campground.noise'
                   z @$noiseInfoLevelTabs, {
                     value: place?.noise
                   }
-              if place?.type in ['campground']
+              if place?.shade
                 z '.section',
                   z '.title', @model.l.get 'campground.shade'
                   z @$shadeInfoLevel, {
                     value: place?.shade
                   }
-              if place?.type in ['campground', 'overnight']
+              if place?.safety
                 z '.section',
                   z '.title', @model.l.get 'campground.safety'
                   z @$safetyInfoLevel, {
                     value: place?.safety
                     isReversed: true # 5 is bad 1 is good
                   }
-              if place?.type in ['campground']
+              if place?.roadDifficulty
                 z '.section',
                   z '.title', @model.l.get 'campground.roadDifficulty'
                   z @$roadDifficultyInfoLevel, {

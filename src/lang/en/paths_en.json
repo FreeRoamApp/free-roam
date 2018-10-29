@@ -37,6 +37,7 @@
   "newAmenity": "/new-amenity",
   "newCampground": "/new-campground",
   "newCampgroundReview": "/campground/:slug/new-review",
+  "newOvernight": "/new-overnight",
   "newOvernightReview": "/overnight/:slug/new-review",
 
   "overnight": "/overnight/:slug",

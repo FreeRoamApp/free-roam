@@ -4,6 +4,7 @@ _filter = require 'lodash/filter'
 _truncate = require 'lodash/truncate'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
+_startCase = require 'lodash/startCase'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
@@ -53,7 +54,7 @@ module.exports = class Review
       onDeleteMessage: =>
         @model["#{review.type}Review"].deleteById review.id
       onEditMessage: =>
-        @router.go "#{review.type}EditReview", {
+        @router.go "edit#{_startCase review.type}Review", {
           slug: parent.slug
           reviewId: review.id
         }

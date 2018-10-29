@@ -32,7 +32,10 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, @dataTypes, showScale, mapBounds, @persistentCookiePrefix,
-      @addPlaces, @optionalLayers, initialZoom, @isFilterBarHidden} = options
+      @addPlaces, @optionalLayers, initialZoom, @isFilterBarHidden,
+      @currentDataType} = options
+
+    @currentDataType ?= new RxBehaviorSubject @dataTypes[0].dataType
 
     @persistentCookiePrefix ?= 'default'
     @addPlaces ?= RxObservable.of []
@@ -65,7 +68,7 @@ module.exports = class PlacesMapContainer
     @state = z.state
       filterTypes: @filterTypesStream
       types: @dataTypesStream
-      currentType: @dataTypes[0].dataType
+      currentDataType: @currentDataType
       place: @place
       isTypesVisible: false
       isLayersPickerVisible: false
@@ -292,7 +295,7 @@ module.exports = class PlacesMapContainer
     filter
 
   render: =>
-    {filterTypes, types, currentType, place, layersVisible,
+    {filterTypes, types, currentDataType, place, layersVisible,
       isTypesVisible, isLayersPickerVisible} = @state.getValue()
 
     z '.z-places-map-container', {
@@ -312,9 +315,9 @@ module.exports = class PlacesMapContainer
               },
                 @model.l.get 'placesMapContainer.show'
               z '.filters', {
-                className: z.classKebab {"#{currentType}": true}
+                className: z.classKebab {"#{currentDataType}": true}
               },
-                _map filterTypes?[currentType], (filter) =>
+                _map filterTypes?[currentDataType], (filter) =>
                   if filter.name
                     z '.filter', {
                       className: z.classKebab {
@@ -338,13 +341,13 @@ module.exports = class PlacesMapContainer
                 {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
                 z '.type', {
                   className: z.classKebab {
-                    isSelected: currentType is dataType
+                    isSelected: currentDataType is dataType
                     "#{dataType}": true
                   }
                   onclick: =>
                     ga? 'send', 'event', 'map', 'typeClick', dataType
                     onclick?()
-                    @state.set currentType: dataType
+                    @currentDataType.next dataType
                     isCheckedSubject.next true
                 },
                   z '.checkbox', {
@@ -388,7 +391,8 @@ module.exports = class PlacesMapContainer
                   z '.g-cols',
                     if isLayersPickerVisible
                       _map @optionalLayers, (optionalLayer) =>
-                        {name, source, layer, insertBeneathLabels} = optionalLayer
+                        {name, source, sourceId, layer,
+                          insertBeneathLabels} = optionalLayer
                         index = layersVisible.indexOf(layer.id)
                         isVisible = index isnt -1
                         z ".layer-icon.#{layer.id}.g-col.g-xs-4.g-md-4", {
@@ -404,6 +408,7 @@ module.exports = class PlacesMapContainer
                             @$map.toggleLayer layer, {
                               insertBeneathLabels
                               source: source
+                              sourceId: sourceId
                             }
 
                         },

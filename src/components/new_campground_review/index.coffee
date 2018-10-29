@@ -3,12 +3,11 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 
 NewPlaceReview = require '../new_place_review'
 NewCampgroundReviewExtras = require '../new_campground_review_extras'
-NewCampgroundInitialInfo = require '../new_campground_initial_info'
 
-module.exports = class NewCampground extends NewPlaceReview
+module.exports = class NewCampgroundReview extends NewPlaceReview
   NewPlaceReviewExtras: NewCampgroundReviewExtras
-  NewPlaceInitialInfo: NewCampgroundInitialInfo
   placeType: 'campground'
+  placeWithTabPath: 'campgroundWithTab'
 
   constructor: ({@model}) ->
     @placeReviewModel = @model.campgroundReview
