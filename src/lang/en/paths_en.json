@@ -50,6 +50,11 @@
   "privacy": "/privacy",
   "productGuides": "/product-guides",
   "product": "/product/:slug",
+
+  "reviewlessCampground": "/reviewless-campground/:slug",
+  "reviewlessCampgroundAttachments": "/reviewless-campground/:slug/attachments",
+  "reviewlessCampgroundWithTab": "/reviewless-campground/:slug/:tab",
+
   "termsOfService": "/tos",
   "home": "/",
   "404": "/*"

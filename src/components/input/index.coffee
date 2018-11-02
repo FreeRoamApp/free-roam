@@ -24,7 +24,7 @@ module.exports = class Input
     }
 
   render: (props) =>
-    {colors, hintText, type, isFloating, isDisabled, isFullWidth,
+    {colors, hintText, type, isFloating, isDisabled, isFullWidth, autoCapitalize
       isDark, isCentered, disableAutoComplete} = props
 
     {value, error, isFocused} = @state.getValue()
@@ -38,6 +38,7 @@ module.exports = class Input
     type ?= 'text'
     isFloating ?= false
     isDisabled ?= false
+    autoCapitalize ?= true
 
     z '.z-input',
       className: z.classKebab {
@@ -63,6 +64,7 @@ module.exports = class Input
           autocomplete: if disableAutoComplete then 'off' else undefined
           # hack to get chrome to not autofill
           readonly: if disableAutoComplete then true else undefined
+          autocapitalize: if not autoCapitalize then 'off' else undefined
           type: type
         value: value or ''
         oninput: z.ev (e, $$el) =>

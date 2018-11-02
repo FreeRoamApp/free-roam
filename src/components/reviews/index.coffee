@@ -32,7 +32,7 @@ module.exports = class Reviews extends Base
       parent: parent
       selectedProfileDialogUser: selectedProfileDialogUser
       reviews: parent.switchMap (parent) =>
-        unless parent?.type
+        unless parent?.type and @model["#{parent.type}Review"]
           return RxObservable.of null
         @model["#{parent.type}Review"].getAllByParentId parent.id
         .map (reviews) =>

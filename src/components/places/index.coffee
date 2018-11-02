@@ -32,6 +32,18 @@ module.exports = class Places
           defaultValue: true
         }
         {
+          dataType: 'overnight'
+          filters: MapService.getOvernightFilters {@model}
+          onclick: =>
+            unless @model.cookie.get('hasSeenOvernightWarning')
+              @model.cookie.set 'hasSeenOvernightWarning', '1'
+              @model.overlay.open new OvernightWarningDialog {@model}
+        }
+        {
+          dataType: 'reviewlessCampground'
+          filters: [] # TODO
+        }
+        {
           dataType: 'amenity'
           filters: MapService.getAmenityFilters {@model}
         }
@@ -42,14 +54,6 @@ module.exports = class Places
             unless @model.cookie.get('hasSeenLowClearanceWarning')
               @model.cookie.set 'hasSeenLowClearanceWarning', '1'
               @model.overlay.open new ClearanceWarningDialog {@model}
-        }
-        {
-          dataType: 'overnight'
-          filters: MapService.getOvernightFilters {@model}
-          onclick: =>
-            unless @model.cookie.get('hasSeenOvernightWarning')
-              @model.cookie.set 'hasSeenOvernightWarning', '1'
-              @model.overlay.open new OvernightWarningDialog {@model}
         }
       ]
       optionalLayers: MapService.getOptionalLayers {@model}

@@ -34,7 +34,7 @@ module.exports = class Checkbox
         attributes:
           disabled: if isDisabled then true else undefined
         checked: if value then true else undefined
-        oninput: z.ev (e, $$el) =>
+        onchange: z.ev (e, $$el) =>
           if @valueStreams
             @valueStreams.next RxObservable.of $$el.checked
           else

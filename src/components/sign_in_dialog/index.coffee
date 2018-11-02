@@ -136,11 +136,13 @@ module.exports = class SignInDialog
               z '.input',
                 z @$usernameInput, {
                   hintText: @model.l.get 'general.username'
+                  autoCapitalize: false
                 }
               if data is 'join'
                 z '.input',
                   z @$emailInput, {
                     hintText: @model.l.get 'general.email'
+                    type: 'email'
                   }
               z '.input', {key: 'password-input'},
                 z @$passwordInput, {
