@@ -276,10 +276,17 @@ module.exports = class PlacesMapContainer
           }
         when 'booleanArray'
           arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'
+          ###
+          alternative is:
+          {terms: {"#{field}": arrayValues}, but terms
+          is case-insensitive and 'contains', not 'equals'.
+          breaks with camelcase restArea since it searches restarea
+          ###
           {
-            terms:
-              "#{field}": arrayValues
-              # minimum_should_match: 1
+            bool:
+              should: _map arrayValues, (value) ->
+                match:
+                  "#{field}": value
             }
 
     filter.push {
@@ -292,6 +299,7 @@ module.exports = class PlacesMapContainer
             lat: currentLocation._sw.lat
             lon: currentLocation._ne.lng
     }
+    console.log filter
     filter
 
   render: =>

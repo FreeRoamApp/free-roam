@@ -2,6 +2,9 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- rec.gov campgrounds
+  - "Unvetted Campgrounds"
+  - When creating new campground, once coordinates are put in, ask if it's one of the unvetted ones
 - Favorite GPS points (not just campgrounds)
   - Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)
   - roadpickle

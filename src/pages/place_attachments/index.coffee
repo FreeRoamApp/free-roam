@@ -2,7 +2,6 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-PlaceAttachments = require '../../components/place_attachments'
 BasePage = require '../base'
 colors = require '../../colors'
 config = require '../../config'
@@ -18,13 +17,11 @@ module.exports = class PlaceAttachmentsPage extends BasePage
       group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
-      type = route.src.split('/')[1]
-      type = if type in ['campground', 'amenity'] then type else 'campground'
-      @model[type].getBySlug route.params.slug
+      @placeModel.getBySlug route.params.slug
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$placeAttachments = new PlaceAttachments {
+    @$placeAttachments = new @PlaceAttachments {
       @model, @router, @place
     }
 

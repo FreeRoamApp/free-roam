@@ -200,6 +200,7 @@
   "partners.text5": "To apply, send an email to austin@freeroam.app",
   "partners.requirement1": "5,000+ followers across social media",
   "partners.requirement2": "Full-time RVer / Vanlifer",
+  "place.details": "Details",
   "placesMapContainer.show": "Show",
   "placesMapContainer.typesTitle": "Filter by type",
   "placesMapContainer.layerBlm": "BLM Land",
@@ -335,6 +336,7 @@
 
   "overnight.casino": "Casinos",
   "overnight.restArea": "Rest Areas",
+  "overnight.truckStop": "Truck Stops",
   "overnight.walmart": "Walmarts",
 
   "placeType.amenity": "Amenitie",
@@ -342,12 +344,14 @@
   "placeType.cellTower": "Cell tower",
   "placeType.lowClearance": "Low clearance",
   "placeType.overnight": "Overnight",
+  "placeType.reviewlessCampground": "Reviewless Campground",
 
   "placeTypes.amenity": "Amenities",
   "placeTypes.campground": "Campgrounds",
   "placeTypes.cellTower": "Cell towers",
   "placeTypes.lowClearance": "Low clearances",
   "placeTypes.overnight": "Overnights",
+  "placeTypes.reviewlessCampground": "Reviewless Campgrounds",
 
   "levelText.roadDifficulty1": "No problems with any vehicle",
   "levelText.roadDifficulty2": "Take it a little slow, but any vehicle should be fine",

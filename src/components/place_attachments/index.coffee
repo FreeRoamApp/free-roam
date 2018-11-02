@@ -21,7 +21,7 @@ module.exports = class PlaceAttachments
       attachments: place.switchMap (place) =>
         unless place
           return RxObservable.of null
-        @model.campgroundAttachment.getAllByParentId place.id
+        @placeAttachmentModel.getAllByParentId place.id
 
   render: =>
     {me, place, attachments} = @state.getValue()
@@ -53,7 +53,7 @@ module.exports = class PlaceAttachments
                   oncontextmenu: (e) =>
                     if (attachment.userId is me.id or me.username is 'austin') and confirm 'Delete?'
                       e?.preventDefault()
-                      @model.campgroundAttachment.deleteByRow attachment
+                      @placeAttachmentModel.deleteByRow attachment
                 },
                   z '.image',
                     style:

@@ -11,6 +11,7 @@ Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
 InfoLevel = require '../info_level'
 EmbeddedVideo = require '../embedded_video'
+FormattedText = require '../formatted_text'
 MasonryGrid = require '../masonry_grid'
 Spinner = require '../spinner'
 Rating = require '../rating'
@@ -57,6 +58,16 @@ module.exports = class CampgroundInfo extends Base
     }
     @$spinner = new Spinner()
 
+    @$details = new FormattedText {
+      text: @place.map (place) ->
+        place?.details
+      imageWidth: 'auto'
+      isFullWidth: true
+      embedVideos: false
+      @model
+      @router
+    }
+
     @state = z.state
       place: @place.map (place) =>
         {
@@ -94,8 +105,6 @@ module.exports = class CampgroundInfo extends Base
 
     {place, $videos, cellCarriers} = place or {}
 
-    console.log 'place', place
-
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
     z '.z-place-info', {
@@ -108,7 +117,7 @@ module.exports = class CampgroundInfo extends Base
             backgroundImage: "url(#{src})"
         },
           @router.link z 'a.see-more', {
-            href: @router.get 'campgroundAttachments', {
+            href: @router.get "#{place?.type}Attachments", {
               slug: place?.slug
             }
           },
@@ -119,11 +128,19 @@ module.exports = class CampgroundInfo extends Base
         z '.location',
           "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
           ' ('
-          z 'a', {
-            href:
-              'https://maps.google.com/?saddr=My+Location&daddr=' +
-              place?.location?.lat + ',' + place?.location?.lon
-            target: '_system'
+          z 'span.get-directions', {
+            onclick: =>
+              target = '_system'
+              baseUrl = 'https://google.com/maps/dir/?api=1'
+              destination = place?.location?.lat + ',' + place?.location?.lon
+              onLocation = ({coords}) =>
+                origin = coords?.latitude + ',' + coords?.longitude
+                url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
+                @model.portal.call 'browser.openWindow', {url, target}
+              onError = =>
+                url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
+                @model.portal.call 'browser.openWindow', {url, target}
+              navigator.geolocation.getCurrentPosition onLocation, onError
           }, @model.l.get 'general.directions'
           ')'
 
@@ -134,6 +151,11 @@ module.exports = class CampgroundInfo extends Base
           z '.driving-instructions',
             z '.title', @model.l.get 'campground.drivingInstructions'
             place?.drivingInstructions
+
+        if place?.details
+          z '.details',
+            z '.title', @model.l.get 'place.details'
+            @$details
 
         z '.masonry',
           z @$masonryGrid,
@@ -190,12 +212,12 @@ module.exports = class CampgroundInfo extends Base
                     value: place?.roadDifficulty
                   }
 
-              if place?.type in ['campground']
+              if place?.weather
                 z '.section',
                   z '.title', @model.l.get 'campgroundInfo.averageWeather'
                   z 'img.graph', {
                     src:
-                      "#{config.USER_CDN_URL}/weather/campground_#{place?.id}.svg?12"
+                      "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?12"
                   }
 
               unless _isEmpty $videos

@@ -33,7 +33,7 @@ module.exports = class ImageViewOverlay
         setImmediate =>
           @$tabs.toggle 'enable'
       # account for being middle slide
-      transformX: window.innerWidth
+      transformX: if images?.length > 1 then window.innerWidth else 0
     }
 
     @state = z.state
@@ -134,10 +134,12 @@ module.exports = class ImageViewOverlay
         }
       }
       if images?.length is 1
-        z 'img.z-image-view-overlay_image',
-          src: image1?.url
-          width: dimensions1.width
-          height: dimensions1.height
+        z @$pinchZoom,
+          $el:
+            z 'img.z-image-view-overlay_image',
+              src: image1?.url
+              width: dimensions1.width
+              height: dimensions1.height
       else
         [
           z '.previous',

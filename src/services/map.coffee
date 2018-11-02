@@ -110,6 +110,12 @@ class MapService
       {
         field: 'subType'
         type: 'booleanArray'
+        arrayValue: 'truckStop'
+        name: model.l.get 'overnight.truckStop'
+      }
+      {
+        field: 'subType'
+        type: 'booleanArray'
         arrayValue: 'restArea'
         name: model.l.get 'overnight.restArea'
       }
