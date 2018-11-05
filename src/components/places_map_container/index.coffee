@@ -7,6 +7,7 @@ _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _reduce = require 'lodash/reduce'
 _groupBy = require 'lodash/groupBy'
+_sumBy = require 'lodash/sumBy'
 _isEmpty = require 'lodash/isEmpty'
 _some = require 'lodash/some'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
@@ -44,13 +45,17 @@ module.exports = class PlacesMapContainer
 
     @currentLocation = new RxBehaviorSubject null
     @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
-    places = RxObservable.combineLatest(
+    placesWithCounts = RxObservable.combineLatest(
       @addPlaces, @getPlacesStream(), (vals...) -> vals
-    ).map ([addPlaces, places]) ->
+    ).map ([addPlaces, {places, visible, total}]) ->
       if places
-        addPlaces.concat places
+        places = addPlaces.concat places
       else
-        addPlaces
+        places = addPlaces
+
+      {places, visible, total}
+    places = placesWithCounts.map ({places}) -> places
+    counts = placesWithCounts.map ({visible, total}) -> {visible, total}
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
@@ -70,6 +75,7 @@ module.exports = class PlacesMapContainer
       types: @dataTypesStream
       currentDataType: @currentDataType
       place: @place
+      counts: counts
       isTypesVisible: false
       isLayersPickerVisible: false
       layersVisible: []
@@ -189,8 +195,16 @@ module.exports = class PlacesMapContainer
             bool:
               filter: queryFilter
         }
-      .map (values) ->
-        _flatten values
+      .map (responses) ->
+        # visible = _sumBy responses, ({places}) -> places?.length
+        total = _sumBy responses, 'total'
+        places = _filter _map responses, 'places'
+        places = _flatten places
+        {
+          visible: places.length
+          total: total
+          places: places
+        }
 
   getQueryFilterFromFilters: (filters, currentLocation) ->
     groupedFilters = _groupBy filters, 'field'
@@ -303,8 +317,10 @@ module.exports = class PlacesMapContainer
     filter
 
   render: =>
-    {filterTypes, types, currentDataType, place, layersVisible,
+    {filterTypes, types, currentDataType, place, layersVisible, counts,
       isTypesVisible, isLayersPickerVisible} = @state.getValue()
+
+    isCountsBarVisbile = counts?.visible < counts?.total
 
     z '.z-places-map-container', {
       onclick: =>
@@ -367,6 +383,15 @@ module.exports = class PlacesMapContainer
                     z $checkbox
                   z '.name', @model.l.get "placeTypes.#{dataType}"
           ]
+
+        z '.counts-bar', {
+          className: z.classKebab {isVisible: isCountsBarVisbile}
+        },
+          @model.l.get 'placesMapContainer.countsBar', {
+            replacements:
+              visible: counts?.visible
+              total: counts?.total
+          }
 
         z '.map',
           z @$map

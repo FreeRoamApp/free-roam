@@ -28,6 +28,7 @@ colors = require './colors'
 
 Pages =
   AboutPage: require './pages/about'
+  AmenityPage: require './pages/amenity'
   BackpackPage: require './pages/backpack'
   CampgroundPage: require './pages/campground'
   CampgroundAttachmentsPage: require './pages/campground_attachments'
@@ -226,6 +227,7 @@ module.exports = class App
     isiOSApp = Environment.isiOS({userAgent}) and
                 Environment.isNativeApp('freeroam', {userAgent})
     route 'about', 'AboutPage'
+    route ['amenity', 'amenityWithTab'], 'AmenityPage'
     route 'backpack', 'BackpackPage'
     route ['campground', 'campgroundWithTab'], 'CampgroundPage'
     route 'campgroundAttachments', 'CampgroundAttachmentsPage'
@@ -302,8 +304,8 @@ module.exports = class App
               z @$offlineOverlay
             if @$nps.shouldBeShown()
               z @$nps,
-                gameName: 'free-roam'
                 onRate: =>
+                  console.log 'rate'
                   @model.portal.call 'app.rate'
 
             if $overlayPage

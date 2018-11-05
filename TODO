@@ -2,8 +2,14 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- And maybe somewhere that would help us find out where/when gatherings are because I get a lot of questions about them! But I usually only know the west coast ones. So it would be nice to have one app that shared all the known gatherings and info.
+  - divineontheroad
 - rec.gov campgrounds
   - "Unvetted Campgrounds"
+  x COE, WMA (wma too difficult to automate)
+  - "We think this campsite is free, but you should verify through their website or phone number. If you've been here, please add a review so we can move this to our normal campground section!"
+  - Adding review moves to normal campsite. Add review button on main tab too?
+  x Show contact info
   - When creating new campground, once coordinates are put in, ask if it's one of the unvetted ones
 - Favorite GPS points (not just campgrounds)
   - Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)

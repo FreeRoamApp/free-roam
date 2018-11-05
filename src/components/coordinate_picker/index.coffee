@@ -1,8 +1,10 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+_find = require 'lodash/find'
 
 ActionBar = require '../action_bar'
 Map = require '../map'
+MapService = require '../../services/map'
 
 if window?
   require './index.styl'
@@ -34,10 +36,25 @@ module.exports = class CoordinatePicker
 
     @state = z.state {
       coordinates: ''
+      isSatelliteVisible: false
+    }
+
+  toggleSatellite: =>
+    {isSatelliteVisible} = @state.getValue()
+
+    layers = MapService.getOptionalLayers {@model}
+    {layer, source, sourceId, insertBeneathLabels} = _find layers, (layer) ->
+      layer.layer.id is 'satellite'
+
+    @state.set isSatelliteVisible: not isSatelliteVisible
+    @$map.toggleLayer layer, {
+      insertBeneathLabels
+      source: source
+      sourceId: sourceId
     }
 
   render: =>
-    {coordinates} = @state.getValue()
+    {coordinates, isSatelliteVisible} = @state.getValue()
 
     z '.z-coordinate-picker',
       z @$actionBar, {
@@ -54,4 +71,11 @@ module.exports = class CoordinatePicker
             @model.overlay.close()
       }
       z '.map',
+        z '.toggle-satellite', {
+          onclick: @toggleSatellite
+        },
+          if isSatelliteVisible
+            @model.l.get 'coordinatePicker.hideSatellite'
+          else
+            @model.l.get 'coordinatePicker.showSatellite'
         z @$map

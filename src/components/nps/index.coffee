@@ -73,7 +73,7 @@ module.exports = class Nps
     .then =>
       @state.set isLoading: false
 
-  render: ({gameName, onSubmit, onCancel, onRate}) =>
+  render: ({onSubmit, onCancel, onRate}) =>
     {npsValue, isLoading, step} = @state.getValue()
 
     z '.z-nps',
