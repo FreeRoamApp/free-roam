@@ -133,6 +133,22 @@
           height: 10px
           margin-right: 4px
 
+  > .counts-bar
+    font-caption1()
+    display: none
+    text-align: center
+    z-index: 1
+    position: absolute
+    bottom: 0
+    left: 0
+    width: 100%
+    padding: 4px
+    box-sizing: border-box
+    background: getColor('$bg500')
+
+    &.is-visible
+      display: block
+
   > .map
     flex1()
     display: flex

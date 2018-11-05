@@ -15,6 +15,7 @@ FormattedText = require '../formatted_text'
 MasonryGrid = require '../masonry_grid'
 Spinner = require '../spinner'
 Rating = require '../rating'
+Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -126,7 +127,8 @@ module.exports = class CampgroundInfo extends Base
             }
       z '.g-grid',
         z '.location',
-          "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+          if place?.address?.locality
+            "#{place.address.locality}, #{place.address.administrativeArea}"
           ' ('
           z 'span.get-directions', {
             onclick: =>
@@ -140,12 +142,44 @@ module.exports = class CampgroundInfo extends Base
               onError = =>
                 url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
                 @model.portal.call 'browser.openWindow', {url, target}
-              navigator.geolocation.getCurrentPosition onLocation, onError
+              if Environment.isNativeApp 'freeroam'
+                console.log 'good'
+                navigator.geolocation.getCurrentPosition onLocation, onError
+              else
+                console.log 'err'
+                # just use the "my location" version, to avoid popup blocker
+                onError()
+
           }, @model.l.get 'general.directions'
           ')'
 
         z '.rating',
           z @$rating, {size: '20px'}
+
+        # TODO: get contact info for campgrounds, amenities
+        if place?.type is 'reviewlessCampground'
+          z '.contact',
+            if place.contact.phone
+              matches = place.contact?.phone?.number.match(
+                /^(\d{3})(\d{3})(\d{4})$/
+              )
+              phone = if matches
+                "(#{matches[1]}) #{matches[2]}-#{matches[3]}"
+              z '.phone',
+                z 'span.title', @model.l.get 'place.phone'
+                phone
+            if place.contact.website
+              z '.website',
+                z 'span.title', @model.l.get 'place.website'
+                z 'a', {
+                  href: place.contact?.website
+                  onclick: (e) =>
+                    e?.preventDefault()
+                    @model.portal.call 'browser.openWindow', {
+                      url: place.contact?.website
+                      target: '_system'
+                    }
+                }, place.contact?.website
 
         if place?.drivingInstructions
           z '.driving-instructions',

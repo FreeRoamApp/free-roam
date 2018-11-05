@@ -42,8 +42,20 @@
     padding: 16px
     box-sizing: border-box
 
+    > .contact
+      margin-bottom: 8px
+
+      > .phone, > .website
+        white-space: nowrap
+        text-overflow: ellipsis
+        overflow: hidden
+
+        > .title
+          font-title()
+
     > .driving-instructions, > .details
       margin-bottom: 8px
+
       > .title
         font-title()
 

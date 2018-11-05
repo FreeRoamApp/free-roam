@@ -63,7 +63,8 @@ module.exports = class PlaceNearby
     )
     @$placesList = new PlacesList {
       @model, @router
-      places: placeAndPlacesStream.map ([place, places]) ->
+      places: placeAndPlacesStream.map ([place, placesWithCounts]) ->
+        places = placesWithCounts?.places
         knownTimes = _reduce place?.distanceTo, (obj, {id, time}) ->
           obj[id] = time
           obj

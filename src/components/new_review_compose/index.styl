@@ -12,6 +12,8 @@
     flex1()
     display: flex
     flex-direction: column
+    // get scroll working if content is too tall
+    min-height: min-content
 
     > .rating
       padding: 16px
@@ -31,6 +33,7 @@
 
     > .textarea
       flex1()
+      min-height: 150px
 
     > .attachments
       padding: 16px

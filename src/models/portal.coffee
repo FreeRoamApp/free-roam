@@ -135,7 +135,7 @@ module.exports = class Portal
 
     @call 'browser.openWindow',
       url: if Environment.isiOS() \
-           then config.ITUNES_APP_URL
+           then config.IOS_APP_URL
            else config.GOOGLE_PLAY_APP_URL
       target: '_system'
 
