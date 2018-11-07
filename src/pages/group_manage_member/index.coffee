@@ -23,21 +23,13 @@ module.exports = class GroupManageMemberPage
       @model, @router, serverData, group, user
     }
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'groupManageMemberPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-group-manage-member', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-manage-member',
       z @$appBar, {
         title: @model.l.get 'groupManageMemberPage.title'
         style: 'primary'

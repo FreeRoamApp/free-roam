@@ -83,7 +83,7 @@ module.exports = class Map
       @map = new mapboxgl.Map {
         container: $$mapEl
         style: tile
-        center: [-101.894, 40.048]
+        center: [-105.894, 40.048]
         # center: [-112.045697, 35.214012]
         zoom: @initialZoom
       }
@@ -99,52 +99,52 @@ module.exports = class Map
               width: $$mapEl.offsetWidth, height: $$mapEl.offsetHeight
             }
           , 0
-          @map.addLayer {
-            id: 'places'
-            type: 'symbol'
-            source:
-              type: 'geojson'
-              data:
-                type: 'FeatureCollection'
-                features: []
-            # need spritesheet for symbols.
-            # eg. https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
-            # keep in mind these don't use svgs...
-            # could also do the name of rv park to right of symbol
+        @map.addLayer {
+          id: 'places'
+          type: 'symbol'
+          source:
+            type: 'geojson'
+            data:
+              type: 'FeatureCollection'
+              features: []
+          # need spritesheet for symbols.
+          # eg. https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
+          # keep in mind these don't use svgs...
+          # could also do the name of rv park to right of symbol
 
-            layout:
-              # there is a bug where markers don't show if zoomed in on another area then zoom out.
-              # not sure how to fix
-              'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
-              'icon-allow-overlap': true
-              # 'icon-ignore-placement': true
-              'icon-size': 1
-              'icon-anchor': 'bottom'
+          layout:
+            # there is a bug where markers don't show if zoomed in on another area then zoom out.
+            # not sure how to fix
+            'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+            'icon-allow-overlap': true
+            # 'icon-ignore-placement': true
+            'icon-size': 1
+            'icon-anchor': 'bottom'
 
-              'text-field': '{name}'
-              'text-optional': true
-              # 'text-ignore-placement': true
-              'text-anchor': 'bottom-left'
-              'text-size':
-                stops: [
-                  [0, 0]
-                  [6, 0]
-                  [6.001, 12]
-                ]
-              'text-font': ['Open Sans Regular'] # must exist in tilejson
+            'text-field': '{name}'
+            'text-optional': true
+            # 'text-ignore-placement': true
+            'text-anchor': 'bottom-left'
+            'text-size':
+              stops: [
+                [0, 0]
+                [6, 0]
+                [6.001, 12]
+              ]
+            'text-font': ['Open Sans Regular'] # must exist in tilejson
 
-            paint:
-              'text-translate': [12, -4]
-              'text-halo-color': 'rgba(255, 255, 255, 1)'
-              'text-halo-width': 2
-              #  # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
-              #  stops: [[8, 3], [11, 10], [16, 50]]
-          }
+          paint:
+            'text-translate': [12, -4]
+            'text-halo-color': 'rgba(255, 255, 255, 1)'
+            'text-halo-width': 2
+            #  # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
+            #  stops: [[8, 3], [11, 10], [16, 50]]
+        }
 
-          @updateMapLocation()
-          @subscribeToPlaces()
-          @subscribeToCenter()
-          @state.set isLoading: false
+        @updateMapLocation()
+        @subscribeToPlaces()
+        @subscribeToCenter()
+        @state.set isLoading: false
 
       @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapLocation

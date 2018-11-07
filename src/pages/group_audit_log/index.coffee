@@ -20,21 +20,13 @@ module.exports = class GroupAuditLogPage
       @model, @router, serverData, group
     }
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'groupAuditLogPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-group-audit-log', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-audit-log',
       z @$appBar, {
         title: @model.l.get 'groupAuditLogPage.title'
         style: 'primary'

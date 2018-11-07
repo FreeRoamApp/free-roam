@@ -26,20 +26,11 @@ module.exports = class EditThreadPage
       group
     }
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-      thread: thread
-
   getMeta: =>
     {
       title: @model.l.get 'editThreadPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-edit-thread', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-edit-thread',
       z @$editThread

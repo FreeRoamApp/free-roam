@@ -27,9 +27,7 @@ module.exports = class PlacePage extends BasePage
     @$place = new @Place {@model, @router, @place, tab}
 
     @state = z.state
-      me: @model.user.getMe()
       place: @place
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     @place.map (place) =>
@@ -48,12 +46,9 @@ module.exports = class PlacePage extends BasePage
       }
 
   render: =>
-    {me, place, windowSize} = @state.getValue()
+    {place} = @state.getValue()
 
-    z '.p-place', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-place',
       z @$appBar, {
         title: place?.name
         isFlat: true

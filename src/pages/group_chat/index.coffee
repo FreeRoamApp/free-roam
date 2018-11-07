@@ -128,7 +128,6 @@ module.exports = class GroupChatPage
     @isBottomBarVisible = false
 
     @state = z.state
-      windowSize: @model.window.getSize()
       breakpoint: @model.window.getBreakpoint()
       group: @group
       me: me
@@ -177,13 +176,11 @@ module.exports = class GroupChatPage
     }
 
   render: =>
-    {windowSize, group, me, conversation, isChannelDrawerOpen, breakpoint
+    {group, me, conversation, isChannelDrawerOpen, breakpoint
       selectedProfileDialogUser, shouldShowBottomBar} = @state.getValue()
 
     z '.p-group-chat', {
       className: z.classKebab {shouldShowBottomBar}
-      style:
-        height: "#{windowSize.height}px"
     },
       z @$appBar, {
         isFullWidth: true

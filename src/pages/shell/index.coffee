@@ -18,21 +18,16 @@ module.exports = class ShellPage
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$spinner = new Spinner()
 
+    # subscribe so they're in exoid cache
     @state = z.state
       me: @model.user.getMe()
       group: group
-      windowSize: @model.window.getSize()
 
   getMeta: ->
     {}
 
   render: =>
-    {me, windowSize} = @state.getValue()
-
-    z '.p-shell', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-shell',
       z @$appBar, {
         title: ''
         style: 'primary'

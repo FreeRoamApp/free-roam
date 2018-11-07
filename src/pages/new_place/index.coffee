@@ -9,9 +9,6 @@ module.exports = class NewPlacePage
   constructor: ({@model, requests, @router, serverData}) ->
     @$newPlace = new @NewPlace {@model, @router}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'newPlacePage.title', {
@@ -20,10 +17,5 @@ module.exports = class NewPlacePage
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-new-place', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-new-place',
       @$newPlace

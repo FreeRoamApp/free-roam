@@ -14,21 +14,13 @@ module.exports = class ConversationsPage
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$conversations = new Conversations {@model, @router}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'drawer.privateMessages'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-conversations', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-conversations',
       z @$appBar,
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
         title: @model.l.get 'drawer.privateMessages'

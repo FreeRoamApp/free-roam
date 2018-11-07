@@ -17,19 +17,11 @@ module.exports = class NewAmenityPage
 
     @$newAmenity = new NewAmenity {@model, @router, center}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'newAmenityPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-new-amenity', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-new-amenity',
       @$newAmenity

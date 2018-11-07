@@ -29,22 +29,14 @@ module.exports = class GroupEditChannelPage
     }
     @$tabs = new Tabs {@model}
 
-    @state = z.state
-      group: group
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'groupEditChannelPage.title'
     }
 
   render: =>
-    {group, windowSize} = @state.getValue()
 
-    z '.p-group-edit-channel', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-edit-channel',
       z @$appBar, {
         title: @model.l.get 'groupEditChannelPage.title'
         style: 'primary'

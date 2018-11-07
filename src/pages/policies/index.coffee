@@ -14,19 +14,11 @@ module.exports = class PoliciesPage
 
     @$policies = new Policies {@model, @router, isIab}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'policiesPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-policies', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-policies',
       @$policies

@@ -22,9 +22,7 @@ module.exports = class ItemPage extends BasePage
     @$item = new Item {@model, @router, @item}
 
     @state = z.state
-      me: @model.user.getMe()
       item: @item
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     @item.map (item) =>
@@ -34,12 +32,9 @@ module.exports = class ItemPage extends BasePage
       }
 
   render: =>
-    {me, item, windowSize} = @state.getValue()
+    {item} = @state.getValue()
 
-    z '.p-item', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-item',
       z @$appBar, {
         title: item?.name
         style: 'primary'

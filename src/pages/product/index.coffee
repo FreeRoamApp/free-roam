@@ -21,9 +21,7 @@ module.exports = class ProductPage
     @$product = new Product {@model, @router, @product}
 
     @state = z.state
-      me: @model.user.getMe()
       product: @product
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     @product.map (product) ->
@@ -33,12 +31,9 @@ module.exports = class ProductPage
       }
 
   render: =>
-    {me, product, windowSize} = @state.getValue()
+    {product} = @state.getValue()
 
-    z '.p-product', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-product',
       z @$appBar, {
         title: product?.item?.name
         style: 'primary'

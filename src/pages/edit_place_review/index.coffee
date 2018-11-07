@@ -22,21 +22,13 @@ module.exports = class EditPlaceReviewPage
     @$buttonBack = new ButtonBack {@model, @router}
     @$editReview = new @EditPlaceReview {@model, @router, review, parent}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'newReviewPage.title'
     }
 
   render: =>
-    {windowSize, $editReview} = @state.getValue()
-
-    z '.p-edit-place-review', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-edit-place-review',
       z @$appBar, {
         title: @model.l.get 'editReviewPage.title'
         style: 'primary'

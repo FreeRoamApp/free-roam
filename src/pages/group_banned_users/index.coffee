@@ -45,7 +45,6 @@ module.exports = class GroupBannedUsersPage
 
     @state = z.state
       group: group
-      windowSize: @model.window.getSize()
       selectedProfileDialogUser: @selectedProfileDialogUser
 
   getMeta: =>
@@ -54,12 +53,9 @@ module.exports = class GroupBannedUsersPage
     }
 
   render: =>
-    {group, windowSize, selectedProfileDialogUser} = @state.getValue()
+    {group, selectedProfileDialogUser} = @state.getValue()
 
-    z '.p-group-banned-users', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-banned-users',
       z @$appBar, {
         title: @model.l.get 'groupBannedUsersPage.title'
         style: 'primary'

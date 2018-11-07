@@ -18,10 +18,6 @@ module.exports = class PlacesPage
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$places = new Places {@model, @router}
 
-    @state = z.state
-      me: @model.user.getMe()
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'general.places'
@@ -29,12 +25,7 @@ module.exports = class PlacesPage
     }
 
   render: =>
-    {me, windowSize} = @state.getValue()
-
-    z '.p-places', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-places',
       z @$appBar, {
         title: @model.l.get 'general.places'
         style: 'primary'

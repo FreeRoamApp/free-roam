@@ -34,7 +34,6 @@ module.exports = class ConversationPage
       me: @model.user.getMe()
       conversation: conversation
       selectedProfileDialogUser: selectedProfileDialogUser
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     {
@@ -42,16 +41,12 @@ module.exports = class ConversationPage
     }
 
   render: =>
-    {conversation, me, selectedProfileDialogUser,
-      windowSize} = @state.getValue()
+    {conversation, me, selectedProfileDialogUser} = @state.getValue()
 
     toUser = _find conversation?.users, (user) ->
       me?.id isnt user.id
 
-    z '.p-conversation', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-conversation',
       z @$appBar, {
         title: @model.user.getDisplayName toUser
         style: 'primary'
