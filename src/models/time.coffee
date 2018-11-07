@@ -12,8 +12,8 @@ module.exports = class Time
     , 100
 
   updateServerTime: =>
-    @auth.stream 'time.get'
-    .take(1).subscribe (timeObj) =>
+    @auth.call 'time.get', {}
+    .then (timeObj) =>
       @serverTime = Date.parse timeObj.now
 
   getServerTime: =>

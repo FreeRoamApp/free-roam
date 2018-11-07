@@ -32,11 +32,6 @@ HEALTHCHECK_TIMEOUT = 200
 RENDER_TO_STRING_TIMEOUT_MS = 1200
 BOT_RENDER_TO_STRING_TIMEOUT_MS = 4500
 
-styles = if config.ENV is config.ENVS.PROD
-  fs.readFileSync gulpPaths.dist + '/bundle.css', 'utf-8'
-else
-  null
-
 # memwatch = require 'memwatch-next'
 #
 # hd = undefined
@@ -113,6 +108,7 @@ app.use '/setCookie', (req, res) ->
 
 
 if config.ENV is config.ENVS.PROD
+# service_worker.js max-age modified in load-balancer
 then app.use express.static(gulpPaths.dist, {maxAge: '4h'})
 else app.use express.static(gulpPaths.build, {maxAge: '4h'})
 
@@ -159,12 +155,12 @@ app.use (req, res, next) ->
   if config.ENV is config.ENVS.PROD
     scriptsCdnUrl = config.SCRIPTS_CDN_URL
     bundlePath = "#{scriptsCdnUrl}/bundle_#{stats.hash}_#{language}.js"
-    bundleCssPath = "/bundle.css?#{stats.time}"
+    bundleCssPath = "#{scriptsCdnUrl}/bundle_#{stats.hash}.css"
   else
     bundlePath = null
     bundleCssPath = null
 
-  serverData = {req, res, bundlePath, bundleCssPath, styles}
+  serverData = {req, res, bundlePath, bundleCssPath}#, styles}
   userAgent = req.headers?['user-agent']
   isFacebookCrawler = userAgent?.indexOf('facebookexternalhit') isnt -1 or
       userAgent?.indexOf('Facebot') isnt -1

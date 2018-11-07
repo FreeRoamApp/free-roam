@@ -55,6 +55,7 @@
   "reviewlessCampgroundAttachments": "/reviewless-campground/:slug/attachments",
   "reviewlessCampgroundWithTab": "/reviewless-campground/:slug/:tab",
 
+  "shell": "/shell",
   "termsOfService": "/tos",
   "home": "/",
   "404": "/*"

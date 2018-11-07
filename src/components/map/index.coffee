@@ -83,7 +83,8 @@ module.exports = class Map
       @map = new mapboxgl.Map {
         container: $$mapEl
         style: tile
-        center: [-112.045697, 35.214012]
+        center: [-101.894, 40.048]
+        # center: [-112.045697, 35.214012]
         zoom: @initialZoom
       }
 
@@ -92,11 +93,12 @@ module.exports = class Map
 
       @map.on 'load', =>
         @resizeSubscription = @model.window.getSize().subscribe =>
-          setImmediate =>
+          setTimeout =>
             @map.resize()
             @mapSize?.next {
               width: $$mapEl.offsetWidth, height: $$mapEl.offsetHeight
             }
+          , 0
           @map.addLayer {
             id: 'places'
             type: 'symbol'

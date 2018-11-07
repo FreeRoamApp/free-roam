@@ -307,13 +307,12 @@ module.exports = class PlacesMapContainer
       geo_bounding_box:
         location:
           top_left:
-            lat: currentLocation._ne.lat
-            lon: currentLocation._sw.lng
+            lat: Math.round(1000 * currentLocation._ne.lat) / 1000
+            lon: Math.round(1000 * currentLocation._sw.lng) / 1000
           bottom_right:
-            lat: currentLocation._sw.lat
-            lon: currentLocation._ne.lng
+            lat: Math.round(1000 * currentLocation._sw.lat) / 1000
+            lon: Math.round(1000 * currentLocation._ne.lng) / 1000
     }
-    console.log filter
     filter
 
   render: =>

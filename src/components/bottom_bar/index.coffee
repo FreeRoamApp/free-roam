@@ -34,7 +34,7 @@ module.exports = class BottomBar
     {requests, group, currentPath, serverData} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
-    isLoaded = Boolean group
+    isLoaded = true # Boolean group
 
     @menuItems = _filter [
       {
@@ -87,8 +87,9 @@ module.exports = class BottomBar
             # without delay, browser will wait until the next render is complete
             # before showing ripple. seems better to start ripple animation
             # first
-            setImmediate =>
+            setTimeout =>
               @router.goPath route
+            , 0
           # ontouchstart: (e) =>
           #   e?.stopPropagation()
           #   @router.goPath route

@@ -92,11 +92,12 @@ module.exports = class Conversation extends Base
       @messageBatchesStreams.switch()
       .map (messageBatches) =>
         isLoading.next false
-        setImmediate =>
+        setTimeout =>
           # HACK not sure why this timeout is necessary. the dom element changes
           # if done before this, even though it has a key on it
           @$$loadingSpinner = @$$el?.querySelector('.loading')
           @$$loadingSpinner?.style.display = 'none'
+        , 0
         @state.set isLoaded: true
         @iScrollContainer?.refresh()
 
@@ -280,8 +281,9 @@ module.exports = class Conversation extends Base
     #   # exact time. caused an issue of leaving event page back to home,
     #   # and home had no responses / empty streams / unobserved streams
     #   # for group data
-      setImmediate =>
+      setTimeout =>
         @model.exoid.invalidateAll()
+      , 0
     @resetMessageBatches.next [[]]
     setTimeout =>
       @state.set isLoaded: false, hasLoadedAllNewMessages: true

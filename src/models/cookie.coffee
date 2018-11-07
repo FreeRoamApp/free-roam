@@ -6,7 +6,7 @@ class Cookie
   constructor: ({initialCookies, @setCookie, @host}) ->
     @cookies = initialCookies or {}
 
-  getCookieOpts: (key, ttlMs) ->
+  getCookieOpts: (key, ttlMs) =>
     host = @host
     if not host
       host = config.HOST
@@ -17,7 +17,7 @@ class Cookie
       path: '/'
       expires: new Date(Date.now() + ttlMs)
       # Set cookie for subdomains
-      domain: '.' + hostname
+      domain: if hostname is 'localhost' then hostname else '.' + hostname
     }
 
   set: (key, value, {ttlMs} = {}) =>

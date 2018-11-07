@@ -189,8 +189,6 @@
   "nps.rate": "Rate FreeRoam",
   "nps.thanks": "Thanks for your feedback!",
   "nps.title": "Thoughts?",
-  "offlineOverlay.text": "Looks like you're offline. Reconnect to the internet to resume",
-  "offlineOverlay.closeButtonText": "Close this message",
   "overnightWarningDialog.title": "Heads up",
   "overnightWarningDialog.text1": "We try to filter out ones that don't allow overnight parking, but it's always best to call ahead of time to verify, especially if you don't see any reviews from other travelers.",
   "overnightWarningDialog.text2": "Remember to thank these companies by being respectful and shopping there!",
@@ -409,6 +407,9 @@
   "months.9": "October",
   "months.10": "November",
   "months.11": "December",
+
+  "status.offline": "You are offline, some features may not work",
+  "status.newVersion": "Refresh to get the latest FreeRoam update",
 
   "error.usernameTaken": "Username is taken",
   "error.invalid": "Invalid",
