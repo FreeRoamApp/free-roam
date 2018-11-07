@@ -35,7 +35,6 @@ module.exports = class GroupForumPage
     @$threads = new Threads {@model, @router, filter, group}
 
     @state = z.state
-      windowSize: @model.window.getSize()
       isFilterThreadsDialogVisible: @isFilterThreadsDialogVisible
       group: group
 
@@ -46,12 +45,9 @@ module.exports = class GroupForumPage
     }
 
   render: =>
-    {windowSize, isFilterThreadsDialogVisible, group} = @state.getValue()
+    {isFilterThreadsDialogVisible, group} = @state.getValue()
 
-    z '.p-group-forum', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-forum',
       z @$appBar, {
         title: @model.l.get 'general.forum'
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}

@@ -30,9 +30,6 @@ module.exports = class ThreadPage
 
     @$thread = new Thread {@model, @router, thread, group}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     @groupAndThread.map ([group, thread]) =>
       imageAttachment = _find thread?.attachments, {type: 'image'}
@@ -52,10 +49,5 @@ module.exports = class ThreadPage
     @thread.next {}
 
   render: =>
-    {windowSize, $el} = @state.getValue()
-
-    z '.p-thread', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-thread',
       z @$thread

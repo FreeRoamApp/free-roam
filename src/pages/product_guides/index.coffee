@@ -19,23 +19,14 @@ module.exports = class ProductGuidesPage
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$productGuides = new ProductGuides {@model, @router}
 
-    @state = z.state
-      me: @model.user.getMe()
-      windowSize: @model.window.getSize()
-
-  getMeta: ->
+  getMeta: =>
     {
       title: @model.l.get 'productGuidesPage.metaTitle'
       description: @model.l.get 'productGuidesPage.description'
     }
 
   render: =>
-    {me, windowSize} = @state.getValue()
-
-    z '.p-product-guides', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-product-guides',
       z @$appBar, {
         title: @model.l.get 'productGuidesPage.title'
         style: 'primary'

@@ -15,9 +15,6 @@ module.exports = class AboutPage
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$about = new About {@model, @router}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'drawer.about'
@@ -26,12 +23,7 @@ module.exports = class AboutPage
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-about', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-about',
       z @$appBar, {
         title: @model.l.get 'drawer.about'
         style: 'primary'

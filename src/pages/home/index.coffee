@@ -14,7 +14,6 @@ module.exports = class HomePage
 
     @state = z.state
       me: @model.user.getMe()
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     {
@@ -24,10 +23,5 @@ module.exports = class HomePage
     }
 
   render: =>
-    {me, windowSize} = @state.getValue()
-
-    z '.p-home', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-home',
       @$spinner

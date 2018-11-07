@@ -26,9 +26,7 @@ module.exports = class PlaceAttachmentsPage extends BasePage
     }
 
     @state = z.state
-      me: @model.user.getMe()
       place: @place
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     @place.map (place) =>
@@ -40,12 +38,9 @@ module.exports = class PlaceAttachmentsPage extends BasePage
       }
 
   render: =>
-    {me, place, windowSize} = @state.getValue()
+    {place} = @state.getValue()
 
-    z '.p-place-attachments', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-place-attachments',
       z @$appBar, {
         title:
           if place

@@ -19,21 +19,13 @@ module.exports = class GroupSettingsPage
       @model, @router, serverData, group
     }
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'groupSettingsPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-group-settings', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-settings',
       z @$appBar, {
         title: @model.l.get 'groupSettingsPage.title'
         $topLeftButton: z @$buttonMenu, {

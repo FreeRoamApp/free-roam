@@ -29,7 +29,6 @@ colors = require './colors'
 Pages =
   AboutPage: require './pages/about'
   AmenityPage: require './pages/amenity'
-  BackpackPage: require './pages/backpack'
   CampgroundPage: require './pages/campground'
   CampgroundAttachmentsPage: require './pages/campground_attachments'
   ConversationPage: require './pages/conversation'
@@ -187,6 +186,7 @@ module.exports = class App
       me: me
       $overlays: @model.overlay.get$()
       isStatusBarVisible: @model.statusBar.getData()
+      windowSize: @model.window.getSize()
       hideDrawer: @requests.switchMap (request) ->
         hideDrawer = request.$page?.hideDrawer
         if hideDrawer?.map
@@ -229,7 +229,6 @@ module.exports = class App
                 Environment.isNativeApp('freeroam', {userAgent})
     route 'about', 'AboutPage'
     route ['amenity', 'amenityWithTab'], 'AmenityPage'
-    route 'backpack', 'BackpackPage'
     route ['campground', 'campgroundWithTab'], 'CampgroundPage'
     route 'campgroundAttachments', 'CampgroundAttachmentsPage'
     route 'conversation', 'ConversationPage'
@@ -275,7 +274,7 @@ module.exports = class App
     routes
 
   render: =>
-    {request, $backupPage, me, hideDrawer, isStatusBarVisible,
+    {request, $backupPage, me, hideDrawer, isStatusBarVisible, windowSize,
       $overlays} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
@@ -299,7 +298,10 @@ module.exports = class App
             unless hideDrawer
               z @$navDrawer, {currentPath: request?.req.path}
 
-            z '.content',
+            z '.content', {
+              style:
+                height: "#{windowSize.height}px"
+            },
               if isStatusBarVisible
                 z @$statusBar
               z '.page', {key: 'page'},

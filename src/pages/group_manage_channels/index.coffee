@@ -22,9 +22,6 @@ module.exports = class GroupManageChannelsPage
       @model, @router, serverData, group, user
     }
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'groupManageChannelsPage.title'
@@ -32,12 +29,7 @@ module.exports = class GroupManageChannelsPage
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-group-manage-channels', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-group-manage-channels',
       z @$appBar, {
         title: @model.l.get 'groupManageChannelsPage.title'
         style: 'primary'

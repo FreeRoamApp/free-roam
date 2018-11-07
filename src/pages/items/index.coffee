@@ -40,9 +40,7 @@ module.exports = class ItemsPage extends Base
         RxObservable.of filter?.value
 
     @state = z.state
-      me: @model.user.getMe()
       title: @title
-      windowSize: @model.window.getSize()
 
   getMeta: =>
     @title.map (title) =>
@@ -54,12 +52,9 @@ module.exports = class ItemsPage extends Base
       }
 
   render: =>
-    {me, windowSize, title} = @state.getValue()
+    {title} = @state.getValue()
 
-    z '.p-items', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-items',
       z @$appBar, {
         title: title
         style: 'primary'

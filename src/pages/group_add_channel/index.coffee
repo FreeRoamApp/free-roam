@@ -19,18 +19,12 @@ module.exports = class GroupAddChannelPage
       @model, @router, serverData, group
     }
 
-    @state = z.state
-      group: group
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'groupAddChannelPage.title'
     }
 
   render: =>
-    {group, windowSize} = @state.getValue()
-
     z '.p-group-add-channel', {
       style:
         height: "#{windowSize.height}px"

@@ -14,9 +14,6 @@ module.exports = class TosPage
     @$backButton = new ButtonBack {@model, @router}
     @$tos = new Tos {@model, @router}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'tosPage.title'
@@ -24,12 +21,7 @@ module.exports = class TosPage
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-tos', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-tos',
       z @$appBar, {
         title: @model.l.get 'tosPage.title'
         $topLeftButton: z @$backButton, {color: colors.$header500Icon}

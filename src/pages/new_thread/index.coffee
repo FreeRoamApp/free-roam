@@ -14,19 +14,11 @@ module.exports = class NewThreadPage
 
     @$newThread = new NewThread {@model, @router, category, id, group}
 
-    @state = z.state
-      windowSize: @model.window.getSize()
-
   getMeta: =>
     {
       title: @model.l.get 'newThreadPage.title'
     }
 
   render: =>
-    {windowSize} = @state.getValue()
-
-    z '.p-new-thread', {
-      style:
-        height: "#{windowSize.height}px"
-    },
+    z '.p-new-thread',
       @$newThread
