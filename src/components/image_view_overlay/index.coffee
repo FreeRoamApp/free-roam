@@ -30,8 +30,9 @@ module.exports = class ImageViewOverlay
       onZoomed: =>
         @$tabs.toggle 'disable'
       onUnzoomed: =>
-        setImmediate =>
+        setTimeout =>
           @$tabs.toggle 'enable'
+        , 0
       # account for being middle slide
       transformX: if images?.length > 1 then window.innerWidth else 0
     }
@@ -54,22 +55,26 @@ module.exports = class ImageViewOverlay
         imageIndex = imageIndex += 1
         if imageIndex >= images?.length
           imageIndex = 0
-        setImmediate =>
+        setTimeout =>
           @$tabs.disableTransition()
           @selectedIndex.next 1
           @imageIndex.next imageIndex
-          setImmediate =>
+          setTimeout =>
             @$tabs.enableTransition()
+          , 0
+        , 0
       else if index is 0
         imageIndex = imageIndex -= 1
         if imageIndex < 0
           imageIndex = images?.length - 1
-        setImmediate =>
+        setTimeout =>
           @$tabs.disableTransition()
           @selectedIndex.next 1
           @imageIndex.next imageIndex
-          setImmediate =>
+          setTimeout =>
             @$tabs.enableTransition()
+          , 0
+        , 0
     ).subscribe()
 
     @router.onBack =>

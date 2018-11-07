@@ -19,7 +19,7 @@ module.exports = class PlaceAttachments
       me: @model.user.getMe()
       place: place
       attachments: place.switchMap (place) =>
-        unless place
+        unless place?.id
           return RxObservable.of null
         @placeAttachmentModel.getAllByParentId place.id
 

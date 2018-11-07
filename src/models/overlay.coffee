@@ -32,7 +32,6 @@ module.exports = class Overlay
     @overlay$
 
   open: ($, data) =>
-    console.log 'open'
     @overlay$.next _filter (@overlay$.getValue() or []).concat $
     @setData data
     # prevent body scrolling while viewing menu

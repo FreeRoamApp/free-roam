@@ -33,7 +33,9 @@ module.exports = class Head
 
     @lastGroupId = null
     @bundlePath = serverData?.bundlePath or
-      document?.getElementById('bundle').src
+      document?.getElementById('bundle')?.src
+    @bundleCssPath = serverData?.bundleCssPath or
+      document?.getElementById('bundle-css')?.href
 
     @state = z.state
       meta: meta
@@ -47,29 +49,39 @@ module.exports = class Head
       modelSerialization: unless window?
         @model.getSerializationStream()
       additionalCss: @model.additionalScript.getCss()
-      cssVariables: group?.map (group) =>
-        groupSlug = group?.slug
+      cssVariables: @_getCssVariables()
 
-        cssColors = _defaults colors[groupSlug], colors.default
-        cssColors['--drawer-header-500'] ?= cssColors['--primary-500']
-        cssColors['--drawer-header-500-text'] ?= cssColors['--primary-500-text']
-        cssVariables = _map(cssColors, (value, key) ->
-          "#{key}:#{value}"
-        ).join ';'
-
-        if @lastGroupId isnt group?.id
-          newStatusBarColor = cssColors['--status-bar-500'] or
-                              cssColors['--primary-900']
-          @model.portal?.call 'statusBar.setBackgroundColor', {
-            color: newStatusBarColor
-          }
-          @lastGroupId = group?.id
-          @model.cookie.set 'lastGroupId', group?.id
-          @model.cookie.set "group_#{group?.id}_lastVisit", Date.now()
-          if cssVariables
-            @model.cookie.set 'cachedCssVariables', cssVariables
-
-        cssVariables
+  _getCssVariables: ->
+    cssColors = colors.default
+    cssColors['--drawer-header-500'] ?= cssColors['--primary-500']
+    cssColors['--drawer-header-500-text'] ?= cssColors['--primary-500-text']
+    cssVariables = _map(cssColors, (value, key) ->
+      "#{key}:#{value}"
+    ).join ';'
+    cssVariables
+    # group?.map (group) =>
+    #   groupSlug = group?.slug
+    #
+    #   cssColors = _defaults colors[groupSlug], colors.default
+    #   cssColors['--drawer-header-500'] ?= cssColors['--primary-500']
+    #   cssColors['--drawer-header-500-text'] ?= cssColors['--primary-500-text']
+    #   cssVariables = _map(cssColors, (value, key) ->
+    #     "#{key}:#{value}"
+    #   ).join ';'
+    #
+    #   if @lastGroupId isnt group?.id
+    #     newStatusBarColor = cssColors['--status-bar-500'] or
+    #                         cssColors['--primary-900']
+    #     @model.portal?.call 'statusBar.setBackgroundColor', {
+    #       color: newStatusBarColor
+    #     }
+    #     @lastGroupId = group?.id
+    #     @model.cookie.set 'lastGroupId', group?.id
+    #     @model.cookie.set "group_#{group?.id}_lastVisit", Date.now()
+    #     if cssVariables
+    #       @model.cookie.set 'cachedCssVariables', cssVariables
+    #
+    #   cssVariables
 
   render: =>
     {meta, serverData, path, route, routeKey, group, additionalCss,
@@ -140,18 +152,6 @@ module.exports = class Head
       z 'title', "#{meta.title}"
       if meta.description
         z 'meta', {name: 'description', content: "#{meta.description}"}
-
-      # Appcache
-      # TODO: re-enable?
-      # if config.ENV is config.ENVS.PROD
-      #   z 'iframe',
-      #     src: '/manifest.html'
-      #     style:
-      #       width: 0
-      #       height: 0
-      #       visibility: 'hidden'
-      #       position: 'absolute'
-      #       border: 'none'
 
       # mobile
       z 'meta',
@@ -246,13 +246,14 @@ module.exports = class Head
         # we could use separate css file for styles, which would benefit from
         # cache... but we have a weird problem where chrome tries to
         # re-parse the css file resulting in a white flash. maybe a vdom issue?
-        z 'style#inline',
-          type: 'text/css'
-        , serverData?.styles
-        # z 'link',
-        #   rel: 'stylesheet'
+        # z 'style#inline',
         #   type: 'text/css'
-        #   href: serverData?.bundleCssPath
+        # , serverData?.styles
+        z 'link',
+          rel: 'stylesheet'
+          type: 'text/css'
+          id: 'bundle-css'
+          href: @bundleCssPath
       else
         null
 
@@ -267,8 +268,7 @@ module.exports = class Head
       z 'script#bundle',
         key: 'bundle'
         async: true
-        src: if isInliningSource then @bundlePath \
-             else "#{webpackDevUrl}/bundle.js"
+        src: @bundlePath or 'http://localhost:50341/bundle.js'
 
       # any conditional scripts need to be at end or else they interfere with others
       if meta.structuredData

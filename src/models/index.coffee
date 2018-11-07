@@ -4,7 +4,15 @@ _isPlainObject = require 'lodash/isPlainObject'
 _defaults = require 'lodash/defaults'
 _merge = require 'lodash/merge'
 _pick = require 'lodash/pick'
+_map = require 'lodash/map'
+_zipWith = require 'lodash/zipWith'
+_differenceWith = require 'lodash/differenceWith'
+_isEqual = require 'lodash/isEqual'
+_keys = require 'lodash/keys'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/combineLatest'
+require 'rxjs/add/observable/of'
 require 'rxjs/add/operator/take'
 
 Auth = require './auth'
@@ -39,6 +47,7 @@ Product = require './product'
 PushToken = require './push_token'
 ReviewlessCampground = require './reviewless_campground'
 ReviewlessCampgroundAttachment = require './reviewless_campground_attachment'
+StatusBar = require './status_bar'
 Thread = require './thread'
 ThreadComment = require './thread_comment'
 ThreadVote = require './thread_vote'
@@ -103,10 +112,19 @@ module.exports = class Model
           proxyHeaders
       }, opts
 
+    # offlineCache = try
+    #   JSON.parse localStorage?.offlineCache
+    # catch
+    #   {}
+    #
+    # console.log 'offline', offlineCache
+    offlineCache = null
+    @initialCache = offlineCache or cache.exoid
+
     @exoid = new Exoid
       ioEmit: ioEmit
       io: io
-      cache: cache.exoid
+      cache: @initialCache
       isServerSide: not window?
 
     pushToken = new RxBehaviorSubject null
@@ -116,6 +134,7 @@ module.exports = class Model
     @overlay = new Overlay()
 
     @auth = new Auth {@exoid, @cookie, pushToken, @l, userAgent, @portal}
+
     @user = new User {@auth, proxy, @exoid, @cookie, @l, @overlay, @portal}
     @userBlock = new UserBlock {@auth}
     @userFollower = new UserFollower {@auth}
@@ -148,6 +167,7 @@ module.exports = class Model
     @pushToken = new PushToken {@auth, pushToken}
     @reviewlessCampground = new ReviewlessCampground {@auth}
     @reviewlessCampgroundAttachment = new ReviewlessCampgroundAttachment {@auth}
+    @statusBar = new StatusBar {}
     @thread = new Thread {@auth, @l, @group, @exoid, proxy}
     @threadComment = new ThreadComment {@auth}
     @threadVote = new ThreadVote {@auth}
@@ -159,6 +179,52 @@ module.exports = class Model
       @user, @pushToken, @l, @installOverlay, @overlay
     }
     @window = new Window {@cookie, @experiment, userAgent}
+
+  validateInitialCache: =>
+    cache = @initialCache
+    @initialCache = null
+
+    # could listen for postMessage from service worker to see if this is from
+    # cache, then validate data
+    requests = _map cache, (result, key) =>
+      req = try
+        JSON.parse key
+      catch
+        RxObservable.of null
+
+      if req.path
+        @auth.stream req.path, req.body, {ignoreCache: true} #, options
+
+    # TODO: seems to use anon cookie for this. not sure how to fix...
+    # i guess keep initial cookie stored and run using that?
+
+    # so need to handle the case where the cookie changes between server-side
+    # cache and the actual get (when user doesn't exist from exoid, but cookie gets user)
+
+    RxObservable.combineLatest(
+      requests, (vals...) -> vals
+    )
+    .take(1).subscribe (responses) =>
+      responses = _zipWith responses, _keys(cache), (response, req) ->
+        {req, response}
+      cacheArray = _map cache, (response, req) ->
+        {req, response}
+      # see if our updated responses differ from the cached data.
+      changedReqs = _differenceWith(responses, cacheArray, _isEqual)
+      # update with new values
+      _map changedReqs, ({req, response}) =>
+        console.log 'OUTDATED EXOID:', req, 'replacing...', response
+        @exoid.setDataCache req, response
+
+      # there's a change this will be invalidated every time
+      # eg. if we add some sort of timer / visitCount to user.getMe
+      # i'm not sure if that's a bad thing or not. some people always
+      # load from cache then update, and this would basically be the same
+      unless _isEmpty changedReqs
+        console.log 'invalidating html cache...'
+        @portal.call 'cache.deleteHtmlCache'
+        # FIXME TODO invalidate in service worker
+
 
   wasCached: => @isFromCache
 

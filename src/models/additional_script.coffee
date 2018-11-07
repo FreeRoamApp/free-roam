@@ -18,7 +18,7 @@ module.exports = class AdditionalScript
         $$script = document.createElement('script')
         $$script.type = 'text/javascript'
         $$script.onload = ->
-          setImmediate resolve
+          setTimeout resolve, 0
         $$script.src = script
         $$head.appendChild $$script
     else

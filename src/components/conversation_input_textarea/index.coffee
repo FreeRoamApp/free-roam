@@ -126,17 +126,20 @@ module.exports = class ConversationInputTextarea
             if Environment.isiOS() and not Environment.isNativeApp 'freeroam'
               @model.window.pauseResizing()
             clearTimeout @blurTimeout
-            setImmediate => # FIXME FIXME: breaks ios?
+            setTimeout => # FIXME FIXME: breaks ios?
               @isTextareaFocused.next true
+            , 0
             @onResize?()
           onblur: (e) =>
-            @blurTimeout = setImmediate =>
+            @blurTimeout = setTimeout =>
               isFocused = e.target is document.activeElement
               unless isFocused
                 if Environment.isiOS() and not Environment.isNativeApp 'freeroam'
                   @model.window.resumeResizing()
-                setImmediate =>
+                setTimeout =>
                   @isTextareaFocused.next false
+                , 0
+            , 0
 
 
         z '.right-icons',

@@ -88,7 +88,7 @@ module.exports = class PlaceNewReviewExtras
     @carrierCount.next 1
 
   onCellChange: =>
-    setImmediate =>
+    setTimeout =>
       {carriers} = @state.getValue()
       unless carriers
         return
@@ -104,8 +104,8 @@ module.exports = class PlaceNewReviewExtras
           obj[key] = signal
         obj
       , {}
-
       @fields.cellSignal.valueStreams.next RxObservable.of newCellSignal
+    , 0
 
   isCompleted: =>
     {me, fieldsValues} = @state.getValue()

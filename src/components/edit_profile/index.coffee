@@ -160,6 +160,16 @@ module.exports = class EditProfile
                   onSelect: ({file, dataUrl}) =>
                     @state.set avatarImage: file, avatarDataUrl: dataUrl
 
+        if me?.username is 'austin'
+          z '.section',
+            z 'div', {
+              onclick: =>
+                @model.auth.exoid.getCacheStream().take(1).subscribe (cache) ->
+                  console.log 'cache', cache
+                  localStorage?.offlineCache = JSON.stringify cache
+            },
+              'Save cache' # FIXME: rm
+
         z '.actions',
           z '.button',
             z @$saveButton,

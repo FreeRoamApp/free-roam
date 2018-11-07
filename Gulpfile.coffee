@@ -40,12 +40,18 @@ webpackBase =
     publicPath: '/'
 
 gulp.task 'dev', ['dev:webpack-server', 'watch:dev:server']
-# TODO: 'dist:manifest' - appcache
+
 gulp.task 'dist', gulpSequence(
   'dist:clean'
   ['dist:scripts', 'dist:static']
   'dist:concat'
+  'dist:sw'
   'dist:gc'
+)
+
+gulp.task 'dist:sw', gulpSequence(
+  'dist:sw:script'
+  'dist:sw:replace'
 )
 
 gulp.task 'watch', ->
@@ -141,7 +147,7 @@ gulp.task 'dist:static', ['dist:clean'], ->
   gulp.src paths.static
     .pipe gulp.dest paths.dist
 
-gulp.task 'dist:sw', ->
+gulp.task 'dist:sw:script', ->
   gulp.src paths.sw
   .pipe webpackStream(_defaultsDeep({
     mode: 'production'
@@ -167,7 +173,13 @@ gulp.task 'dist:sw', ->
   }, webpackBase), require('webpack'))
   .pipe gulp.dest paths.dist
 
-gulp.task 'dist:scripts', ['dist:clean', 'dist:sw'], ->
+gulp.task 'dist:sw:replace', ->
+  stats = JSON.parse fs.readFileSync "#{__dirname}/#{paths.dist}/stats.json"
+  sw = fs.readFileSync "#{__dirname}/#{paths.dist}/service_worker.js", 'utf-8'
+  sw = sw.replace /\|HASH\|/g, stats.hash
+  fs.writeFileSync("#{__dirname}/#{paths.dist}/service_worker.js", sw, 'utf-8')
+
+gulp.task 'dist:scripts', ['dist:clean'], ->
   handleLoader = new HandleCSSLoader {
     minimize: true,
     extract: true,
@@ -201,7 +213,7 @@ gulp.task 'dist:scripts', ['dist:clean', 'dist:sw'], ->
       # new BundleAnalyzerPlugin()
       new webpack.IgnorePlugin /\.json$/, /lang/
       new MiniCssExtractPlugin {
-        filename: "bundle.css"
+        filename: 'bundle.css'
       }
     ]
     output:
@@ -225,12 +237,19 @@ gulp.task 'dist:scripts', ['dist:clean', 'dist:sw'], ->
   .pipe gulp.dest paths.dist
 
 gulp.task 'dist:concat', ->
+  stats = JSON.parse fs.readFileSync "#{__dirname}/#{paths.dist}/stats.json"
+
+  fs.renameSync(
+    "#{__dirname}/#{paths.dist}/bundle.css"
+    "#{__dirname}/#{paths.dist}/bundle_#{stats.hash}.css"
+  )
+
   bundle = fs.readFileSync "#{__dirname}/#{paths.dist}/bundle.js", 'utf-8'
+  bundle = bundle.replace /\|HASH\|/g, stats.hash
   matches = bundle.match(/process\.env\.[a-zA-Z0-9_]+/g)
   _map matches, (match) ->
     key = match.replace('process.env.', '')
     bundle = bundle.replace match, "'#{process.env[key]}'"
-  stats = JSON.parse fs.readFileSync "#{__dirname}/#{paths.dist}/stats.json"
   _map config.LANGUAGES, (language) ->
     lang = fs.readFileSync(
       "#{__dirname}/#{paths.dist}/lang_#{language}.json", 'utf-8'

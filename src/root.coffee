@@ -17,6 +17,7 @@ config = require './config'
 RouterService = require './services/router'
 PushService = require './services/push'
 SemverService = require './services/semver'
+ServiceWorkerService = require './services/service_worker'
 App = require './app'
 Model = require './models'
 Portal = require './models/portal'
@@ -60,66 +61,65 @@ window.onerror = (message, file, line, column, error) ->
   if oldOnError
     return oldOnError arguments...
 
-#################
-# ROUTING SETUP #
-#################
+###
+# Model stuff
+###
 
-try
-  navigator.serviceWorker?.register '/service_worker.js'
-  .then (registration) ->
-    PushService.setFirebaseServiceWorker registration
-  .catch (err) ->
-    console.log 'sw promise err', err
-catch err
-  console.log 'sw err', err
-
-# start before dom has loaded
 portal = new Portal()
+initialCookies = cookie.parse(document.cookie)
+
+isBackendUnavailable = new RxBehaviorSubject false
+currentNotification = new RxBehaviorSubject false
+
+io = socketIO config.API_HOST, {
+  path: (config.API_PATH or '') + '/socket.io'
+  # this potentially has negative side effects. firewalls could
+  # potentially block websockets, but not long polling.
+  # unfortunately, session affinity on kubernetes is a complete pain.
+  # behind cloudflare, it seems to unevenly distribute load.
+  # the libraries for sticky websocket sessions between cpus
+  # also aren't great - it's hard to get the real ip sent to
+  # the backend (easy as http-forwarded-for, hard as remote address)
+  # and the only library that uses forwarded-for isn't great....
+  # see kaiser experiments for how to pass source ip in gke, but
+  # it doesn't keep session affinity (for now?) if adding polling
+  transports: ['websocket']
+}
+fullLanguage = window.navigator.languages?[0] or window.navigator.language
+language = initialCookies?['language'] or fullLanguage?.substr(0, 2)
+unless language in config.LANGUAGES
+  language = 'en'
+model = new Model {
+  io, portal, language, initialCookies
+  setCookie: (key, value, options) ->
+    document.cookie = cookie.serialize \
+      key, value, options
+}
+model.portal.listen()
+
+model.cookie.set(
+  'resolution', "#{window.innerWidth}x#{window.innerHeight}"
+)
+
+onOnline = ->
+  model.statusBar.close()
+  model.exoid.invalidateAll()
+onOffline = ->
+  model.statusBar.open {
+    text: model.l.get 'status.offline'
+  }
+
+###
+# Service workers
+###
+ServiceWorkerService.register {model}
+
+
+###
+# DOM stuff
+###
 
 init = ->
-  initialCookies = cookie.parse(document.cookie)
-
-  isOffline = new RxBehaviorSubject false
-  isBackendUnavailable = new RxBehaviorSubject false
-  currentNotification = new RxBehaviorSubject false
-
-  io = socketIO config.API_HOST, {
-    path: (config.API_PATH or '') + '/socket.io'
-    # this potentially has negative side effects. firewalls could
-    # potentially block websockets, but not long polling.
-    # unfortunately, session affinity on kubernetes is a complete pain.
-    # behind cloudflare, it seems to unevenly distribute load.
-    # the libraries for sticky websocket sessions between cpus
-    # also aren't great - it's hard to get the real ip sent to
-    # the backend (easy as http-forwarded-for, hard as remote address)
-    # and the only library that uses forwarded-for isn't great....
-    # see kaiser experiments for how to pass source ip in gke, but
-    # it doesn't keep session affinity (for now?) if adding polling
-    transports: ['websocket']
-  }
-  fullLanguage = window.navigator.languages?[0] or window.navigator.language
-  language = initialCookies?['language'] or fullLanguage?.substr(0, 2)
-  unless language in config.LANGUAGES
-    language = 'en'
-  model = new Model {
-    io, portal, language, initialCookies
-    setCookie: (key, value, options) ->
-      document.cookie = cookie.serialize \
-        key, value, options
-  }
-  model.portal.listen()
-
-  model.cookie.set(
-    'resolution', "#{window.innerWidth}x#{window.innerHeight}"
-  )
-
-  onOnline = ->
-    isOffline.next false
-    console.log 'online invalidate'
-    model.exoid.invalidateAll()
-  onOffline = ->
-    isOffline.next true
-
   router = new RouterService {
     model: model
     router: new LocationRouter()
@@ -136,12 +136,14 @@ init = ->
     requests
     model
     router
-    isOffline
     isBackendUnavailable
     currentNotification
   }
   $app = z app
   z.bind root, $app
+
+  # re-fetch and potentially replace data, in case html is served from cache
+  model.validateInitialCache()
 
   window.addEventListener 'beforeinstallprompt', (e) ->
     e.preventDefault()

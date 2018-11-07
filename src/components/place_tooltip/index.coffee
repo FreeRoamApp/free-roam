@@ -33,8 +33,9 @@ module.exports = class PlaceTooltip extends Base
       if place
         thumbnailUrl = @getThumbnailUrl place
         @fadeInWhenLoaded thumbnailUrl
-        setImmediate =>
+        setTimeout =>
           @size.next {width: @$$el.offsetWidth, height: @$$el.offsetHeight}
+        , 0
       else
         @size.next {width: 0, height: 0}
 
@@ -109,7 +110,8 @@ module.exports = class PlaceTooltip extends Base
     ]
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
-      href: if not isDisabled then @router.get place?.type, {slug: place?.slug}
+      href: if not isDisabled and place
+        @router.get place.type, {slug: place.slug}
       className: z.classKebab {isVisible, @isImageLoaded}
       onclick: (e) =>
         e?.stopPropagation()

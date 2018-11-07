@@ -43,7 +43,7 @@ module.exports = class User
       # but it doesn't update existing streams
       # .then @exoid.update
       .then (response) =>
-        setImmediate @exoid.invalidateAll
+        setTimeout @exoid.invalidateAll, 0
         response
     else
       @auth.call "#{@namespace}.upsert", {userDiff}

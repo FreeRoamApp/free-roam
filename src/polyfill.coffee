@@ -30,8 +30,6 @@ window.Promise = window.Promise or Promiz
 # Fetch polyfill - https://github.com/github/fetch
 require 'whatwg-fetch'
 
-require 'setimmediate'
-
 # iScroll does a translate transform, but it only does it for one transform
 # property (eg transform or webkitTransform). We need to know which one iscroll
 # is using, so this is the same code they have to pick one

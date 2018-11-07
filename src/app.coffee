@@ -20,7 +20,7 @@ NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
 WelcomeDialog = require './components/welcome_dialog'
-OfflineOverlay = require './components/offline_overlay'
+StatusBar = require './components/status_bar'
 Nps = require './components/nps'
 Environment = require './services/environment'
 config = require './config'
@@ -67,6 +67,7 @@ Pages =
   PrivacyPage: require './pages/privacy'
   ReviewlessCampgroundPage: require './pages/reviewless_campground'
   ReviewlessCampgroundAttachmentsPage: require './pages/reviewless_campground_attachments'
+  ShellPage: require './pages/shell'
   ThreadPage: require './pages/thread'
   TosPage: require './pages/tos'
   FourOhFourPage: require './pages/404'
@@ -75,7 +76,7 @@ TIME_UNTIL_ADD_TO_HOME_PROMPT_MS = 90000 # 1.5 min
 
 module.exports = class App
   constructor: (options) ->
-    {requests, @serverData, @model, @router, isOffline, @isCrawler} = options
+    {requests, @serverData, @model, @router, @isCrawler} = options
     @$cachedPages = []
     routes = @model.window.getBreakpoint().map @getRoutes
             .publishReplay(1).refCount()
@@ -121,7 +122,7 @@ module.exports = class App
       groupId = route.params.groupId
 
       subdomain = @router.getSubdomain()
-      if subdomain and not groupId
+      if subdomain and subdomain isnt 'staging' and not groupId
         groupId = subdomain
 
       groupId or= @model.cookie.get 'lastGroupId'
@@ -149,8 +150,8 @@ module.exports = class App
 
     addToHomeSheetIsVisible = new RxBehaviorSubject false
 
-    @$offlineOverlay = new OfflineOverlay {@model, isOffline}
     @$navDrawer = new NavDrawer {@model, @router, @group}
+    @$statusBar = new StatusBar {@model}
     @$addToHomeSheet = new AddToHomeScreenSheet {
       @model
       @router
@@ -185,7 +186,7 @@ module.exports = class App
       $backupPage: $backupPage
       me: me
       $overlays: @model.overlay.get$()
-      isOffline: isOffline
+      isStatusBarVisible: @model.statusBar.getData()
       hideDrawer: @requests.switchMap (request) ->
         hideDrawer = request.$page?.hideDrawer
         if hideDrawer?.map
@@ -266,6 +267,7 @@ module.exports = class App
       'reviewlessCampground', 'reviewlessCampgroundWithTab'
     ], 'ReviewlessCampgroundPage'
     route 'reviewlessCampgroundAttachments', 'ReviewlessCampgroundAttachmentsPage'
+    route 'shell', 'ShellPage'
     route 'termsOfService', 'TosPage'
     route 'privacy', 'PrivacyPage'
 
@@ -273,8 +275,8 @@ module.exports = class App
     routes
 
   render: =>
-    {request, $backupPage, me, hideDrawer,
-      $overlays, isOffline} = @state.getValue()
+    {request, $backupPage, me, hideDrawer, isStatusBarVisible,
+      $overlays} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
@@ -297,11 +299,12 @@ module.exports = class App
             unless hideDrawer
               z @$navDrawer, {currentPath: request?.req.path}
 
-            z '.page', {key: 'page'},
-              $page
+            z '.content',
+              if isStatusBarVisible
+                z @$statusBar
+              z '.page', {key: 'page'},
+                $page
 
-            if isOffline
-              z @$offlineOverlay
             if @$nps.shouldBeShown()
               z @$nps,
                 onRate: =>

@@ -16,8 +16,9 @@ module.exports = class ButtonBack
         hasRipple: true
         onclick: (e) =>
           e.preventDefault()
-          setImmediate =>
+          setTimeout =>
             if onclick
               onclick()
             else
               @router.back {fallbackPath}
+          , 0
