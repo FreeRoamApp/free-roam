@@ -27,8 +27,6 @@ module.exports = class NewPlaceReviewPage
     }
 
   render: =>
-    {$newReview} = @state.getValue()
-
     z '.p-new-place-review',
       z @$appBar, {
         title: @model.l.get 'newReviewPage.title'

@@ -33,8 +33,8 @@ module.exports = class Window
       height = window.innerHeight
     else if resolution
       arr = resolution.split 'x'
-      width = arr[0]
-      height = arr[1]
+      width = parseInt arr[0]
+      height = parseInt arr[1]
     else
       width = undefined
       height = 732
@@ -82,6 +82,38 @@ module.exports = class Window
 
   getAppBarHeight: =>
     @appBarHeight
+
+  getTransformProperty: ->
+    if window?
+      _elementStyle = document.createElement('div').style
+      _vendor = do ->
+        vendors = [
+          't'
+          'webkitT'
+          'MozT'
+          'msT'
+          'OT'
+        ]
+        transform = undefined
+        i = 0
+        l = vendors.length
+        while i < l
+          transform = vendors[i] + 'ransform'
+          if transform of _elementStyle
+            return vendors[i].substr(0, vendors[i].length - 1)
+          i += 1
+        false
+
+      _prefixStyle = (style) ->
+        if _vendor is false
+          return false
+        if _vendor is ''
+          return style
+        _vendor + style.charAt(0).toUpperCase() + style.substr(1)
+
+      _prefixStyle 'transform'
+    else
+      'transform' # should probably use userAgent to get more accurate
 
   pauseResizing: =>
     @isPaused = true

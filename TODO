@@ -3,19 +3,20 @@ Allow people to contribute cell information:
   - Get carrier, band, strength, maybe download speed?
 
 - offline
-  - record start/stop
-  - record save pbf files?
   - only cache map searches when recording enabled
     - cache w/o the bounds, so all show? or cache by zoom level?
-  later: doesn't seem to cache screen resolution properly? drawer shows when it shouldn't for split second
-  - show message when offline
+  - better shells
+  x doesn't seem to cache screen resolution properly? drawer shows when it shouldn't for split second
+  x record start/stop
+  x record save pbf files?
+  x show message when offline
   x dynamically update sw file with hashes
   x create shell paths
     - place/shell
     - /shell
-  - rm staging from env vars in padlock
+  x rm staging from env vars in padlock
   x fix cache deletion portal call
-  - only validate exoid if loaded from service worker cache?
+  later only validate exoid if loaded from service worker cache?
   n? when logging in / out, clear deploy cache?
   x figure out server-side rendering. do server still get req?
       - want fast initial load, but also server to do initial data fetching i think
@@ -33,7 +34,7 @@ Allow people to contribute cell information:
     - probably not a good idea, for now at least. go with recording method
   x bottom bar starts at 0 opacity, i guess because group var is empty
 
-  - first run test on place page. shell vs no shell (server-side rendered)
+  x first run test on place page. shell vs no shell (server-side rendered)
     - run at 3g speed or worse?
     - server-side render
       - first content: 1300ms, fully loaded w/ images: 2500ms (i think because of time to parse js)

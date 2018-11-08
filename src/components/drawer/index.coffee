@@ -11,7 +11,7 @@ MAX_OVERLAY_OPACITY = 0.5
 
 module.exports = class Drawer
   constructor: ({@model, @isOpen, @onOpen, @onClose, @side, @key, @isStatic}) ->
-    @transformProperty = window?.getTransformProperty()
+    @transformProperty = @model.window.getTransformProperty()
 
     @side ?= 'left'
     @key ?= 'nav'
@@ -131,6 +131,8 @@ module.exports = class Drawer
     if hasAppBar and isStatic
       height -= appBarHeight
 
+    x = if @side is 'right' or isStatic then 0 else -drawerWidth
+
     $drawerTab =
       z '.drawer-tab.tab',
         z '.drawer', {
@@ -159,8 +161,9 @@ module.exports = class Drawer
       z '.drawer-wrapper', {
         style:
           width: "#{drawerWidth + windowSize.width}px"
-          # "#{@transformProperty}": "translate(#{translateX}, 0)"
-          # webkitTransform: "translate(#{translateX}, 0)"
+          # make sure drawer is hidden before js laods
+          "#{@transformProperty}":
+            "translate(#{x}px, 0px) translateZ(0px)"
       },
         if @side is 'right'
           [$overlayTab, $drawerTab]

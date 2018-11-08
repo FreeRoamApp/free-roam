@@ -21,8 +21,14 @@ class ServiceWorkerService
 
   handleUpdate: (registration, {model}) =>
     if @hasActiveServiceWorker
+      console.log 'update'
       model.statusBar.open {
         text: model.l.get 'status.newVersion'
+        type: 'snack'
+        action:
+          icon: 'refresh'
+          onclick: ->
+            window.location.reload()
       }
     # PushService.setFirebaseServiceWorker registration
 

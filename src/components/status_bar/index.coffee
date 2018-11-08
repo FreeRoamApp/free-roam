@@ -10,11 +10,11 @@ module.exports = class StatusBar
     @state = z.state
       data: @model.statusBar.getData()
 
-  getHeight: =>
-    @model.window.getStatusBarHeight()
-
   render: =>
     {data} = @state.getValue()
 
-    z '.z-status-bar',
+    z '.z-status-bar', {
+      onclick: ->
+        data?.onclick?()
+    },
       data?.text

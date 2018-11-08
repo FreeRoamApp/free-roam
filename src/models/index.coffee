@@ -40,6 +40,7 @@ Language = require './language'
 LowClearance = require './low_clearance'
 Notification = require './notification'
 Nps = require './nps'
+OfflineData = require './offline_data'
 Overnight = require './overnight'
 OvernightAttachment = require './overnight_attachment'
 OvernightReview = require './overnight_review'
@@ -112,13 +113,14 @@ module.exports = class Model
           proxyHeaders
       }, opts
 
-    # offlineCache = try
-    #   JSON.parse localStorage?.offlineCache
-    # catch
-    #   {}
+    if navigator?.onLine
+      offlineCache = null
+    else
+      offlineCache = try
+        JSON.parse localStorage?.offlineCache
+      catch
+        {}
     #
-    # console.log 'offline', offlineCache
-    offlineCache = null
     @initialCache = offlineCache or cache.exoid
 
     @exoid = new Exoid
@@ -175,6 +177,7 @@ module.exports = class Model
 
     @drawer = new Drawer()
     @installOverlay = new InstallOverlay {@l, @overlay}
+    @offlineData = new OfflineData {@exoid, @portal, @statusBar, @l}
     @portal?.setModels {
       @user, @pushToken, @l, @installOverlay, @overlay
     }

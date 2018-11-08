@@ -37,7 +37,7 @@ class Environment
 
   isiOS: ({userAgent} = {}) ->
     userAgent ?= navigator?.userAgent
-    Boolean userAgent.match /iP(hone|od|ad)/g
+    Boolean userAgent?.match /iP(hone|od|ad)/g
 
   isNativeApp: (gameKey, {userAgent} = {}) ->
     userAgent ?= navigator?.userAgent

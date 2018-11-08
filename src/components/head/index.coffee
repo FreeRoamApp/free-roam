@@ -59,6 +59,7 @@ module.exports = class Head
       "#{key}:#{value}"
     ).join ';'
     cssVariables
+
     # group?.map (group) =>
     #   groupSlug = group?.slug
     #

@@ -21,6 +21,7 @@ BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
 WelcomeDialog = require './components/welcome_dialog'
 StatusBar = require './components/status_bar'
+SnackBar = require './components/snack_bar'
 Nps = require './components/nps'
 Environment = require './services/environment'
 config = require './config'
@@ -151,6 +152,7 @@ module.exports = class App
 
     @$navDrawer = new NavDrawer {@model, @router, @group}
     @$statusBar = new StatusBar {@model}
+    @$snackBar = new SnackBar {@model}
     @$addToHomeSheet = new AddToHomeScreenSheet {
       @model
       @router
@@ -185,7 +187,7 @@ module.exports = class App
       $backupPage: $backupPage
       me: me
       $overlays: @model.overlay.get$()
-      isStatusBarVisible: @model.statusBar.getData()
+      statusBarData: @model.statusBar.getData()
       windowSize: @model.window.getSize()
       hideDrawer: @requests.switchMap (request) ->
         hideDrawer = request.$page?.hideDrawer
@@ -274,13 +276,14 @@ module.exports = class App
     routes
 
   render: =>
-    {request, $backupPage, me, hideDrawer, isStatusBarVisible, windowSize,
+    {request, $backupPage, me, hideDrawer, statusBarData, windowSize,
       $overlays} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
     isAndroid = Environment.isAndroid {userAgent}
     isNative = Environment.isNativeApp 'freeroam', {userAgent}
+    isStatusBarVisible = Boolean statusBarData
 
     if @router.preservedRequest
       $page = @router.preservedRequest?.$page
@@ -303,14 +306,18 @@ module.exports = class App
                 height: "#{windowSize.height}px"
             },
               if isStatusBarVisible
-                z @$statusBar
+                if statusBarData.type is 'snack'
+                  z @$snackBar, {
+                    hasBottomBar: $page?.$bottomBar
+                  }
+                else
+                  z @$statusBar
               z '.page', {key: 'page'},
                 $page
 
             if @$nps.shouldBeShown()
               z @$nps,
                 onRate: =>
-                  console.log 'rate'
                   @model.portal.call 'app.rate'
 
             if $overlayPage

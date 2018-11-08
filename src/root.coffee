@@ -13,7 +13,6 @@ require 'rxjs/add/operator/do'
 
 require './root.styl'
 
-config = require './config'
 RouterService = require './services/router'
 PushService = require './services/push'
 SemverService = require './services/semver'
@@ -21,6 +20,8 @@ ServiceWorkerService = require './services/service_worker'
 App = require './app'
 Model = require './models'
 Portal = require './models/portal'
+config = require './config'
+colors = require './colors'
 
 MAX_ERRORS_LOGGED = 5
 
@@ -103,8 +104,10 @@ model.cookie.set(
 
 onOnline = ->
   model.statusBar.close()
+  model.exoid.enableInvalidation()
   model.exoid.invalidateAll()
 onOffline = ->
+  model.exoid.disableInvalidation()
   model.statusBar.open {
     text: model.l.get 'status.offline'
   }
@@ -153,6 +156,9 @@ init = ->
   model.portal.call 'networkInformation.onOffline', onOffline
   model.portal.call 'networkInformation.onOnline', onOnline
 
+  model.portal.call 'statusBar.setBackgroundColor', {
+    color: colors.$primary700
+  }
   # if model.ad.isVisible() and Environment.isNativeApp 'freeroam'
   #   if Environment.isiOS()
   #     adId = '' # TODO
