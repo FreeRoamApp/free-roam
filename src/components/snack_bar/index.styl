@@ -1,0 +1,41 @@
+@require '../../vars'
+
+.z-snack-bar
+  position: absolute
+  bottom: 0
+  left: 0
+  z-index: 999999
+  user-select: none
+  width: 100%
+  padding: 8px
+  box-sizing: border-box
+  max-width: 420px
+
+  &.has-bottom-bar
+    bottom: 64px
+
+  > .bar
+    shadow-1()
+    background: getColor('$tertiary100')
+    border-radius: 4px
+    display: flex
+    align-items: center
+    width: 100%
+    padding: 16px
+    box-sizing: border-box
+
+
+    // > .content
+
+    > .actions
+      margin-left: auto
+      display: flex
+
+      > .icon
+        padding: 8px
+
+        &:last-child
+          padding-right: 0
+
+  // @media (min-width: $breakPointMedium)
+  //   height: 24px

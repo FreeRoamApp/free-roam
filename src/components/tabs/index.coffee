@@ -18,7 +18,7 @@ module.exports = class Tabs
     @mountDisposable = null
     @iScrollContainer = null
     @isPaused = false
-    @transformProperty = window?.getTransformProperty()
+    @transformProperty = @model.window.getTransformProperty()
     @transitionTime = TRANSITION_TIME_MS
 
     @$tabsBar = new TabsBar {@model, @selectedIndex}

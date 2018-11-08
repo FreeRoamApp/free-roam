@@ -31,7 +31,7 @@ $zIndexTextarea = 2
     flex1()
     overflow-y: auto
     overflow-x: hidden
-    // -webkit-overflow-scrolling: touch
+    -webkit-overflow-scrolling: touch
 
     // https://stackoverflow.com/questions/18614301/keep-overflow-div-scrolled-to-bottom-unless-user-scrolls-up?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
     // reverse scrolling so we always stay at the bottom
@@ -99,6 +99,8 @@ $zIndexTextarea = 2
   &.use-iscroll
     > .messages
       overflow-y: hidden
+      -webkit-overflow-scrolling: auto
+      // flex-direction: column
 
   @media (min-width: $breakPointMedium)
     > .textarea-container

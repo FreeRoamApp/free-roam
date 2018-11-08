@@ -33,4 +33,5 @@ module.exports = class ShellPage
         style: 'primary'
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
       }
-      @$spinner
+      z '.spinner',
+        @$spinner

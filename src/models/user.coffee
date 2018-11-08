@@ -46,7 +46,7 @@ module.exports = class User
         setTimeout @exoid.invalidateAll, 0
         response
     else
-      @auth.call "#{@namespace}.upsert", {userDiff}
+      @auth.call "#{@namespace}.upsert", {userDiff}, {invalidateAll: true}
 
   getDisplayName: (user) =>
     user?.username or @l.get 'general.anonymous'

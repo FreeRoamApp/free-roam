@@ -12,6 +12,8 @@ Avatar = require '../avatar'
 Icon = require '../icon'
 UploadOverlay = require '../upload_overlay'
 PrimaryButton = require '../primary_button'
+SecondaryButton = require '../secondary_button'
+FlatButton = require '../flat_button'
 PrimaryInput = require '../primary_input'
 colors = require '../../colors'
 config = require '../../config'
@@ -19,16 +21,20 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+B_IN_MB = 1024 * 1024
+
 module.exports = class EditProfile
   constructor: ({@model, @router, group}) ->
     me = @model.user.getMe()
-
 
     @$avatar = new Avatar()
     @$avatarButton = new PrimaryButton()
     @$uploadOverlay = new UploadOverlay {@model}
 
     @$saveButton = new PrimaryButton()
+    @$recordButton = new SecondaryButton()
+    @$cacheSizeButton = new FlatButton()
+    @$clearCacheButton = new FlatButton()
 
     @usernameValueStreams = new RxReplaySubject 1
     @usernameValueStreams.next me.map (me) ->
@@ -160,15 +166,37 @@ module.exports = class EditProfile
                   onSelect: ({file, dataUrl}) =>
                     @state.set avatarImage: file, avatarDataUrl: dataUrl
 
-        if me?.username is 'austin'
+        if navigator?.serviceWorker
           z '.section',
-            z 'div', {
-              onclick: =>
-                @model.auth.exoid.getCacheStream().take(1).subscribe (cache) ->
-                  console.log 'cache', cache
-                  localStorage?.offlineCache = JSON.stringify cache
-            },
-              'Save cache' # FIXME: rm
+            z '.title', @model.l.get 'editProfile.offlineMode'
+            z '.description', @model.l.get 'editProfile.description'
+            z '.actions',
+              z @$recordButton,
+                text: @model.l.get 'editProfile.startRecording'
+                onclick: =>
+                  @model.offlineData.record()
+              z @$cacheSizeButton, {
+                onclick: =>
+                  @model.portal.call 'cache.getSizeByCacheName', {
+                    cacheName: 'recorded'
+                  }
+                  .then (size) =>
+                    size += localStorage?.offlineCache?.length or 0
+                    mb = Math.round(100 * size / B_IN_MB) / 100
+                    alert @model.l.get 'editProfile.sizeInfo', {
+                      replacements:
+                        size: "#{mb}mb"
+                    }
+                text: @model.l.get 'editProfile.checkCacheSize'
+              }
+              z @$clearCacheButton, {
+                onclick: =>
+                  @model.portal.call 'cache.clearByCacheName', {
+                    cacheName: 'recorded'
+                  }
+                  delete localStorage.offlineCache
+                text: @model.l.get 'editProfile.clearOfflineData'
+              }
 
         z '.actions',
           z '.button',
