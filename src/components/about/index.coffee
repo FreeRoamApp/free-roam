@@ -40,6 +40,18 @@ module.exports = class About
           }, @model.l.get 'general.here'
           '.'
         z 'p', @model.l.get 'about.text5'
+        z 'p',
+          @model.l.get 'welcomeDialog.video'
+          z 'a', {
+            href: '#'
+            onclick: (e) =>
+              e?.preventDefault()
+              @model.portal.call 'browser.openWindow', {
+                url: 'https://youtu.be/yKISmxLF5V8'
+                target: '_system'
+              }
+          },
+            @model.l.get 'welcomeDialog.watch'
         z 'p', @model.l.get 'about.text6'
         z 'p', @model.l.get 'about.text7'
 

@@ -120,6 +120,10 @@ module.exports = class PlaceNewReviewExtras
   render: =>
     {season, carriers, fieldsValues} = @state.getValue()
 
+    ###
+    TODO: rig
+    ###
+
     z '.z-place-new-review-extras',
       z '.g-grid',
         z '.field.cell',

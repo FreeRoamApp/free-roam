@@ -321,7 +321,11 @@ module.exports = class App
                   @model.portal.call 'app.rate'
 
             if $overlayPage
-              z '.overlay-page', {key: 'overlay-page'},
+              z '.overlay-page', {
+                key: 'overlay-page'
+                style:
+                  height: "#{windowSize.height}px"
+              },
                 z $overlayPage
 
             _map $overlays, ($overlay) ->

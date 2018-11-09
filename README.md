@@ -23,3 +23,7 @@ Austin: programming
 ##### `npm run dev` - Starts the server, watching files
 
 More to come soonish
+
+
+### License
+This repository currently does not have a license until we figure out the best open-source license down the road, but our primary goal right now is transparency. You can read more about what "No License" means [here](https://choosealicense.com/no-permission/).

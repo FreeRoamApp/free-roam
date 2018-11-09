@@ -2,53 +2,20 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- Campground description
+- Ask for rig information on first review (review extras)
+- link to MVUM for USFS https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
+- make road condition seasonal
+- usfs roads?
 - offline
   - only cache map searches when recording enabled
     - cache w/o the bounds, so all show? or cache by zoom level?
   - better shells
-  x doesn't seem to cache screen resolution properly? drawer shows when it shouldn't for split second
-  x record start/stop
-  x record save pbf files?
-  x show message when offline
-  x dynamically update sw file with hashes
-  x create shell paths
-    - place/shell
-    - /shell
-  x rm staging from env vars in padlock
-  x fix cache deletion portal call
-  later only validate exoid if loaded from service worker cache?
-  n? when logging in / out, clear deploy cache?
-  x figure out server-side rendering. do server still get req?
-      - want fast initial load, but also server to do initial data fetching i think
-      - or we need js to be smart enough to not use exoid cache if loaded from cache
-      - actually, have it use the server-side exoid cache, but request anyway and replace if different
-  x store a shell for various page types. campground, places, chat, ... and load from that
-    - try to minimize trashing?
-    - include necessities (group, user.getMe, etc...)
-    - problems/cons
-      - an extra request on first time loading that type of page
-      - more cpu being used by making that req and storing in the background
-  n could store *all* exoid in indexdb/localstorage/cookie w/cache expiry?
-    - always refetch new and replace if diff
-    - could be slow doing all the isEqual diffs?
-    - probably not a good idea, for now at least. go with recording method
-  x bottom bar starts at 0 opacity, i guess because group var is empty
-
-  x first run test on place page. shell vs no shell (server-side rendered)
-    - run at 3g speed or worse?
-    - server-side render
-      - first content: 1300ms, fully loaded w/ images: 2500ms (i think because of time to parse js)
-      - slow 3g: first content: 2800ms, fully loaded: 4000ms
-    - service-worker
-      - first content: first content: 2200ms, fully loaded: 2200ms
-      - slow 3g: first content: 2200ms, fully loaded: 2200ms
-
-
 - improve the shell/loading pages to have less thrashing / be more than just a spinner
 - And maybe somewhere that would help us find out where/when gatherings are because I get a lot of questions about them! But I usually only know the west coast ones. So it would be nice to have one app that shared all the known gatherings and info.
   - divineontheroad
 - rec.gov campgrounds
-  - "Unvetted Campgrounds"
+  x "Unvetted Campgrounds"
   x COE, WMA (wma too difficult to automate)
   - "We think this campsite is free, but you should verify through their website or phone number. If you've been here, please add a review so we can move this to our normal campground section!"
   - Adding review moves to normal campsite. Add review button on main tab too?
@@ -62,7 +29,6 @@ Allow people to contribute cell information:
   - Filter by distance to ATV trails
   - https://bit.ly/2JnjQBD
 - Edit review use initial season for value?
-- Ask for rig information on first review
 x Tooltip picture and reviews
 x Swipe / tap through gallery of images
 - "We don't have any data for this season yet, but here\'s what it was like in *season*"

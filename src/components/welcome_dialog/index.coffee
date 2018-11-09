@@ -27,6 +27,18 @@ module.exports = class WelcomeDialog
             z '.block', @model.l.get 'welcomeDialog.text2'
             z '.block', @model.l.get 'welcomeDialog.text3'
             z '.block',
+              @model.l.get 'welcomeDialog.video'
+              z 'a', {
+                href: '#'
+                onclick: (e) =>
+                  e?.preventDefault()
+                  @model.portal.call 'browser.openWindow', {
+                    url: 'https://youtu.be/yKISmxLF5V8'
+                    target: '_system'
+                  }
+              },
+                @model.l.get 'welcomeDialog.watch'
+            z '.block',
               z 'div', @model.l.get 'welcomeDialog.text4'
               z 'div', @model.l.get 'welcomeDialog.text5'
         cancelButton:
