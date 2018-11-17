@@ -201,6 +201,7 @@ colors = _defaults {
   '$blue50026': 'rgba(33, 150, 243, 0.26)'
   '$green50026': 'rgba(76, 175, 80, 0.26)'
   '$red50026': 'rgba(244, 67, 54, 0.26)'
+  '$yellow50026': 'rgba(233, 217, 130, 0.26)'
 
   '$amenitygroceries': '#549a4a'
   '$amenitydump': '#864319'

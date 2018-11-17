@@ -34,7 +34,7 @@ module.exports = class ProductGuides
       z '.g-grid',
         z '.search',
           z @$searchInput, {
-            isSearchIconRight: true
+            isSearchOnSubmit: true
             placeholder: @model.l.get 'productGuides.searchPlaceholder'
             onsubmit: =>
               @router.go 'itemsBySearch', {query: @searchValue.getValue()}

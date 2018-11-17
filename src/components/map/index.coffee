@@ -15,8 +15,8 @@ module.exports = class Map
   type: 'Widget'
 
   constructor: (options) ->
-    {@model, @router, @places, @showScale, @mapBounds, @currentLocation
-      @place, @placePosition, @mapSize, @initialZoom, @center,
+    {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
+      @place, @placePosition, @mapSize, @initialZoom, @zoom, @center,
       @onclick} = options
 
     @place ?= new RxBehaviorSubject null
@@ -88,7 +88,7 @@ module.exports = class Map
         zoom: @initialZoom
       }
 
-      if @mapBounds
+      if @mapBoundsStreams
         @subscribeToMapBounds()
 
       @map.on 'load', =>
@@ -144,6 +144,7 @@ module.exports = class Map
         @updateMapLocation()
         @subscribeToPlaces()
         @subscribeToCenter()
+        @subscribeToZoom()
         @state.set isLoading: false
 
       @map.on 'move', @onMapMove
@@ -203,14 +204,16 @@ module.exports = class Map
 
   beforeUnmount: =>
     @disposable?.unsubscribe()
-    @mapBoundsDisposable?.unsubscribe()
+    @mapBoundsStreamsDisposable?.unsubscribe()
     @centerDisposable?.unsubscribe()
+    @zoomDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
     @map.remove()
     @map = null
 
   subscribeToMapBounds: =>
-    @mapBoundsDisposable = @mapBounds.subscribe ({x1, y1, x2, y2}) =>
+    @mapBoundsStreamsDisposable = @mapBoundsStreams.switch()
+    .subscribe ({x1, y1, x2, y2} = {}) =>
       if x1?
         @map.fitBounds(
           [[x1, y1], [x2, y2]]
@@ -228,6 +231,11 @@ module.exports = class Map
     @centerDisposable = @center?.subscribe (longLatArray) =>
       if longLatArray
         @map.setCenter longLatArray
+
+  subscribeToZoom: =>
+    @zoomDisposable = @zoom?.subscribe (zoom) =>
+      if zoom
+        @map.setZoom zoom
 
   subscribeToPlaces: =>
     @disposable = @places.subscribe (places) =>
@@ -259,7 +267,7 @@ module.exports = class Map
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>
-    @currentLocation?.next @map.getBounds()
+    @currentMapBounds?.next @map.getBounds()
 
   render: =>
     {windowSize, isLoading} = @state.getValue()

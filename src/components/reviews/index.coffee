@@ -57,7 +57,7 @@ module.exports = class Reviews extends Base
       z '.g-grid',
         # z '.search',
         #   z @$searchInput, {
-        #     isSearchIconRight: true
+        #     isSearchOnSubmit: true
         #     placeholder: @model.l.get 'reviews.searchPlaceholder'
         #     onsubmit: =>
         #       @router.go 'itemsBySearch', {query: @searchValue.getValue()}

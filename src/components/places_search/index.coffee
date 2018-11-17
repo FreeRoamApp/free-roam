@@ -1,0 +1,106 @@
+z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/operator/switchMap'
+require 'rxjs/add/observable/of'
+require 'rxjs/add/operator/debounceTime'
+_map = require 'lodash/map'
+_isEmpty = require 'lodash/isEmpty'
+
+SearchInput = require '../search_input'
+FlatButton = require '../flat_button'
+colors = require '../../colors'
+
+if window?
+  require './index.styl'
+
+Icon = require '../icon'
+
+SEARCH_DEBOUNCE = 300
+
+module.exports = class PlacesSearch
+  constructor: ({@model, @router, @currentMapBounds, @onclick}) ->
+    @searchValue = new RxBehaviorSubject ''
+
+    locations = @searchValue.debounceTime(SEARCH_DEBOUNCE).switchMap (query) =>
+      if query
+        @model.geocoder.autocomplete {query}
+      else
+        RxObservable.of []
+
+    @isOpen = new RxBehaviorSubject false
+    @$searchInput = new SearchInput {@model, @router, @searchValue, @isOpen}
+    @$doneButton = new FlatButton()
+
+    @state = z.state {
+      locations
+      @isOpen
+    }
+
+  render: ({dataTypes}) =>
+    {locations, isOpen} = @state.getValue()
+
+    z '.z-places-search', {
+      className: z.classKebab {isOpen}
+    },
+      z '.input-container',
+        z '.input',
+          z @$searchInput, {
+            clearOnBack: false
+            height: '48px'
+            isAppBar: true
+            alwaysShowBack: isOpen
+            placeholder: if isOpen \
+                         then @model.l.get 'placesSearch.openPlaceholder'
+                         else @model.l.get 'placesSearch.placeholder'
+            onfocus: (e) =>
+              @isOpen.next true
+            onBack: (e) =>
+              e?.stopPropagation()
+              @isOpen.next false
+          }
+      z '.overlay',
+        z '.data-types',
+          z '.title', @model.l.get 'placesSearch.dataTypesTitle'
+
+          z '.g-grid',
+            z '.g-cols',
+            _map dataTypes, (type) =>
+              {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
+              z '.g-col.g-xs-6.g-md-3',
+                z 'label.type', {
+                  className: z.classKebab {
+                    "#{dataType}": true
+                  }
+                },
+                  z '.checkbox',
+                    z $checkbox
+                  z '.name', @model.l.get "placeTypes.#{dataType}"
+
+        if _isEmpty locations
+          z '.done',
+            z @$doneButton,
+              text: @model.l.get 'general.done'
+              onclick: =>
+                @isOpen.next false
+        else
+          z '.locations',
+            z '.title', @model.l.get 'placesSearch.locationsTitle'
+            _map locations, (location) =>
+              z '.location', {
+                onclick: =>
+                  @onclick? location
+                  @searchValue.next location.text
+                  @isOpen.next false
+              },
+                z '.text',
+                  location.text
+                z '.locality',
+                  if location.locality
+                    [
+                      location.locality
+                      if location.administrativeArea
+                        ", #{location.administrativeArea}"
+                    ]
+                  else
+                    location.administrativeArea

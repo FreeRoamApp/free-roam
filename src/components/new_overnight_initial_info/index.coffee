@@ -7,6 +7,7 @@ module.exports = class NewOvernightInitialInfo extends NewPlaceInitialInfo
   constructor: ({@model}) ->
     @subTypes = {
       restArea: @model.l.get 'overnight.restArea'
+      other: @model.l.get 'overnight.other'
       truckStop: @model.l.get 'overnight.truckStop'
       casino: @model.l.get 'overnight.casino'
       walmart: @model.l.get 'overnight.walmart'

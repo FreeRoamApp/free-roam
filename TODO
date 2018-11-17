@@ -2,6 +2,10 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- "Other" category for overnights
+- Non-profit? Definitely requires more filing/time w/ form 990. That seems to be biggest drawback
+- Better coloring for overlapping like Verizon + BLM (hard to make out which parts overlap)
+- I think it's asking for PWA update after cache gets cleared when exoid doesn't match up (eg when group updates)
 - Campground description
 - Ask for rig information on first review (review extras)
 - link to MVUM for USFS https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf

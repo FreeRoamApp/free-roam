@@ -7,10 +7,12 @@ module.exports = class ButtonBack
   constructor: ({@router}) ->
     @$backIcon = new Icon()
 
-  render: ({color, onclick, fallbackPath} = {}) =>
+  render: ({color, onclick, fallbackPath, isAlignedLeft} = {}) =>
+    isAlignedLeft ?= true
+
     z '.z-button-back',
       z @$backIcon,
-        isAlignedLeft: true
+        isAlignedLeft: isAlignedLeft
         icon: 'back'
         color: color or colors.$header500Icon
         hasRipple: true

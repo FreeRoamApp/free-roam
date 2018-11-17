@@ -46,6 +46,7 @@ module.exports = class Window
         else width
       width: width
       height: height
+      appBarHeight: if width >= 768 then 64 else 56
     }
 
   getBreakpointVal: =>

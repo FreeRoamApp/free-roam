@@ -10,10 +10,16 @@ module.exports = class ButtonMenu
   constructor: ({@model}) ->
     @$menuIcon = new Icon()
 
-  render: ({color, onclick} = {}) =>
+  isVisible: ->
+    # TODO: json file with vars that are used in stylus and js
+    # eg $contentMaxWidth
+    not window?.matchMedia('(min-width: 1280px)').matches
+
+  render: ({color, onclick, isAlignedLeft} = {}) =>
+    isAlignedLeft ?= true
     z '.z-button-menu',
       z @$menuIcon,
-        isAlignedLeft: true
+        isAlignedLeft: isAlignedLeft
         icon: 'menu'
         color: color or colors.$header500Icon
         hasRipple: true

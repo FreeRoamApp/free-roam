@@ -1,5 +1,6 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 _defaults = require 'lodash/defaults'
@@ -30,7 +31,8 @@ module.exports = class PlaceNearby
         location: place.location
       }]
 
-    mapBounds = @place.switchMap (place) =>
+    mapBoundsStreams = new RxReplaySubject 1
+    mapBoundsStreams.next @place.switchMap (place) =>
       unless place
         return RxObservable.of {}
       @model[place.type].getAmenityBoundsById place.id
@@ -41,7 +43,7 @@ module.exports = class PlaceNearby
     @$addIcon = new Icon()
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, initialZoom: 9
-      showScale: true, addPlaces, mapBounds, isFilterBarHidden: true
+      showScale: true, addPlaces, mapBoundsStreams, isSearchHidden: true
       dataTypes: [
         {
           dataType: 'amenity'

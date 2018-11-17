@@ -11,6 +11,7 @@ _sumBy = require 'lodash/sumBy'
 _isEmpty = require 'lodash/isEmpty'
 _some = require 'lodash/some'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
@@ -18,7 +19,8 @@ require 'rxjs/add/observable/of'
 Checkbox = require '../checkbox'
 Map = require '../map'
 PlaceTooltip = require '../place_tooltip'
-FilterDialog = require '../filter_dialog'
+PlacesFilterBar = require '../places_filter_bar'
+PlacesSearch = require '../places_search'
 Fab = require '../fab'
 Icon = require '../icon'
 colors = require '../../colors'
@@ -32,10 +34,13 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, @dataTypes, showScale, mapBounds, @persistentCookiePrefix,
-      @addPlaces, @optionalLayers, initialZoom, @isFilterBarHidden,
-      @currentDataType} = options
+    {@model, @router, @dataTypes, showScale, mapBoundsStreams, @persistentCookiePrefix,
+      @addPlaces, @optionalLayers, initialZoom, @isSearchHidden,
+      @currentDataType, center, zoom} = options
 
+    mapBoundsStreams ?= new RxReplaySubject 1
+    center ?= new RxBehaviorSubject null
+    zoom ?= new RxBehaviorSubject null
     @currentDataType ?= new RxBehaviorSubject @dataTypes[0].dataType
 
     @persistentCookiePrefix ?= 'default'
@@ -43,7 +48,7 @@ module.exports = class PlacesMapContainer
 
     @dataTypesStream = @getDataTypesStreams @dataTypes
 
-    @currentLocation = new RxBehaviorSubject null
+    @currentMapBounds = new RxBehaviorSubject null
     @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
     placesWithCounts = RxObservable.combineLatest(
       @addPlaces, @getPlacesStream(), (vals...) -> vals
@@ -60,33 +65,53 @@ module.exports = class PlacesMapContainer
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
 
+    @isFilterTypesVisible = new RxBehaviorSubject false
+
     @$fab = new Fab()
     @$layersIcon = new Icon()
     @$map = new Map {
       @model, @router, places, @setFilterByField, initialZoom, showScale
-      @place, @placePosition, @mapSize, mapBounds, @currentLocation
+      @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
+      center, zoom
     }
     @$placeTooltip = new PlaceTooltip {
       @model, @router, @place, position: @placePosition, @mapSize
     }
+    @$placesSearch = new PlacesSearch {
+      @model, @router, @currentMapBounds
+      onclick: (location) =>
+        if location.bbox and location.bbox[0] isnt location.bbox[2]
+          mapBoundsStreams.next RxObservable.of {
+            x1: location.bbox[0]
+            y1: location.bbox[1]
+            x2: location.bbox[2]
+            y2: location.bbox[3]
+          }
+        else
+          center.next [
+            location.location.lat
+            location.location.lon
+          ]
+          zoom.next 13
+    }
+    @$placesFilterBar = new PlacesFilterBar {
+      @model, @isFilterTypesVisible, @currentDataType
+    }
 
     @state = z.state
       filterTypes: @filterTypesStream
-      types: @dataTypesStream
+      dataTypes: @dataTypesStream
+      visibleDataTypes: @dataTypesStream.map (dataTypes) ->
+        _filter dataTypes, 'isChecked'
       currentDataType: @currentDataType
       place: @place
       counts: counts
-      isTypesVisible: false
       isLayersPickerVisible: false
+      isFilterTypesVisible: @isFilterTypesVisible
       layersVisible: []
 
   beforeUnmount: =>
     @place.next null
-
-  showFilterDialog: (filter) =>
-    @model.overlay.open new FilterDialog {
-      @model, @router, filter
-    }
 
   getDataTypesStreams: (dataTypes) =>
     persistentCookie = "#{@persistentCookiePrefix}_savedDataTypes"
@@ -125,6 +150,11 @@ module.exports = class PlacesMapContainer
         obj
       , {}
       @model.cookie.set persistentCookie, JSON.stringify savedDataTypes
+
+      # if unchecking data type, set a new current
+      {currentDataType} = @state.getValue()
+      unless dataTypesWithValue[currentDataType]?.isChecked
+        @currentDataType.next _find(dataTypesWithValue, 'isChecked')?.dataType
 
       dataTypesWithValue
 
@@ -176,19 +206,19 @@ module.exports = class PlacesMapContainer
     unless window?
       return RxObservable.of []
 
-    filterTypesAndCurrentLocationAndDataTypes = RxObservable.combineLatest(
-      @filterTypesStream, @currentLocation, @dataTypesStream, (vals...) -> vals
+    filterTypesAndcurrentMapBoundsAndDataTypes = RxObservable.combineLatest(
+      @filterTypesStream, @currentMapBounds, @dataTypesStream, (vals...) -> vals
     )
-    filterTypesAndCurrentLocationAndDataTypes.switchMap (response) =>
-      [filterTypes, currentLocation, dataTypes] = response
-      if not currentLocation
+    filterTypesAndcurrentMapBoundsAndDataTypes.switchMap (response) =>
+      [filterTypes, currentMapBounds, dataTypes] = response
+      if not currentMapBounds
         return RxObservable.of []
 
       RxObservable.combineLatest.apply null, _map dataTypes, ({dataType, isChecked}) =>
         unless isChecked
           return RxObservable.of []
         filters = filterTypes[dataType]
-        queryFilter = @getQueryFilterFromFilters filters, currentLocation
+        queryFilter = @getQueryFilterFromFilters filters, currentMapBounds
 
         @model[dataType].search {
           query:
@@ -206,7 +236,7 @@ module.exports = class PlacesMapContainer
           places: places
         }
 
-  getQueryFilterFromFilters: (filters, currentLocation) ->
+  getQueryFilterFromFilters: (filters, currentMapBounds) ->
     groupedFilters = _groupBy filters, 'field'
     filter = _filter _map groupedFilters, (fieldFilters, field) ->
       unless _some fieldFilters, 'value'
@@ -307,82 +337,34 @@ module.exports = class PlacesMapContainer
       geo_bounding_box:
         location:
           top_left:
-            lat: Math.round(1000 * currentLocation._ne.lat) / 1000
-            lon: Math.round(1000 * currentLocation._sw.lng) / 1000
+            lat: Math.round(1000 * currentMapBounds._ne.lat) / 1000
+            lon: Math.round(1000 * currentMapBounds._sw.lng) / 1000
           bottom_right:
-            lat: Math.round(1000 * currentLocation._sw.lat) / 1000
-            lon: Math.round(1000 * currentLocation._ne.lng) / 1000
+            lat: Math.round(1000 * currentMapBounds._sw.lat) / 1000
+            lon: Math.round(1000 * currentMapBounds._ne.lng) / 1000
     }
     filter
 
   render: =>
-    {filterTypes, types, currentDataType, place, layersVisible, counts,
-      isTypesVisible, isLayersPickerVisible} = @state.getValue()
+    {filterTypes, dataTypes, currentDataType, place, layersVisible, counts,
+      visibleDataTypes, isFilterTypesVisible,
+      isLayersPickerVisible} = @state.getValue()
 
     isCountsBarVisbile = counts?.visible < counts?.total
 
     z '.z-places-map-container', {
       onclick: =>
-        if isLayersPickerVisible or isTypesVisible
-          @state.set isLayersPickerVisible: false, isTypesVisible: false
+        if isLayersPickerVisible or isFilterTypesVisible
+          @state.set isLayersPickerVisible: false
+          @isFilterTypesVisible.next false
     },
       [
-        unless @isFilterBarHidden
-          [
-            z '.top-bar',
-              z '.show', {
-                onclick: =>
-                  unless isTypesVisible
-                    ga? 'send', 'event', 'map', 'showTypes'
-                  @state.set isTypesVisible: not isTypesVisible
-              },
-                @model.l.get 'placesMapContainer.show'
-              z '.filters', {
-                className: z.classKebab {"#{currentDataType}": true}
-              },
-                _map filterTypes?[currentDataType], (filter) =>
-                  if filter.name
-                    z '.filter', {
-                      className: z.classKebab {
-                        hasMore: filter.type isnt 'booleanArray'
-                        hasValue: filter.value?
-                      }
-                      onclick: =>
-                        ga? 'send', 'event', 'map', 'filterClick', filter.field
-                        if filter.type is 'booleanArray'
-                          filter.valueSubject.next (not filter.value) or null
-                        else
-                          @showFilterDialog filter
-                    }, filter.name
-            z '.types', {
-              className: z.classKebab {isVisible: isTypesVisible}
-              onclick: (e) ->
-                e?.stopPropagation()
-            },
-              z '.title', @model.l.get 'placesMapContainer.typesTitle'
-              _map types, (type) =>
-                {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
-                z '.type', {
-                  className: z.classKebab {
-                    isSelected: currentDataType is dataType
-                    "#{dataType}": true
-                  }
-                  onclick: =>
-                    ga? 'send', 'event', 'map', 'typeClick', dataType
-                    onclick?()
-                    @currentDataType.next dataType
-                    isCheckedSubject.next true
-                },
-                  z '.checkbox', {
-                    onclick: (e) ->
-                      # if they're unchecking, don't switch to these filters
-                      unless $checkbox.isChecked()
-                        e.stopPropagation()
-                  },
-                    z $checkbox
-                  z '.name', @model.l.get "placeTypes.#{dataType}"
-          ]
-
+        unless @isSearchHidden
+          z '.search',
+            z @$placesSearch, {dataTypes}
+            z @$placesFilterBar, {
+              dataTypes, currentDataType, filterTypes, visibleDataTypes
+            }
         z '.counts-bar', {
           className: z.classKebab {isVisible: isCountsBarVisbile}
         },
@@ -404,7 +386,7 @@ module.exports = class PlacesMapContainer
                 $icon: z @$layersIcon, {
                   icon: 'layers'
                   isTouchTarget: false
-                  color: colors.$bgText70
+                  color: colors.$bgText54
                 }
                 isImmediate: true
                 onclick: =>

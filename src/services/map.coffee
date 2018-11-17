@@ -90,6 +90,25 @@ class MapService
       }
     ]
 
+  getReviewlessCampgroundFilters: ({model}) ->
+    [
+      {
+        field: 'cellSignal'
+        type: 'cellSignal'
+        name: model.l.get 'campground.cellSignal'
+      }
+      {
+        field: 'weather'
+        type: 'weather'
+        name: model.l.get 'general.weather'
+      }
+      {
+        field: 'distanceTo'
+        type: 'distanceTo'
+        name: model.l.get 'campground.distanceTo'
+      }
+    ]
+
   getLowClearanceFilters: ({model}) ->
     [
       {
@@ -125,6 +144,12 @@ class MapService
         arrayValue: 'casino'
         name: model.l.get 'overnight.casino'
       }
+      {
+        field: 'subType'
+        type: 'booleanArray'
+        arrayValue: 'other'
+        name: model.l.get 'overnight.other'
+      }
     ]
 
   getOptionalLayers: ({model}) ->
@@ -141,7 +166,8 @@ class MapService
           'source-layer': 'us_pad'
           layout: {}
           paint:
-            'fill-color': colors.$mapLayerBlm
+            # 'fill-color': colors.$mapLayerBlm
+            'fill-pattern': 'blm_bg'
             'fill-opacity': 0.5
         insertBeneathLabels: true
       }
@@ -158,7 +184,8 @@ class MapService
           'source-layer': 'us_pad'
           layout: {}
           paint:
-            'fill-color': colors.$mapLayerUsfs
+            # 'fill-color': colors.$mapLayerUsfs
+            'fill-pattern': 'usfs_bg'
             'fill-opacity': 0.5
         insertBeneathLabels: true
       }
@@ -175,8 +202,9 @@ class MapService
           'source-layer': 'us_cell_verizon'
           layout: {}
           paint:
-            'fill-color': colors.$verizon
-            'fill-opacity': 0.3
+            # 'fill-color': colors.$verizon
+            'fill-pattern': 'verizon_bg'
+            'fill-opacity': 0.4
         insertBeneathLabels: true
       }
 
@@ -192,8 +220,9 @@ class MapService
           'source-layer': 'us_cell_att'
           layout: {}
           paint:
-            'fill-color': colors.$att
-            'fill-opacity': 0.3
+            # 'fill-color': colors.$att
+            'fill-pattern': 'att_bg'
+            'fill-opacity': 0.4
         insertBeneathLabels: true
       }
 
@@ -209,8 +238,9 @@ class MapService
           'source-layer': 'us_cell_tmobile'
           layout: {}
           paint:
-            'fill-color': colors.$tmobile
-            'fill-opacity': 0.3
+            # 'fill-color': colors.$tmobile
+            'fill-pattern': 'tmobile_bg'
+            'fill-opacity': 0.4
         insertBeneathLabels: true
       }
 
@@ -226,8 +256,9 @@ class MapService
           'source-layer': 'us_cell_sprint'
           layout: {}
           paint:
-            'fill-color': colors.$sprint
-            'fill-opacity': 0.3
+            # 'fill-color': colors.$sprint
+            'fill-pattern': 'sprint_bg'
+            'fill-opacity': 0.4
         insertBeneathLabels: true
       }
 

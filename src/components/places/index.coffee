@@ -33,20 +33,20 @@ module.exports = class Places
           defaultValue: true
         }
         {
+          dataType: 'reviewlessCampground'
+          filters: MapService.getReviewlessCampgroundFilters {@model}
+          onclick: =>
+            unless @model.cookie.get('hasSeenReviewlessCampgroundWarning')
+              @model.cookie.set 'hasSeenReviewlessCampgroundWarning', '1'
+              @model.overlay.open new ReviewlessCampgroundWarningDialog {@model}
+        }
+        {
           dataType: 'overnight'
           filters: MapService.getOvernightFilters {@model}
           onclick: =>
             unless @model.cookie.get('hasSeenOvernightWarning')
               @model.cookie.set 'hasSeenOvernightWarning', '1'
               @model.overlay.open new OvernightWarningDialog {@model}
-        }
-        {
-          dataType: 'reviewlessCampground'
-          filters: [] # TODO
-          onclick: =>
-            unless @model.cookie.get('hasSeenReviewlessCampgroundWarning')
-              @model.cookie.set 'hasSeenReviewlessCampgroundWarning', '1'
-              @model.overlay.open new ReviewlessCampgroundWarningDialog {@model}
         }
         {
           dataType: 'amenity'
