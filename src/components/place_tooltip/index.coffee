@@ -106,7 +106,7 @@ module.exports = class PlaceTooltip extends Base
     transform = @getTransform place?.position, anchor
 
     isDisabled = not place?.type in [
-      'campground', 'overnight', 'reviewlessCampground'
+      'campground', 'overnight'
     ]
 
     z "a.z-place-tooltip.anchor-#{anchor}", {

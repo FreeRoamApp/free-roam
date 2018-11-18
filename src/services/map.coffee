@@ -90,25 +90,6 @@ class MapService
       }
     ]
 
-  getReviewlessCampgroundFilters: ({model}) ->
-    [
-      {
-        field: 'cellSignal'
-        type: 'cellSignal'
-        name: model.l.get 'campground.cellSignal'
-      }
-      {
-        field: 'weather'
-        type: 'weather'
-        name: model.l.get 'general.weather'
-      }
-      {
-        field: 'distanceTo'
-        type: 'distanceTo'
-        name: model.l.get 'campground.distanceTo'
-      }
-    ]
-
   getLowClearanceFilters: ({model}) ->
     [
       {

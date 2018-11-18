@@ -51,10 +51,6 @@
   "productGuides": "/product-guides",
   "product": "/product/:slug",
 
-  "reviewlessCampground": "/reviewless-campground/:slug",
-  "reviewlessCampgroundAttachments": "/reviewless-campground/:slug/attachments",
-  "reviewlessCampgroundWithTab": "/reviewless-campground/:slug/:tab",
-
   "shell": "/shell",
   "termsOfService": "/tos",
   "home": "/",

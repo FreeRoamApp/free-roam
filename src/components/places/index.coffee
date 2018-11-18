@@ -6,7 +6,6 @@ Fab = require '../fab'
 Icon = require '../icon'
 ClearanceWarningDialog = require '../clearance_warning_dialog'
 OvernightWarningDialog = require '../overnight_warning_dialog'
-ReviewlessCampgroundWarningDialog = require '../reviewless_campground_warning_dialog'
 PlacesMapContainer = require '../places_map_container'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -31,14 +30,6 @@ module.exports = class Places
           dataType: 'campground'
           filters: MapService.getCampgroundFilters {@model}
           defaultValue: true
-        }
-        {
-          dataType: 'reviewlessCampground'
-          filters: MapService.getReviewlessCampgroundFilters {@model}
-          onclick: =>
-            unless @model.cookie.get('hasSeenReviewlessCampgroundWarning')
-              @model.cookie.set 'hasSeenReviewlessCampgroundWarning', '1'
-              @model.overlay.open new ReviewlessCampgroundWarningDialog {@model}
         }
         {
           dataType: 'overnight'
