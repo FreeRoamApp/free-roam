@@ -60,47 +60,48 @@ module.exports = class PlacesSearch
               @isOpen.next false
           }
       z '.overlay',
-        z '.data-types',
-          z '.title', @model.l.get 'placesSearch.dataTypesTitle'
+        z '.overlay-inner',
+          z '.data-types',
+            z '.title', @model.l.get 'placesSearch.dataTypesTitle'
 
-          z '.g-grid',
-            z '.g-cols',
-            _map dataTypes, (type) =>
-              {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
-              z '.g-col.g-xs-6.g-md-3',
-                z 'label.type', {
-                  className: z.classKebab {
-                    "#{dataType}": true
-                  }
-                },
-                  z '.checkbox',
-                    z $checkbox
-                  z '.name', @model.l.get "placeTypes.#{dataType}"
+            z '.g-grid',
+              z '.g-cols',
+              _map dataTypes, (type) =>
+                {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
+                z '.g-col.g-xs-6.g-md-3',
+                  z 'label.type', {
+                    className: z.classKebab {
+                      "#{dataType}": true
+                    }
+                  },
+                    z '.checkbox',
+                      z $checkbox
+                    z '.name', @model.l.get "placeTypes.#{dataType}"
 
-        if _isEmpty locations
-          z '.done',
-            z @$doneButton,
-              text: @model.l.get 'general.done'
-              onclick: =>
-                @isOpen.next false
-        else
-          z '.locations',
-            z '.title', @model.l.get 'placesSearch.locationsTitle'
-            _map locations, (location) =>
-              z '.location', {
+          if _isEmpty locations
+            z '.done',
+              z @$doneButton,
+                text: @model.l.get 'general.done'
                 onclick: =>
-                  @onclick? location
-                  @searchValue.next location.text
                   @isOpen.next false
-              },
-                z '.text',
-                  location.text
-                z '.locality',
-                  if location.locality
-                    [
-                      location.locality
-                      if location.administrativeArea
-                        ", #{location.administrativeArea}"
-                    ]
-                  else
-                    location.administrativeArea
+          else
+            z '.locations',
+              z '.title', @model.l.get 'placesSearch.locationsTitle'
+              _map locations, (location) =>
+                z '.location', {
+                  onclick: =>
+                    @onclick? location
+                    @searchValue.next location.text
+                    @isOpen.next false
+                },
+                  z '.text',
+                    location.text
+                  z '.locality',
+                    if location.locality
+                      [
+                        location.locality
+                        if location.administrativeArea
+                          ", #{location.administrativeArea}"
+                      ]
+                    else
+                      location.administrativeArea

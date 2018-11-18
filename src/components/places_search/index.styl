@@ -27,48 +27,56 @@
     left: 0
     width: 100%
     height: 100%
+    padding-bottom: 62px // hack to cover bottom bar
     background: getColor('$bg500')
     opacity: 0
-    padding: 8px
-    padding-top: 56px
-    box-sizing: border-box
+    overflow: auto
+    -webkit-overflow-scrolling: touch
     transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
-    > .done
-      margin-top: 16px
-
-    > .locations, > .data-types
-      shadow-1()
-      background: getColor('$tertiary100')
-      border-radius: 2px
+    > .overlay-inner
       padding: 8px
-      margin-top: 8px
+      padding-top: 56px
 
-      > .title
-        font-caption2()
-        padding: 0 8px
-        margin-bottom: 8px
+      > .done
+        margin-top: 16px
 
-    > .data-types > .g-grid > .g-cols > .g-col
-      > .type
-        display: flex
-        align-items: center
-        padding: 0 8px
-        cursor: pointer
-
-        > .name
-          font-caption1()
-          margin-left: 8px
-
-    > .locations
-      > .location
-        display: flex
+      > .locations, > .data-types
+        shadow-1()
+        background: getColor('$tertiary100')
+        border-radius: 2px
         padding: 8px
-        cursor: pointer
+        margin-top: 8px
 
-        &:hover
-          background: getColor('$bg500')
+        > .title
+          font-caption2()
+          padding: 0 8px
+          margin-bottom: 8px
 
-        > .locality
-          margin-left: 8px
-          color: getColor('$bgText54')
+      > .data-types > .g-grid > .g-cols > .g-col
+        > .type
+          display: flex
+          align-items: center
+          padding: 0 8px
+          cursor: pointer
+
+          > .name
+            font-caption1()
+            margin-left: 8px
+
+      > .locations
+        > .location
+          display: flex
+          padding: 8px
+          cursor: pointer
+
+          &:hover
+            background: getColor('$bg500')
+
+          > .locality
+            margin-left: 8px
+            color: getColor('$bgText54')
+
+  @media (min-width: $contentMaxWidth)
+    > .overlay
+      padding-bottom: 0 // get rid of bottom bar padding

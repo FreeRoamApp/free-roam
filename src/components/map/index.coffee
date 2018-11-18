@@ -208,7 +208,7 @@ module.exports = class Map
     @centerDisposable?.unsubscribe()
     @zoomDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
-    @map.remove()
+    @map?.remove()
     @map = null
 
   subscribeToMapBounds: =>

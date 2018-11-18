@@ -156,8 +156,7 @@ module.exports = class CampgroundInfo extends Base
         z '.rating',
           z @$rating, {size: '20px'}
 
-        # TODO: get contact info for campgrounds, amenities
-        if place?.type is 'reviewlessCampground'
+        if place?.contact
           z '.contact',
             if place.contact.phone
               matches = place.contact?.phone?.number.match(

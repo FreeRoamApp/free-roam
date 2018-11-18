@@ -2,7 +2,17 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
-- "Other" category for overnights
+- Merge reviewless_campgrounds into campgrounds.
+  - Keep the orange icon for ones w/ reviews
+  - Gray icon for reviewless
+  x Add `source` column to campgrounds
+  - Make it clear first time filtering that it'll only keep the orange ones
+  - Delete reviewless campgrounds
+- Show icons when choosing "Show me...".
+- Exoid cache gets very large with all of the place.search reqs. Clear them out
+- Message first time clicking on a filter saying it's only for that data type
+x Select a more appropriate zoom level for geocoding
+x "Other" category for overnights
 - Non-profit? Definitely requires more filing/time w/ form 990. That seems to be biggest drawback
 - Better coloring for overlapping like Verizon + BLM (hard to make out which parts overlap)
 - I think it's asking for PWA update after cache gets cleared when exoid doesn't match up (eg when group updates)
@@ -28,7 +38,6 @@ Allow people to contribute cell information:
 - Favorite GPS points (not just campgrounds)
   - Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)
   - roadpickle
-- Exoid cache gets very large with all of the place.search reqs. Clear them out
 - ATV trails as a nearby amenity
   - Filter by distance to ATV trails
   - https://bit.ly/2JnjQBD

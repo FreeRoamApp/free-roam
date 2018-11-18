@@ -92,7 +92,7 @@ module.exports = class PlacesMapContainer
             location.location.lat
             location.location.lon
           ]
-          zoom.next 13
+          zoom.next 9
     }
     @$placesFilterBar = new PlacesFilterBar {
       @model, @isFilterTypesVisible, @currentDataType
