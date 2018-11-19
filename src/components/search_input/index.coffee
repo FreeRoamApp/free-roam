@@ -92,6 +92,7 @@ module.exports = class SearchInput
           height: height
       },
         z 'input.input',
+          type: 'text'
           placeholder: placeholder
           value: if window? then searchValue
           onfocus: (e) =>

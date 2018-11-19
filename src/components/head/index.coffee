@@ -207,6 +207,11 @@ module.exports = class Head
       z 'meta', {name: 'theme-color', content: "#{meta.themeColor}"}
       z 'link#favicon', {rel: 'icon', href: "#{meta.favicon}"}
       z 'meta', {name: 'msapplication-tap-highlight', content: 'no'}
+      z 'link#gfonts-preconnect', { # faster dns for fonts
+        rel: 'preconnect'
+        href: 'https://fonts.gstatic.com/'
+      }
+
 
       # Android
       z 'link#manifest', {rel: 'manifest', href: "#{meta.manifestUrl}"}
@@ -244,12 +249,6 @@ module.exports = class Head
         innerHTML:
           ":root {#{cssVariables or @model.cookie.get 'cachedCssVariables'}}"
       if isInliningSource
-        # we could use separate css file for styles, which would benefit from
-        # cache... but we have a weird problem where chrome tries to
-        # re-parse the css file resulting in a white flash. maybe a vdom issue?
-        # z 'style#inline',
-        #   type: 'text/css'
-        # , serverData?.styles
         z 'link',
           rel: 'stylesheet'
           type: 'text/css'

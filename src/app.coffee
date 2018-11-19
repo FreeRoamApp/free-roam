@@ -285,7 +285,10 @@ module.exports = class App
     else
       $page = request?.$page or $backupPage
 
-    z 'html',
+    z 'html', {
+      attributes:
+        lang: 'en'
+    },
       z @$head, {meta: $page?.getMeta?()}
       z 'body',
         z '#zorium-root', {

@@ -160,7 +160,7 @@ app.use (req, res, next) ->
     bundlePath = null
     bundleCssPath = null
 
-  serverData = {req, res, bundlePath, bundleCssPath}#, styles}
+  serverData = {req, res, bundlePath, bundleCssPath}
   userAgent = req.headers?['user-agent']
   isFacebookCrawler = userAgent?.indexOf('facebookexternalhit') isnt -1 or
       userAgent?.indexOf('Facebot') isnt -1

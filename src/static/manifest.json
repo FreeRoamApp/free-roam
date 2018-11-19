@@ -7,10 +7,20 @@
       "src": "https://fdn.uno/d/images/android-chrome-144x144.png",
       "sizes": "144x144",
       "type": "image/png"
+    },
+    {
+      "src": "https://fdn.uno/d/images/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://fdn.uno/d/images/web_icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
-  "background_color": "#1a1a1a",
-  "theme_color": "#fc373e",
+  "background_color": "#ffffff",
+  "theme_color": "#D25A00",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": ".",
