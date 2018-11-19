@@ -42,12 +42,12 @@ module.exports = class PlacesFilterBar
             if filter.name
               z '.filter', {
                 className: z.classKebab {
-                  hasMore: filter.type isnt 'booleanArray'
+                  hasMore: not filter.isBoolean
                   hasValue: filter.value?
                 }
                 onclick: =>
                   ga? 'send', 'event', 'map', 'filterClick', filter.field
-                  if filter.type is 'booleanArray'
+                  if filter.isBoolean
                     filter.valueSubject.next (not filter.value) or null
                   else
                     @showFilterDialog filter

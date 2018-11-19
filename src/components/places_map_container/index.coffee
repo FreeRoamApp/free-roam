@@ -282,6 +282,12 @@ module.exports = class PlacesMapContainer
               "#{field}.#{filter.value.dayNight}":
                 lte: filter.value.value
           }
+        when 'gtZero'
+          {
+            range:
+              "#{field}":
+                gt: 0
+          }
         when 'cellSignal'
           carrier = filter.value.carrier
           if filter.value.isLte

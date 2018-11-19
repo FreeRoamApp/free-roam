@@ -2,12 +2,15 @@ Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 
+- "Location you're searching not showing? Let us know! **button**"
+- Places nearby: show closets & show all toggle (so it's not a bunch of walmarts)
 - Merge reviewless_campgrounds into campgrounds.
-  - Keep the orange icon for ones w/ reviews
-  - Gray icon for reviewless
+  x Keep the orange icon for ones w/ reviews
+  x Gray icon for reviewless
   x Add `source` column to campgrounds
   - Make it clear first time filtering that it'll only keep the orange ones
-  - Delete reviewless campgrounds
+  - Warning message on campgrounds w/o review
+  x Delete reviewless campgrounds
 - Show icons when choosing "Show me...".
 - Exoid cache gets very large with all of the place.search reqs. Clear them out
 - Message first time clicking on a filter saying it's only for that data type

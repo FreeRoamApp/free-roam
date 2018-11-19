@@ -6,36 +6,42 @@ class MapService
       {
         field: 'amenities'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'dump'
         name: model.l.get 'amenities.dump'
       }
       {
         field: 'amenities'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'water'
         name: model.l.get 'amenities.water'
       }
       {
         field: 'amenities'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'groceries'
         name: model.l.get 'amenities.groceries'
       }
       {
         field: 'amenities'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'propane'
         name: model.l.get 'amenities.propane'
       }
       {
         field: 'amenities'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'gas'
         name: model.l.get 'amenities.gas'
       }
       {
         field: 'amenities'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'trash'
         name: model.l.get 'amenities.trash'
       }
@@ -88,6 +94,12 @@ class MapService
         type: 'maxInt'
         name: model.l.get 'campground.shade'
       }
+      {
+        field: 'attachmentCount'
+        type: 'gtZero'
+        isBoolean: true
+        name: model.l.get 'campground.hasPhoto'
+      }
     ]
 
   getLowClearanceFilters: ({model}) ->
@@ -104,30 +116,35 @@ class MapService
       {
         field: 'subType'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'walmart'
         name: model.l.get 'overnight.walmart'
       }
       {
         field: 'subType'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'truckStop'
         name: model.l.get 'overnight.truckStop'
       }
       {
         field: 'subType'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'restArea'
         name: model.l.get 'overnight.restArea'
       }
       {
         field: 'subType'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'casino'
         name: model.l.get 'overnight.casino'
       }
       {
         field: 'subType'
         type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'other'
         name: model.l.get 'overnight.other'
       }

@@ -74,7 +74,7 @@ module.exports = class ConversationInputGifs
           e?.stopPropagation()
       },
         if isLoadingGifs
-          z @$spinner, {hasTopMargin: false}
+          z @$spinner
         else
           _map gifs, (gif) =>
             fixedHeightImg = gif.images.fixed_height

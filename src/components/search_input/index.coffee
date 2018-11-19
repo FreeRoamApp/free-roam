@@ -33,8 +33,9 @@ module.exports = class SearchInput
     @searchValue.next ''
 
   render: (options = {}) =>
-    {placeholder, onBack, height, bgColor, clearOnBack, isAppBar,
-      alwaysShowBack, isSearchOnSubmit, onclick, onsubmit, onfocus} = options
+    {placeholder, onBack, height, bgColor, clearOnBack, isAppBar, alwaysShowBack
+      isSearchOnSubmit, onclick, onsubmit, onfocus, onblur
+      ontouchstart} = options
 
     {isFocused, searchValue} = @state.getValue()
 
@@ -96,7 +97,11 @@ module.exports = class SearchInput
           onfocus: (e) =>
             @open e
             onfocus? e
-          onblur: @close
+          onblur: (e) =>
+            @close e
+            onblur? e
+          ontouchstart: (e) =>
+            ontouchstart? e
           style:
             backgroundColor: bgColor
           oninput: (e) =>

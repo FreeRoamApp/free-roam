@@ -10,17 +10,20 @@ if window?
 DEFAULT_SIZE = 50
 
 module.exports = class Spinner
-  render: ({size} = {}) -> #, hasTopMargin} = {}) ->
+  render: ({size} = {}) ->
     size ?= DEFAULT_SIZE
     # hasTopMargin ?= true
 
     z '.z-spinner', {
-      style:
-        width: "#{size}px"
-        height: "#{size * 0.6}px"
+      # style:
+      #   width: "#{size}px"
+      #   height: "#{size * 0.6}px"
         # marginTop: if hasTopMargin then '16px' else 0
     },
-      _map _range(3), ->
-        z 'li',
-          style:
-            border: "#{Math.round(size * 0.06)}px solid #{colors.$primary500}"
+      z '.van',
+        z '.chassis'
+        z '.wheel-1'
+        z '.wheel-2'
+        z '.smoke'
+      z '.text',
+        'Are we there yet?' # FIXME lang

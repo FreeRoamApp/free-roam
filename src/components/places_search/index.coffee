@@ -55,6 +55,14 @@ module.exports = class PlacesSearch
                          else @model.l.get 'placesSearch.placeholder'
             onfocus: (e) =>
               @isOpen.next true
+            ontouchstart: =>
+              # reduce jank in map
+              # (doesn't need to resize for kb when overlay is up)
+              @model.window.pauseResizing()
+            onblur: (e) =>
+              setTimeout =>
+                @model.window.resumeResizing()
+              , 200 # give time for keyboard animation to finish
             onBack: (e) =>
               e?.stopPropagation()
               @isOpen.next false

@@ -335,6 +335,7 @@
   "campground.drivingInstructions": "Driving instructions",
   "campground.crowds": "Crowdedness",
   "campground.fullness": "Fullness",
+  "campground.hasPhoto": "Has photo(s)",
   "campground.noise": "Noise",
   "campground.roadDifficulty": "Road difficulty",
   "campground.safety": "Safety",
