@@ -179,6 +179,9 @@ module.exports = class GroupChatPage
     {group, me, conversation, isChannelDrawerOpen, breakpoint
       selectedProfileDialogUser, shouldShowBottomBar} = @state.getValue()
 
+    # synchronous so it doesn't flash has-bottom-bar on ($spinner moves)
+    shouldShowBottomBar ?= @model.window.getBreakpointVal() in ['tablet', 'mobile']
+
     z '.p-group-chat', {
       className: z.classKebab {shouldShowBottomBar}
     },

@@ -80,6 +80,7 @@ module.exports = class NewPlace
 
     @state = z.state {
       @step
+      me: @model.user.getMe()
       isLoading: false
       titleValue: @reviewFields.titleValueStreams.switch()
       bodyValue: @reviewFields.bodyValueStreams.switch()
@@ -89,28 +90,31 @@ module.exports = class NewPlace
     }
 
   upsert: =>
-    {attachmentsValue} = @state.getValue()
+    {me, attachmentsValue} = @state.getValue()
 
-    if _find attachmentsValue, {isUploading: true}
-      isReady = confirm @model.l.get 'newReview.pendingUpload'
-    else
-      isReady = true
+    @state.set isLoading: true
 
-    if isReady
-      @state.set isLoading: true
-      @placeModel.upsert {
-        name: @initialInfoFields.name.valueSubject.getValue()
-        location: @initialInfoFields.location.valueSubject.getValue()
-        videos: @initialInfoFields.videos.valueSubject.getValue()
-        subType: @initialInfoFields.subType?.valueSubject.getValue()
-      }
-      .then @upsertReview
-      .catch (err) =>
-        console.log err
-        # TODO: err messages
-        @state.set isLoading: false
-      .then =>
-        @state.set isLoading: false
+    @model.user.requestLoginIfGuest me
+    .then =>
+      if _find attachmentsValue, {isUploading: true}
+        isReady = confirm @model.l.get 'newReview.pendingUpload'
+      else
+        isReady = true
+
+      if isReady
+        @placeModel.upsert {
+          name: @initialInfoFields.name.valueSubject.getValue()
+          location: @initialInfoFields.location.valueSubject.getValue()
+          videos: @initialInfoFields.videos.valueSubject.getValue()
+          subType: @initialInfoFields.subType?.valueSubject.getValue()
+        }
+        .then @upsertReview
+        .catch (err) =>
+          console.log err
+          # TODO: err messages
+          @state.set isLoading: false
+        .then =>
+          @state.set isLoading: false
 
   upsertReview: (parent) =>
     {titleValue, bodyValue, ratingValue, attachmentsValue,

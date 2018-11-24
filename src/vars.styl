@@ -219,15 +219,6 @@ box-shadow()
 border()
   cssVariableFallbacks('border', arguments)
 
-
-@keyframes z-ripple-animation-css-only
-  from
-    transform: scale(7)
-    opacity: 0.25
-  to
-    transform: scale(20)
-    opacity: 0
-
 ripple(color)
   position: relative
   outline: none
@@ -253,6 +244,7 @@ ripple(color)
   // ios and desktop look bad on hover
   .is-android &:hover::after {
     will-change: transform
+    // anim defined in root
     animation: z-ripple-animation-css-only 0.3s ease-out
     opacity: 0
   }

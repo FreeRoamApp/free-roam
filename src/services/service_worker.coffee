@@ -21,7 +21,6 @@ class ServiceWorkerService
 
   handleUpdate: (registration, {model}) =>
     if @hasActiveServiceWorker
-      console.log 'update'
       model.statusBar.open {
         text: model.l.get 'status.newVersion'
         type: 'snack'

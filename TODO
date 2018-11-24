@@ -1,7 +1,49 @@
-Allow people to contribute cell information:
+- Reputation & Leveling, plan it out
+  - Start with 10 levels
+    -
+  - Earn for:
+    - Posting a review (initially, eventually get rid of in favor of likes)
+    - Review getting likes
+    - Photo getting likes
+    - Forum thread getting likes
+
+
+
+  - WoW, Clash Royale, Fam
+  - Use XP code as base
+  - Notifications when you gain rep
+  - Named levels (themed after forest system?)
+
+  - **Is it site-wide or group-wide???**
+    - If it's site-wide should thread votes count? I guess so, similar to Reddit
+
+  - Review voting
+  - Photo voting
+- See who other sites have partnered with for gear giveaways and reach out to company
+  - See what they got out of it, what they wish they got out of it
+- Run contests for people w/ most rep each week
+
+TODOS:
+- Review voting
+- Photo voting
+
+
+- Saved places
+  - Should be mappable, so extend place_base
+  - Should it have it's own page, or just a checkbox on the map search???
+    - Have it on it's own page. My Map: Past & Future modes?
+    - How will this work with places you've been. Separate, or merged?
+  - Should enough data be stored for it, or should it query db for each place?
+
+- Delete campground
+  - https://freeroam.app/campground/the-salty-spot-iqualuit/reviews
+- Cost and discounts would be useful. For example, New Mexico state parks are crazy-cheap with an annual pass, which is why so many full-timers come here. Some BLM campgrounds offer 1/2 price camping for someone with a National Parks pass. Etc.
+  - The Good Luck Duck
+- Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
-
+- Allow searching campground name
+- Allow searching type? Eg "Walmarts" gets them to the right place
 - Legend? Icon -> Name
 - "Location you're searching not showing? Let us know! **button**"
 - Places nearby: show closets & show all toggle (so it's not a bunch of walmarts)

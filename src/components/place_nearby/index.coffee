@@ -6,6 +6,10 @@ require 'rxjs/add/observable/combineLatest'
 _defaults = require 'lodash/defaults'
 _map = require 'lodash/map'
 _reduce = require 'lodash/reduce'
+_filter = require 'lodash/filter'
+_minBy = require 'lodash/minBy'
+_maxBy = require 'lodash/maxBy'
+_uniqBy = require 'lodash/uniqBy'
 
 Fab = require '../fab'
 Icon = require '../icon'
@@ -20,30 +24,59 @@ if window?
 
 module.exports = class PlaceNearby
   constructor: ({@model, @router, @place}) ->
+    nearestAmenities = @place.switchMap (place) =>
+      unless place
+        return RxObservable.of []
+      @model[place.type].getNearestAmenitiesById place.id
 
-    addPlaces = @place.map (place) ->
+    placeAndNearestAmenities = RxObservable.combineLatest(
+      @place, nearestAmenities, (vals...) -> vals
+    )
+
+    addPlaces = placeAndNearestAmenities.map ([place, nearestAmenities]) ->
       unless place
         return []
-      [{
-        name: place.name
-        slug: place.slug
-        type: place.type
-        location: place.location
-      }]
+      _map _filter([place].concat nearestAmenities), (place) ->
+        _defaults place, {iconOpacity: 1}
 
     mapBoundsStreams = new RxReplaySubject 1
-    mapBoundsStreams.next @place.switchMap (place) =>
-      unless place
-        return RxObservable.of {}
-      @model[place.type].getAmenityBoundsById place.id
+    mapBoundsStreams.next(
+      placeAndNearestAmenities.map ([place, nearestAmenities]) =>
+        unless place
+          return RxObservable.of {}
+
+        importantAmenities = _filter [place].concat nearestAmenities
+        minX = _minBy importantAmenities, ({location}) -> location.lon
+        minY = _minBy importantAmenities, ({location}) -> location.lat
+        maxX = _maxBy importantAmenities, ({location}) -> location.lon
+        maxY = _maxBy importantAmenities, ({location}) -> location.lat
+        {
+          x1: minX.location.lon
+          y1: maxY.location.lat
+          x2: maxX.location.lon
+          y2: minY.location.lat
+        }
+    )
 
     @isCellTowersChecked = new RxBehaviorSubject false
 
     @$fab = new Fab()
     @$addIcon = new Icon()
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router, initialZoom: 9
+      @model, @router, initialZoom: 9, defaultOpacity: 0.3
       showScale: true, addPlaces, mapBoundsStreams, isSearchHidden: true
+      sort: @place.map (place) ->
+        unless place
+          return undefined
+        [
+          _geo_distance:
+            location:
+              lat: place.location.lat
+              lon: place.location.lon
+            order: 'asc'
+            unit: 'km'
+            distance_type: 'plane'
+        ]
       dataTypes: [
         {
           dataType: 'amenity'
@@ -60,25 +93,27 @@ module.exports = class PlaceNearby
     }
     # TODO: better solution than @$placesMapContainer.getPlacesStream()?
     placesStream = @$placesMapContainer.getPlacesStream()
-    placeAndPlacesStream = RxObservable.combineLatest(
-      @place, placesStream, (vals...) -> vals
+    placeAndNearestAmenitiesAndPlacesStream = RxObservable.combineLatest(
+      @place, nearestAmenities, placesStream, (vals...) -> vals
     )
     @$placesList = new PlacesList {
       @model, @router
-      places: placeAndPlacesStream.map ([place, placesWithCounts]) ->
+      places: placeAndNearestAmenitiesAndPlacesStream
+      .map ([place, nearestAmenities, placesWithCounts]) ->
         places = placesWithCounts?.places
         knownTimes = _reduce place?.distanceTo, (obj, {id, time}) ->
           obj[id] = time
           obj
         , {}
-        _map places, (nearbyPlace) ->
+
+        places = _uniqBy (nearestAmenities or []).concat(places or []), 'id'
+        places = _map places, (nearbyPlace) ->
           if knownTime = knownTimes[nearbyPlace.id]
             _defaults {
               name: "#{nearbyPlace.name} (#{knownTime} min away)"
             }, nearbyPlace
           else
             nearbyPlace
-
     }
 
     @state = z.state {

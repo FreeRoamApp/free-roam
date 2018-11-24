@@ -24,6 +24,7 @@ module.exports = class PlacesSearch
 
     locations = @searchValue.debounceTime(SEARCH_DEBOUNCE).switchMap (query) =>
       if query
+        ga? 'send', 'event', 'mapSearch', 'search', query
         @model.geocoder.autocomplete {query}
       else
         RxObservable.of []
@@ -54,6 +55,7 @@ module.exports = class PlacesSearch
                          then @model.l.get 'placesSearch.openPlaceholder'
                          else @model.l.get 'placesSearch.placeholder'
             onfocus: (e) =>
+              ga? 'send', 'event', 'mapSearch', 'open'
               @isOpen.next true
             ontouchstart: =>
               # reduce jank in map
@@ -78,6 +80,8 @@ module.exports = class PlacesSearch
                 {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
                 z '.g-col.g-xs-6.g-md-3',
                   z 'label.type', {
+                    onclick: ->
+                      ga? 'send', 'event', 'mapSearch', 'dataType', dataType
                     className: z.classKebab {
                       "#{dataType}": true
                     }

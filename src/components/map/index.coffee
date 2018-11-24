@@ -17,9 +17,10 @@ module.exports = class Map
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
       @place, @placePosition, @mapSize, @initialZoom, @zoom, @center,
-      @onclick} = options
+      @defaultOpacity, @onclick} = options
 
     @place ?= new RxBehaviorSubject null
+    @defaultOpacity ?= 1
     @initialZoom ?= 4
     @layers = []
     @$spinner = new Spinner()
@@ -84,7 +85,6 @@ module.exports = class Map
         container: $$mapEl
         style: tile
         center: [-105.894, 40.048]
-        # center: [-112.045697, 35.214012]
         zoom: @initialZoom
       }
 
@@ -92,6 +92,7 @@ module.exports = class Map
         @subscribeToMapBounds()
 
       @map.on 'load', =>
+        console.log 'map loaded'
         @resizeSubscription = @model.window.getSize().subscribe =>
           setTimeout =>
             @map.resize()
@@ -113,14 +114,21 @@ module.exports = class Map
           # could also do the name of rv park to right of symbol
 
           layout:
-            # there is a bug where markers don't show if zoomed in on another area then zoom out.
-            # not sure how to fix
             'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
             'icon-allow-overlap': true
             # 'icon-ignore-placement': true
             'icon-size': 1
             'icon-anchor': 'bottom'
 
+
+            # having text causes icons to occasionally show then fade out and
+            # back. i think??? because of the opacity stops hack.
+            # alternative is creating two layers using same source, with minzoom
+            # and maxzoom, but i think that's less performant.
+            # text-opacity isn't a good solution as it has same fading issue,
+            # and the transparent text is still clickable
+            # maybe this fixes:
+            # https://github.com/mapbox/mapbox-gl-js/issues/6692
             'text-field': '{name}'
             'text-optional': true
             # 'text-ignore-placement': true
@@ -134,6 +142,9 @@ module.exports = class Map
             'text-font': ['Open Sans Regular'] # must exist in tilejson
 
           paint:
+            # 'icon-opacity': ['case', ['to-boolean', ['get', 'iconOpacity']], ['get', 'iconOpacity'], 0.1]
+            'icon-opacity': ['get', 'iconOpacity']
+            'text-opacity': ['get', 'iconOpacity']
             'text-translate': [12, -4]
             'text-halo-color': 'rgba(255, 255, 255, 1)'
             'text-halo-width': 2
@@ -203,6 +214,7 @@ module.exports = class Map
         @map.getCanvas().style.cursor = ''
 
   beforeUnmount: =>
+    console.log 'rm subscription'
     @disposable?.unsubscribe()
     @mapBoundsStreamsDisposable?.unsubscribe()
     @centerDisposable?.unsubscribe()
@@ -238,10 +250,11 @@ module.exports = class Map
         @map.setZoom zoom
 
   subscribeToPlaces: =>
+    console.log 'create subscription'
     @disposable = @places.subscribe (places) =>
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'
-        features: _map places, (place) ->
+        features: _map places, (place) =>
           {
             type: 'Feature'
             properties:
@@ -252,6 +265,7 @@ module.exports = class Map
               thumbnailPrefix: place.thumbnailPrefix
               type: place.type
               icon: place.icon or 'default'
+              iconOpacity: place.iconOpacity or @defaultOpacity
             geometry:
               type: 'Point'
               coordinates: [ # reverse of typical lat, lon

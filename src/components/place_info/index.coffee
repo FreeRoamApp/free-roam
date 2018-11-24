@@ -143,7 +143,6 @@ module.exports = class CampgroundInfo extends Base
                 url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
                 @model.portal.call 'browser.openWindow', {url, target}
               if Environment.isNativeApp 'freeroam'
-                console.log 'good'
                 navigator.geolocation.getCurrentPosition onLocation, onError
               else
                 console.log 'err'

@@ -34,6 +34,7 @@ module.exports = class ImageViewOverlay
           @$tabs.toggle 'enable'
         , 0
       # account for being middle slide
+      # WARNING: causes reflows, so don't call this too often
       transformX: if images?.length > 1 then window.innerWidth else 0
     }
 

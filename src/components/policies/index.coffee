@@ -34,17 +34,6 @@ module.exports = class Policies
         $icon: new Icon()
         isVisible: false
       }
-      {
-        $title: 'Supercell Fan Content Policy'
-        $content:
-          z 'div', {style: {padding: '16px'}},
-            'This content is not affiliated with, endorsed, sponsored,
-            or specifically approved by Supercell and Supercell is not
-            responsible for it. For more information see Supercell\'s Fan
-            Content Policy: https://www.supercell.com/fan-content-policy.'
-        $icon: new Icon()
-        isVisible: false
-      }
     ]
 
     @state = z.state

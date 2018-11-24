@@ -73,8 +73,6 @@ module.exports = class NewPlaceReview
       }
     ]
 
-    console.log @$steps
-
     @state = z.state {
       @step
       me: @model.user.getMe()

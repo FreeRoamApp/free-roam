@@ -35,10 +35,12 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, @dataTypes, showScale, mapBoundsStreams, @persistentCookiePrefix,
-      @addPlaces, @optionalLayers, initialZoom, @isSearchHidden,
-      @currentDataType, center, zoom} = options
+      @addPlaces, @optionalLayers, initialZoom, @isSearchHidden, @limit, @sort
+      defaultOpacity, @currentDataType, center, zoom} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
+    @sort ?= new RxBehaviorSubject undefined
+    @limit ?= new RxBehaviorSubject null
     center ?= new RxBehaviorSubject null
     zoom ?= new RxBehaviorSubject null
     @currentDataType ?= new RxBehaviorSubject @dataTypes[0].dataType
@@ -59,7 +61,10 @@ module.exports = class PlacesMapContainer
         places = addPlaces
 
       {places, visible, total}
-    places = placesWithCounts.map ({places}) -> places
+    .share() # otherwise map setsData twice (subscribe called twice)
+
+    places = placesWithCounts
+            .map ({places}) -> places
     counts = placesWithCounts.map ({visible, total}) -> {visible, total}
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
@@ -72,7 +77,7 @@ module.exports = class PlacesMapContainer
     @$map = new Map {
       @model, @router, places, @setFilterByField, initialZoom, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
-      center, zoom
+      defaultOpacity, center, zoom
     }
     @$placeTooltip = new PlaceTooltip {
       @model, @router, @place, position: @placePosition, @mapSize
@@ -206,11 +211,12 @@ module.exports = class PlacesMapContainer
     unless window?
       return RxObservable.of []
 
-    filterTypesAndcurrentMapBoundsAndDataTypes = RxObservable.combineLatest(
-      @filterTypesStream, @currentMapBounds, @dataTypesStream, (vals...) -> vals
+    streamValues = RxObservable.combineLatest(
+      @filterTypesStream, @currentMapBounds, @dataTypesStream, @sort, @limit
+      (vals...) -> vals
     )
-    filterTypesAndcurrentMapBoundsAndDataTypes.switchMap (response) =>
-      [filterTypes, currentMapBounds, dataTypes] = response
+    streamValues.switchMap (response) =>
+      [filterTypes, currentMapBounds, dataTypes, sort, limit] = response
       if not currentMapBounds
         return RxObservable.of []
 
@@ -220,7 +226,10 @@ module.exports = class PlacesMapContainer
         filters = filterTypes[dataType]
         queryFilter = @getQueryFilterFromFilters filters, currentMapBounds
 
+
         @model[dataType].search {
+          limit: limit
+          sort: sort
           query:
             bool:
               filter: queryFilter

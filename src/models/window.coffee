@@ -29,8 +29,10 @@ module.exports = class Window
   getSizeVal: =>
     resolution = @cookie.get 'resolution'
     if window?
+      # WARNING: causes reflows, so don't call this too often
       width = window.innerWidth
       height = window.innerHeight
+      @cookie.set('resolution', "#{width}x#{height}")
     else if resolution
       arr = resolution.split 'x'
       width = parseInt arr[0]
@@ -41,7 +43,7 @@ module.exports = class Window
 
     {
       contentWidth:
-        if window?.innerWidth >= 1280
+        if width >= 1280
         then Math.min GRID_WIDTH, width - DRAWER_MAX_WIDTH
         else width
       width: width

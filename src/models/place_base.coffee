@@ -6,8 +6,8 @@ module.exports = class PlaceBase
   getBySlug: (slug) =>
     @auth.stream "#{@namespace}.getBySlug", {slug}
 
-  search: ({query}) =>
-    @auth.stream "#{@namespace}.search", {query}
+  search: ({query, sort, limit}) =>
+    @auth.stream "#{@namespace}.search", {query, sort, limit}
 
   upsert: (options) =>
     @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
@@ -15,5 +15,5 @@ module.exports = class PlaceBase
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}
 
-  getAmenityBoundsById: (id) =>
-    @auth.stream "#{@namespace}.getAmenityBoundsById", {id}
+  getNearestAmenitiesById: (id) =>
+    @auth.stream "#{@namespace}.getNearestAmenitiesById", {id}

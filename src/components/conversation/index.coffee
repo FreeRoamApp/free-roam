@@ -554,6 +554,9 @@ module.exports = class Conversation extends Base
       channelId: conversation?.id, permissions: ['sendMessage']
     }
 
+    # synchronous so it doesn't flash has-bottom-bar on ($spinner moves)
+    hasBottomBar ?= @model.window.getBreakpointVal() in ['tablet', 'mobile']
+
     z '.z-conversation', {
       className: z.classKebab {hasBottomBar, @useIscroll}
       onclick: (e) =>

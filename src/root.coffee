@@ -98,10 +98,6 @@ model = new Model {
 }
 model.portal.listen()
 
-model.cookie.set(
-  'resolution', "#{window.innerWidth}x#{window.innerHeight}"
-)
-
 onOnline = ->
   model.statusBar.close()
   model.exoid.enableInvalidation()

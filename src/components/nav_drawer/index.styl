@@ -128,49 +128,49 @@ $zIndexDrawer = 300
             font-title()
             background: getColor('$tertiary100')
 
-    > .my-groups
-      position: relative
-      overflow: hidden
-
-      &:after
-        content: ''
-        position: absolute
-        right: 0
-        top: 0
-        height: 100%
-        width: 60px
-        // looks ugly on ios since it does gradient to black (0 opacity black)
-        // could make a $tertiary700Transparent, but don't want to
-        // background: linear-gradient(to right, getColor('$transparent') 0%, getColor('$tertiary700') 70%)
-        z-index: 999
-        pointer-events: none
-
-      > .my-groups-scroller
-        padding: 0 16px
-        margin-top: 8px
-        white-space: nowrap
-        overflow-x: auto
-        overflow-y: hidden
-        -webkit-overflow-scrolling: touch
-
-        > .group-bubble
-          display: inline-block
-          vertical-align: top
-          width: 40px
-          height: 44px
-          border-radius: 50%
-          margin-right: 8px
-
-          > .icon
-            background: getColor('$tertiary500')
-            border: 2px solid getColor('$bgText54')
-            box-sizing: border-box
-            border-radius: 50%
-            width: 40px
-            height: 40px
-            position: relative
-            z-index: 1000
-            cursor: pointer
+    // > .my-groups
+    //   position: relative
+    //   overflow: hidden
+    //
+    //   &:after
+    //     content: ''
+    //     position: absolute
+    //     right: 0
+    //     top: 0
+    //     height: 100%
+    //     width: 60px
+    //     // looks ugly on ios since it does gradient to black (0 opacity black)
+    //     // could make a $tertiary700Transparent, but don't want to
+    //     // background: linear-gradient(to right, getColor('$transparent') 0%, getColor('$tertiary700') 70%)
+    //     z-index: 999
+    //     pointer-events: none
+    //
+    //   > .my-groups-scroller
+    //     padding: 0 16px
+    //     margin-top: 8px
+    //     white-space: nowrap
+    //     overflow-x: auto
+    //     overflow-y: hidden
+    //     -webkit-overflow-scrolling: touch
+    //
+    //     > .group-bubble
+    //       display: inline-block
+    //       vertical-align: top
+    //       width: 40px
+    //       height: 44px
+    //       border-radius: 50%
+    //       margin-right: 8px
+    //
+    //       > .icon
+    //         background: getColor('$tertiary500')
+    //         border: 2px solid getColor('$bgText54')
+    //         box-sizing: border-box
+    //         border-radius: 50%
+    //         width: 40px
+    //         height: 40px
+    //         position: relative
+    //         z-index: 1000
+    //         cursor: pointer
 
 
 
