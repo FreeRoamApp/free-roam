@@ -1,0 +1,87 @@
+@require '../../vars'
+
+.z-onboard
+  position: absolute
+  z-index: 999
+  display: flex
+
+.z-onboard_step-image
+  width: 240px
+  height: 240px
+  display: block
+  margin: 40px auto 0 auto
+  background-size: 100% auto
+  border-top-left-radius: 8px
+  border-top-right-radius: 8px
+
+  &.number-1
+    background-image: url($cdnUrl + '/onboard/phone_1.png?1')
+  &.number-2
+    background-image: url($cdnUrl + '/onboard/phone_2.png?1')
+  &.number-3
+    background-image: url($cdnUrl + '/us.jpg')
+
+  @media (min-width: $breakPointMedium)
+    width: 422px
+    height: 640px
+    display: block
+    margin: auto 0 auto auto
+    background-size: auto 100%
+
+    &.number-1
+      background-image: url($cdnUrl + '/onboard/tab_1.png?1')
+    &.number-2
+      background-image: url($cdnUrl + '/onboard/tab_2.png?1')
+    &.number-3
+      background-image: url($cdnUrl + '/us.jpg')
+      width: 300px
+      height: 300px
+      border-radius: 0
+
+.z-onboard_step-content
+  flex1()
+  padding: 24px
+  display: flex
+  flex-direction: column
+  text-align: center
+
+  > .icon
+    margin: auto auto 16px auto
+
+  > .title
+    font-title()
+    margin: 0 auto 8px auto
+    color: inherit
+
+  > .description
+    font-body1()
+    margin: 0 auto auto auto
+    color: inherit
+    line-height: 24px
+    max-width: 320px
+
+    a
+      font-weight: bold
+
+@media (max-height: 600px)
+  .z-onboard_step-content
+    > .icon
+      display: none
+
+
+@media (max-width: $breakPointSmall)
+  .z-onboard_step-image
+    width: 140px
+    height: 140px
+
+  .z-onboard_step-content
+    > .icon
+      display: none
+
+@media (min-width: $breakPointMedium)
+  .z-onboard_step-content
+    > .title
+      margin: 0 auto 16px auto
+
+    > .description
+      max-width: 400px

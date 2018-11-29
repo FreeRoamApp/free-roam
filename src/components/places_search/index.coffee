@@ -9,6 +9,7 @@ _isEmpty = require 'lodash/isEmpty'
 
 SearchInput = require '../search_input'
 FlatButton = require '../flat_button'
+Tooltip = require '../tooltip'
 colors = require '../../colors'
 
 if window?
@@ -32,6 +33,13 @@ module.exports = class PlacesSearch
     @isOpen = new RxBehaviorSubject false
     @$searchInput = new SearchInput {@model, @router, @searchValue, @isOpen}
     @$doneButton = new FlatButton()
+    @$tooltip = new Tooltip {
+      @model
+      key: 'placeSearch'
+      anchor: 'top-left'
+      offset:
+        left: 48
+    }
 
     @state = z.state {
       locations
@@ -57,6 +65,7 @@ module.exports = class PlacesSearch
             onfocus: (e) =>
               ga? 'send', 'event', 'mapSearch', 'open'
               @isOpen.next true
+              @$tooltip.close()
             ontouchstart: =>
               # reduce jank in map
               # (doesn't need to resize for kb when overlay is up)
@@ -69,6 +78,13 @@ module.exports = class PlacesSearch
               e?.stopPropagation()
               @isOpen.next false
           }
+
+      # tooltip here. need easy way of adding this
+      z @$tooltip, {
+        $title: 'Search for campgrounds and more'
+        $content: 'Tap above to find whatever you\'re looking for. Campsites, dump stations, Walmarts, you name it!'
+      }
+
       z '.overlay',
         z '.overlay-inner',
           z '.data-types',
@@ -88,7 +104,11 @@ module.exports = class PlacesSearch
                   },
                     z '.checkbox',
                       z $checkbox
-                    z '.name', @model.l.get "placeTypes.#{dataType}"
+                    z '.info',
+                      z '.name', @model.l.get "placeTypes.#{dataType}"
+                      if @model.experiment.get('tooltips') is 'visible'
+                        z '.description',
+                          @model.l.get "placeTypes.#{dataType}Description"
 
           if _isEmpty locations
             z '.done',

@@ -22,6 +22,7 @@ PlaceTooltip = require '../place_tooltip'
 PlacesFilterBar = require '../places_filter_bar'
 PlacesSearch = require '../places_search'
 Fab = require '../fab'
+Tooltip = require '../tooltip'
 Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
@@ -74,6 +75,12 @@ module.exports = class PlacesMapContainer
 
     @$fab = new Fab()
     @$layersIcon = new Icon()
+    @$tooltip = new Tooltip {
+      @model
+      key: 'mapLayers'
+      offset:
+        left: 60
+    }
     @$map = new Map {
       @model, @router, places, @setFilterByField, initialZoom, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
@@ -407,6 +414,14 @@ module.exports = class PlacesMapContainer
                 onclick: =>
                   ga? 'send', 'event', 'map', 'showLayers'
                   @state.set isLayersPickerVisible: true
+                  @$tooltip.close()
+
+              # tooltip here. need easy way of adding this
+              z @$tooltip, {
+                $title: 'Show map layers'
+                $content: 'Tap above to show satellite, public land, and cell coverage overlays'
+              }
+
 
           z '.layers', {
             className: z.classKebab {isVisible: isLayersPickerVisible}

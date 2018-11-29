@@ -60,6 +60,9 @@ TODOS:
 x Select a more appropriate zoom level for geocoding
 x "Other" category for overnights
 - Non-profit? Definitely requires more filing/time w/ form 990. That seems to be biggest drawback
+  - Typically non-profits run off of donations
+  - Ad revenue is considered UBI (unrelated business income) and is taxed
+  - Some non-profits have sponsors which aren't taxed?
 - Better coloring for overlapping like Verizon + BLM (hard to make out which parts overlap)
 n Inline css req for shell, then load in the rest async
 - Seems to difficult and if we were to do it, we'd have to generate css for every page, or just the home page

@@ -20,6 +20,7 @@ NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
 WelcomeDialog = require './components/welcome_dialog'
+Onboard = require './components/onboard'
 StatusBar = require './components/status_bar'
 SnackBar = require './components/snack_bar'
 Nps = require './components/nps'
@@ -177,7 +178,13 @@ module.exports = class App
           @model.cookie.set 'lastAddToHomePromptTime', Date.now()
       , TIME_UNTIL_ADD_TO_HOME_PROMPT_MS
 
-    if window? and not @model.cookie.get 'hasSeenWelcome'
+    isOnboardVisible = @model.experiment.get('onboard') is 'visible'
+
+    if isOnboardVisible and not @model.cookie.get 'hasSeenWelcome'
+      if window?
+        @model.cookie.set 'hasSeenWelcome', 1
+      @model.overlay.open new Onboard {@model, @router}
+    else if not isOnboardVisible and  window? and not @model.cookie.get 'hasSeenWelcome'
       @model.cookie.set 'hasSeenWelcome', 1
       @model.overlay.open new WelcomeDialog {@model, @router}
 

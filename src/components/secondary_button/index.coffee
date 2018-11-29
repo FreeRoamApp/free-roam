@@ -15,9 +15,9 @@ module.exports = class SecondaryButton extends Button
         isRaised: true
         isDark: true
         colors:
-          c200: colors.$secondary500
-          c500: colors.$secondary500
-          c600: colors.$secondary400
-          c700: colors.$secondary400
-          ink: colors.$secondary500Text
+          c200: colors.$tertiary200
+          c500: colors.$tertiary100
+          c600: colors.$tertiary300
+          c700: colors.$tertiary400
+          ink: colors.$primary900
       }

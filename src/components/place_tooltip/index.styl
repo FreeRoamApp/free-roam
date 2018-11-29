@@ -1,19 +1,7 @@
 @require '../../vars'
 
 .z-place-tooltip
-  shadow-1()
-  position: absolute
-  z-index: 100
-  opacity: 0
-  pointer-events: none
-  background: getColor('$tertiary100')
-  max-width: 300px
-  min-height: 72px
-  will-change: transform
-  box-sizing: border-box
-  cursor: pointer
-  display: flex
-  align-items: center
+  tooltip()
 
   &.is-image-loaded
     > .thumbnail
@@ -23,72 +11,9 @@
   // @media (min-width: $breakPointMedium)
   //   max-width: 300px
 
-  &::after
-    content: ''
-    position: absolute
-    border: 10px solid transparent
-
-  &.anchor-top-center
-    margin-top: 0
-    &::after
-      left: 50%
-      top: -10px
-      margin-left: -10px
-      border-top: none
-      // border-left: none
-      border-bottom-color: getColor('$white')
-
-  &.anchor-bottom-center
-    margin-top: -20px
-    &::after
-      left: 50%
-      bottom: -10px
-      margin-left: -10px
-      border-bottom: none
-      border-top-color: getColor('$white')
-
-  &.anchor-center-left
-    margin-left: 10px
-    margin-top: -10px
-
-    &::after
-      top: 50%
-      left: -10px
-      margin-top: -10px
-      border-left: none
-      border-right-color: getColor('$white')
-
-  &.anchor-center-right
-    margin-left: -10px
-    margin-top: -10px
-
-    &::after
-      top: 50%
-      right: -10px
-      margin-top: -10px
-      border-right: none
-      border-left-color: getColor('$white')
-
-  &.is-visible
-    opacity: 1
-    pointer-events: all
-
-  > .close
-    position: absolute
-    top: 4px
-    right: 4px
-
   > .thumbnail
     width: 72px
     height: 72px
     background-size: cover
     opacity: 0
-
-  > .content
-    padding: 0 16px
-    flex1()
-
-    > .title
-      font-title()
-
-  // > .rating
+    margin-left: 16px

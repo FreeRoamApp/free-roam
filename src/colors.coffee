@@ -68,7 +68,7 @@ colors = _defaults {
     '--tertiary-300': '#f0efed'
     '--tertiary-400': '#FCF7ED'
     '--tertiary-500': '#FCF8F0'
-    '--tertiary-600': '#FDF9F2'
+    '--tertiary-600': '#f3f0ea'
     '--tertiary-700': '#FEFBF6'
     # '--tertiary-800': '#FEFDFA'
     '--tertiary-900': '#f0f0f0'

@@ -56,13 +56,21 @@
       > .data-types > .g-grid > .g-cols > .g-col
         > .type
           display: flex
-          align-items: center
+          align-items: flex-start
           padding: 0 8px
           cursor: pointer
 
-          > .name
-            font-caption1()
+          > .info
             margin-left: 8px
+
+            > .name
+              font-body1()
+
+            > .description
+              font-caption2()
+              white-space: nowrap
+              overflow: hidden
+              text-overflow: ellipsis
 
       > .locations
         > .location

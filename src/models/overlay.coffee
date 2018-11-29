@@ -35,9 +35,9 @@ module.exports = class Overlay
     @overlay$.next _filter (@overlay$.getValue() or []).concat $
     @setData data
     # prevent body scrolling while viewing menu
-    document.body.style.overflow = 'hidden'
+    document?.body.style.overflow = 'hidden'
 
   close: =>
     @overlay$.next null
     @onComplete null
-    document.body.style.overflow = 'auto'
+    document?.body.style.overflow = 'auto'
