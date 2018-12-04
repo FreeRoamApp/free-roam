@@ -35,9 +35,10 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, @dataTypes, showScale, mapBoundsStreams, @persistentCookiePrefix,
-      @addPlaces, @optionalLayers, initialZoom, @isSearchHidden, @limit, @sort
-      defaultOpacity, @currentDataType, center, zoom} = options
+    {@model, @router, @dataTypes, showScale, mapBoundsStreams,
+      @persistentCookiePrefix, @addPlaces, @optionalLayers, @isSearchHidden,
+      @limit, @sort, defaultOpacity, @currentDataType, initialCenter, center,
+      initialZoom, zoom} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
     @sort ?= new RxBehaviorSubject undefined
@@ -49,9 +50,18 @@ module.exports = class PlacesMapContainer
     @persistentCookiePrefix ?= 'default'
     @addPlaces ?= RxObservable.of []
 
-    @dataTypesStream = @getDataTypesStreams @dataTypes
+    zoomCookie = "#{@persistentCookiePrefix}_zoom"
+    initialZoom ?= @model.cookie.get zoomCookie
+    centerCookie = "#{@persistentCookiePrefix}_center"
+    initialCenter ?= try
+      JSON.parse @model.cookie.get centerCookie
+    catch
+      undefined
 
     @currentMapBounds = new RxBehaviorSubject null
+
+    @dataTypesStream = @getDataTypesStreams @dataTypes
+
     @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
     placesWithCounts = RxObservable.combineLatest(
       @addPlaces, @getPlacesStream(), (vals...) -> vals
@@ -82,15 +92,15 @@ module.exports = class PlacesMapContainer
         left: 60
     }
     @$map = new Map {
-      @model, @router, places, @setFilterByField, initialZoom, showScale
+      @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
-      defaultOpacity, center, zoom
+      defaultOpacity, initialCenter, center, initialZoom,  zoom
     }
     @$placeTooltip = new PlaceTooltip {
       @model, @router, @place, position: @placePosition, @mapSize
     }
     @$placesSearch = new PlacesSearch {
-      @model, @router, @currentMapBounds
+      @model, @router
       onclick: (location) =>
         if location.bbox and location.bbox[0] isnt location.bbox[2]
           mapBoundsStreams.next RxObservable.of {
@@ -122,7 +132,15 @@ module.exports = class PlacesMapContainer
       isFilterTypesVisible: @isFilterTypesVisible
       layersVisible: []
 
+  afterMount: =>
+    @disposable = @currentMapBounds.subscribe ({zoom, center} = {}) =>
+      zoomCookie = "#{@persistentCookiePrefix}_zoom"
+      @model.cookie.set zoomCookie, JSON.stringify zoom
+      centerCookie = "#{@persistentCookiePrefix}_center"
+      @model.cookie.set centerCookie, JSON.stringify center
+
   beforeUnmount: =>
+    @disposable?.unsubscribe()
     @place.next null
 
   getDataTypesStreams: (dataTypes) =>
@@ -231,7 +249,9 @@ module.exports = class PlacesMapContainer
         unless isChecked
           return RxObservable.of []
         filters = filterTypes[dataType]
-        queryFilter = @getQueryFilterFromFilters filters, currentMapBounds
+        queryFilter = @getQueryFilterFromFilters(
+          filters, currentMapBounds?.bounds
+        )
 
 
         @model[dataType].search {

@@ -2,6 +2,8 @@ _map = require 'lodash/map'
 _find = require 'lodash/find'
 _sum = require 'lodash/sum'
 
+config = require '../config'
+
 module.exports = class Cache
   constructor: ->
     @isRecording = false
@@ -22,7 +24,7 @@ module.exports = class Cache
         ]
       }
       sprites: {
-        version: 1 # bump when changing
+        version: 2 # bump when changing
         files: [
           'https://fdn.uno/d/images/maps/sprite_2018_11_17.json'
           'https://fdn.uno/d/images/maps/sprite_2018_11_17.png'
@@ -31,10 +33,10 @@ module.exports = class Cache
         ]
       }
       mapbox: {
-        version: 1 # bump when changing
+        version: 2 # bump when changing
         files: [
-          'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.js'
-          'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.css'
+          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.css"
+          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.js"
         ]
       }
 

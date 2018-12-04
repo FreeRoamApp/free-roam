@@ -19,7 +19,7 @@ module.exports = class NewAmenityPage
 
   getMeta: =>
     {
-      title: @model.l.get 'newAmenityPage.title'
+      title: @model.l.get 'newPlacePage.title', {prettyType: 'Amenity'}
     }
 
   render: =>

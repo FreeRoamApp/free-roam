@@ -4,6 +4,7 @@ _forEach = require 'lodash/forEach'
 _map = require 'lodash/map'
 _values = require 'lodash/values'
 _flatten = require 'lodash/flatten'
+_isEmpty = require 'lodash/isEmpty'
 _defaults = require 'lodash/defaults'
 isUuid = require 'isuuid'
 RxObservable = require('rxjs/Observable').Observable
@@ -194,8 +195,9 @@ module.exports = class App
       $overlays: @model.overlay.get$()
       statusBarData: @model.statusBar.getData()
       windowSize: @model.window.getSize()
-      hideDrawer: @requests.switchMap (request) ->
-        hideDrawer = request.$page?.hideDrawer
+      hideDrawer: @requests.switchMap (request) =>
+        $page = @router.preservedRequest or request.$page
+        hideDrawer = $page?.hideDrawer
         if hideDrawer?.map
         then hideDrawer
         else RxObservable.of (hideDrawer or false)
@@ -292,6 +294,8 @@ module.exports = class App
     else
       $page = request?.$page or $backupPage
 
+    hasOverlayPage = $overlayPage?
+
     z 'html', {
       attributes:
         lang: 'en'
@@ -299,7 +303,7 @@ module.exports = class App
       z @$head, {meta: $page?.getMeta?()}
       z 'body',
         z '#zorium-root', {
-          className: z.classKebab {isIos, isAndroid}
+          className: z.classKebab {isIos, isAndroid, hasOverlayPage}
         },
           z '.z-root',
             unless hideDrawer

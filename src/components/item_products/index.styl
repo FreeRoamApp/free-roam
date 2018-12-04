@@ -1,0 +1,32 @@
+@require '../../vars'
+
+.z-item-products
+  // padding: 16px
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding-top: 8px
+
+  > .g-grid > .g-cols > .g-col
+    > .product
+      shadow-1()
+      display: flex
+      padding: 16px
+      background: getColor('$white')
+      border-radius: 2px
+      margin-bottom: 8px
+
+      > .image
+        width: 128px
+        height: 128px
+        margin: 0 auto
+        max-width: 100%
+        background-size: 100%
+        background-repeat: no-repeat
+        background-position: center center
+
+      > .name
+        font-title()
+
+  @media (min-width: $breakPointMedium)
+    padding: 16px

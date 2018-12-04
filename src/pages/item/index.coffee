@@ -2,8 +2,10 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-Item = require '../../components/item'
+ItemProducts = require '../../components/item_products'
+ItemGuide = require '../../components/item_guide'
 BasePage = require '../base'
+Tabs = require '../../components/tabs'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -18,8 +20,10 @@ module.exports = class ItemPage extends BasePage
       @model.item.getBySlug route.params.slug
 
     @$appBar = new AppBar {@model}
+    @$tabs = new Tabs {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$item = new Item {@model, @router, @item}
+    @$itemProducts = new ItemProducts {@model, @router, @item}
+    @$itemGuide = new ItemGuide {@model, @router, @item}
 
     @state = z.state
       item: @item
@@ -37,7 +41,19 @@ module.exports = class ItemPage extends BasePage
     z '.p-item',
       z @$appBar, {
         title: item?.name
-        style: 'primary'
+        isFlat: true
         $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
       }
+      z @$tabs,
+        isBarFixed: false
+        tabs: [
+          {
+            $menuText: @model.l.get 'itemsPage.products'
+            $el: @$itemProducts
+          }
+          {
+            $menuText: @model.l.get 'itemsPage.guide'
+            $el: z @$itemGuide
+          }
+        ]
       @$item

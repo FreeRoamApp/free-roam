@@ -32,7 +32,6 @@ $zIndexDrawer = 300
 
     > .name
       font-h1(false)
-      font-weight: 700
       color: getColor('$header500Text')
 
   > .ad
@@ -103,14 +102,16 @@ $zIndexDrawer = 300
             width: 24px
             height: 28px
 
-          > .new
-            font-button()
-            color: getColor('$primary500')
-            font-size: 10px
-            font-weight: 700
-            display: inline-block
-            vertical-align: middle
-            margin-left: 16px
+          > .notification
+            &.is-visible
+              display: block
+
+            width: 6px
+            height: 6px
+            display: none
+            border-radius: 50%
+            background: getColor('$primary500')
+            margin-left: 8px
 
           > .chevron
             margin-left: auto

@@ -14,36 +14,36 @@
 // g-sm, use max-width (one-offs for iphone 4)
 
 grid(class = 'xs', columns = 12)
+  .g-grid .g-cols
+    // Iterate through our columns
+    for colCount in 1 2 3 4 6 12
 
-  // Iterate through our columns
-  for colCount in 1 2 3 4 6 12
+      // Convert each column count to a percentage: i.e. 1/12
+      percentWidth = 1% * ((colCount / columns) * 100)
+      //
+      // &.no-padding
+      // 	.g-{class}-{colCount}
+      // 		&:nth-child(n)
+      // 			padding: 0
+      // 			padding-left: 0
+      // 			padding-right: 0
 
-    // Convert each column count to a percentage: i.e. 1/12
-    percentWidth = 1% * ((colCount / columns) * 100)
-    //
-    // &.no-padding
-    // 	.g-{class}-{colCount}
-    // 		&:nth-child(n)
-    // 			padding: 0
-    // 			padding-left: 0
-    // 			padding-right: 0
+      .g-{class}-{colCount}
+        width: percentWidth
+        box-sizing: border-box
+        // reset smaller sizes (eg reset xs when sm)
+        &:nth-child(n)
+          padding-left: 8px
+          padding-right: 8px
+          clear: none
+        &:nth-child({12 / colCount}n + 1)
+          clear: both
 
-    .g-{class}-{colCount}
-      width: percentWidth
-      box-sizing: border-box
-      // reset smaller sizes (eg reset xs when sm)
-      &:nth-child(n)
-        padding-left: 8px
-        padding-right: 8px
-        clear: none
-      &:nth-child({12 / colCount}n + 1)
-        clear: both
-
-      for childNumber in (1 .. (12 / colCount))
-        &:nth-child({childNumber})
-          padding-top: 0
-        &:nth-child({12 - childNumber})
-          padding-bottom: 0
+        for childNumber in (1 .. (12 / colCount))
+          &:nth-child({childNumber})
+            padding-top: 0
+          &:nth-child({12 - childNumber})
+            padding-bottom: 0
 
 // Styles
 // ------
@@ -56,34 +56,42 @@ grid(class = 'xs', columns = 12)
   width: 100%
   clearfix()
 
-  > .g-cols
+  .g-cols
     margin-left: -8px
     margin-right: -8px
+
+    > .g-col
+      float left
+      position relative
+      padding 8px
+
+      img
+        max-width 100%
+        height auto
+        ms-interpolation-mode bicubic
 
     &.no-padding
       margin-left: 0
       margin-right: 0
 
+      > .g-col
+        padding: 0
+
   *
     box-sizing border-box
 
-.g-cols.no-padding .g-col
-  padding: 0
-
-.g-col
-  float left
-  position relative
-  padding 8px
-
-  img
-    max-width 100%
-    height auto
-    ms-interpolation-mode bicubic
-
 grid()
 
-// @media (min-width: $breakPointSmall)
-// 	grid('sm')
+@media (max-width: $breakPointMedium)
+  .g-cols.lt-md-no-padding
+    margin-left: 0 !important
+    margin-right: 0 !important
+
+    .g-col
+      padding: 0 !important
+
+@media (min-width: $breakPointSmall)
+	grid('sm')
 
 @media (min-width: $breakPointMedium)
   grid('md')

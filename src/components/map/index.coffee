@@ -16,12 +16,15 @@ module.exports = class Map
 
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
-      @place, @placePosition, @mapSize, @initialZoom, @zoom, @center,
-      @defaultOpacity, @onclick} = options
+      @place, @placePosition, @mapSize, @initialZoom, @zoom, @initialCenter,
+      @center, @defaultOpacity, @onclick} = options
 
     @place ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
+
     @initialZoom ?= 4
+    @initialCenter ?= [-105.894, 40.048]
+
     @layers = []
     @$spinner = new Spinner()
 
@@ -76,15 +79,15 @@ module.exports = class Map
 
     fitBounds = null
 
-    @model.additionalScript.add 'css', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.css'
-    @model.additionalScript.add 'js', 'https://cdnjs.cloudflare.com/ajax/libs/mapbox-gl/0.49.0/mapbox-gl.js'
+    @model.additionalScript.add 'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.css"
+    @model.additionalScript.add 'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.js"
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'
       mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN
       @map = new mapboxgl.Map {
         container: $$mapEl
         style: tile
-        center: [-105.894, 40.048]
+        center: @initialCenter
         zoom: @initialZoom
       }
 
@@ -95,7 +98,7 @@ module.exports = class Map
         console.log 'map loaded'
         @resizeSubscription = @model.window.getSize().subscribe =>
           setTimeout =>
-            @map.resize()
+            @map?.resize()
             @mapSize?.next {
               width: $$mapEl.offsetWidth, height: $$mapEl.offsetHeight
             }
@@ -281,7 +284,11 @@ module.exports = class Map
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>
-    @currentMapBounds?.next @map.getBounds()
+    @currentMapBounds?.next {
+      bounds: @map.getBounds()
+      center: @map.getCenter()
+      zoom: @map.getZoom()
+    }
 
   render: =>
     {windowSize, isLoading} = @state.getValue()

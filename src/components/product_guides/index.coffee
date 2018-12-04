@@ -5,6 +5,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Icon = require '../icon'
 SearchInput = require '../search_input'
+Spinner = require '../spinner'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -24,6 +25,8 @@ module.exports = class ProductGuides
     @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
+    @$spinner = new Spinner()
+
     @state = z.state
       categories: @model.category.getAll()
 
@@ -39,22 +42,25 @@ module.exports = class ProductGuides
             onsubmit: =>
               @router.go 'itemsBySearch', {query: @searchValue.getValue()}
           }
-        z '.g-cols',
-          _map categories, (category, i) =>
-            productSlug = category?.data?.defaultProductSlug or
-                          category?.firstItemFirstProductSlug
-            z '.g-col.g-xs-12.g-md-6',
-              @router.link z 'a.category', {
-                href: @router.get 'itemsByCategory', {category: category.slug}
-              },
-                z '.background',
-                  style:
-                    backgroundImage:
-                      "url(#{config.CDN_URL}/products/#{productSlug}-200h.jpg)"
-                  z '.gradient'
-                z '.overlay', {
-                  style:
-                      backgroundColor: BG_COLORS[i % BG_COLORS.length]
+        z '.g-cols.lt-md-no-padding',
+          if categories
+            _map categories, (category, i) =>
+              productSlug = category?.data?.defaultProductSlug or
+                            category?.firstItemFirstProductSlug
+              z '.g-col.g-xs-12.g-md-6',
+                @router.link z 'a.category', {
+                  href: @router.get 'itemsByCategory', {category: category.slug}
                 },
-                  z '.name', category.name
-                  z '.description', category.description
+                  z '.background',
+                    style:
+                      backgroundImage:
+                        "url(#{config.CDN_URL}/products/#{productSlug}-200h.jpg)"
+                    z '.gradient'
+                  z '.overlay', {
+                    style:
+                        backgroundColor: BG_COLORS[i % BG_COLORS.length]
+                  },
+                    z '.name', "\##{category.name.toLowerCase()}"
+                    z '.description', category.description
+          else
+            @$spinner

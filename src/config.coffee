@@ -54,6 +54,7 @@ isomorphic =
   BASE_NAME_COLORS: ['#2196F3', '#8BC34A', '#FFC107', '#f44336']#, '#673AB7']
 
   # ALSO IN back-roads
+  EMPTY_UUID: '00000000-0000-0000-0000-000000000000'
   DEFAULT_PERMISSIONS:
     readMessage: true
     manageChannel: false

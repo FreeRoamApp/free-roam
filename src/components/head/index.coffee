@@ -249,10 +249,9 @@ module.exports = class Head
         innerHTML:
           ":root {#{cssVariables or @model.cookie.get 'cachedCssVariables'}}"
       if isInliningSource
-        z 'link',
+        z 'link#bundle-css',
           rel: 'stylesheet'
           type: 'text/css'
-          id: 'bundle-css'
           href: @bundleCssPath
       else
         null

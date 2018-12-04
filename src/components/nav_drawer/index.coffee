@@ -6,6 +6,7 @@ _isEmpty = require 'lodash/isEmpty'
 _orderBy = require 'lodash/orderBy'
 _clone = require 'lodash/clone'
 _find = require 'lodash/find'
+_some = require 'lodash/some'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/map'
@@ -35,11 +36,20 @@ module.exports = class NavDrawer
       onClose: @model.drawer.close
     }
 
+    # don't need to slow down server-side rendering for this
+    hasUnreadMessages = if window?
+      @model.conversation.getAll().map (conversations) ->
+        hasWelcomeMessage = _isEmpty conversations
+        hasWelcomeMessage or _some conversations, {isRead: false}
+    else
+      RxObservable.of null
+
     me = @model.user.getMe()
     menuItemsInfo = RxObservable.combineLatest(
       me
       group
       @model.l.getLanguage()
+      hasUnreadMessages
       (vals...) -> vals
     )
 
@@ -78,7 +88,7 @@ module.exports = class NavDrawer
       drawerWidth: @model.window.getDrawerWidth()
       breakpoint: @model.window.getBreakpoint()
 
-      menuItems: menuItemsInfo.map ([me, group, language]) =>
+      menuItems: menuItemsInfo.map ([me, group, language, hasUnreadMessages]) =>
         meGroupUser = group?.meGroupUser
 
         userAgent = @model.window.getUserAgent()
@@ -117,6 +127,7 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'chat-bubble'
+            hasNotification: hasUnreadMessages
           }
           {
             path: @model.group.getPath group, 'groupForum', {@router}
@@ -355,8 +366,11 @@ module.exports = class NavDrawer
                             icon: iconName
                             color: colors.$primary500
                         title
-                        if isNew
-                          z '.new', @model.l.get 'general.new'
+                        z '.notification', {
+                          className: z.classKebab {
+                            isVisible: menuItem.hasNotification
+                          }
+                        }
                         if hasChildren
                           z '.chevron',
                             z $chevronIcon,

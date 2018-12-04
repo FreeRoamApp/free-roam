@@ -120,14 +120,14 @@ module.exports = class NewAmenity
             hintText: @model.l.get 'newAmenity.name'
 
         z 'label.field.where',
-          z '.name', @model.l.get 'newCampgroundInitialInfo.where'
+          z '.name', @model.l.get 'newPlaceInitialInfo.where'
           z '.form',
             z '.input',
               z @$locationInput,
-                hintText: @model.l.get 'newCampgroundInitialInfo.coordinates'
+                hintText: @model.l.get 'newPlaceInitialInfo.coordinates'
             z '.button',
               z @$mapButton,
-                text: @model.l.get 'newCampgroundInitialInfo.coordinatesFromMap'
+                text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
                 isFullWidth: false
                 onclick: =>
                   @model.overlay.open new CoordinatePicker {

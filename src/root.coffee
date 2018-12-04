@@ -130,7 +130,7 @@ init = ->
   # (flash with whatever obs data is on page going empty for 1 frame), then
   # render after a few ms
   root = document.getElementById('zorium-root').cloneNode(true)
-  requests = router.getStream()
+  requests = router.getStream().publishReplay(1).refCount()
   app = new App {
     requests
     model

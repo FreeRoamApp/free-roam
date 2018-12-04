@@ -35,6 +35,23 @@ module.exports = class Conversations
       me: me
       conversations: conversationsAndBlockedUserIdsAndMe
       .map ([conversations, blockedUserIds, me]) =>
+        if _isEmpty conversations
+          welcomeConversation = {
+            id: 'welcome'
+            lastMessage:
+              body:
+                @model.l.get 'conversations.welcome'
+            lastUpdateTime: Date.now()
+            users: [
+              {
+                username: 'austin'
+                avatarImage:
+                  prefix: 'uav/4120c690-aa76-11e8-a3bd-4a64b58f0b6a_d5208ce0-d988-11e8-9184-55468ca0fad7'
+              }
+            ]
+          }
+          conversations = [welcomeConversation]
+
         _filter _map conversations, (conversation) =>
           otherUser = _find conversation.users, (user) ->
             user.id isnt me?.id

@@ -16,7 +16,7 @@ if window?
 NPS_MIN = 0
 NPS_MAX = 10
 NPS_DEFAULT = 5
-MIN_VISITS_TO_SHOW = 4
+MIN_VISITS_TO_SHOW = 2
 
 module.exports = class Nps
   constructor: ({@model}) ->
@@ -127,14 +127,13 @@ module.exports = class Nps
       else
         z @$dialog,
           isVanilla: true
-          title: ''
+          $title: @model.l.get 'nps.rate'
           $content:
             z '.z-nps_dialog', {
               style:
                 maxWidth: "#{Math.min(240, window?.innerWidth - 64)}px"
             },
               z 'label.label',
-                z '.text', @model.l.get 'nps.rate'
                 z '.range-container',
                   z 'input.range',
                     type: 'range'

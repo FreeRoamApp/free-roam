@@ -14,10 +14,11 @@
       > .g-col
         > .category
           shadow-1()
+          border-radius: 2px
           display: block
           width: 100%
           height: 150px
-          margin: 0 auto
+          margin-bottom: 8px
           position: relative
           background: getColor('$white')
 
@@ -38,7 +39,7 @@
               width: 100%
               height: 100%
               background: getColor('$black70')
-
+              border-radius: 2px
 
           > .overlay
             position: absolute
@@ -46,6 +47,7 @@
             top: 0
             width: 100%
             height: 100%
+            border-radius: 2px
             padding: 16px
             box-sizing: border-box
             background-color: getColor('$blue50026')
@@ -60,5 +62,10 @@
 
             > .description
               font-body1()
+              text-align: center
               color: getColor('$white70')
               margin-top: 8px
+
+  @media (min-width: $breakPointMedium)
+    > .g-grid > .g-cols > .g-col > .category
+      margin-bottom: 0

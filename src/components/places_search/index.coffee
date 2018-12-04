@@ -20,7 +20,7 @@ Icon = require '../icon'
 SEARCH_DEBOUNCE = 300
 
 module.exports = class PlacesSearch
-  constructor: ({@model, @router, @currentMapBounds, @onclick}) ->
+  constructor: ({@model, @router, @onclick}) ->
     @searchValue = new RxBehaviorSubject ''
 
     locations = @searchValue.debounceTime(SEARCH_DEBOUNCE).switchMap (query) =>
