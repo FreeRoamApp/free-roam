@@ -129,13 +129,13 @@ module.exports = class NavDrawer
             iconName: 'chat-bubble'
             hasNotification: hasUnreadMessages
           }
-          {
-            path: @model.group.getPath group, 'groupForum', {@router}
-            title: @model.l.get 'general.forum'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'rss'
-          }
+          # {
+          #   path: @model.group.getPath group, 'groupForum', {@router}
+          #   title: @model.l.get 'general.forum'
+          #   $icon: new Icon()
+          #   $ripple: new Ripple()
+          #   iconName: 'rss'
+          # }
           {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'
@@ -150,13 +150,13 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'star'
           # }
-          {
-            path: @router.get 'partners'
-            title: @model.l.get 'general.partners'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'star'
-          }
+          # {
+          #   path: @router.get 'partners'
+          #   title: @model.l.get 'general.partners'
+          #   $icon: new Icon()
+          #   $ripple: new Ripple()
+          #   iconName: 'star'
+          # }
           if isMember
             {
               path: @router.get 'editProfile'

@@ -52,6 +52,8 @@ module.exports = class PlacesMapContainer
 
     zoomCookie = "#{@persistentCookiePrefix}_zoom"
     initialZoom ?= @model.cookie.get zoomCookie
+    if initialZoom is 'undefined'
+      initialZoom = undefined
     centerCookie = "#{@persistentCookiePrefix}_center"
     initialCenter ?= try
       JSON.parse @model.cookie.get centerCookie
