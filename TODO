@@ -33,6 +33,13 @@ TODOS:
     - Have it on it's own page. My Map: Past & Future modes?
     - How will this work with places you've been. Separate, or merged?
   - Should enough data be stored for it, or should it query db for each place?
+    - Query per place w/ cache (since place info changes)
+  - Needs to store
+    - sourceType: campground, amenity, coordinate, etc...
+    - sourceId (if coordinate, use stringified coordinate?)
+    - time saved
+    - time visited? (later)
+
 
 - Performance
   - Code splitting for performance
@@ -51,6 +58,7 @@ TODOS:
   - check if having opacities on layers/icons slows things down
     - run chrome performance check. one slow fn is updateLayerOpacities
 
+- Ask for RV size when reviewing (stored rig info) and filter by rv size
 - Delete campground
   - https://freeroam.app/campground/the-salty-spot-iqualuit/reviews
 - Cost and discounts would be useful. For example, New Mexico state parks are crazy-cheap with an annual pass, which is why so many full-timers come here. Some BLM campgrounds offer 1/2 price camping for someone with a National Parks pass. Etc.
@@ -79,11 +87,31 @@ x Welcome PM with red dot
     x Once they click, create both message and conversation
 x Select a more appropriate zoom level for geocoding
 x "Other" category for overnights
+
+
 - Non-profit? Definitely requires more filing/time w/ form 990. That seems to be biggest drawback
   - Typically non-profits run off of donations
   - Ad revenue is considered UBI (unrelated business income) and is taxed
   - Some non-profits have sponsors which aren't taxed?
   - Talk to Ali and Hadi Partovi (code.org) for advice
+  - Can form a non-profit and have 27 months to file for 501c3 exemption status be applied retroactively (not sure this matters)
+    - If the organization files Form 1023 after the deadline has passed, generally, recognition of 501(c)(3) status will be given only from the date the Form was filed.
+    - So should just pay taxes and be fine, but we'll probably apply for 501c3 before 27 months?
+    - I think we fall under "Environmental and animals (e.g., wildlife organizations)"
+  - Need to file 1023ez
+    - Apparently need to have 3 board members, or 5? if Rachel and I on board (no other relatives)
+      - Me, Cristian, Kelsey?
+  - https://foundation.mozilla.org/en/about/public-records/ is useful
+  - foundation classification is probably "A"
+  - https://www.rcfp.org/nonprofit-news-guide/taxation-unrelated-business-taxable-income/losing-tax-exempt-status-because-too
+    - We'll probably have a high UBIT, so we'll probably need to do what Mozilla did and have a corporation that the foundation is the only shareholder of
+    - Though maybe the income is mission-related since it's education? https://www.thebalancesmb.com/how-much-unrelated-earned-income-can-a-nonprofit-receive-2501873
+  - Make less than $50k this year and apply to YC the next year to get help with structure?
+    - Can file 990-N which is super easy
+  - Get advice from:
+    - tbiz
+    - code.org founders? Watsi? ...?
+
 x Better coloring for overlapping like Verizon + BLM (hard to make out which parts overlap)
 n Inline css req for shell, then load in the rest async
   n Seems to difficult and if we were to do it, we'd have to generate css for every page, or just the home page

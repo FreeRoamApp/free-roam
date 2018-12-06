@@ -131,12 +131,6 @@
   "editProfile.logoutButtonText": "Logout",
   "editProfile.newPassword": "New password...",
   "editProfile.currentPassword": "Current password...",
-  "editProfile.offlineMode": "Offline Mode",
-  "editProfile.description": "You can access some of FreeRoam when not connected to the internet. Tap on the button below to start \"recording\" data to access later. Any data you view while \"recording\" will be saved locally to your device.",
-  "editProfile.startRecording": "Start recording data",
-  "editProfile.checkCacheSize": "Check offline data size",
-  "editProfile.clearOfflineData": "Clear offline data",
-  "editProfile.sizeInfo": "You are using {size} locally for offline data.",
   "filterDialog.cellCarrier": "Carrier",
   "filterDialog.minSignal": "Signal must be at least:",
   "filterDialog.maxClearance": "Max clearance (height of your rig)",
@@ -196,6 +190,12 @@
   "nps.rate": "Rate FreeRoam",
   "nps.thanks": "Thanks for your feedback!",
   "nps.title": "Thoughts?",
+  "settings.offlineMode": "Offline Mode",
+  "settings.description": "You can access some of FreeRoam when not connected to the internet. Tap on the button below to start \"recording\" data to access later. Any data you view while \"recording\" will be saved locally to your device.",
+  "settings.startRecording": "Start recording data",
+  "settings.checkCacheSize": "Check offline data size",
+  "settings.clearOfflineData": "Clear offline data",
+  "settings.sizeInfo": "You are using {size} locally for offline data.",
 
 
   "overnightWarningDialog.title": "Heads up",
@@ -313,6 +313,7 @@
   "productGuidesPage.title": "Boondocking products",
   "productGuidesPage.metaTitle": "The best products for Boondocking",
   "productGuidesPage.description": "Learn which products are helpful to have when boondocking. We highlight the pros and cons of different brands and types, and summarize what reviewers had to say.",
+  "settingsPage.title": "Offline Mode",
 
   "permissions.admin": "Admin permissions",
   "permissions.readMessage": "Read messages",

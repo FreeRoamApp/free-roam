@@ -51,6 +51,7 @@
   "productGuides": "/product-guides",
   "product": "/product/:slug",
 
+  "settings": "/settings",
   "shell": "/shell",
   "termsOfService": "/tos",
   "home": "/",

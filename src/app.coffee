@@ -66,6 +66,7 @@ Pages =
   ProductGuidesPage: require './pages/product_guides'
   PoliciesPage: require './pages/policies'
   PrivacyPage: require './pages/privacy'
+  SettingsPage: require './pages/settings'
   ShellPage: require './pages/shell'
   ThreadPage: require './pages/thread'
   TosPage: require './pages/tos'
@@ -264,9 +265,10 @@ module.exports = class App
     route 'product', 'ProductPage'
     route 'productGuides', 'ProductGuidesPage'
     route 'policies', 'PoliciesPage'
+    route 'privacy', 'PrivacyPage'
+    route 'settings', 'SettingsPage'
     route 'shell', 'ShellPage'
     route 'termsOfService', 'TosPage'
-    route 'privacy', 'PrivacyPage'
 
     route '404', 'FourOhFourPage'
     routes
