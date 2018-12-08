@@ -145,7 +145,7 @@ module.exports = class PlaceNearby
           else
             @model.l.get 'campgroundNearby.showCellTowers'
       z '.places-list',
-        z @$placesList
+        z @$placesList, {hideRating: true}
 
       z '.fab',
         z @$fab,

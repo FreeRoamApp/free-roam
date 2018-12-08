@@ -4,6 +4,8 @@ require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 _filter = require 'lodash/filter'
+_find = require 'lodash/find'
+_startCase = require 'lodash/startCase'
 
 Base = require '../base'
 CellBars = require '../cell_bars'
@@ -15,6 +17,7 @@ FormattedText = require '../formatted_text'
 MasonryGrid = require '../masonry_grid'
 Spinner = require '../spinner'
 Rating = require '../rating'
+UiCard = require '../ui_card'
 Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
@@ -22,7 +25,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class CampgroundInfo extends Base
+module.exports = class PlaceInfo extends Base
   constructor: ({@model, @router, @place}) ->
     seasons =  [
       {key: 'spring', text: @model.l.get 'seasons.spring'}
@@ -58,6 +61,10 @@ module.exports = class CampgroundInfo extends Base
       value: @place.map (place) -> place?.rating
     }
     @$spinner = new Spinner()
+    @$directionsIcon = new Icon()
+    @$addReviewIcon = new Icon()
+    @$saveIcon = new Icon()
+    @$respectCard = new UiCard()
 
     @$details = new FormattedText {
       text: @place.map (place) ->
@@ -69,7 +76,17 @@ module.exports = class CampgroundInfo extends Base
       @router
     }
 
+    myPlacesAndPlace = RxObservable.combineLatest(
+      @model.savedPlace.getAll()
+      @place
+      (vals...) -> vals
+    )
+
     @state = z.state
+      isSaving: false
+      isSaved: myPlacesAndPlace.map ([myPlaces, place]) ->
+        Boolean _find myPlaces, {sourceId: place?.id}
+      hasSeenRespectCard: @model.cookie.get 'hasSeenRespectCard'
       place: @place.map (place) =>
         {
           place
@@ -101,8 +118,50 @@ module.exports = class CampgroundInfo extends Base
       place.attachmentsPreview.first.prefix, 'large'
     )
 
+  getDirections: (place) =>
+    target = '_system'
+    baseUrl = 'https://google.com/maps/dir/?api=1'
+    destination = place?.location?.lat + ',' + place?.location?.lon
+    onLocation = ({coords}) =>
+      origin = coords?.latitude + ',' + coords?.longitude
+      url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
+      @model.portal.call 'browser.openWindow', {url, target}
+    onError = =>
+      url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
+      @model.portal.call 'browser.openWindow', {url, target}
+    if Environment.isNativeApp 'freeroam'
+      navigator.geolocation.getCurrentPosition onLocation, onError
+    else
+      console.log 'err'
+      # just use the "my location" version, to avoid popup blocker
+      onError()
+
+  addReview: (place) =>
+    path = "new#{_startCase(place?.type)}Review"
+    @router.go path, {slug: place?.slug}
+
+  save: =>
+    {place, isSaved} = @state.getValue()
+    place = place.place
+
+    @state.set isSaving: true
+    if isSaved
+      @model.savedPlace.deleteByRow {
+        sourceType: place.type
+        sourceId: place.id
+      }
+      .then =>
+        @state.set isSaving: false
+    else
+      @model.savedPlace.upsert {
+        sourceType: place.type
+        sourceId: place.id
+      }
+      .then =>
+        @state.set isSaving: false
+
   render: =>
-    {place} = @state.getValue()
+    {place, isSaved, isSaving, hasSeenRespectCard} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
 
@@ -122,38 +181,52 @@ module.exports = class CampgroundInfo extends Base
               slug: place?.slug
             }
           },
-            @model.l.get 'campgroundInfo.seeAll', {
+            @model.l.get 'placeInfo.seeAll', {
               replacements: {count: place.attachmentsPreview.count}
             }
       z '.g-grid',
         z '.location',
           if place?.address?.locality
             "#{place.address.locality}, #{place.address.administrativeArea}"
-          ' ('
-          z 'span.get-directions', {
-            onclick: =>
-              target = '_system'
-              baseUrl = 'https://google.com/maps/dir/?api=1'
-              destination = place?.location?.lat + ',' + place?.location?.lon
-              onLocation = ({coords}) =>
-                origin = coords?.latitude + ',' + coords?.longitude
-                url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
-                @model.portal.call 'browser.openWindow', {url, target}
-              onError = =>
-                url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
-                @model.portal.call 'browser.openWindow', {url, target}
-              if Environment.isNativeApp 'freeroam'
-                navigator.geolocation.getCurrentPosition onLocation, onError
-              else
-                console.log 'err'
-                # just use the "my location" version, to avoid popup blocker
-                onError()
-
-          }, @model.l.get 'general.directions'
-          ')'
-
         z '.rating',
           z @$rating, {size: '20px'}
+
+        z '.action-box',
+          z '.actions',
+            z '.action', {
+              onclick: =>
+                @getDirections place
+            },
+              z '.icon',
+                z @$directionsIcon,
+                  icon: 'directions'
+                  isTouchTarget: false
+                  color: colors.$bgText54
+              z '.text', @model.l.get 'general.directions'
+            z '.divider'
+            z '.action', {
+              onclick: =>
+                @addReview place
+            },
+              z '.icon',
+                z @$addReviewIcon,
+                  icon: 'add-circle'
+                  isTouchTarget: false
+                  color: colors.$bgText54
+              z '.text', @model.l.get 'placeInfo.addReview'
+            z '.divider'
+            z '.action', {
+              onclick: @save
+            },
+              z '.icon',
+                z @$saveIcon,
+                  icon: 'star'
+                  isTouchTarget: false
+                  color: colors.$bgText54
+              z '.text',
+                if isSaving then @model.l.get 'general.saving'
+                else if isSaved then @model.l.get 'general.saved'
+                else @model.l.get 'general.save'
 
         z '.contact',
           z '.coordinates',
@@ -181,6 +254,22 @@ module.exports = class CampgroundInfo extends Base
                     target: '_system'
                   }
               }, place.contact?.website
+
+        unless hasSeenRespectCard
+          z '.card',
+            z @$respectCard, {
+              $title: @model.l.get 'preservationPage.title'
+              $content: @model.l.get 'placeInfo.respectCard'
+              cancel:
+                text: @model.l.get 'general.readMore'
+                onclick: =>
+                  @router.go 'preservation'
+              submit:
+                text: @model.l.get 'general.gotIt'
+                onclick: =>
+                  @state.set hasSeenRespectCard: true
+                  @model.cookie.set 'hasSeenRespectCard', '1'
+            }
 
         if place?.drivingInstructions
           z '.driving-instructions',
@@ -249,7 +338,7 @@ module.exports = class CampgroundInfo extends Base
 
               if place?.weather
                 z '.section',
-                  z '.title', @model.l.get 'campgroundInfo.averageWeather'
+                  z '.title', @model.l.get 'placeInfo.averageWeather'
                   z 'img.graph', {
                     src:
                       "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?12"

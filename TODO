@@ -27,7 +27,12 @@ TODOS:
 - Review voting
 - Photo voting
 
+x First-time pack-in, pack-out educational tips
+- Add cleanliness so people can find dirty places to help clean up
+
 - Saved places
+  - Empty state
+
   - Should be mappable, so extend place_base
   - Should it have it's own page, or just a checkbox on the map search???
     - Have it on it's own page. My Map: Past & Future modes?
@@ -39,6 +44,15 @@ TODOS:
     - sourceId (if coordinate, use stringified coordinate?)
     - time saved
     - time visited? (later)
+
+    - doesn't really work if extending off of placeBase since we don't store location and other details (in case name / rating changes)
+      - how does search query work? seems inefficient to grab all ids, then embed all info...
+      - probably best to just treat them differently and always just grab all places by userId
+        - don't need elasticsearch in this case.
+      - people might want to filter down list by where they zoom on map, so would have to be able to do that with cached list
+
+  - /my-places
+    - List for now, map later
 
 
 - Performance

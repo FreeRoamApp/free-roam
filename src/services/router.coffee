@@ -51,6 +51,9 @@ class RouterService
     else
       @goPath path, options
 
+  goPlace: (place) =>
+    @go place.sourceType or place.type, {slug: place.slug}
+
   get: (routeKey, replacements, {language} = {}) =>
     route = @model.l.get routeKey, {file: 'paths', language}
     _forEach replacements, (value, key) ->

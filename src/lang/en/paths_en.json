@@ -34,6 +34,7 @@
   "item": "/item/:slug",
   "itemsByCategory": "/product-guides/:category",
   "itemsBySearch": "/product-guides/search/:query",
+  "myPlaces": "/my-places",
   "newAmenity": "/new-amenity",
   "newCampground": "/new-campground",
   "newCampgroundReview": "/campground/:slug/new-review",
@@ -48,6 +49,7 @@
   "places": "/places",
   "policies": "/policies",
   "privacy": "/privacy",
+  "preservation": "/respect-the-land",
   "productGuides": "/product-guides",
   "product": "/product/:slug",
 

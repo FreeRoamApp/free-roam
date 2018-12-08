@@ -1,8 +1,10 @@
 z = require 'zorium'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
+RxObservable = require('rxjs/Observable').Observable
 
 Icon = require '../icon'
+Rating = require '../rating'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -18,6 +20,9 @@ module.exports = class PlacesList
           if place.type isnt 'cellTower'
             {
               place
+              $rating: new Rating {
+                value: RxObservable.of place.rating
+              }
               amenities: _map place.amenities, (amenity) ->
                 {
                   amenity
@@ -25,18 +30,22 @@ module.exports = class PlacesList
                 }
             }
 
-  render: =>
+  render: ({hideRating} = {}) =>
     {me, places} = @state.getValue()
 
     z '.z-places-list',
       z '.g-grid',
-        _map places, ({place, amenities}) =>
+        _map places, ({place, $rating, amenities}) =>
           z '.place', {
             onclick: =>
+              @router.goPlace place
               if me?.username is 'austin' and confirm 'Delete?'
                 @model.amenity.deleteByRow place
           },
             z '.name', place.name
+            unless hideRating
+              z '.rating',
+                z $rating
             z '.amenities',
               _map amenities, ({amenity, $icon}) ->
                 z '.amenity',

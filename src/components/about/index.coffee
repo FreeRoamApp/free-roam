@@ -19,13 +19,19 @@ module.exports = class About
 
     z '.z-about',
       z '.g-grid',
-        z '.h1.meet', @model.l.get 'about.meet'
+        z '.h1.title', @model.l.get 'about.mission'
+        z 'p', @model.l.get 'about.mission1'
+        z 'ul',
+          z 'li', @model.l.get 'about.mission1a'
+          z 'li', @model.l.get 'about.mission1b'
+          z 'li', @model.l.get 'about.mission1c'
+        z '.h1.title', @model.l.get 'about.meet'
         z '.us',
           z 'img',
             src: "#{config.CDN_URL}/us.jpg"
             width: Math.min(400, windowSize.width - 32 * 2 - 16 * 2)
             height: Math.min(400, windowSize.width - 32 * 2 - 16 * 2)
-        z '.divider'
+        # z '.divider'
         z 'p', @model.l.get 'about.text1'
         z 'p', @model.l.get 'about.text2'
         z 'p', @model.l.get 'about.text3'
@@ -52,15 +58,20 @@ module.exports = class About
               }
           },
             @model.l.get 'welcomeDialog.watch'
-        z 'p', @model.l.get 'about.text6'
-        z 'p', @model.l.get 'about.text7'
 
-        # TODO: the vision (long-term, helping people, environment)
+        z '.clear'
+
+        z '.h1.title', @model.l.get 'about.help'
+        z 'p', @model.l.get 'about.help1'
+        z 'ul',
+          z 'li', @model.l.get 'about.help1a'
+          z 'li', @model.l.get 'about.help1b'
+          z 'li', @model.l.get 'about.help1c'
+
         z '.divider.clear'
-        z 'img.home',
-          src: "#{config.CDN_URL}/home.jpg"
 
-        z 'p', @model.l.get 'about.opencellid'
+        z 'p.disclaimer', @model.l.get 'about.amazon'
+        z 'p.disclaimer', @model.l.get 'about.opencellid'
 
         # Goals:
         # 1. Make enough to support ourselves

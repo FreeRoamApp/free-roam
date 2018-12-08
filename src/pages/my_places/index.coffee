@@ -2,31 +2,31 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonMenu = require '../../components/button_menu'
-About = require '../../components/about'
-config = require '../../config'
+MyPlaces = require '../../components/my_places'
 colors = require '../../colors'
+config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class AboutPage
+module.exports = class MyPlacesPage
+  # hideDrawer: true
+
   constructor: ({@model, @router, requests, serverData, group}) ->
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
-    @$about = new About {@model, @router}
+    @$myPlaces = new MyPlaces {@model, @router}
 
   getMeta: =>
     {
-      title: @model.l.get 'drawer.about'
-      description:
-        "#{@model.l.get('about.text2')} #{@model.l.get 'about.text3'}"
+      title: @model.l.get 'myPlacesPage.title'
     }
 
   render: =>
-    z '.p-about',
+    z '.p-my-places',
       z @$appBar, {
-        title: @model.l.get 'drawer.about'
+        title: @model.l.get 'myPlacesPage.title'
         style: 'primary'
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
       }
-      @$about
+      @$myPlaces

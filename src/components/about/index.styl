@@ -1,17 +1,17 @@
 @require '../../vars'
 
 .z-about
-  padding: 16px
+  padding: 0 16px 16px 16px
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
 
   > .g-grid
 
-    > .meet
+    > .title
       font-display1()
-      text-align: center
-      margin-bottom: 16px
+      // text-align: center
+      margin: 16px 0
 
     > .divider
       width: 100%
@@ -32,6 +32,9 @@
 
     a
       font-weight: 500
+
+    > .disclaimer
+      font-caption2()
 
 
   @media (min-width: $breakPointMedium)

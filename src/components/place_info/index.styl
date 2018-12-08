@@ -42,6 +42,9 @@
     padding: 16px
     box-sizing: border-box
 
+    > .card
+      margin-bottom: 16px
+
     > .contact
       margin-bottom: 8px
 
@@ -70,6 +73,33 @@
     > .rating
       margin-bottom: 16px
 
+    > .action-box
+      padding: 8px
+      border: 1px solid getColor('$bgText12')
+      border-radius: 4px
+      margin-bottom: 16px
+
+      > .actions
+        display: flex
+        height: 46px
+
+        > .divider
+          width: 1px
+          height: 100%
+          background: getColor('$bgText26')
+
+        > .action
+          flex1()
+          text-align: center
+          cursor: pointer
+
+          > .icon
+            margin-bottom: 2px
+
+          > .text
+            font-title()
+
+
     > .masonry
       margin: -4px -16px // account for padding in .section
     // TODO: move each section into own component, so we don't have to
@@ -85,10 +115,12 @@
         width: 100%
 
       > .carriers
-        display: flex
+        white-space: nowrap
+        overflow-x: auto
 
         > .carrier
           font-caption2()
+          display: inline-block
           text-align: center
           margin-right: 16px
 
