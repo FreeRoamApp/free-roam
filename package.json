@@ -35,6 +35,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-s3-upload": "^1.6.6",
     "gulp-sequence": "^0.4.6",
+    "gulp-sizereport": "^1.2.1",
     "gulp-util": "^3.0.8",
     "karma": "^0.13.15",
     "karma-chrome-launcher": "^0.2.1",

@@ -244,7 +244,12 @@ module.exports = class PlacesMapContainer
     )
     streamValues.switchMap (response) =>
       [filterTypes, currentMapBounds, dataTypes, sort, limit] = response
-      if not currentMapBounds
+
+      boundsTooSmall = not currentMapBounds or Math.abs(
+        currentMapBounds.bounds._ne.lat - currentMapBounds.bounds._sw.lat
+      ) < 0.001
+
+      if boundsTooSmall
         return RxObservable.of []
 
       RxObservable.combineLatest.apply null, _map dataTypes, ({dataType, isChecked}) =>

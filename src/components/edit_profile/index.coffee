@@ -166,38 +166,6 @@ module.exports = class EditProfile
                   onSelect: ({file, dataUrl}) =>
                     @state.set avatarImage: file, avatarDataUrl: dataUrl
 
-        if navigator?.serviceWorker
-          z '.section',
-            z '.title', @model.l.get 'editProfile.offlineMode'
-            z '.description', @model.l.get 'editProfile.description'
-            z '.actions',
-              z @$recordButton,
-                text: @model.l.get 'editProfile.startRecording'
-                onclick: =>
-                  @model.offlineData.record()
-              z @$cacheSizeButton, {
-                onclick: =>
-                  @model.portal.call 'cache.getSizeByCacheName', {
-                    cacheName: 'recorded'
-                  }
-                  .then (size) =>
-                    size += localStorage?.offlineCache?.length or 0
-                    mb = Math.round(100 * size / B_IN_MB) / 100
-                    alert @model.l.get 'editProfile.sizeInfo', {
-                      replacements:
-                        size: "#{mb}mb"
-                    }
-                text: @model.l.get 'editProfile.checkCacheSize'
-              }
-              z @$clearCacheButton, {
-                onclick: =>
-                  @model.portal.call 'cache.clearByCacheName', {
-                    cacheName: 'recorded'
-                  }
-                  delete localStorage.offlineCache
-                text: @model.l.get 'editProfile.clearOfflineData'
-              }
-
         z '.actions',
           z '.button',
             z @$saveButton,

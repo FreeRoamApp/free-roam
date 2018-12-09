@@ -42,6 +42,9 @@ module.exports = class NewCampground extends NewPlace
       shade:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+      cleanliness:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
       roadDifficulty:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null

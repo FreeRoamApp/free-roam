@@ -28,10 +28,12 @@ TODOS:
 - Photo voting
 
 x First-time pack-in, pack-out educational tips
-- Add cleanliness so people can find dirty places to help clean up
+x Add cleanliness so people can find dirty places to help clean up
+
+- Let people add their website link / instagram
 
 - Saved places
-  - Empty state
+  x Empty state
 
   - Should be mappable, so extend place_base
   - Should it have it's own page, or just a checkbox on the map search???
@@ -39,23 +41,31 @@ x First-time pack-in, pack-out educational tips
     - How will this work with places you've been. Separate, or merged?
   - Should enough data be stored for it, or should it query db for each place?
     - Query per place w/ cache (since place info changes)
-  - Needs to store
+  x Needs to store
     - sourceType: campground, amenity, coordinate, etc...
     - sourceId (if coordinate, use stringified coordinate?)
     - time saved
     - time visited? (later)
 
-    - doesn't really work if extending off of placeBase since we don't store location and other details (in case name / rating changes)
+    x doesn't really work if extending off of placeBase since we don't store location and other details (in case name / rating changes)
       - how does search query work? seems inefficient to grab all ids, then embed all info...
       - probably best to just treat them differently and always just grab all places by userId
         - don't need elasticsearch in this case.
       - people might want to filter down list by where they zoom on map, so would have to be able to do that with cached list
 
-  - /my-places
+  x /my-places
     - List for now, map later
 
 
 - Performance
+  - remark-parse is pretty large
+    - includes parse-entities and code-entities
+    - 164kb / 2.38mb (6.9% of bundle)
+  - firebase is pretty large
+    - 198kb (8.3% of bundle)
+  - lodash
+    - 294kb (12.4% of bundle)
+    - pre-minify and gzip though
   - Code splitting for performance
     - https://developers.google.com/web/fundamentals/performance/optimizing-javascript/code-splitting/
     - https://webpack.js.org/guides/code-splitting/#dynamic-imports dynamic imports...
@@ -101,31 +111,6 @@ x Welcome PM with red dot
     x Once they click, create both message and conversation
 x Select a more appropriate zoom level for geocoding
 x "Other" category for overnights
-
-
-- Non-profit? Definitely requires more filing/time w/ form 990. That seems to be biggest drawback
-  - Typically non-profits run off of donations
-  - Ad revenue is considered UBI (unrelated business income) and is taxed
-  - Some non-profits have sponsors which aren't taxed?
-  - Talk to Ali and Hadi Partovi (code.org) for advice
-  - Can form a non-profit and have 27 months to file for 501c3 exemption status be applied retroactively (not sure this matters)
-    - If the organization files Form 1023 after the deadline has passed, generally, recognition of 501(c)(3) status will be given only from the date the Form was filed.
-    - So should just pay taxes and be fine, but we'll probably apply for 501c3 before 27 months?
-    - I think we fall under "Environmental and animals (e.g., wildlife organizations)"
-  - Need to file 1023ez
-    - Apparently need to have 3 board members, or 5? if Rachel and I on board (no other relatives)
-      - Me, Cristian, Kelsey?
-  - https://foundation.mozilla.org/en/about/public-records/ is useful
-  - foundation classification is probably "A"
-  - https://www.rcfp.org/nonprofit-news-guide/taxation-unrelated-business-taxable-income/losing-tax-exempt-status-because-too
-    - We'll probably have a high UBIT, so we'll probably need to do what Mozilla did and have a corporation that the foundation is the only shareholder of
-    - Though maybe the income is mission-related since it's education? https://www.thebalancesmb.com/how-much-unrelated-earned-income-can-a-nonprofit-receive-2501873
-  - Make less than $50k this year and apply to YC the next year to get help with structure?
-    - Can file 990-N which is super easy
-  - Get advice from:
-    - tbiz
-    - code.org founders? Watsi? ...?
-
 x Better coloring for overlapping like Verizon + BLM (hard to make out which parts overlap)
 n Inline css req for shell, then load in the rest async
   n Seems to difficult and if we were to do it, we'd have to generate css for every page, or just the home page

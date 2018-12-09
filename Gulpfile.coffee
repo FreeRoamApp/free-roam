@@ -22,6 +22,7 @@ Visualizer = require('webpack-visualizer-plugin')
 BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 gcPub = require 'gulp-gcloud-publish'
 gzip = require 'gulp-gzip'
+sizereport = require 'gulp-sizereport'
 argv = require('yargs').argv
 
 config = require './src/config'
@@ -47,6 +48,7 @@ gulp.task 'dist', gulpSequence(
   'dist:concat'
   'dist:sw'
   'dist:gc'
+  'dist:sizereport'
 )
 
 gulp.task 'dist:sw', gulpSequence(
@@ -283,3 +285,7 @@ gulp.task 'dist:manifest', ['dist:static', 'dist:scripts'], ->
       fallback: ['/ /offline.html']
     }
     .pipe gulp.dest paths.dist
+
+gulp.task 'dist:sizereport', ->
+  gulp.src "#{__dirname}/#{paths.dist}/bundle*"
+  .pipe sizereport()

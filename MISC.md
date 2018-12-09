@@ -22,7 +22,7 @@ If you enter '.', the field will be left blank.
 Country Name (2 letter code) [AU]:US
 State or Province Name (full name) [Some-State]:California
 Locality Name (eg, city) []:San Francisco
-Organization Name (eg, company) [Internet Widgits Pty Ltd]:FreeRoam LLC
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:FreeRoam Foundation
 Organizational Unit Name (eg, section) []:
 Common Name (e.g. server FQDN or YOUR name) []:192.168.0.109.xip.io
 Email Address []:austin@freeroam.app

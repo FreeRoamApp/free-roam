@@ -2344,6 +2344,23 @@
         "glob": "^7.1.1"
       }
     },
+    "cli-table": {
+      "version": "0.3.1",
+      "resolved": "https://registry.npmjs.org/cli-table/-/cli-table-0.3.1.tgz",
+      "integrity": "sha1-9TsFJmqLGguTSz0IIebi3FkUriM=",
+      "dev": true,
+      "requires": {
+        "colors": "1.0.3"
+      },
+      "dependencies": {
+        "colors": {
+          "version": "1.0.3",
+          "resolved": "http://registry.npmjs.org/colors/-/colors-1.0.3.tgz",
+          "integrity": "sha1-BDP0TYCWgP3rYO0mDxsMJi6CpAs=",
+          "dev": true
+        }
+      }
+    },
     "cli-width": {
       "version": "1.1.1",
       "resolved": "https://registry.npmjs.org/cli-width/-/cli-width-1.1.1.tgz",
@@ -7291,6 +7308,21 @@
           "resolved": "https://registry.npmjs.org/minimist/-/minimist-1.2.0.tgz",
           "integrity": "sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ="
         }
+      }
+    },
+    "gulp-sizereport": {
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/gulp-sizereport/-/gulp-sizereport-1.2.1.tgz",
+      "integrity": "sha512-thlt5LczraR7umuMLfpGo8XVUNxvU+PsSKWOrj41NjZnMeI4E9t4rLYc3eEAP20Sl1YhfxMER/SRz3udLldQVg==",
+      "dev": true,
+      "requires": {
+        "ansi-colors": "^1.0.1",
+        "beeper": "^1.1.1",
+        "cli-table": "^0.3.1",
+        "gzip-size": "^3.0.0",
+        "plugin-error": "^1.0.0",
+        "pretty-bytes": "^3.0.1",
+        "through2": "^2.0.1"
       }
     },
     "gulp-util": {
@@ -12540,6 +12572,15 @@
       "resolved": "https://registry.npmjs.org/preserve/-/preserve-0.2.0.tgz",
       "integrity": "sha1-gV7R9uvGWSb4ZbMQwHE7yzMVzks=",
       "dev": true
+    },
+    "pretty-bytes": {
+      "version": "3.0.1",
+      "resolved": "http://registry.npmjs.org/pretty-bytes/-/pretty-bytes-3.0.1.tgz",
+      "integrity": "sha1-J9AAjXeAY6C0gRuzXHnxvV1fvM8=",
+      "dev": true,
+      "requires": {
+        "number-is-nan": "^1.0.0"
+      }
     },
     "pretty-hrtime": {
       "version": "1.0.3",

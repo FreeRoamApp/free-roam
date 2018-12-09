@@ -53,6 +53,7 @@ module.exports = class PlaceInfo extends Base
       key: 'noise'
     }
     @$shadeInfoLevel = new InfoLevel {@model, @router, key: 'shade'}
+    @$cleanlinessInfoLevel = new InfoLevel {@model, @router, key: 'cleanliness'}
     @$safetyInfoLevel = new InfoLevel {@model, @router, key: 'safety'}
     @$roadDifficultyInfoLevel = new InfoLevel {
       @model, @router, key: 'roadDifficulty'
@@ -321,6 +322,12 @@ module.exports = class PlaceInfo extends Base
                   z '.title', @model.l.get 'campground.shade'
                   z @$shadeInfoLevel, {
                     value: place?.shade
+                  }
+              if place?.cleanliness
+                z '.section',
+                  z '.title', @model.l.get 'campground.cleanliness'
+                  z @$cleanlinessInfoLevel, {
+                    value: place?.cleanliness
                   }
               if place?.safety
                 z '.section',
