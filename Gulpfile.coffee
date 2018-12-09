@@ -218,9 +218,15 @@ gulp.task 'dist:scripts', ['dist:clean'], ->
         filename: 'bundle.css'
       }
     ]
+    # remark requires this (parse-entities -> character-entities)
+    # character-entities is 38kb and not really necessary. legacy is 1.64kb
+    resolve:
+      alias:
+       'character-entities': 'character-entities-legacy'
     output:
       # TODO: '[hash].bundle.js' if we have caching issues, or use appcache
       filename: 'bundle.js'
+      chunkFilename: '[name]_bundle_[hash].js',
     module:
       rules: [
         {test: /\.coffee$/, loader: 'coffee-loader'}
@@ -262,7 +268,7 @@ gulp.task 'dist:concat', ->
     , 'utf-8')
 
 gulp.task 'dist:gc', ->
-  gulp.src("#{__dirname}/#{paths.dist}/bundle*")
+  gulp.src("#{__dirname}/#{paths.dist}/*bundle*")
   .pipe gzip()
   .pipe gcPub {
     bucket: 'fdn.uno'

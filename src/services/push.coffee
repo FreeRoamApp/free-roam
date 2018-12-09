@@ -1,34 +1,40 @@
 Environment = require '../services/environment'
-# TODO separate bundle for app that doesn't require this
-firebase = require 'firebase/app'
-require 'firebase/messaging'
 
 SemverService = require '../services/semver'
 config = require '../config'
+
+
+# TODO separate bundle for app that doesn't require this
+# firebase = require 'firebase/app'
+# require 'firebase/messaging'
 
 ONE_DAY_MS = 3600 * 24 * 1000
 
 class PushService
   constructor: ->
     if window? and not Environment.isNativeApp 'freeroam'
-      firebase.initializeApp {
-        apiKey: config.FIREBASE.API_KEY
-        authDomain: config.FIREBASE.AUTH_DOMAIN
-        databaseURL: config.FIREBASE.DATABASE_URL
-        projectId: config.FIREBASE.PROJECT_ID
-        messagingSenderId: config.FIREBASE.MESSAGING_SENDER_ID
-      }
-      @firebaseMessaging = firebase.messaging()
       @isReady = new Promise (@resolveReady) => null
+      @isFirebaseImported = Promise.all [
+        `import(/* webpackChunkName: "firebase" */'firebase/app')`
+        `import(/* webpackChunkName: "firebase" */'firebase/messaging')`
+      ]
+      .then ([firebase, firebaseMessaging]) ->
+        console.log 'imported...', firebase
+        firebase.initializeApp {
+          apiKey: config.FIREBASE.API_KEY
+          authDomain: config.FIREBASE.AUTH_DOMAIN
+          databaseURL: config.FIREBASE.DATABASE_URL
+          projectId: config.FIREBASE.PROJECT_ID
+          messagingSenderId: config.FIREBASE.MESSAGING_SENDER_ID
+        }
+        @firebaseMessaging = firebase.messaging()
 
   setFirebaseServiceWorker: (registration) =>
-    @firebaseMessaging?.useServiceWorker registration
-    @resolveReady?()
+    @isFirebaseImported.then =>
+      @resolveReady?()
 
   init: ({model}) ->
     onReply = (reply) ->
-      unless reply.additionalData # legacy (older than 1.4.10)
-        reply = reply[0]
       payload = reply.additionalData.payload or reply.additionalData.data
       if payload.conversationId
         model.conversationMessage.create {
@@ -69,22 +75,11 @@ class PushService
       return Promise.resolve {
         token: navigator?.userAgent, sourceType: 'web-fcm'
       }
-    getToken = (isSecondAttempt) =>
+
+    @isReady.then ->
       @firebaseMessaging.requestPermission()
       .then =>
         @firebaseMessaging.getToken()
-      .catch (err) ->
-        # if the user has an old VAPID token, getToken fails... so resub them
-        navigator.serviceWorker.ready.then (serviceWorkerRegistration) ->
-          serviceWorkerRegistration.pushManager.getSubscription()
-          .then (subscription) ->
-            subscription.unsubscribe()
-          .then ->
-            unless isSecondAttempt
-              getToken true
-
-    @isReady.then ->
-      getToken()
     .then (token) ->
       {token, sourceType: 'web-fcm'}
 

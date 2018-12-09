@@ -92,13 +92,6 @@ module.exports = class ThreadListItem
           z '.bottom',
             z '.author',
               z '.name', @model.user.getDisplayName thread.user
-              if thread.user?.flags?.isStar
-                z '.icon',
-                  z @$starIcon,
-                    icon: 'star-tag'
-                    color: colors.$bgText
-                    isTouchTarget: false
-                    size: '22px'
               z '.middot',
                 innerHTML: '&middot;'
               z '.time',

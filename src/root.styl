@@ -113,9 +113,12 @@ input:-webkit-autofill:active
     border-radius: 20px
 
 @keyframes z-ripple-animation-css-only
-  from
+  // w/ from/to instead of 0 50 100, sometimes a second ripple shows once animation is done (bottom bar)
+  0%
     transform: scale(7)
     opacity: 0.25
-  to
+  50%
     transform: scale(20)
+    opacity: 0
+  100%
     opacity: 0

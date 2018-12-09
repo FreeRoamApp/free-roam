@@ -1,6 +1,8 @@
 z = require 'zorium'
 supportsWebP = window? and require 'supports-webp'
-remark = require 'remark'
+# remark = require 'remark'
+unified = require 'unified'
+markdown = require 'remark-parse'
 vdom = require 'remark-vdom'
 _uniq = require 'lodash/uniq'
 _find = require 'lodash/find'
@@ -59,7 +61,8 @@ module.exports = class FormattedText
       )
     , text
 
-    remark()
+    unified()
+    .use markdown
     .use vdom, {
       # zorium components' states aren't subscribed in here
       components:

@@ -32,13 +32,6 @@ module.exports = class Author
                   )
 
     z '.z-author', {onclick},
-      if user?.flags?.isStar
-        z '.icon',
-          z @$starIcon,
-            icon: 'star-tag'
-            color: nameColor or colors.$bgText
-            isTouchTarget: false
-            size: '22px'
       if user?.flags?.isDev
         z '.icon',
           z @$statusIcon,

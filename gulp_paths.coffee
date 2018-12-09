@@ -18,7 +18,6 @@ module.exports =
   manifest: [
     './dist/**/*'
     '!./dist/**/*.map'
-    '!./dist/humans.txt'
     '!./dist/robots.txt'
     '!./dist/stats.json'
     '!./dist/manifest.html'

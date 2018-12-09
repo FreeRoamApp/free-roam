@@ -58,8 +58,10 @@ x Add cleanliness so people can find dirty places to help clean up
 
 
 - Performance
+  - current 269kb gzipped
   - remark-parse is pretty large
-    - includes parse-entities and code-entities
+    - includes parse-entities and character-entities
+      - try removing these? don't seem super necessary
     - 164kb / 2.38mb (6.9% of bundle)
   - firebase is pretty large
     - 198kb (8.3% of bundle)
