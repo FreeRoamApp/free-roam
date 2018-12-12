@@ -19,7 +19,6 @@ class PushService
         `import(/* webpackChunkName: "firebase" */'firebase/messaging')`
       ]
       .then ([firebase, firebaseMessaging]) ->
-        console.log 'imported...', firebase
         firebase.initializeApp {
           apiKey: config.FIREBASE.API_KEY
           authDomain: config.FIREBASE.AUTH_DOMAIN

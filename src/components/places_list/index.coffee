@@ -5,6 +5,7 @@ RxObservable = require('rxjs/Observable').Observable
 
 Icon = require '../icon'
 Rating = require '../rating'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -38,12 +39,19 @@ module.exports = class PlacesList
         _map places, ({place, $rating, amenities}) =>
           z '.place', {
             onclick: =>
-              @router.goPlace place
+              if place?.sourceType is 'coordinate'
+                MapService.getDirections place, {@model}
+              else
+                @router.goPlace place
               if me?.username is 'austin' and confirm 'Delete?'
                 @model.amenity.deleteByRow place
           },
             z '.name', place.name
-            unless hideRating
+            if place.sourceType is 'coordinate' and place.location
+              latRounded = Math.round(place.location.lat * 1000) / 1000
+              lonRounded = Math.round(place.location.lon * 1000) / 1000
+              z '.coordinates', "#{latRounded}, #{lonRounded}"
+            if not hideRating and place.sourceType isnt 'coordinate'
               z '.rating',
                 z $rating
             z '.amenities',

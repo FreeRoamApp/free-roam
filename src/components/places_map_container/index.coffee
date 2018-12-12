@@ -93,10 +93,22 @@ module.exports = class PlacesMapContainer
       offset:
         left: 60
     }
+
+    persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
+    layersVisible = try
+      JSON.parse @model.cookie.get persistentCookie
+    catch
+      []
+    layersVisible or= []
+    initialLayers = _map layersVisible, (layerId) =>
+      optionalLayer = _find @optionalLayers, (optionalLayer) =>
+        optionalLayer.layer.id is layerId
+
     @$map = new Map {
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
-      defaultOpacity, initialCenter, center, initialZoom,  zoom
+      defaultOpacity, initialCenter, center, initialZoom,  zoom,
+      initialLayers
     }
     @$placeTooltip = new PlaceTooltip {
       @model, @router, @place, position: @placePosition, @mapSize
@@ -132,7 +144,7 @@ module.exports = class PlacesMapContainer
       counts: counts
       isLayersPickerVisible: false
       isFilterTypesVisible: @isFilterTypesVisible
-      layersVisible: []
+      layersVisible: layersVisible
 
   afterMount: =>
     @disposable = @currentMapBounds.subscribe ({zoom, center} = {}) =>
@@ -394,6 +406,29 @@ module.exports = class PlacesMapContainer
     }
     filter
 
+  toggleLayer: (optionalLayer, index) =>
+    {source, sourceId, layer, insertBeneathLabels} = optionalLayer
+    {layersVisible} = @state.getValue()
+
+    isVisible = index isnt -1
+
+    if isVisible
+      layersVisible.splice index, 1
+    else
+      ga? 'send', 'event', 'map', 'showLayer', layer.id
+      layersVisible.push layer.id
+    @state.set {layersVisible}
+
+    persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
+    @model.cookie.set persistentCookie, JSON.stringify layersVisible
+
+    @$map.toggleLayer layer, {
+      insertBeneathLabels
+      source: source
+      sourceId: sourceId
+    }
+
+
   render: =>
     {filterTypes, dataTypes, currentDataType, place, layersVisible, counts,
       visibleDataTypes, isFilterTypesVisible,
@@ -462,26 +497,13 @@ module.exports = class PlacesMapContainer
                   z '.g-cols',
                     if isLayersPickerVisible
                       _map @optionalLayers, (optionalLayer) =>
-                        {name, source, sourceId, layer,
-                          insertBeneathLabels} = optionalLayer
+                        {name, layer} = optionalLayer
                         index = layersVisible.indexOf(layer.id)
                         isVisible = index isnt -1
                         z ".layer-icon.#{layer.id}.g-col.g-xs-4.g-md-4", {
                           className: z.classKebab {isVisible}
                           onclick: =>
-                            if isVisible
-                              layersVisible.splice index, 1
-                            else
-                              ga? 'send', 'event', 'map', 'showLayer', layer.id
-                              layersVisible.push layer.id
-                            @state.set {layersVisible}
-
-                            @$map.toggleLayer layer, {
-                              insertBeneathLabels
-                              source: source
-                              sourceId: sourceId
-                            }
-
+                            @toggleLayer optionalLayer, index
                         },
                           z '.icon'
                           z '.name', name

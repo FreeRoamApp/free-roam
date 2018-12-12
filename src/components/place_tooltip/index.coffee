@@ -7,6 +7,7 @@ _find = require 'lodash/find'
 Icon = require '../icon'
 Rating = require '../rating'
 Base = require '../base'
+MapService = require '../../services/map'
 colors = require '../../colors'
 
 if window?
@@ -15,16 +16,28 @@ if window?
 module.exports = class PlaceTooltip extends Base
   constructor: ({@model, @router, @place, @position, @mapSize}) ->
     @$closeIcon = new Icon()
+    @$directionsIcon = new Icon()
+    @$addCampsiteIcon = new Icon()
+    @$saveIcon = new Icon()
     @$rating = new Rating {
       value: @place.map (place) -> place?.rating
     }
 
     @size = new RxBehaviorSubject {width: 0, height: 0}
+    myPlacesAndPlace = RxObservable.combineLatest(
+      @model.savedPlace.getAll()
+      @place
+      (vals...) -> vals
+    )
 
     @state = z.state {
       @place
       @mapSize
       @size
+      isSaving: false
+      isSaved: false
+      # isSaved: myPlacesAndPlace.map ([myPlaces, place]) ->
+      #   Boolean _find myPlaces, {sourceId: place?.id}
     }
 
   afterMount: (@$$el) =>
@@ -37,6 +50,9 @@ module.exports = class PlaceTooltip extends Base
           @size.next {width: @$$el.offsetWidth, height: @$$el.offsetHeight}
         , 0
       else
+        {isSaved} = @state.getValue()
+        if isSaved
+          @state.set isSaved: false
         @size.next {width: 0, height: 0}
 
     # update manually so we don't have to rerender
@@ -97,17 +113,34 @@ module.exports = class PlaceTooltip extends Base
   getThumbnailUrl: (place) =>
     @model.image.getSrcByPrefix place?.thumbnailPrefix, 'tiny'
 
+  saveCoordinate: =>
+    {place} = @state.getValue()
+
+    @state.set isSaving: true
+    name = prompt 'Enter a name'
+    @model.coordinate.upsert {
+      name: name
+      location: "#{place.location[1]}, #{place.location[0]}"
+    }, {invalidateAll: false}
+    .then ({id}) =>
+      @model.savedPlace.upsert {
+        sourceType: 'coordinate'
+        sourceId: id
+      }
+    .then =>
+      @state.set isSaving: false, isSaved: true
+
   render: ({isVisible} = {}) =>
-    {place, mapSize, size} = @state.getValue()
+    {place, mapSize, size, isSaving, isSaved} = @state.getValue()
 
     isVisible ?= Boolean place and Boolean size.width
 
     anchor = @getAnchor place?.position, mapSize, size
     transform = @getTransform place?.position, anchor
 
-    isDisabled = not place?.type in [
+    isDisabled = not place or not (place.type in [
       'campground', 'overnight'
-    ]
+    ])
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
       href: if not isDisabled and place
@@ -147,5 +180,46 @@ module.exports = class PlaceTooltip extends Base
         z '.title', place?.name
         if place?.description
           z '.description', place?.description
-        z '.rating',
-          z @$rating
+        if place?.type is 'coordinate'
+          z '.actions',
+            z '.action', {
+              onclick: =>
+                MapService.getDirections {
+                  location:
+                    lat: place.location[1]
+                    lon: place.location[0]
+                }, {@model}
+            },
+              z '.icon',
+                z @$directionsIcon,
+                  icon: 'directions'
+                  isTouchTarget: false
+                  color: colors.$bgText54
+              z '.text', @model.l.get 'general.directions'
+            # z '.action', {
+            #   onclick: =>
+            #     # TODO: pass in coordinates
+            #     @router.go 'newCampground'
+            # },
+            #   z '.icon',
+            #     z @$addCampsiteIcon,
+            #       icon: 'add-circle'
+            #       isTouchTarget: false
+            #       color: colors.$bgText54
+            #   z '.text', @model.l.get 'placeTooltip.addCampsite'
+            z '.action', {
+              onclick: @saveCoordinate
+            },
+              z '.icon',
+                z @$saveIcon,
+                  icon: 'star'
+                  isTouchTarget: false
+                  color: colors.$bgText54
+              z '.text',
+                if isSaving then @model.l.get 'general.saving'
+                else if isSaved then @model.l.get 'general.saved'
+                else @model.l.get 'general.save'
+
+        else
+          z '.rating',
+            z @$rating

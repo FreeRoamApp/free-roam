@@ -81,7 +81,7 @@ module.exports = class Auth
       @exoid.call path, body
     .then (response) =>
       if invalidateAll
-        # console.log 'Invalidating all'
+        console.log 'Invalidating all'
         @exoid.invalidateAll()
       else if invalidateSingle
         console.log 'Invalidating single', invalidateSingle

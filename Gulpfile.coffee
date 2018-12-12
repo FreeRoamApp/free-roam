@@ -19,7 +19,8 @@ HandleCSSLoader = require 'webpack-handle-css-loader'
 UglifyJSPlugin = require 'uglifyjs-webpack-plugin'
 MiniCssExtractPlugin = require 'mini-css-extract-plugin'
 Visualizer = require('webpack-visualizer-plugin')
-BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+new Visualizer()
+# BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 gcPub = require 'gulp-gcloud-publish'
 gzip = require 'gulp-gzip'
 sizereport = require 'gulp-sizereport'
@@ -212,6 +213,7 @@ gulp.task 'dist:scripts', ['dist:clean'], ->
       ]
     }
     plugins: [
+      # new Visualizer()
       # new BundleAnalyzerPlugin()
       new webpack.IgnorePlugin /\.json$/, /lang/
       new MiniCssExtractPlugin {

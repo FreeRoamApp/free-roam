@@ -58,13 +58,15 @@ x Add cleanliness so people can find dirty places to help clean up
 
 
 - Performance
-  - current 269kb gzipped
-  - remark-parse is pretty large
-    - includes parse-entities and character-entities
-      - try removing these? don't seem super necessary
-    - 164kb / 2.38mb (6.9% of bundle)
-  - firebase is pretty large
-    - 198kb (8.3% of bundle)
+  x current 269kb gzipped
+  x remark-parse is pretty large
+    x includes parse-entities and character-entities
+      x try removing these? don't seem super necessary
+    x 164kb / 2.38mb (6.9% of bundle)
+  - could remove socket.io to save 15kb (~6%) gzipped
+    - https://stackoverflow.com/questions/38546496/moving-from-socket-io-to-raw-websockets/38546537#38546537
+  x firebase is pretty large
+    x 198kb (8.3% of bundle)
   - lodash
     - 294kb (12.4% of bundle)
     - pre-minify and gzip though
@@ -207,3 +209,5 @@ Other feedback
 - route planner that takes into account RV height
 - truck / trailer finder by weight, truck towing capacities
 - finding RV-friendly gas stations for gas
+- Hey Techy Rvers, anyone know how to make a cool map of the places you’ve been and traveled to this year. Maybe with each trip being a different color, able to put favorite pictures next to them or when clicked on?
+  - in full time rving group

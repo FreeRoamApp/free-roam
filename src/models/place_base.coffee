@@ -9,8 +9,9 @@ module.exports = class PlaceBase
   search: ({query, sort, limit}) =>
     @auth.stream "#{@namespace}.search", {query, sort, limit}
 
-  upsert: (options) =>
-    @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
+  upsert: (options, {invalidateAll}) =>
+    invalidateAll ?= true
+    @auth.call "#{@namespace}.upsert", options, {invalidateAll}
 
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}

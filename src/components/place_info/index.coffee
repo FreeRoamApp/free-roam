@@ -19,6 +19,7 @@ Spinner = require '../spinner'
 Rating = require '../rating'
 UiCard = require '../ui_card'
 Environment = require '../../services/environment'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -119,24 +120,6 @@ module.exports = class PlaceInfo extends Base
       place.attachmentsPreview.first.prefix, 'large'
     )
 
-  getDirections: (place) =>
-    target = '_system'
-    baseUrl = 'https://google.com/maps/dir/?api=1'
-    destination = place?.location?.lat + ',' + place?.location?.lon
-    onLocation = ({coords}) =>
-      origin = coords?.latitude + ',' + coords?.longitude
-      url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
-      @model.portal.call 'browser.openWindow', {url, target}
-    onError = =>
-      url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
-      @model.portal.call 'browser.openWindow', {url, target}
-    if Environment.isNativeApp 'freeroam'
-      navigator.geolocation.getCurrentPosition onLocation, onError
-    else
-      console.log 'err'
-      # just use the "my location" version, to avoid popup blocker
-      onError()
-
   addReview: (place) =>
     path = "new#{_startCase(place?.type)}Review"
     @router.go path, {slug: place?.slug}
@@ -196,7 +179,7 @@ module.exports = class PlaceInfo extends Base
           z '.actions',
             z '.action', {
               onclick: =>
-                @getDirections place
+                MapService.getDirections place, {@model}
             },
               z '.icon',
                 z @$directionsIcon,

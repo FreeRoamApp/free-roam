@@ -17,7 +17,7 @@ module.exports = class Map
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
       @place, @placePosition, @mapSize, @initialZoom, @zoom, @initialCenter,
-      @center, @defaultOpacity, @onclick} = options
+      @initialLayers, @center, @defaultOpacity, @onclick} = options
 
     @place ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
@@ -155,6 +155,8 @@ module.exports = class Map
             #  stops: [[8, 3], [11, 10], [16, 50]]
         }
 
+        @addInitialLayers()
+
         @updateMapLocation()
         @subscribeToPlaces()
         @subscribeToCenter()
@@ -180,6 +182,24 @@ module.exports = class Map
       else
         @map.on 'click', =>
           @place.next null
+
+        console.log 'listen ctx'
+        @map.on 'contextmenu', (e) =>
+          console.log 'ctx'
+          e.originalEvent.preventDefault()
+
+          @placePosition.next e.point
+
+          latRounded = Math.round(e.lngLat.lat * 1000) / 1000
+          lonRounded = Math.round(e.lngLat.lng * 1000) / 1000
+
+          @place.next {
+            name: "#{latRounded}, #{lonRounded}"
+            type: 'coordinate'
+            position: e.point
+            location: [e.lngLat.lng, e.lngLat.lat]
+          }
+
         @map.on 'click', 'places', (e) =>
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
@@ -225,6 +245,16 @@ module.exports = class Map
     @resizeSubscription?.unsubscribe()
     @map?.remove()
     @map = null
+
+  addInitialLayers: =>
+    _map @initialLayers, (initialLayer) =>
+      {layer, insertBeneathLabels, source, sourceId} = initialLayer
+
+      @addLayer layer, {
+        insertBeneathLabels
+        source: source
+        sourceId: sourceId
+      }
 
   subscribeToMapBounds: =>
     @mapBoundsStreamsDisposable = @mapBoundsStreams.switch()
