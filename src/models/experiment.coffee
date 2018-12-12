@@ -1,16 +1,16 @@
 module.exports = class Experiment
   constructor: ({@cookie}) ->
-    expTooltips = @cookie.get 'exp:tooltips'
-    unless expTooltips
+    expDefault = @cookie.get 'exp:default'
+    unless expDefault
       rand = Math.random()
-      expTooltips = if rand > 0.5 \
+      expDefault = if rand > 0.5 \
                          then 'visible'
                          else 'control'
-      @cookie.set 'exp:tooltips', expTooltips
-    ga? 'send', 'event', 'exp', "tooltips:#{expTooltips}"
+      @cookie.set 'exp:default', expDefault
+    ga? 'send', 'event', 'exp', "default:#{expDefault}"
 
     @experiments =
-      tooltips: expTooltips
+      default: expDefault
 
   get: (key) =>
     @experiments[key]

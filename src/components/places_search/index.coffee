@@ -106,9 +106,8 @@ module.exports = class PlacesSearch
                       z $checkbox
                     z '.info',
                       z '.name', @model.l.get "placeTypes.#{dataType}"
-                      if @model.experiment.get('tooltips') is 'visible'
-                        z '.description',
-                          @model.l.get "placeTypes.#{dataType}Description"
+                      z '.description',
+                        @model.l.get "placeTypes.#{dataType}Description"
 
           if _isEmpty locations
             z '.done',

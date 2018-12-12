@@ -126,7 +126,7 @@ module.exports = class Tooltip extends Base
     # doing this causes weird things to happen (multiple mounts, ...)
     # unless isNecessary
     #   return z ''
-    if not isNecessary or @model.experiment.get('tooltips') is 'control'
+    if not isNecessary
       return z '.z-tooltip', {key: "tooltip-#{@key}"}
 
     z ".z-tooltip.anchor-#{anchor}", {
