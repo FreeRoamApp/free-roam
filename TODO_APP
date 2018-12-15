@@ -24,6 +24,7 @@
 - Run contests for people w/ most rep each week
 
 TODOS:
+- Google Play exp w/ new iOS style screenshots
 - Review voting
 - Photo voting
 
@@ -32,7 +33,11 @@ x Add cleanliness so people can find dirty places to help clean up
 
 - Let people add their website link / instagram
 
+- Tooltip on place page to get people going to other tabs
+  - Only do tooltip to reviews if the campground has one...
+
 - Saved places
+  - contextmenu doesn't work on ios https://github.com/mapbox/mapbox-gl-js/pull/1542
   x Empty state
 
   - Should be mappable, so extend place_base
@@ -71,6 +76,8 @@ x Add cleanliness so people can find dirty places to help clean up
     - 294kb (12.4% of bundle)
     - pre-minify and gzip though
   - Code splitting for performance
+    - Already doing for firebase, so extend off of that
+    - Can probably chunk out the mod tools and/or logged-in pages
     - https://developers.google.com/web/fundamentals/performance/optimizing-javascript/code-splitting/
     - https://webpack.js.org/guides/code-splitting/#dynamic-imports dynamic imports...
       - that should generate all the proper chunks
@@ -86,6 +93,8 @@ x Add cleanliness so people can find dirty places to help clean up
   - check if having opacities on layers/icons slows things down
     - run chrome performance check. one slow fn is updateLayerOpacities
 
+    - Exoid cache gets very large with all of the place.search reqs. Clear them out
+    - Message first time clicking on a filter saying it's only for that data type?
 - Ask for RV size when reviewing (stored rig info) and filter by rv size
 - Delete campground
   - https://freeroam.app/campground/the-salty-spot-iqualuit/reviews
@@ -94,21 +103,23 @@ x Add cleanliness so people can find dirty places to help clean up
 - Allow people to contribute cell information:
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
-- Allow searching campground name
-- Allow searching type? Eg "Walmarts" gets them to the right place
-- Legend? Icon -> Name
+- Search
+  - Allow searching campground name
+  - Allow searching type? Eg "Walmarts" gets them to the right place
+  - Common queries:
+    - Florida, Dump / Dump Station, Tucson, Arizona, Moab, Bakersfield, Las Cruces, Ohio
+    - Only ~10-15 queries over a month for dump station, so probably not worth to add yet?
 - "Location you're searching not showing? Let us know! **button**"
-- Places nearby: show closets & show all toggle (so it's not a bunch of walmarts)
-- Merge reviewless_campgrounds into campgrounds.
+- Warning message on campgrounds w/o reviews
+x Places nearby: show closest & show all toggle (so it's not a bunch of walmarts)
+  x went with fading out non-closest
+x Merge reviewless_campgrounds into campgrounds.
   x Keep the orange icon for ones w/ reviews
   x Gray icon for reviewless
   x Add `source` column to campgrounds
-  - Make it clear first time filtering that it'll only keep the orange ones
-  - Warning message on campgrounds w/o review
+  n Make it clear first time filtering that it'll only keep the orange ones
   x Delete reviewless campgrounds
 n Show icons when choosing "Show me...".
-- Exoid cache gets very large with all of the place.search reqs. Clear them out
-- Message first time clicking on a filter saying it's only for that data type
 x Welcome PM with red dot
   x Welcome to FreeRoam! I'm Austin, the guy who is programming the app. Let me know if you have any questions or suggestions for how Rachel and I can improve it!
   x Probably best to not create an actual message or conversation until user clicks to conversation
@@ -127,24 +138,26 @@ x I think it's asking for PWA update after cache gets cleared when exoid doesn't
 - offline
   - only cache map searches when recording enabled
     - cache w/o the bounds, so all show? or cache by zoom level?
-  - better shells
+  x better shells
 - improve the shell/loading pages to have less thrashing / be more than just a spinner
+  x homepage
+  - place page
 - And maybe somewhere that would help us find out where/when gatherings are because I get a lot of questions about them! But I usually only know the west coast ones. So it would be nice to have one app that shared all the known gatherings and info.
   - divineontheroad
 - rec.gov campgrounds
   x "Unvetted Campgrounds"
   x COE, WMA (wma too difficult to automate)
-  - "We think this campsite is free, but you should verify through their website or phone number. If you've been here, please add a review so we can move this to our normal campground section!"
-  - Adding review moves to normal campsite. Add review button on main tab too?
+  n "We think this campsite is free, but you should verify through their website or phone number. If you've been here, please add a review so we can move this to our normal campground section!"
+  n Adding review moves to normal campsite. Add review button on main tab too?
   x Show contact info
-  - When creating new campground, once coordinates are put in, ask if it's one of the unvetted ones
-- Favorite GPS points (not just campgrounds)
-  - Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)
-  - roadpickle
+  n When creating new campground, once coordinates are put in, ask if it's one of the unvetted ones
+x Favorite GPS points (not just campgrounds)
+  x Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)
+  x roadpickle
 - ATV trails as a nearby amenity
   - Filter by distance to ATV trails
   - https://bit.ly/2JnjQBD
-- Edit review use initial season for value?
+x Edit review use initial season for value?
 x Tooltip picture and reviews
 x Swipe / tap through gallery of images
 - "We don't have any data for this season yet, but here\'s what it was like in *season*"
@@ -169,9 +182,25 @@ n Map doesn't show after locking and unlocking phone?
   n can plugin to inspect after it happens?
   n couldn't replicate anymore
 - Don't load nearby map until tab is active
+  - only 6% go to nearby tab from main tab
 x Add review redirect back to reviews
 x Reviews add to photos
 x Show photos on place page
+
+- Places traveled
+  - integrate with my places
+  - Page with all places, can drag to rearrange order
+    - Edit button for each places which brings to 'add/edit place page'
+    - "Add another" button at bottom that opens add place page
+  - Add place page
+    - Location, pictures
+    - Option to add it as a campground (then go through the normal steps and request review)
+    - If they add as campground, use that for my places type, otherwise use coordinate
+  - DB table: trips
+    - name, userId, places: [{sourceId, sourceType, startTime, endTime, attachments}]
+  - Option to generate from photo library?
+  - Ability to share to FB, Instagram
+  - In map view, people can click on a campground to go to that campground page
 
 
 Feedback:
@@ -202,10 +231,6 @@ Boondocking
 x Nearby dumpsites, freshwater, ...
 
 Other feedback
-- partners page, link to people's social media, etc...
-  - application process, minimum number of followers
-  - sort by most followers
-
 - route planner that takes into account RV height
 - truck / trailer finder by weight, truck towing capacities
 - finding RV-friendly gas stations for gas

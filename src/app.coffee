@@ -140,18 +140,6 @@ module.exports = class App
 
     isNativeApp = Environment.isNativeApp 'freeroam', {userAgent}
 
-    # used if state / requests fails to work
-    $backupPage = if @serverData?
-      if isNativeApp
-        serverPath = @model.cookie.get('routerLastPath') or @serverData.req.path
-      else
-        serverPath = @serverData.req.path
-      @getRoutes().get(serverPath).handler?()
-    else
-      null
-
-    addToHomeSheetIsVisible = new RxBehaviorSubject false
-
     @$navDrawer = new NavDrawer {@model, @router, @group}
     @$statusBar = new StatusBar {@model}
     @$snackBar = new SnackBar {@model}
@@ -184,6 +172,16 @@ module.exports = class App
     if window? and not @model.cookie.get 'hasSeenWelcome'
       @model.cookie.set 'hasSeenWelcome', 1
       @model.overlay.open new WelcomeDialog {@model, @router}
+
+    # used if state / requests fails to work
+    $backupPage = if @serverData?
+      if isNativeApp
+        serverPath = @model.cookie.get('routerLastPath') or @serverData.req.path
+      else
+        serverPath = @serverData.req.path
+      @getRoutes().get(serverPath).handler?()
+    else
+      null
 
     @state = z.state {
       $backupPage: $backupPage
@@ -264,7 +262,7 @@ module.exports = class App
     route ['overnight', 'overnightWithTab'], 'OvernightPage'
     route 'overnightAttachments', 'OvernightAttachmentsPage'
     route 'partners', 'PartnersPage'
-    route ['places', 'home'], 'PlacesPage'
+    route ['places', 'home', 'placesShell'], 'PlacesPage'
     route 'preservation', 'PreservationPage'
     route 'product', 'ProductPage'
     route 'productGuides', 'ProductGuidesPage'

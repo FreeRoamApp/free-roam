@@ -8,11 +8,14 @@ module.exports = class OfflineDataModel
       text: @l.get 'status.recordingData'
       onclick: @save
     }
-    @exoid.disableInvalidation()
-    # @exoid.getCacheStream().subscribe (cache) ->
-    #   console.log 'cache', JSON.stringify(cache).length
+    @exoid.invalidateAll()
+    setTimeout =>
+      @exoid.disableInvalidation()
+      # @exoid.getCacheStream().subscribe (cache) ->
+      #   console.log 'cache', JSON.stringify(cache).length
 
-    @portal.call 'cache.startRecording'
+      @portal.call 'cache.startRecording'
+    , 0
 
   save: =>
     @exoid.getCacheStream().take(1).subscribe (cache) =>

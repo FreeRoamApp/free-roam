@@ -185,7 +185,6 @@ module.exports = class Map
 
         console.log 'listen ctx'
         @map.on 'contextmenu', (e) =>
-          console.log 'ctx'
           e.originalEvent.preventDefault()
 
           @placePosition.next e.point

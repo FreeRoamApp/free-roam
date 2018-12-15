@@ -15,14 +15,14 @@ if window?
   require './index.styl'
 
 module.exports = class Places
-  constructor: ({@model, @router}) ->
+  constructor: ({@model, @router, isShell}) ->
     @$fab = new Fab()
     @$addIcon = new Icon()
 
     @currentDataType = new RxBehaviorSubject 'campground'
 
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router
+      @model, @router, isShell
       persistentCookiePrefix: 'home'
       currentDataType: @currentDataType
       dataTypes: [

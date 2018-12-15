@@ -12,7 +12,9 @@ module.exports = class PlacesPage
   @hasBottomBar: true
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
-    @$places = new Places {@model, @router}
+    isShell = requests.map ({req}) =>
+      req.path is @router.get('placesShell')
+    @$places = new Places {@model, @router, isShell}
 
   getMeta: =>
     {

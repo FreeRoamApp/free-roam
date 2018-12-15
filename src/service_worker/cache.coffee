@@ -21,6 +21,7 @@ module.exports = class Cache
         version: '|HASH|'
         files: [
           '/shell'
+          '/places/shell'
           '/campground/shell'
         ]
       }
@@ -99,8 +100,12 @@ module.exports = class Cache
       request = 'https://freeroam.app/campground/shell'
       # request = 'https://staging.freeroam.app/campground/shell'
       # request = 'http://localhost:50340/campground/shell'
+    else if event.request.url.match /(:\/\/freeroam.app|localhost:50340)(\/?$|\/places)/i
+      request = 'https://freeroam.app/places/shell'
+      # request = 'https://staging.freeroam.app/campground/shell'
+      # request = 'http://localhost:50340/campground/shell'
     # any other path that isn't a static file
-    else if event.request.url.match /(freeroam.app|localhost:50340)([^\.]*)$/i
+    else if event.request.url.match /(:\/\/freeroam.app|localhost:50340)([^\.]*)$/i
       request = 'https://freeroam.app/shell'
       # request = 'https://staging.freeroam.app/shell'
       # request = 'http://localhost:50340/shell'

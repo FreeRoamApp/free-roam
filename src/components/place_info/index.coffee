@@ -88,6 +88,12 @@ module.exports = class PlaceInfo extends Base
       isSaving: false
       isSaved: myPlacesAndPlace.map ([myPlaces, place]) ->
         Boolean _find myPlaces, {sourceId: place?.id}
+      amenities: @place.map (place) ->
+        _map place?.amenities, (amenity) ->
+          {
+            amenity
+            $icon: new Icon()
+          }
       hasSeenRespectCard: @model.cookie.get 'hasSeenRespectCard'
       place: @place.map (place) =>
         {
@@ -145,7 +151,8 @@ module.exports = class PlaceInfo extends Base
         @state.set isSaving: false
 
   render: =>
-    {place, isSaved, isSaving, hasSeenRespectCard} = @state.getValue()
+    {place, isSaved, isSaving, amenities,
+      hasSeenRespectCard} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
 
@@ -187,17 +194,20 @@ module.exports = class PlaceInfo extends Base
                   isTouchTarget: false
                   color: colors.$bgText54
               z '.text', @model.l.get 'general.directions'
-            z '.divider'
-            z '.action', {
-              onclick: =>
-                @addReview place
-            },
-              z '.icon',
-                z @$addReviewIcon,
-                  icon: 'add-circle'
-                  isTouchTarget: false
-                  color: colors.$bgText54
-              z '.text', @model.l.get 'placeInfo.addReview'
+            if place?.type isnt 'amenity'
+              [
+                z '.divider'
+                z '.action', {
+                  onclick: =>
+                    @addReview place
+                },
+                  z '.icon',
+                    z @$addReviewIcon,
+                      icon: 'add-circle'
+                      isTouchTarget: false
+                      color: colors.$bgText54
+                  z '.text', @model.l.get 'placeInfo.addReview'
+              ]
             z '.divider'
             z '.action', {
               onclick: @save
@@ -239,7 +249,7 @@ module.exports = class PlaceInfo extends Base
                   }
               }, place.contact?.website
 
-        unless hasSeenRespectCard
+        if place?.type is 'campground' and not hasSeenRespectCard
           z '.card',
             z @$respectCard, {
               $title: @model.l.get 'preservationPage.title'
@@ -254,6 +264,19 @@ module.exports = class PlaceInfo extends Base
                   @state.set hasSeenRespectCard: true
                   @model.cookie.set 'hasSeenRespectCard', '1'
             }
+
+        if place?.type is 'amenity'
+          _map amenities, ({amenity, $icon}) ->
+            console.log amenity, $icon
+            z '.amenity',
+              z '.icon',
+                z $icon,
+                  icon: amenity
+                  isTouchTarget: false
+                  size: '16px'
+                  color: colors["$amenity#{amenity}"]
+
+              z '.name', amenity
 
         if place?.drivingInstructions
           z '.driving-instructions',

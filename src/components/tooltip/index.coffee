@@ -20,6 +20,8 @@ module.exports = class Tooltip extends Base
       prereqs: null
     mapLayers:
       prereqs: ['placeSearch']
+    placeTooltip:
+      prereqs: null
 
   constructor: ({@model, @isVisible, @offset, @key, @anchor}) ->
     unless window? # could also return right away if cookie exists for perf
@@ -46,7 +48,9 @@ module.exports = class Tooltip extends Base
   afterMount: (@$$el) =>
     super
     @disposable = @isNecessary.subscribe (isNecessary) =>
-      if isNecessary
+      if isNecessary and not @isPositionSet
+        @isPositionSet = true
+        # despite having this, ios still calls this twice, hence the flag above
         @disposable?.unsubscribe()
         setTimeout =>
           checkIsReady = =>
@@ -84,7 +88,7 @@ module.exports = class Tooltip extends Base
     ).join(',')
     @isVisible.next false
 
-  getAnchor: (position, windowSize, size) =>
+  getAnchor: (position, windowSize, size) ->
     width = windowSize?.width
     height = windowSize?.height
     xAnchor = if position?.x < size.width / 2 \
@@ -99,7 +103,7 @@ module.exports = class Tooltip extends Base
               else 'center'
     "#{yAnchor}-#{xAnchor}"
 
-  getTransform: (position, anchor) =>
+  getTransform: (position, anchor) ->
     anchorParts = anchor.split('-')
     xPercent = if anchorParts[1] is 'left' \
                then 0

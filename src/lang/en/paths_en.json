@@ -47,6 +47,7 @@
 
   "partners": "/partners",
   "places": "/places",
+  "placesShell": "/places/shell",
   "policies": "/policies",
   "privacy": "/privacy",
   "preservation": "/respect-the-land",

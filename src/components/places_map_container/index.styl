@@ -7,15 +7,17 @@
   position: relative
   user-select: none
 
-  // > .search
-  //   position: absolute
-  //   // padding-bottom: 62px // hack: extend past bottom for bottomBar
-  //   width: 100%
-  //   height: 100%
-  //   left: 0
-  //   top: 0
-  //   z-index: 99
-  //   pointer-events: none
+  &.is-shell
+    > .search
+      // HACK: is it better to pass isShell to that component?
+      > .z-places-filter-bar
+        > .bar
+          > .filters
+            display: none
+
+      > .z-places-search
+        > .overlay
+          display: none
 
   > .counts-bar
     font-caption1()

@@ -35,7 +35,7 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, @dataTypes, showScale, mapBoundsStreams,
+    {@model, @router, isShell, @dataTypes, showScale, mapBoundsStreams,
       @persistentCookiePrefix, @addPlaces, @optionalLayers, @isSearchHidden,
       @limit, @sort, defaultOpacity, @currentDataType, initialCenter, center,
       initialZoom, zoom} = options
@@ -101,7 +101,7 @@ module.exports = class PlacesMapContainer
       []
     layersVisible or= []
     initialLayers = _map layersVisible, (layerId) =>
-      optionalLayer = _find @optionalLayers, (optionalLayer) =>
+      optionalLayer = _find @optionalLayers, (optionalLayer) ->
         optionalLayer.layer.id is layerId
 
     @$map = new Map {
@@ -115,7 +115,7 @@ module.exports = class PlacesMapContainer
     }
     @$placesSearch = new PlacesSearch {
       @model, @router
-      onclick: (location) =>
+      onclick: (location) ->
         if location.bbox and location.bbox[0] isnt location.bbox[2]
           mapBoundsStreams.next RxObservable.of {
             x1: location.bbox[0]
@@ -135,6 +135,7 @@ module.exports = class PlacesMapContainer
     }
 
     @state = z.state
+      isShell: isShell
       filterTypes: @filterTypesStream
       dataTypes: @dataTypesStream
       visibleDataTypes: @dataTypesStream.map (dataTypes) ->
@@ -430,13 +431,14 @@ module.exports = class PlacesMapContainer
 
 
   render: =>
-    {filterTypes, dataTypes, currentDataType, place, layersVisible, counts,
-      visibleDataTypes, isFilterTypesVisible,
+    {isShell, filterTypes, dataTypes, currentDataType, place, layersVisible,
+      counts, visibleDataTypes, isFilterTypesVisible,
       isLayersPickerVisible} = @state.getValue()
 
     isCountsBarVisbile = counts?.visible < counts?.total
 
     z '.z-places-map-container', {
+      className: z.classKebab {isShell}
       onclick: =>
         if isLayersPickerVisible or isFilterTypesVisible
           @state.set isLayersPickerVisible: false
