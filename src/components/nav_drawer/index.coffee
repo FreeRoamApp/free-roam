@@ -172,6 +172,13 @@ module.exports = class NavDrawer
               $ripple: new Ripple()
               iconName: 'profile'
             }
+          {
+            path: @router.get 'editTripByType', {type: 'past'}
+            title: @model.l.get 'editTripPage.title'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'marker-multiple'
+          }
           if navigator?.serviceWorker
             {
               path: @router.get 'settings'
@@ -329,11 +336,11 @@ module.exports = class NavDrawer
                       z 'li.sign-in-buttons',
                         z '.button', {
                           onclick: =>
-                            @model.overlay.open @$signInDialog, 'signIn'
+                            @model.overlay.open @$signInDialog, {data: 'signIn'}
                         }, @model.l.get 'general.signIn'
                         z '.button', {
                           onclick: =>
-                            @model.overlay.open @$signInDialog, 'join'
+                            @model.overlay.open @$signInDialog, {data: 'join'}
                         }, @model.l.get 'general.signUp'
                       z 'li.divider'
                     ]

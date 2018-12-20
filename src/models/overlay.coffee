@@ -1,26 +1,13 @@
+
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _filter = require 'lodash/filter'
+_isEmpty = require 'lodash/isEmpty'
+_map = require 'lodash/map'
 
 module.exports = class Overlay
   constructor: ->
-    @overlay$ = new RxBehaviorSubject null
+    @overlays = new RxBehaviorSubject null
     @_data = new RxBehaviorSubject null
-    @onCompleteFn = null
-    @onCancelFn = null
-
-  onComplete: (@onCompleteFn) => null
-
-  onCancel: (@onCancelFn) => null
-
-  complete: =>
-    @onCompleteFn?()
-
-  cancel: =>
-    @onCancelFn?()
-
-  openAndWait: =>
-    @open.apply this, arguments
-    new Promise (@onCompleteFn, reject) => null
 
   getData: =>
     @_data
@@ -29,15 +16,27 @@ module.exports = class Overlay
     @_data.next data
 
   get$: =>
-    @overlay$
+    @overlays.map (overlays) -> _map overlays, '$'
 
-  open: ($, data) =>
-    @overlay$.next _filter (@overlay$.getValue() or []).concat $
-    @setData data
+  open: ($, {data, onComplete, onCancel} = {}) =>
+    @overlays.next _filter (@overlays.getValue() or []).concat(
+      {$, onComplete, onCancel}
+    )
+    @setData data # TODO: per-overlay data
+
     # prevent body scrolling while viewing menu
     document?.body.style.overflow = 'hidden'
 
-  close: =>
-    @overlay$.next null
-    @onComplete null
+  close: (action, response) =>
+    overlays = @overlays.getValue()
+    {onComplete, onCancel} = overlays.pop()
+    if _isEmpty overlays
+      overlays = null
+    @overlays.next overlays
+
+    if action is 'complete'
+      onComplete? response
+    else
+      onCancel? response
+
     document?.body.style.overflow = 'auto'

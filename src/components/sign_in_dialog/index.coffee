@@ -61,8 +61,7 @@ module.exports = class SignInDialog
       # give time for invalidate to work
       setTimeout =>
         @model.user.getMe().take(1).subscribe =>
-          @model.overlay.complete()
-          @model.overlay.close()
+          @model.overlay.close 'complete'
       , 0
     .catch (err) =>
       err = try
@@ -91,8 +90,7 @@ module.exports = class SignInDialog
       # give time for invalidate to work
       setTimeout =>
         @model.user.getMe().take(1).subscribe =>
-          @model.overlay.complete()
-          @model.overlay.close()
+          @model.overlay.close 'complete'
       , 0
     .catch (err) =>
       err = try
@@ -107,8 +105,7 @@ module.exports = class SignInDialog
       @state.set isLoading: false
 
   cancel: =>
-    @model.overlay.cancel()
-    @model.overlay.close()
+    @model.overlay.close 'cancel'
 
   render: =>
     {isLoading, data} = @state.getValue()

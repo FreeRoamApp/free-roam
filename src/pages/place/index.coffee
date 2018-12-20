@@ -36,7 +36,7 @@ module.exports = class PlacePage extends BasePage
         description: @model.l.get 'placePage.description', {
           replacements:
             name: place?.name
-            location:  "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+            location: "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
         }
         structuredData:
           type: 'LocalBusiness'

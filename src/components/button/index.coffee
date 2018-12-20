@@ -41,9 +41,10 @@ module.exports = class Button
   render: (options) =>
     {text, isDisabled, allowDisabledClick, listeners, isRaised, isFullWidth,
       isShort, isDark, isFlat, colors, onclick, type, $content,
-      heightPx} = options
+      heightPx, hasRipple} = options
     {backgroundColor, isHovered, isActive} = @state.getValue()
 
+    hasRipple ?= true
     $content ?= text
     heightPx ?= 36
     type ?= 'button'
@@ -106,5 +107,5 @@ module.exports = class Button
           minHeight: "#{heightPx}px"
       },
         $content
-        unless isDisabled
+        if hasRipple and not isDisabled
           @$ripple

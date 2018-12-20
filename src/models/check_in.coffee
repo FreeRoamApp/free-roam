@@ -1,12 +1,12 @@
 config = require '../config'
 
-module.exports = class SavedPlace
-  namespace: 'savedPlaces'
+module.exports = class CheckIn
+  namespace: 'checkIns'
 
   constructor: ({@auth}) -> null
 
-  search: ({query, sort, limit}) =>
-    @auth.stream "#{@namespace}.search", {query, sort, limit}
+  getById: (id) =>
+    @auth.stream "#{@namespace}.getById", {id}
 
   getAll: ({includeDetails} = {}) =>
     @auth.stream "#{@namespace}.getAll", {includeDetails}

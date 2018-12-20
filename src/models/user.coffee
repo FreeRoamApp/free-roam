@@ -58,7 +58,8 @@ module.exports = class User
       else
         @overlay.open new SignInDialog {
           model: {@l, @auth, @overlay, @portal, user: this}
+        }, {
+          data: 'join'
+          onComplete: resolve
+          onCancel: reject
         }
-        @overlay.setData 'join'
-        @overlay.onComplete resolve
-        @overlay.onCancel reject

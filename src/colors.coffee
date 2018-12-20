@@ -190,7 +190,6 @@ colors = _defaults {
   '$quaternary500': '#ff7b45'
 
   '$white4': 'rgba(255, 255, 255, 0.04)'
-  '$white54': 'rgba(255, 255, 255, 0.54)'
 
   '$black': '#0c0c0c'
 

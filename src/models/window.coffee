@@ -21,10 +21,18 @@ module.exports = class Window
     @resumeFns = {}
     window?.addEventListener 'resize', @updateSize
 
-  updateSize: =>
+  updateSize: (ignoreBreakpoint) =>
+    oldSize = @size.getValue()
+    newSize = @getSizeVal()
+    oldBreakpoint = @breakpoint.getValue()
+    newBreakpoint = @getBreakpointVal()
+    # don't want to update if not necessary. particularly because there can be
+    # breakpoint-specific routes in app.coffee, and those listen to @breakpoint
     unless @isPaused
-      @size.next @getSizeVal()
-      @breakpoint.next @getBreakpointVal()
+      if oldSize isnt newSize
+        @size.next newSize
+      if oldBreakpoint isnt newBreakpoint
+        @breakpoint.next newBreakpoint
 
   getSizeVal: =>
     resolution = @cookie.get 'resolution'

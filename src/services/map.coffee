@@ -295,5 +295,50 @@ class MapService
       }
     ]
 
+  # This is adapted from the implementation in Project-OSRM
+  # https://github.com/DennisOSRM/Project-OSRM-Web/blob/master/WebContent/routing/OSRM.RoutingGeometry.js
+
+  decodePolyline: (str, precision = 6) ->
+    index = 0
+    lat = 0
+    lng = 0
+    coordinates = []
+    shift = 0
+    result = 0
+    byte = null
+    latitude_change = undefined
+    longitude_change = undefined
+    factor = 10 ** (precision)
+    # Coordinates have variable length when encoded, so just keep
+    # track of whether we've hit the end of the string. In each
+    # loop iteration, a single coordinate is decoded.
+    while index < str.length
+      # Reset shift, result, and byte
+      byte = null
+      shift = 0
+      result = 0
+      loop
+        byte = str.charCodeAt(index++) - 63
+        result |= (byte & 0x1f) << shift
+        shift += 5
+        unless byte >= 0x20
+          break
+      latitude_change = if result & 1 then ~(result >> 1) else result >> 1
+      shift = result = 0
+      loop
+        byte = str.charCodeAt(index++) - 63
+        result |= (byte & 0x1f) << shift
+        shift += 5
+        unless byte >= 0x20
+          break
+      longitude_change = if result & 1 then ~(result >> 1) else result >> 1
+      lat += latitude_change
+      lng += longitude_change
+      # mapbox likes these backwards
+      coordinates.push [
+        lng / factor
+        lat / factor
+      ]
+    coordinates
 
 module.exports = new MapService()

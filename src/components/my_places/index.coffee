@@ -10,7 +10,7 @@ if window?
 
 module.exports = class MyPlaces
   constructor: ({@model, @router}) ->
-    places = @model.savedPlace.getAll {includeDetails: true}
+    places = @model.checkIn.getAll {includeDetails: true}
     @$placesList = new PlacesList {
       @model, @router
       places: places
@@ -22,6 +22,8 @@ module.exports = class MyPlaces
 
   render: =>
     {places} = @state.getValue()
+
+    console.log places
 
     z '.z-my-places',
       if places and _isEmpty places

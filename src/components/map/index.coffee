@@ -2,9 +2,12 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _map = require 'lodash/map'
+_flatten = require 'lodash/flatten'
+_forEach = require 'lodash/forEach'
 
 tile = require './tilejson'
 Spinner = require '../spinner'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -17,7 +20,8 @@ module.exports = class Map
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
       @place, @placePosition, @mapSize, @initialZoom, @zoom, @initialCenter,
-      @initialLayers, @center, @defaultOpacity, @onclick} = options
+      @initialBounds, @route, @initialLayers, @center, @defaultOpacity,
+      @onclick, @preserveDrawingBuffer, @onContentReady, @hideLabels} = options
 
     @place ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
@@ -41,10 +45,10 @@ module.exports = class Map
     firstSymbolId = undefined
     i = 0
     while i < layers.length
-      if layers[i].type == 'symbol'
+      if layers[i].type is 'symbol'
         firstSymbolId = layers[i].id
         break
-      i++
+      i += 1
     return firstSymbolId
 
   addLayer: (layer, {source, sourceId, insertBeneathLabels} = {}) =>
@@ -72,6 +76,10 @@ module.exports = class Map
     else
       @removeLayerById layer.id
 
+  getBlob: =>
+    new Promise (resolve) =>
+      @map.getCanvas().toBlob resolve
+
   afterMount: ($$el) =>
     @state.set isLoading: true
 
@@ -89,6 +97,8 @@ module.exports = class Map
         style: tile
         center: @initialCenter
         zoom: @initialZoom
+        bounds: @initialBounds
+        preserveDrawingBuffer: @preserveDrawingBuffer
       }
 
       if @mapBoundsStreams
@@ -96,6 +106,8 @@ module.exports = class Map
 
       @map.on 'load', =>
         console.log 'map loaded'
+        if @hideLabels
+          @_hideLabels()
         @resizeSubscription = @model.window.getSize().subscribe =>
           setTimeout =>
             @map?.resize()
@@ -154,14 +166,60 @@ module.exports = class Map
             #  # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
             #  stops: [[8, 3], [11, 10], [16, 50]]
         }
+        if @route
+          @map.addSource 'route', {
+            type: 'geojson'
+            data:
+              type: 'Feature'
+              properties: {}
+              geometry:
+                type: 'LineString'
+                coordinates: []
+          }
+          @map.addLayer {
+            id: 'route'
+            type: 'line'
+            source: 'route'
+            layout:
+              'line-join': 'round'
+              'line-cap': 'round'
+            paint:
+              'line-color': colors.getRawColor(colors.$primary500)
+              'line-width': 2
+          }
+          @map.addLayer {
+            id: 'route-direction'
+            type: 'symbol'
+            source: 'route'
+            layout:
+              'symbol-placement': 'line'
+              'symbol-spacing': 100
+              'icon-allow-overlap': true
+              'icon-image': 'arrow'
+              'icon-size': 1
+              visibility: 'visible'
+          }
+          routeSubscription = @subscribeToRoute()
 
         @addInitialLayers()
 
         @updateMapLocation()
-        @subscribeToPlaces()
+        placeSubscription = @subscribeToPlaces()
         @subscribeToCenter()
         @subscribeToZoom()
         @state.set isLoading: false
+
+
+
+        if @onContentReady
+          Promise.all [
+            @places?.take(1).toPromise() or Promise.resolve null
+            @routes?.take(1).toPromise() or Promise.resolve null
+          ]
+          .then =>
+            # give it a second to draw. better solution is:
+            # https://github.com/mapbox/mapbox-gl-js/issues/4904
+            setTimeout @onContentReady, 1000
 
       @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapLocation
@@ -238,12 +296,18 @@ module.exports = class Map
   beforeUnmount: =>
     console.log 'rm subscription'
     @disposable?.unsubscribe()
+    @routeDisposable?.unsubscribe()
     @mapBoundsStreamsDisposable?.unsubscribe()
     @centerDisposable?.unsubscribe()
     @zoomDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
     @map?.remove()
     @map = null
+
+  _hideLabels: =>
+    _forEach @map.style.stylesheet.layers, (layer) =>
+      if layer.type is 'symbol'
+        @map.removeLayer layer.id
 
   addInitialLayers: =>
     _map @initialLayers, (initialLayer) =>
@@ -280,6 +344,21 @@ module.exports = class Map
     @zoomDisposable = @zoom?.subscribe (zoom) =>
       if zoom
         @map.setZoom zoom
+
+  subscribeToRoute: =>
+    console.log 'create subscription'
+    @routeDisposable = @route.subscribe (route) =>
+      unless route?.legs
+        return
+      geojson = _flatten _map route.legs, ({shape}) ->
+        MapService.decodePolyline shape
+      @map.getSource('route')?.setData {
+        type: 'Feature'
+        properties: {}
+        geometry:
+          type: 'LineString'
+          coordinates: geojson
+      }
 
   subscribeToPlaces: =>
     console.log 'create subscription'

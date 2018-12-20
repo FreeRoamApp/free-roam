@@ -32,15 +32,20 @@ class DateService
     else
       "00:#{seconds}"
 
-  formatSeconds: (seconds) =>
+  formatSeconds: (seconds, precision = 0) =>
     if seconds < ONE_MINUTE_S
-      return parseInt(seconds) + @l.get 'time.secondShorthand'
+      divisor = 1
+      str = @l.get 'time.secondShorthand'
     else if seconds < ONE_HOUR_S
-      return parseInt(seconds / ONE_MINUTE_S) + @l.get 'time.minuteShorthand'
+      divisor = ONE_MINUTE_S
+      str = @l.get 'time.minuteShorthand'
     else if seconds <= ONE_DAY_S
-      return parseInt(seconds / ONE_HOUR_S) + @l.get 'time.hourShorthand'
+      divisor = ONE_HOUR_S
+      str = @l.get 'time.hourShorthand'
     else if seconds <= ONE_WEEK_S
-      return parseInt(seconds / ONE_DAY_S) + @l.get 'time.dayShorthand'
+      divisor = ONE_DAY_S
+      str = @l.get 'time.dayShorthand'
+    return +parseFloat(seconds / divisor).toFixed(precision) + str
 
   fromNow: (date) =>
     unless date instanceof Date

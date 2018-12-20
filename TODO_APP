@@ -196,11 +196,16 @@ x Show photos on place page
     - Location, pictures
     - Option to add it as a campground (then go through the normal steps and request review)
     - If they add as campground, use that for my places type, otherwise use coordinate
+      - Need to add price as an option, maybe other stuff (pad type)
   - DB table: trips
     - name, userId, places: [{sourceId, sourceType, startTime, endTime, attachments}]
   - Option to generate from photo library?
   - Ability to share to FB, Instagram
   - In map view, people can click on a campground to go to that campground page
+  - Allow invisible points to have map choose correct route?
+  - Do a specific color per month on map?
+    - Or let them choose color per leg of trip?
+  - Stats w/ map: miles traveled, states visited
 
 
 Feedback:

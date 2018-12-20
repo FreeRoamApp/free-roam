@@ -81,7 +81,7 @@ module.exports = class SearchInput
                      then colors.$bgText54
                      else colors.$bgText
               touchHeight: height
-              onclick: =>
+              onclick: ->
                 onsubmit?()
       z 'form.form', {
         onsubmit: (e) ->
@@ -101,7 +101,7 @@ module.exports = class SearchInput
           onblur: (e) =>
             @close e
             onblur? e
-          ontouchstart: (e) =>
+          ontouchstart: (e) ->
             ontouchstart? e
           style:
             backgroundColor: bgColor

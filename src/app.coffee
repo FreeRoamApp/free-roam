@@ -37,8 +37,10 @@ Pages =
   ConversationsPage: require './pages/conversations'
   EditProfilePage: require './pages/edit_profile'
   EditCampgroundReviewPage: require './pages/edit_campground_review'
+  EditCheckInPage: require './pages/edit_check_in'
   EditOvernightReviewPage: require './pages/edit_overnight_review'
   EditThreadPage: require './pages/edit_thread'
+  EditTripPage: require './pages/edit_trip'
   GroupAddChannelPage: require './pages/group_add_channel'
   GroupAuditLogPage: require './pages/group_audit_log'
   GroupBannedUsersPage: require './pages/group_banned_users'
@@ -72,6 +74,7 @@ Pages =
   ShellPage: require './pages/shell'
   ThreadPage: require './pages/thread'
   TosPage: require './pages/tos'
+  TripPage: require './pages/trip'
   FourOhFourPage: require './pages/404'
 
 TIME_UNTIL_ADD_TO_HOME_PROMPT_MS = 90000 # 1.5 min
@@ -190,7 +193,7 @@ module.exports = class App
       statusBarData: @model.statusBar.getData()
       windowSize: @model.window.getSize()
       hideDrawer: @requests.switchMap (request) =>
-        $page = @router.preservedRequest or request.$page
+        $page = @router.preservedRequest?.$page or request.$page
         hideDrawer = $page?.hideDrawer
         if hideDrawer?.map
         then hideDrawer
@@ -237,7 +240,9 @@ module.exports = class App
     route 'conversation', 'ConversationPage'
     route 'conversations', 'ConversationsPage'
     route 'editCampgroundReview', 'EditCampgroundReviewPage'
+    route 'editCheckIn', 'EditCheckInPage'
     route 'editProfile', 'EditProfilePage'
+    route ['editTrip', 'editTripByType'], 'EditTripPage'
     route 'groupAdminBannedUsers', 'GroupBannedUsersPage'
     route 'groupAdminAuditLog', 'GroupAuditLogPage'
     route ['groupChat', 'groupChatConversation'], 'GroupChatPage'
@@ -271,6 +276,7 @@ module.exports = class App
     route 'settings', 'SettingsPage'
     route 'shell', 'ShellPage'
     route 'termsOfService', 'TosPage'
+    route 'trip', 'TripPage'
 
     route '404', 'FourOhFourPage'
     routes

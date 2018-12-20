@@ -1,0 +1,46 @@
+@require '../../vars'
+
+.z-edit-trip
+  flex1()
+  display: flex
+  flex-direction: column
+  overflow: hidden
+
+  &.has-stats
+    > .map > .stats
+      display: flex
+
+  > .map
+    flex1()
+    display: flex
+
+    > .stats
+      position: absolute
+      display: none
+      width: 100%
+      padding: 4px 8px
+      background: getColor('$white70')
+      box-sizing: border-box
+
+      > .distance
+        margin-left: auto
+
+  > .info
+    flex1()
+    position: relative
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+
+    > .check-ins
+      padding: 0 16px 16px 16px
+
+      > .check-in
+        display: flex
+        align-items: center
+        height: 44px
+
+        > .name
+          font-title()
+
+        > .actions
+          margin-left: auto

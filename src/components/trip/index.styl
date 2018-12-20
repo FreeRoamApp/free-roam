@@ -1,0 +1,30 @@
+@require '../../vars'
+
+.z-edit-trip
+  flex1()
+  display: flex
+  flex-direction: column
+  overflow: hidden
+
+  > .map
+    flex1()
+    display: flex
+
+  > .info
+    flex1()
+    position: relative
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+
+    > .check-ins
+      padding: 0 16px 16px 16px
+
+      > .check-in
+        display: flex
+        align-items: center
+
+        > .name
+          font-title()
+
+        > .actions
+          margin-left: auto

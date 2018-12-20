@@ -30,13 +30,13 @@ module.exports = class Place
     @$reviews = new Reviews {@model, @router, parent: place}
     @$nearby = new PlaceNearby {@model, @router, place}
 
-    @$reviewsTooltip = new Tooltip {
-      @model
-      key: 'placeReviews'
-      # anchor: 'top-left'
-      offset:
-        left: 48
-    }
+    # @$reviewsTooltip = new Tooltip {
+    #   @model
+    #   key: 'placeReviews'
+    #   # anchor: 'top-left'
+    #   offset:
+    #     left: 48
+    # }
 
     @state = z.state
       selectedIndex: @selectedIndex

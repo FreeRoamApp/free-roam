@@ -125,8 +125,8 @@ module.exports = class PlacesMapContainer
           }
         else
           center.next [
-            location.location.lat
             location.location.lon
+            location.location.lat
           ]
           zoom.next 9
     }

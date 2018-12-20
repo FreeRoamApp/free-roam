@@ -79,7 +79,7 @@ module.exports = class PlaceInfo extends Base
     }
 
     myPlacesAndPlace = RxObservable.combineLatest(
-      @model.savedPlace.getAll()
+      @model.checkIn.getAll()
       @place
       (vals...) -> vals
     )
@@ -136,14 +136,14 @@ module.exports = class PlaceInfo extends Base
 
     @state.set isSaving: true
     if isSaved
-      @model.savedPlace.deleteByRow {
+      @model.checkIn.deleteByRow {
         sourceType: place.type
         sourceId: place.id
       }
       .then =>
         @state.set isSaving: false
     else
-      @model.savedPlace.upsert {
+      @model.checkIn.upsert {
         sourceType: place.type
         sourceId: place.id
       }

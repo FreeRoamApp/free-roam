@@ -28,7 +28,10 @@
 
   "conversation": "/conversation/:id",
   "conversations": "/conversations",
-  "editProfile": "/editProfile",
+  "editCheckIn": "/edit-check-in/:id",
+  "editTrip": "/edit-trip/:id",
+  "editTripByType": "/edit-trip/type/:type",
+  "editProfile": "/edit-profile",
   "editCampgroundReview": "/campground/:slug/review/:reviewId/edit",
   "editOvernightReview": "/overnight/:slug/review/:reviewId/edit",
   "item": "/item/:slug",
@@ -40,6 +43,7 @@
   "newCampgroundReview": "/campground/:slug/new-review",
   "newOvernight": "/new-overnight",
   "newOvernightReview": "/overnight/:slug/new-review",
+  "newTrip": "/new-trip",
 
   "overnight": "/overnight/:slug",
   "overnightAttachments": "/overnight/:slug/attachments",
@@ -57,6 +61,7 @@
   "settings": "/settings",
   "shell": "/shell",
   "termsOfService": "/tos",
+  "trip": "/trip/:id",
   "home": "/",
   "404": "/*"
 }

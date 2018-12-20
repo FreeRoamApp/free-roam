@@ -41,10 +41,6 @@ module.exports = class Portal
       # throw new Error 'Portal called server-side'
       return console.log 'Portal called server-side'
 
-    # FIXME FIXME: rm. HACK to fix sharing on old APK
-    if args[0] is 'share.any'
-      args[1].path = args[1].path.replace '/g/fortnitees', ''
-
     @portal.call args...
     .catch (err) ->
       # if we don't catch, zorium freaks out if a portal call is in state
@@ -85,6 +81,7 @@ module.exports = class Portal
     @portal.on 'push.register', @pushRegister
 
     @portal.on 'twitter.share', @twitterShare
+    @portal.on 'facebook.share', @facebookShare
 
     @portal.on 'networkInformation.onOnline', @networkInformationOnOnline
     @portal.on 'networkInformation.onOffline', @networkInformationOnOffline
@@ -114,10 +111,13 @@ module.exports = class Portal
   shareAny: ({text, imageUrl, url}) =>
     ga? 'send', 'event', 'share_service', 'share_any'
 
-    if url
-      if text then text += ' '
-      text += url
-    @call 'twitter.share', {text}
+    if navigator.share
+      navigator.share {
+        title: text
+        url: url
+      }
+    else
+      @call 'facebook.share', {text, imageUrl, url}
 
   getPlatform: ({gameKey} = {}) =>
     userAgent = navigator.userAgent
@@ -203,10 +203,11 @@ module.exports = class Portal
   #             id: response.authResponse.userID
   #           }
 
-  facebookShare: ({url}) ->
-    FB.ui {
-      method: 'share',
-      href: url
+  facebookShare: ({url}) =>
+    @call 'browser.openWindow', {
+      url:
+        "https://www.facebook.com/sharer/sharer.php?u=#{encodeURIComponent url}"
+      target: '_system'
     }
 
   pushRegister: ->

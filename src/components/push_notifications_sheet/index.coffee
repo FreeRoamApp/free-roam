@@ -20,6 +20,5 @@ module.exports = class PushNotificationsSheet
             PushService.register {@model}
             .catch -> null
             .then =>
-              @model.overlay.complete()
-            @model.overlay.close()
+              @model.overlay.close 'complete'
       }
