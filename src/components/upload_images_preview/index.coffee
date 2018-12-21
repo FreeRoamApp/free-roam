@@ -30,8 +30,11 @@ if window?
 
 module.exports = class UploadImagesPreview
   constructor: (options) ->
-    {@multiImageData, @model,
+    {@multiImageData, @model, @requestTags, @requestLocation,
       @onUpload, @onUploading, @onProgress, @uploadFn} = options
+
+    @requestTags ?= true
+    @requestLocation ?= true
 
     @$appBar = new AppBar {@model}
 
@@ -159,34 +162,36 @@ module.exports = class UploadImagesPreview
           src: imageData.dataUrl
           width: previewWidth
           height: previewHeight
-        z '.tags', {key: "upload-images-tags-#{imageIndex}"},
-          z '.input',
-            z $tagInput,
-              hintText: @model.l.get 'uploadImagesOverlay.tagHintText'
-          z '.button',
-            z $tagButton,
-              text: @model.l.get 'uploadImagesOverlay.addTag'
-              onclick: ->
-                existingTags = tagsValueSubject.getValue()
-                newTag = tagValueSubject.getValue()
-                         .trim().toLowerCase().replace '#', ''
-                tagsValueSubject.next _uniq existingTags.concat [newTag]
-                tagValueSubject.next ''
-          z '.tags',
-            _map tags, (tag) ->
-              z '.tag', "##{tag}"
-        z '.location', {
-          className: z.classKebab {
-            isVisible: Boolean location?.lon
-          }
-        },
-          z '.include-location',
-            z 'label',
-              z '.checkbox',
-                z $includeLocationCheckbox
-              @model.l.get 'uploadImagesOverlay.includeLocation'
-          z '.map',
-            z @$map
+        if @requestTags
+          z '.tags', {key: "upload-images-tags-#{imageIndex}"},
+            z '.input',
+              z $tagInput,
+                hintText: @model.l.get 'uploadImagesOverlay.tagHintText'
+            z '.button',
+              z $tagButton,
+                text: @model.l.get 'uploadImagesOverlay.addTag'
+                onclick: ->
+                  existingTags = tagsValueSubject.getValue()
+                  newTag = tagValueSubject.getValue()
+                           .trim().toLowerCase().replace '#', ''
+                  tagsValueSubject.next _uniq existingTags.concat [newTag]
+                  tagValueSubject.next ''
+            z '.tags',
+              _map tags, (tag) ->
+                z '.tag', "##{tag}"
+        if @requestLocation
+          z '.location', {
+            className: z.classKebab {
+              isVisible: Boolean location?.lon
+            }
+          },
+            z '.include-location',
+              z 'label',
+                z '.checkbox',
+                  z $includeLocationCheckbox
+                @model.l.get 'uploadImagesOverlay.includeLocation'
+            z '.map',
+              z @$map
 
       z @$stepBar, {
         isSaving: false
@@ -217,9 +222,13 @@ module.exports = class UploadImagesPreview
                   @onProgress response, {clientId}
               }
               .then (response) =>
-                console.log 'done', response
+                attachment = _defaults(response, {caption})
+                if @requestLocation
+                  attachment.location = location
+                if @requestTags
+                  attachment.tags = tags
                 @onUpload(
-                  _defaults(response, {caption, location, tags})
+                  attachment
                   {clientId}
                 )
             @multiImageData.next null

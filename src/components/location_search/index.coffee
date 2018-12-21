@@ -71,36 +71,36 @@ module.exports = class LocationSearch
         # style:
         #   "#{@transformProperty}": "translateY(#{translateY}px)"
       },
-        z '.input',
-          z @$searchInput, {
-            clearOnBack: false
-            height: '48px'
-            isAppBar: isAppBar
-            alwaysShowBack: isOpen
-            placeholder: if isOpen \
-                         then @model.l.get 'placesSearch.openPlaceholder'
-                         else placeholder
-            onfocus: (e) =>
-              ga? 'send', 'event', 'mapSearch', 'open'
-              @isOpen.next true
-              @$tooltip.close()
-            ontouchstart: =>
-              # reduce jank in map
-              # (doesn't need to resize for kb when overlay is up)
-              @model.window.pauseResizing()
-            onblur: (e) =>
-              setTimeout =>
-                @model.window.resumeResizing()
-              , 200 # give time for keyboard animation to finish
-            onBack: (e) =>
-              e?.stopPropagation()
-              @isOpen.next false
-          }
+        z '.g-grid.input',
+            z @$searchInput, {
+              clearOnBack: false
+              height: '48px'
+              isAppBar: isAppBar
+              alwaysShowBack: isOpen
+              placeholder: if isOpen \
+                           then @model.l.get 'placesSearch.openPlaceholder'
+                           else placeholder
+              onfocus: (e) =>
+                ga? 'send', 'event', 'mapSearch', 'open'
+                @isOpen.next true
+                @$tooltip.close()
+              ontouchstart: =>
+                # reduce jank in map
+                # (doesn't need to resize for kb when overlay is up)
+                @model.window.pauseResizing()
+              onblur: (e) =>
+                setTimeout =>
+                  @model.window.resumeResizing()
+                , 200 # give time for keyboard animation to finish
+              onBack: (e) =>
+                e?.stopPropagation()
+                @isOpen.next false
+            }
 
       $afterSearch
 
       z '.overlay',
-        z '.overlay-inner',
+        z '.g-grid.overlay-inner',
           $beforeResults
           if showDoneIfEmpty and _isEmpty locations
             z '.done',

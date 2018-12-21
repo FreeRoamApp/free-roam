@@ -3,7 +3,7 @@ config = require '../config'
 module.exports = class CheckIn
   namespace: 'checkIns'
 
-  constructor: ({@auth}) -> null
+  constructor: ({@auth, @proxy}) -> null
 
   getById: (id) =>
     @auth.stream "#{@namespace}.getById", {id}
@@ -16,3 +16,14 @@ module.exports = class CheckIn
 
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}
+
+  uploadImage: (blob) =>
+    formData = new FormData()
+    formData.append 'file', blob
+
+    @proxy config.API_URL + '/upload', {
+      method: 'post'
+      query:
+        path: "#{@namespace}.uploadImage"
+      body: formData
+    }

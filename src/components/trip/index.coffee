@@ -5,12 +5,10 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 
-Base = require '../base'
-PrimaryButton = require '../primary_button'
-FlatButton = require '../flat_button'
+AttachmentsList = require '../attachments_list'
 Map = require '../map'
+DateService = require '../../services/date'
 FormatService = require '../../services/format'
-MapService = require '../../services/map'
 config = require '../../config'
 
 if window?
@@ -18,18 +16,12 @@ if window?
 
 module.exports = class EditTrip
   constructor: ({@model, @router, @trip}) ->
-    @nameValueStreams = new RxReplaySubject 1
-
-    serverCheckIns = @trip.map (trip) ->
+    checkIns = @trip.map (trip) ->
       trip?.checkIns
     # .publishReplay(1).refCount()
-    route = serverCheckIns.switchMap (checkIns) =>
+    route = checkIns.switchMap (checkIns) =>
       locations = _map checkIns, 'location'
       @model.trip.getRoute {checkIns}
-    @clientCheckIns = new RxBehaviorSubject []
-
-    @resetValueStreams()
-    checkIns = RxObservable.merge @clientCheckIns, serverCheckIns
 
     mapOptions = {
       @model, @router, places: checkIns, route: route
@@ -41,48 +33,43 @@ module.exports = class EditTrip
     @state = z.state {
       trip: @trip
       route: route # TODO: rm from state, just send time
-      name: @nameValueStreams.switch()
-      checkIns: checkIns.map (checkIns) ->
-        _map checkIns, (checkIn) ->
+      checkIns: checkIns.map (checkIns) =>
+        _map checkIns, (checkIn) =>
           {
             checkIn
-            $addInfoButton: new FlatButton()
+            $attachmentsList: new AttachmentsList {
+              @model, @router
+              attachments: RxObservable.of checkIn.attachments
+            }
           }
     }
-
-  resetValueStreams: =>
-    @clientCheckIns.next []
-
-    if @trip
-      @nameValueStreams.next @trip.map (trip) ->
-        trip?.name or ''
-    else
-      @nameValueStreams.next new RxBehaviorSubject ''
 
   render: =>
     {name, checkIns, trip, route} = @state.getValue()
 
-    console.log trip, route
+    hasStats = Boolean route?.time
 
-    z '.z-edit-trip',
+    z '.z-edit-trip', {
+      className: z.classKebab {hasStats}
+    },
       z '.map',
         z @$map
         z '.stats',
-          "tm: #{FormatService.countdown route?.time}"
+          z '.g-grid',
+            z '.time',
+              @model.l.get 'trip.totalTime'
+              ": #{DateService.formatSeconds route?.time, 1}"
+            z '.distance',
+              @model.l.get 'trip.totalDistance'
+              ": #{FormatService.number route?.distance}mi"
       z '.info',
-        z '.check-ins',
-          _map checkIns, ({checkIn, $addInfoButton}) ->
-            z '.check-in', {
-            },
-              z '.name',
-                checkIn.name
-
-              # z '.actions',
-              #   if checkIn.id
-              #     z $addInfoButton,
-              #       text: @model.l.get 'newTrip.addInfo'
-              #       hasRipple: false # ripple screws w/ drag drop
-              #       onclick: =>
-              #         @router.goOverlay 'editCheckIn', {
-              #           id: checkIn.id
-              #         }
+        z '.g-grid',
+          z '.check-ins',
+            _map checkIns, ({checkIn, $attachmentsList}) ->
+              z '.check-in', {
+              },
+                z '.info',
+                  z '.name',
+                    checkIn.name
+                z '.attachments',
+                  $attachmentsList

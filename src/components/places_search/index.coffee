@@ -19,6 +19,8 @@ Icon = require '../icon'
 
 SEARCH_DEBOUNCE = 300
 
+# FIXME TODO: replace with locationSearch
+
 module.exports = class PlacesSearch
   constructor: ({@model, @router, @onclick}) ->
     @searchValue = new RxBehaviorSubject ''

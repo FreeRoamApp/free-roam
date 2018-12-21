@@ -12,7 +12,7 @@ require 'rxjs/add/observable/of'
 Avatar = require '../avatar'
 Author = require '../author'
 Icon = require '../icon'
-ImageViewOverlay = require '../image_view_overlay'
+AttachmentsList = require '../attachments_list'
 Rating = require '../rating'
 FormatService = require '../../services/format'
 colors = require '../../colors'
@@ -33,6 +33,11 @@ module.exports = class Review
     @$author = new Author {@model, @router}
     @$rating = new Rating {
       value: RxObservable.of review?.rating
+    }
+    @$attachmentsList = new AttachmentsList {
+      @model, @router
+      attachments:
+        RxObservable.of review?.attachments
     }
 
     me = @model.user.getMe()
@@ -82,12 +87,6 @@ module.exports = class Review
                     groupUser.roleNames.indexOf('mods') isnt -1
                   )
 
-    images = _map attachments, (attachment) =>
-      {
-        url: @model.image.getSrcByPrefix attachment.prefix, 'large'
-        aspectRatio: attachment.aspectRatio
-      }
-
     z '.z-review', {
       # re-use elements in v-dom. doesn't seem to work with prepending more
       className: z.classKebab {isMe}
@@ -115,19 +114,4 @@ module.exports = class Review
         z '.body',
           @$body
         z '.attachments',
-          _map attachments, (attachment, i) =>
-            src = @model.image.getSrcByPrefix attachment.prefix, 'small'
-            z '.attachment',
-              title: attachment.caption
-              onclick: =>
-                @model.overlay.open new ImageViewOverlay {
-                  @model
-                  @router
-                  images: images
-                  imageIndex: i
-                  imageData:
-                    url: @model.image.getSrcByPrefix attachment.prefix, 'large'
-                    aspectRatio: attachment.aspectRatio
-                }
-              style:
-                backgroundImage: "url(#{src})"
+          @$attachmentsList

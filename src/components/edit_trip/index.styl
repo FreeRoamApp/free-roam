@@ -5,10 +5,11 @@
   display: flex
   flex-direction: column
   overflow: hidden
+  position: relative
 
   &.has-stats
     > .map > .stats
-      display: flex
+      display: block
 
   > .map
     flex1()
@@ -22,8 +23,11 @@
       background: getColor('$white70')
       box-sizing: border-box
 
-      > .distance
-        margin-left: auto
+      > .g-grid
+        display: flex
+
+        > .distance
+          margin-left: auto
 
   > .info
     flex1()
@@ -31,16 +35,19 @@
     overflow: auto
     -webkit-overflow-scrolling: touch
 
-    > .check-ins
-      padding: 0 16px 16px 16px
+    > .g-grid
 
-      > .check-in
-        display: flex
-        align-items: center
-        height: 44px
+      > .check-ins
+        padding: 0 16px 16px 16px
 
-        > .name
-          font-title()
+        > .check-in
+          > .info
+            display: flex
+            align-items: center
+            height: 44px
 
-        > .actions
-          margin-left: auto
+            > .name
+              font-title()
+
+            > .actions
+              margin-left: auto

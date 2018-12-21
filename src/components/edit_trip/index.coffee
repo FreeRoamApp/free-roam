@@ -23,13 +23,7 @@ if window?
   require './index.styl'
 
 ###
-new_trip_add_place
 - get pictures
-- check if we have a campground for that coordinate area, if not, ask them if they want to add info for others (can skip add pictures part?)
-- ** needs to save progress to localStorage
-- tap on map to add custom coordinate
-# TODO: "CheckIn" model, and maybe future checkin instead of saved place (to roam)
-
 # TODO: dialog after sharing asking people to leave reviews, give them list of ones they can add
 ###
 
@@ -179,12 +173,13 @@ module.exports = class EditTrip extends Base
         z @$map
         z @$editTripTooltip
         z '.stats',
-          z '.time',
-            @model.l.get 'trip.totalTime'
-            ": #{DateService.formatSeconds route?.time, 1}"
-          z '.distance',
-            @model.l.get 'trip.totalDistance'
-            ": #{FormatService.number route?.distance}mi"
+          z '.g-grid',
+            z '.time',
+              @model.l.get 'trip.totalTime'
+              ": #{DateService.formatSeconds route?.time, 1}"
+            z '.distance',
+              @model.l.get 'trip.totalDistance'
+              ": #{FormatService.number route?.distance}mi"
       z '.info',
         z @$locationSearch, {
           placeholder: @model.l.get 'editTrip.searchPlaceholder'
@@ -192,35 +187,31 @@ module.exports = class EditTrip extends Base
           isAppBar: false
         }
 
-        # z 'div', {
-        #   onclick: =>
-        #     # TODO: create a new map, custom size (hidden), then get screenshot
-        #     console.log @$map.map.getCanvas().toDataURL()
-        # }, 'ss'
+        z '.g-grid',
+          z '.check-ins',
+            _map checkIns, ({checkIn, $addInfoButton}) =>
+              z '.check-in.draggable', {
+                attributes:
+                  if @onReorder then {draggable: 'true'} else {}
+                dataset:
+                  if @onReorder then {id: checkIn.id} else {}
+                ondragover: if @onReorder then z.ev (e, $$el) => @onDragOver e
+                ondragstart: if @onReorder then z.ev (e, $$el) => @onDragStart e
+                ondragend: if @onReorder then z.ev (e, $$el) => @onDragEnd e
+              },
+                z '.info',
+                  z '.name',
+                    checkIn.name
 
-        z '.check-ins',
-          _map checkIns, ({checkIn, $addInfoButton}) =>
-            z '.check-in.draggable', {
-              attributes:
-                if @onReorder then {draggable: 'true'} else {}
-              dataset:
-                if @onReorder then {id: checkIn.id} else {}
-              ondragover: if @onReorder then z.ev (e, $$el) => @onDragOver e
-              ondragstart: if @onReorder then z.ev (e, $$el) => @onDragStart e
-              ondragend: if @onReorder then z.ev (e, $$el) => @onDragEnd e
-            },
-              z '.name',
-                checkIn.name
-
-              z '.actions',
-                if checkIn.id
-                  z $addInfoButton,
-                    text: @model.l.get 'newTrip.addInfo'
-                    hasRipple: false # ripple screws w/ drag drop
-                    onclick: =>
-                      ga? 'send', 'event', 'trip', 'editCheckIn'
-                      @router.goOverlay 'editCheckIn', {
-                        id: checkIn.id
-                      }
+                  z '.actions',
+                    if checkIn.id
+                      z $addInfoButton,
+                        text: @model.l.get 'newTrip.addInfo'
+                        hasRipple: false # ripple screws w/ drag drop
+                        onclick: =>
+                          ga? 'send', 'event', 'trip', 'editCheckIn'
+                          @router.goOverlay 'editCheckIn', {
+                            id: checkIn.id
+                          }
 
       z @$shareMap

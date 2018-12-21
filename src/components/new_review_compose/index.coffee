@@ -9,8 +9,7 @@ _findIndex = require 'lodash/findIndex'
 Icon = require '../icon'
 Rating = require '../rating'
 Textarea = require '../textarea'
-UploadOverlay = require '../upload_overlay'
-UploadImagesPreview = require '../upload_images_preview'
+UploadImagesList = require '../upload_images_list'
 colors = require '../../colors'
 
 if window?
@@ -27,43 +26,11 @@ module.exports = class NewReviewCompose
     @$rating = new Rating {
       valueStreams: @ratingValueStreams, isInteractive: true
     }
-    @$addImageIcon = new Icon()
 
     @attachmentsValueStreams ?= new RxReplaySubject 1
     @$textarea = new Textarea {valueStreams: @bodyValueStreams, @error}
-
-    @multiImageData = new RxBehaviorSubject null
-    @$uploadOverlay = new UploadOverlay {@model}
-    @$uploadImagesPreview = new UploadImagesPreview {
-      @multiImageData
-      @model
-      uploadFn
-      # TODO: there's probably a much cleaner way to do this and onProgress....
-      onUploading: (dataUrl, {clientId}) =>
-        {attachments} = @state.getValue()
-
-        attachments or= []
-        @attachmentsValueStreams.next RxObservable.of(attachments.concat [
-          {
-            type: 'image', isUploading: true, dataUrl, clientId
-          }
-        ])
-      onProgress: (response, {clientId}) =>
-        {attachments} = @state.getValue()
-
-        attachmentIndex = _findIndex attachments, {clientId}
-        attachments[attachmentIndex].progress = response.loaded / response.total
-        @attachmentsValueStreams.next RxObservable.of attachments
-      onUpload: (response, {clientId}) =>
-        {caption, tags, id, prefix, location, aspectRatio} = response
-
-        {attachments} = @state.getValue()
-
-        attachmentIndex = _findIndex attachments, {clientId}
-        attachments[attachmentIndex] = {
-          type: 'image', aspectRatio, caption, tags, location, id, prefix
-        }
-        @attachmentsValueStreams.next RxObservable.of attachments
+    @$uploadImagesList = new UploadImagesList {
+      @model, @router, @attachmentsValueStreams, uploadFn
     }
 
     @state = z.state
@@ -71,7 +38,6 @@ module.exports = class NewReviewCompose
       isLoading: false
       title: @titleValueStreams.switch()
       body: @bodyValueStreams.switch()
-      attachments: @attachmentsValueStreams.switch()
       rating: @ratingValueStreams.switch()
 
   isCompleted: =>
@@ -88,7 +54,7 @@ module.exports = class NewReviewCompose
     @bodyValueStreams.next RxObservable.of e.target.value
 
   render: ({onDone}) =>
-    {attachments, me, isLoading, title} = @state.getValue()
+    {me, isLoading, title} = @state.getValue()
 
     z '.z-new-review-compose',
       z '.g-grid',
@@ -112,40 +78,4 @@ module.exports = class NewReviewCompose
 
         z '.divider'
 
-        z '.attachments',
-          z '.add-image',
-            z @$addImageIcon,
-              icon: 'photo-add'
-              isTouchTarget: false
-              size: '32px'
-
-            z '.upload-overlay',
-              z @$uploadOverlay, {
-                isMulti: true
-                onSelect: ({files, dataUrls}) =>
-                  Promise.all _map files, (file, i) ->
-                    new Promise (resolve) ->
-                      img = new Image()
-                      img.src = dataUrls[i]
-                      img.onload = ->
-                        resolve {
-                          file
-                          dataUrl: dataUrls[i]
-                          width: img.width
-                          height: img.height
-                        }
-                  .then (multiImageData) =>
-                    @multiImageData.next multiImageData
-                    @model.overlay.open @$uploadImagesPreview
-              }
-          _map attachments, ({dataUrl, prefix, isUploading, progress}) =>
-            src = @model.image.getSrcByPrefix prefix, 'small'
-            z '.attachment', {
-              className: z.classKebab {isUploading}
-              style:
-                backgroundImage: "url(#{dataUrl or src})"
-            },
-              z '.progress', {
-                style:
-                  width: "#{100 * (progress or 0)}%"
-              }
+        z @$uploadImagesList

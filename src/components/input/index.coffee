@@ -44,7 +44,7 @@ module.exports = class Input
       className: z.classKebab {
         isDark
         isFloating
-        hasValue: value isnt ''
+        hasValue: type is 'date' or value isnt ''
         isFocused
         isDisabled
         isCentered

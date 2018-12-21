@@ -1,7 +1,7 @@
 z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
-ButtonBack = require '../../components/button_back'
+ButtonMenu = require '../../components/button_menu'
 FlatButton = require '../../components/flat_button'
 EditTrip = require '../../components/edit_trip'
 config = require '../../config'
@@ -11,8 +11,6 @@ if window?
   require './index.styl'
 
 module.exports = class EditTripPage
-  hideDrawer: true
-
   constructor: ({@model, @router, requests, serverData, group}) ->
     trip = requests.switchMap ({route}) =>
       if route.params.id
@@ -21,9 +19,12 @@ module.exports = class EditTripPage
         @model.trip.getByType route.params.type
 
     @$appBar = new AppBar {@model}
-    @$buttonBack = new ButtonBack {@model, @router}
+    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$viewButton = new FlatButton()
     @$shareButton = new FlatButton()
     @$editTrip = new EditTrip {@model, @router, trip}
+
+    @state = z.state {trip}
 
   getMeta: =>
     {
@@ -31,15 +32,22 @@ module.exports = class EditTripPage
     }
 
   render: =>
+    {trip} = @state.getValue()
+
     z '.p-edit-trip',
       z @$appBar, {
         title: @model.l.get 'editTripPage.title'
         style: 'primary'
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
         $topRightButton:
-          z @$shareButton,
-            text: @model.l.get 'general.share'
-            onclick: =>
-              @$editTrip.share()
+          z '.p-edit-trip_top-right',
+            z @$viewButton,
+              text: @model.l.get 'general.view'
+              onclick: =>
+                @router.go 'trip', {id: trip.id}
+            z @$shareButton,
+              text: @model.l.get 'general.share'
+              onclick: =>
+                @$editTrip.share()
       }
       @$editTrip

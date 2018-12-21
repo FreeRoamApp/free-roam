@@ -1,5 +1,24 @@
 _map = require 'lodash/map'
 
+getDraggable = (el, tries = 0) ->
+  parent = el.parentNode
+  maxTries = 5
+  if tries < maxTries and parent.className.indexOf('draggable') is -1
+    parent = getDraggable parent, tries + 1
+  else
+    parent
+
+isBefore = (el1, el2) ->
+  el1Draggable = getDraggable el1
+  el2Draggable = getDraggable el2
+  if el2Draggable is el1Draggable
+    cur = el1.previousSibling
+    while cur
+      if cur is el2
+        return true
+      cur = cur.previousSibling
+  false
+
 module.exports = class Base
   getCached$: (id, component, args...) =>
     @cachedComponents or= []
@@ -12,9 +31,7 @@ module.exports = class Base
       return $component
 
   fadeInWhenLoaded: (url) =>
-    console.log 'call fade'
     @isImageLoaded = @model.image.isLoaded url
-    console.log 'check', @isImageLoaded, url
     unless @isImageLoaded
       @model.image.load url
       .then =>
@@ -23,10 +40,11 @@ module.exports = class Base
         @isImageLoaded = true
 
   onDragOver: (e) =>
-    if isBefore(@$$dragEl, e.target)
-      e.target.parentNode.insertBefore @$$dragEl, e.target
+    draggable = getDraggable e.target
+    if isBefore(@$$dragEl, draggable)
+      draggable.parentNode.insertBefore @$$dragEl, draggable
     else
-      e.target.parentNode.insertBefore @$$dragEl, e.target.nextSibling
+      draggable.parentNode.insertBefore @$$dragEl, draggable.nextSibling
 
   onDragEnd: =>
     @$$dragEl = null
@@ -38,15 +56,6 @@ module.exports = class Base
     e.dataTransfer.effectAllowed = 'move'
     e.dataTransfer.setData 'text/plain', null
     @$$dragEl = e.target
-
-  isBefore = (el1, el2) ->
-    if el2.parentNode is el1.parentNode
-      cur = el1.previousSibling
-      while cur
-        if cur is el2
-          return true
-        cur = cur.previousSibling
-    false
 
   afterMount: (@$$el) =>
     @isImageLoaded = false

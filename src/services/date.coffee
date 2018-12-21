@@ -13,8 +13,15 @@ class DateService
   setL: (@l) => null
 
   format: (date, format) ->
-    # TODO: nothing uses this currently. don't use moment. could  use date-fns
-    ''
+    # TODO: only thing that uses this so far uses yyyy-mm-dd format
+    yyyy = date.getFullYear()
+    mm = date.getMonth() + 1
+    if mm < 10
+      mm = "0#{mm}"
+    dd = date.getDate()
+    if dd < 10
+      dd = "0#{dd}"
+    "#{yyyy}-#{mm}-#{dd}"
 
   formatDuration: (duration) ->
     # https://stackoverflow.com/a/30134889
