@@ -14,6 +14,12 @@ module.exports = class Trip
   getRoute: ({checkIns}) =>
     @auth.stream "#{@namespace}.getRoute", {checkIns}, {ignoreCache: true}
 
+  getStats: ({checkIns}) =>
+    @auth.stream "#{@namespace}.getStats", {checkIns}, {ignoreCache: true}
+
+  getStatesGeoJson: =>
+    @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
+
   addCheckIn: (options) =>
     @auth.call "#{@namespace}.addCheckIn", options, {
       invalidateAll: true

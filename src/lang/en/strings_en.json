@@ -148,6 +148,7 @@
   "editProfile.currentPassword": "Current password...",
   "editTrip.searchPlaceholder": "Add a trip location",
   "editTrip.locationsTitle": "Locations",
+  "editTrip.placeHolder": "Search above to add stops you've made in the last year and we'll map them out for you!",
   "editTripTooltip.addToTrip": "Add to trip",
   "filterDialog.cellCarrier": "Carrier",
   "filterDialog.minSignal": "Signal must be at least:",

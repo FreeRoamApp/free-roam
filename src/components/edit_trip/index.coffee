@@ -2,11 +2,16 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
+_filter = require 'lodash/filter'
+_isEmpty = require 'lodash/isEmpty'
+_omit = require 'lodash/omit'
 
 Base = require '../base'
+AttachmentsList = require '../attachments_list'
 PrimaryButton = require '../primary_button'
 FlatButton = require '../flat_button'
 Map = require '../map'
@@ -23,7 +28,6 @@ if window?
   require './index.styl'
 
 ###
-- get pictures
 # TODO: dialog after sharing asking people to leave reviews, give them list of ones they can add
 ###
 
@@ -43,10 +47,23 @@ module.exports = class EditTrip extends Base
     serverCheckIns = @trip.map (trip) ->
       trip?.checkIns
     # .publishReplay(1).refCount()
-    route = serverCheckIns.switchMap (checkIns) =>
-      locations = _map checkIns, 'location'
-      @model.trip.getRoute {checkIns}
+    route = @trip.map (trip) ->
+      trip?.route
+    stats = @trip.map (trip) ->
+      trip?.stats
     @clientCheckIns = new RxBehaviorSubject []
+
+    allStates = @model.trip.getStatesGeoJson()
+    allStatesAndStats = RxObservable.combineLatest(
+      allStates, stats, (vals...) -> vals
+    )
+    filledStates = allStatesAndStats.map ([allStates, stats]) ->
+      {
+        type: 'FeatureCollection'
+        features: _filter allStates.features, ({id}) ->
+          stats?.stateCounts?[id] > 0
+      }
+
 
     @resetValueStreams()
     checkIns = RxObservable.merge @clientCheckIns, serverCheckIns
@@ -67,7 +84,11 @@ module.exports = class EditTrip extends Base
     }
 
     mapOptions = {
-      @model, @router, places: checkIns, route: route
+      @model, @router
+      places: checkIns
+      route: route
+      fill: filledStates
+      usePlaceNumbers: true
       initialBounds: [[-156.187, 18.440], [-38.766, 55.152]]
       onclick: (e) =>
         ga? 'send', 'event', 'trip', 'clickMap'
@@ -100,13 +121,26 @@ module.exports = class EditTrip extends Base
     }
 
     @state = z.state {
-      trip: @trip
-      route: route # TODO: rm from state
+      trip: @trip.map (trip) ->
+        _omit trip, ['route']
+      routeStats: route.map (route) ->
+        {time: route?.time, distance: route?.distance}
       name: @nameValueStreams.switch()
-      checkIns: checkIns.map (checkIns) ->
-        _map checkIns, (checkIn) ->
+      checkIns: checkIns.map (checkIns) =>
+        _map checkIns, (checkIn) =>
+          # doesn't update when new attachments added
+          # $attachmentsList = @getCached$(
+          #   "attachmentsList-#{checkIn.id}", AttachmentsList, {
+          #     @model, @router
+          #     attachments: RxObservable.of checkIn.attachments
+          #   }
+          # )
           {
             checkIn
+            $attachmentsList: new AttachmentsList {
+              @model, @router
+              attachments: RxObservable.of checkIn.attachments
+            }
             $addInfoButton: new FlatButton()
           }
     }
@@ -162,9 +196,9 @@ module.exports = class EditTrip extends Base
     }
 
   render: =>
-    {name, checkIns, trip, route} = @state.getValue()
+    {name, checkIns, trip, routeStats} = @state.getValue()
 
-    hasStats = Boolean route?.time
+    hasStats = Boolean routeStats?.time
 
     z '.z-edit-trip', {
       className: z.classKebab {hasStats}
@@ -176,10 +210,10 @@ module.exports = class EditTrip extends Base
           z '.g-grid',
             z '.time',
               @model.l.get 'trip.totalTime'
-              ": #{DateService.formatSeconds route?.time, 1}"
+              ": #{DateService.formatSeconds routeStats?.time, 1}"
             z '.distance',
               @model.l.get 'trip.totalDistance'
-              ": #{FormatService.number route?.distance}mi"
+              ": #{FormatService.number routeStats?.distance}mi"
       z '.info',
         z @$locationSearch, {
           placeholder: @model.l.get 'editTrip.searchPlaceholder'
@@ -189,7 +223,9 @@ module.exports = class EditTrip extends Base
 
         z '.g-grid',
           z '.check-ins',
-            _map checkIns, ({checkIn, $addInfoButton}) =>
+            if _isEmpty checkIns
+              z '.placeholder', @model.l.get 'editTrip.placeHolder'
+            _map checkIns, ({checkIn, $addInfoButton, $attachmentsList}) =>
               z '.check-in.draggable', {
                 attributes:
                   if @onReorder then {draggable: 'true'} else {}
@@ -213,5 +249,7 @@ module.exports = class EditTrip extends Base
                           @router.goOverlay 'editCheckIn', {
                             id: checkIn.id
                           }
+                z '.attachments',
+                  $attachmentsList
 
       z @$shareMap

@@ -86,7 +86,7 @@ module.exports = class EditCheckIn
 
     @state = z.state {
       checkIn: @checkIn
-      isSaving: false
+      isLoading: false
       attachmentsValue: @fields.attachments.valueStreams.switch()
       nameValue: @fields.name.valueStreams.switch()
       startTimeValue: @fields.startTime.valueStreams.switch()
@@ -116,7 +116,11 @@ module.exports = class EditCheckIn
       .then (newCheckIn) =>
         @state.set isLoading: false
         @resetValueStreams()
-        @router.back()
+        # TODO: not sure why timeout is necessary
+        # w/o, map reloads
+        setTimeout =>
+          @router.back()
+        , 0
       .catch (err) =>
         console.log 'upload err', err
         @state.set isLoading: false
@@ -142,7 +146,7 @@ module.exports = class EditCheckIn
       @fields.attachments.valueStreams.next new RxBehaviorSubject []
 
   render: =>
-    {isSaving} = @state.getValue()
+    {isLoading} = @state.getValue()
 
     z '.z-edit-check-in',
       z '.g-grid',
@@ -165,7 +169,7 @@ module.exports = class EditCheckIn
 
           z @$uploadImagesList
           z @$saveButton,
-            text: if isSaving \
+            text: if isLoading \
                   then @model.l.get 'general.saving'
                   else @model.l.get 'general.save'
             onclick: @upsert

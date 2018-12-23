@@ -36,9 +36,6 @@ module.exports = class Items extends Base
             )
             {$itemBox}
 
-  beforeUnmount: ->
-    super()
-
   render: =>
     {items} = @state.getValue()
 

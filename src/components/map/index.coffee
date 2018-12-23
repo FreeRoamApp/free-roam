@@ -20,8 +20,9 @@ module.exports = class Map
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
       @place, @placePosition, @mapSize, @initialZoom, @zoom, @initialCenter,
-      @initialBounds, @route, @initialLayers, @center, @defaultOpacity,
-      @onclick, @preserveDrawingBuffer, @onContentReady, @hideLabels} = options
+      @initialBounds, @route, @fill, @initialLayers, @center, @defaultOpacity,
+      @onclick, @preserveDrawingBuffer, @onContentReady, @hideLabels,
+      @usePlaceNumbers} = options
 
     @place ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
@@ -80,20 +81,20 @@ module.exports = class Map
     new Promise (resolve) =>
       @map.getCanvas().toBlob resolve
 
-  afterMount: ($$el) =>
-    @state.set isLoading: true
+  initializeMap: ($$el) =>
+    @$$mapEl = $$el.querySelector('.map')
 
-    $$mapEl = $$el.querySelector('.map')
-
-    fitBounds = null
-
-    @model.additionalScript.add 'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.css"
-    @model.additionalScript.add 'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.js"
+    @model.additionalScript.add(
+      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.css"
+    )
+    @model.additionalScript.add(
+      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.js"
+    )
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'
       mapboxgl.accessToken = config.MAPBOX_ACCESS_TOKEN
       @map = new mapboxgl.Map {
-        container: $$mapEl
+        container: @$$mapEl
         style: tile
         center: @initialCenter
         zoom: @initialZoom
@@ -101,112 +102,152 @@ module.exports = class Map
         preserveDrawingBuffer: @preserveDrawingBuffer
       }
 
-      if @mapBoundsStreams
-        @subscribeToMapBounds()
+  addPlacesLayer: =>
+    @map.addSource 'places', {
+      type: 'geojson'
+      data:
+        type: 'FeatureCollection'
+        features: []
+    }
+    if @usePlaceNumbers
+      @map.addLayer {
+        id: 'places'
+        type: 'symbol'
+        source: 'places'
+        layout:
+          'icon-image': 'empty'
+          'icon-allow-overlap': true
+          'icon-size': 1
+          'icon-anchor': 'bottom'
+          'text-field': '{number}'
+          'text-anchor': 'bottom'
+          'text-size': 9
+          'text-font': ['Open Sans Bold'] # must exist in tilejson
 
+        paint:
+          'text-translate': [0, -9]
+          'text-color': '#ffffff'
+      }
+    else
+      @map.addLayer {
+        id: 'places'
+        type: 'symbol'
+        source: 'places'
+        layout:
+          'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+          'icon-allow-overlap': true
+          # 'icon-ignore-placement': true
+          'icon-size': 1
+          'icon-anchor': 'bottom'
+          # having text causes icons to occasionally show then fade out and
+          # back. i think??? because of the opacity stops hack.
+          # alternative is creating two layers using same source, with minzoom
+          # and maxzoom, but i think that's less performant.
+          # text-opacity isn't a good solution as it has same fading issue,
+          # and the transparent text is still clickable
+          # maybe this fixes:
+          # https://github.com/mapbox/mapbox-gl-js/issues/6692
+          'text-field': '{name}'
+          'text-optional': true
+          'text-anchor': 'bottom-left'
+          'text-size':
+            stops: [
+              [0, 0]
+              [6, 0]
+              [6.001, 12]
+            ]
+          'text-font': ['Open Sans Regular'] # must exist in tilejson
+
+        paint:
+          'icon-opacity': ['get', 'iconOpacity']
+          'text-opacity': ['get', 'iconOpacity']
+          'text-translate': [12, -4]
+          'text-halo-color': 'rgba(255, 255, 255, 1)'
+          'text-halo-width': 2
+      }
+
+  addRouteLayers: =>
+    @map.addSource 'route', {
+      type: 'geojson'
+      data:
+        type: 'Feature'
+        properties: {}
+        geometry:
+          type: 'LineString'
+          coordinates: []
+    }
+    @map.addLayer {
+      id: 'route'
+      type: 'line'
+      source: 'route'
+      layout:
+        'line-join': 'round'
+        'line-cap': 'round'
+      paint:
+        'line-color': colors.getRawColor(colors.$primary500)
+        'line-width': 2
+    }
+    @map.addLayer {
+      id: 'route-direction'
+      type: 'symbol'
+      source: 'route'
+      layout:
+        'symbol-placement': 'line'
+        'symbol-spacing': 100
+        'icon-allow-overlap': true
+        'icon-image': 'arrow'
+        'icon-size': 1
+        visibility: 'visible'
+    }
+
+  # TODO: might be better to just handle this in calling component (trip),
+  # but would need to handle for shareMap too
+  addFillLayer: =>
+    @map.addSource 'fill', {
+      type: 'geojson'
+      data: {
+        type: 'FeatureCollection'
+        features: []
+      }
+    }
+    @map.addLayer {
+      id: 'fill'
+      type: 'fill'
+      source: 'fill'
+      layout: {}
+      paint:
+        'fill-color': colors.getRawColor colors.$primary500
+        'fill-opacity': 0.1
+    }
+
+  afterMount: ($$el) =>
+    @state.set isLoading: true
+    @initializeMap $$el
+    .then =>
       @map.on 'load', =>
         console.log 'map loaded'
         if @hideLabels
           @_hideLabels()
-        @resizeSubscription = @model.window.getSize().subscribe =>
-          setTimeout =>
-            @map?.resize()
-            @mapSize?.next {
-              width: $$mapEl.offsetWidth, height: $$mapEl.offsetHeight
-            }
-          , 0
-        @map.addLayer {
-          id: 'places'
-          type: 'symbol'
-          source:
-            type: 'geojson'
-            data:
-              type: 'FeatureCollection'
-              features: []
-          # need spritesheet for symbols.
-          # eg. https://www.mapbox.com/mapbox-gl-js/example/popup-on-click/
-          # keep in mind these don't use svgs...
-          # could also do the name of rv park to right of symbol
 
-          layout:
-            'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
-            'icon-allow-overlap': true
-            # 'icon-ignore-placement': true
-            'icon-size': 1
-            'icon-anchor': 'bottom'
+        if @fill
+          @addFillLayer()
+          @subscribeToFill()
 
-
-            # having text causes icons to occasionally show then fade out and
-            # back. i think??? because of the opacity stops hack.
-            # alternative is creating two layers using same source, with minzoom
-            # and maxzoom, but i think that's less performant.
-            # text-opacity isn't a good solution as it has same fading issue,
-            # and the transparent text is still clickable
-            # maybe this fixes:
-            # https://github.com/mapbox/mapbox-gl-js/issues/6692
-            'text-field': '{name}'
-            'text-optional': true
-            # 'text-ignore-placement': true
-            'text-anchor': 'bottom-left'
-            'text-size':
-              stops: [
-                [0, 0]
-                [6, 0]
-                [6.001, 12]
-              ]
-            'text-font': ['Open Sans Regular'] # must exist in tilejson
-
-          paint:
-            # 'icon-opacity': ['case', ['to-boolean', ['get', 'iconOpacity']], ['get', 'iconOpacity'], 0.1]
-            'icon-opacity': ['get', 'iconOpacity']
-            'text-opacity': ['get', 'iconOpacity']
-            'text-translate': [12, -4]
-            'text-halo-color': 'rgba(255, 255, 255, 1)'
-            'text-halo-width': 2
-            #  # 3px @ zoom 8, 10px @ zoom 11, 50px @ zoom 16
-            #  stops: [[8, 3], [11, 10], [16, 50]]
-        }
         if @route
-          @map.addSource 'route', {
-            type: 'geojson'
-            data:
-              type: 'Feature'
-              properties: {}
-              geometry:
-                type: 'LineString'
-                coordinates: []
-          }
-          @map.addLayer {
-            id: 'route'
-            type: 'line'
-            source: 'route'
-            layout:
-              'line-join': 'round'
-              'line-cap': 'round'
-            paint:
-              'line-color': colors.getRawColor(colors.$primary500)
-              'line-width': 2
-          }
-          @map.addLayer {
-            id: 'route-direction'
-            type: 'symbol'
-            source: 'route'
-            layout:
-              'symbol-placement': 'line'
-              'symbol-spacing': 100
-              'icon-allow-overlap': true
-              'icon-image': 'arrow'
-              'icon-size': 1
-              visibility: 'visible'
-          }
-          routeSubscription = @subscribeToRoute()
+          @addRouteLayers()
+          @subscribeToRoute()
+
+        @addPlacesLayer()
 
         @addInitialLayers()
 
         @updateMapLocation()
-        placeSubscription = @subscribeToPlaces()
+        if @mapBoundsStreams
+          @subscribeToMapBounds()
+        @subscribeToPlaces()
         @subscribeToCenter()
         @subscribeToZoom()
+        @subscribeToResize()
         @state.set isLoading: false
 
 
@@ -260,6 +301,7 @@ module.exports = class Map
         @map.on 'click', 'places', (e) =>
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
+          number = e.features[0].properties.number
           description = e.features[0].properties.description
           slug = e.features[0].properties.slug
           type = e.features[0].properties.type
@@ -297,6 +339,7 @@ module.exports = class Map
     console.log 'rm subscription'
     @disposable?.unsubscribe()
     @routeDisposable?.unsubscribe()
+    @fillDisposable?.unsubscribe()
     @mapBoundsStreamsDisposable?.unsubscribe()
     @centerDisposable?.unsubscribe()
     @zoomDisposable?.unsubscribe()
@@ -318,6 +361,15 @@ module.exports = class Map
         source: source
         sourceId: sourceId
       }
+
+  subscribeToResize: =>
+    @resizeSubscription = @model.window.getSize().subscribe =>
+      setTimeout =>
+        @map?.resize()
+        @mapSize?.next {
+          width: @$$mapEl.offsetWidth, height: @$$mapEl.offsetHeight
+        }
+      , 0
 
   subscribeToMapBounds: =>
     @mapBoundsStreamsDisposable = @mapBoundsStreams.switch()
@@ -360,16 +412,21 @@ module.exports = class Map
           coordinates: geojson
       }
 
+  subscribeToFill: =>
+    @fillDisposable = @fill.subscribe (fill) =>
+      @map.getSource('fill')?.setData fill
+
   subscribeToPlaces: =>
     console.log 'create subscription'
     @disposable = @places.subscribe (places) =>
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'
-        features: _map places, (place) =>
+        features: _map places, (place, i) =>
           {
             type: 'Feature'
             properties:
               name: place.name
+              number: "#{i + 1}"
               slug: place.slug
               rating: place.rating
               description: place.description

@@ -31,7 +31,6 @@
 
   > .info
     flex1()
-    position: relative
     overflow: auto
     -webkit-overflow-scrolling: touch
 
@@ -39,6 +38,9 @@
 
       > .check-ins
         padding: 0 16px 16px 16px
+
+        > .placeholder
+          padding-top: 16px
 
         > .check-in
           > .info
@@ -51,3 +53,7 @@
 
             > .actions
               margin-left: auto
+
+  @media (min-width: $breakPointMedium)
+    > .info
+      position: relative

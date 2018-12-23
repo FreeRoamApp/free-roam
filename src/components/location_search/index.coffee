@@ -20,7 +20,7 @@ Icon = require '../icon'
 SEARCH_DEBOUNCE = 300
 
 module.exports = class LocationSearch
-  constructor: ({@model, @router, @onclick}) ->
+  constructor: ({@model, @router, @onclick, @persistValue}) ->
     @searchValue = new RxBehaviorSubject ''
     @transformProperty = @model.window.getTransformProperty()
 
@@ -83,7 +83,7 @@ module.exports = class LocationSearch
               onfocus: (e) =>
                 ga? 'send', 'event', 'mapSearch', 'open'
                 @isOpen.next true
-                @$tooltip.close()
+                @$tooltip?.close() # FIXME: for places_search
               ontouchstart: =>
                 # reduce jank in map
                 # (doesn't need to resize for kb when overlay is up)
@@ -115,7 +115,10 @@ module.exports = class LocationSearch
                 z '.location', {
                   onclick: =>
                     @onclick? location
-                    @searchValue.next location.text
+                    if @persistValue
+                      @searchValue.next location.text
+                    else
+                      @searchValue.next ''
                     @isOpen.next false
                 },
                   z '.text',
