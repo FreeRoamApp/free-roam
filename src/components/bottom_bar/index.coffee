@@ -50,18 +50,19 @@ module.exports = class BottomBar
         route: @router.get 'productGuides'
         text: @model.l.get 'drawer.productGuide'
       }
+      if @model.experiment.get('travelMap') is 'bottomBar'
+        {
+          $icon: new Icon()
+          icon: 'marker-multiple'
+          route: @router.get 'editTripByType', {type: 'past'}
+          text: @model.l.get 'general.travelMap'
+        }
       {
         $icon: new Icon()
         icon: 'chat'
         route: @model.group.getPath group, 'groupChat', {@router}
         text: @model.l.get 'general.chat'
       }
-      # {
-      #   $icon: new Icon()
-      #   icon: 'rss'
-      #   route: @model.group.getPath group, 'groupForum', {@router}
-      #   text: @model.l.get 'general.forum'
-      # }
     ]
 
     z '.z-bottom-bar', {

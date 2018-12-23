@@ -226,6 +226,9 @@ module.exports = class Map
     .then =>
       @map.on 'load', =>
         console.log 'map loaded'
+
+        @subscribeToResize()
+
         if @hideLabels
           @_hideLabels()
 
@@ -247,7 +250,6 @@ module.exports = class Map
         @subscribeToPlaces()
         @subscribeToCenter()
         @subscribeToZoom()
-        @subscribeToResize()
         @state.set isLoading: false
 
 

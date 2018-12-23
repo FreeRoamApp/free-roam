@@ -11,7 +11,9 @@ if window?
   require './index.styl'
 
 module.exports = class EditTripPage
-  constructor: ({@model, @router, requests, serverData, group}) ->
+  @hasBottomBar: true
+
+  constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     trip = requests.switchMap ({route}) =>
       if route.params.id
         @model.trip.getById route.params.id
@@ -51,3 +53,5 @@ module.exports = class EditTripPage
                 @$editTrip.share()
       }
       @$editTrip
+      if @model.experiment.get('travelMap') is 'bottomBar'
+        @$bottomBar

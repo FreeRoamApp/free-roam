@@ -23,6 +23,7 @@ module.exports = class Drawer
       isOpen: @isOpen
       isStatic: @isStatic
       windowSize: @model.window.getSize()
+      breakpoint: @model.window.getBreakpoint()
       appBarHeight: @model.window.getAppBarHeightVal()
       drawerWidth: @model.window.getDrawerWidth()
 
@@ -125,7 +126,10 @@ module.exports = class Drawer
 
   render: ({$content, hasAppBar}) =>
     {isOpen, windowSize, appBarHeight,
-      drawerWidth, isStatic} = @state.getValue()
+      drawerWidth, isStatic, breakpoint} = @state.getValue()
+
+    # HACK: isStatic is null on first render for some reason
+    isStatic ?= breakpoint is 'desktop'
 
     height = windowSize.height
     if hasAppBar and isStatic
