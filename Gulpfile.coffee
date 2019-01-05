@@ -16,15 +16,18 @@ webpackStream = require 'webpack-stream'
 gulpSequence = require 'gulp-sequence'
 WebpackDevServer = require 'webpack-dev-server'
 HandleCSSLoader = require 'webpack-handle-css-loader'
-UglifyJSPlugin = require 'uglifyjs-webpack-plugin'
+TerserPlugin = require 'terser-webpack-plugin'
 MiniCssExtractPlugin = require 'mini-css-extract-plugin'
 Visualizer = require('webpack-visualizer-plugin')
-new Visualizer()
 # BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 gcPub = require 'gulp-gcloud-publish'
 gzip = require 'gulp-gzip'
 sizereport = require 'gulp-sizereport'
 argv = require('yargs').argv
+SpeedMeasurePlugin = require 'speed-measure-webpack-plugin'
+HardSourceWebpackPlugin = require 'hard-source-webpack-plugin'
+
+smp = new SpeedMeasurePlugin();
 
 config = require './src/config'
 Language = require './src/lang'
@@ -103,6 +106,7 @@ gulp.task 'dev:webpack-server', ->
     output:
       path: __dirname
       publicPath: "#{config.WEBPACK_DEV_URL}/"
+      pathinfo: false # seems to improve perf
     module:
       rules: [
         {test: /\.coffee$/, loader: 'coffee-loader'}
@@ -112,6 +116,7 @@ gulp.task 'dev:webpack-server', ->
     plugins: [
       new webpack.HotModuleReplacementPlugin()
       # new webpack.IgnorePlugin /\.json$/, /lang/
+      new HardSourceWebpackPlugin()
       new webpack.DefinePlugin
         'process.env': _mapValues process.env, (val) -> JSON.stringify val
     ]
@@ -156,9 +161,9 @@ gulp.task 'dist:sw:script', ->
     mode: 'production'
     optimization: {
       minimizer: [
-        new UglifyJSPlugin {
-          sourceMap: false
-          uglifyOptions:
+        new TerserPlugin {
+          parallel: true
+          terserOptions:
             mangle:
               reserved: ['process']
         }
@@ -204,21 +209,28 @@ gulp.task 'dist:scripts', ['dist:clean'], ->
     mode: 'production'
     optimization: {
       minimizer: [
-        new UglifyJSPlugin {
-          sourceMap: false
-          uglifyOptions:
+        new TerserPlugin {
+          parallel: true
+          terserOptions:
+            # ecma: 6
+            ie8: false
             mangle:
               reserved: ['process']
         }
       ]
     }
     plugins: [
-      # new Visualizer()
+      new Visualizer()
       # new BundleAnalyzerPlugin()
       new webpack.IgnorePlugin /\.json$/, /lang/
       new MiniCssExtractPlugin {
         filename: 'bundle.css'
       }
+      ->
+        this.plugin 'done', (stats) ->
+          if stats.compilation.errors and stats.compilation.errors.length
+            console.log stats.compilation.errors
+            process.exit 1
     ]
     # remark requires this (parse-entities -> character-entities)
     # character-entities is 38kb and not really necessary. legacy is 1.64kb

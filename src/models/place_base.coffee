@@ -9,7 +9,7 @@ module.exports = class PlaceBase
   search: ({query, sort, limit}) =>
     @auth.stream "#{@namespace}.search", {query, sort, limit}
 
-  upsert: (options, {invalidateAll}) =>
+  upsert: (options, {invalidateAll} = {}) =>
     invalidateAll ?= true
     @auth.call "#{@namespace}.upsert", options, {invalidateAll}
 

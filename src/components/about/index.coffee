@@ -34,9 +34,8 @@ module.exports = class About
         # z '.divider'
         z 'p', @model.l.get 'about.text1'
         z 'p', @model.l.get 'about.text2'
-        z 'p', @model.l.get 'about.text3'
         z 'p',
-          @model.l.get 'about.text4'
+          @model.l.get 'about.text3'
           ' '
           z 'a', {
             href: 'http://github.com/freeroamapp'
@@ -45,6 +44,7 @@ module.exports = class About
               ga? 'send', 'event', 'about', 'github'
           }, @model.l.get 'general.here'
           '.'
+        z 'p', @model.l.get 'about.text4'
         z 'p', @model.l.get 'about.text5'
         z 'p',
           @model.l.get 'welcomeDialog.video'
