@@ -11,6 +11,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
 # Sticker = require '../sticker'
+FlatButton = require '../flat_button'
 ImageViewOverlay = require '../image_view_overlay'
 EmbeddedVideo = require '../embedded_video'
 config = require '../../config'
@@ -21,7 +22,7 @@ if window?
 module.exports = class FormattedText
   constructor: (options) ->
     {text, @imageWidth, @model, @router, @skipImages, @mentionedUsers,
-      @selectedProfileDialogUser, @isFullWidth, @embedVideos,
+      @selectedProfileDialogUser, @isFullWidth, @embedVideos, @truncate
       @useThumbnails} = options
 
     if text?.map
@@ -30,8 +31,13 @@ module.exports = class FormattedText
       @$el = @get$ {text, @model} # use right away
       $el = null
 
+    if @truncate
+      @$readMoreButton = new FlatButton()
+
     @state = z.state {
       $el: $el
+      text: text
+      isExpanded: false
     }
 
   get$: ({text, model, state}) =>
@@ -169,16 +175,24 @@ module.exports = class FormattedText
     .contents
 
   render: =>
-    {$el} = @state.getValue()
+    {text, isExpanded, $el} = @state.getValue()
+
+    isTruncated = @truncate and text?.length > @truncate.maxLength and
+                    not isExpanded
+
+    props =
+      className: z.classKebab {@isFullWidth, isTruncated}
 
     if @minHeight
-      props =
-        className: z.classKebab {@isFullWidth}
-        style:
-          minHeight: @minHeight
-    else
-      props =
-        className: z.classKebab {@isFullWidth}
+      props.style = {@minHeight}
+
+    if isTruncated
+      props.onclick = => @state.set isExpanded: true
 
     z '.z-formatted-text', props,
       @$el or $el
+      if @truncate
+        z '.read-more',
+          z @$readMoreButton,
+            text: @model.l.get 'general.readMore'
+            isFullWidth: true

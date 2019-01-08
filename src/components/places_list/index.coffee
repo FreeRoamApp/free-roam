@@ -48,8 +48,8 @@ module.exports = class PlacesList
           },
             z '.name', place.name
             if place.sourceType is 'coordinate' and place.location
-              latRounded = Math.round(place.location.lat * 1000) / 1000
-              lonRounded = Math.round(place.location.lon * 1000) / 1000
+              latRounded = Math.round(place.location.lat * 10000) / 10000
+              lonRounded = Math.round(place.location.lon * 10000) / 10000
               z '.coordinates', "#{latRounded}, #{lonRounded}"
             if not hideRating and place.sourceType isnt 'coordinate'
               z '.rating',

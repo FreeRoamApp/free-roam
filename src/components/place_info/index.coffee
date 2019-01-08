@@ -76,6 +76,9 @@ module.exports = class PlaceInfo extends Base
       embedVideos: false
       @model
       @router
+      truncate:
+        maxLength: 200
+        height: 200
     }
 
     myPlacesAndPlace = RxObservable.combineLatest(
@@ -176,11 +179,23 @@ module.exports = class PlaceInfo extends Base
               replacements: {count: place.attachmentsPreview.count}
             }
       z '.g-grid',
-        z '.location',
-          if place?.address?.locality
-            "#{place.address.locality}, #{place.address.administrativeArea}"
-        z '.rating',
-          z @$rating, {size: '20px'}
+        z '.top-info',
+          z '.left',
+            z '.location',
+              if place?.address?.locality
+                "#{place.address.locality}, #{place.address.administrativeArea}"
+            z '.rating',
+              z @$rating, {size: '20px'}
+          z '.right',
+            z '.price',
+              if place?.prices?.all?.mode is 0
+                @model.l.get 'general.free'
+              else if places?.prices?.all?.mode
+                @model.l.get 'placeInfo.approx'
+                " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
+              else
+                "$#{@model.l.get 'general.unknown'}"
+
 
         z '.action-box',
           z '.actions',

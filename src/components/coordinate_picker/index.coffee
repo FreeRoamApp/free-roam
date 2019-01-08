@@ -20,8 +20,8 @@ module.exports = class CoordinatePicker
     @$map = new Map {
       @model, @router, @places, center: @mapCenter, initialZoom
       onclick: (e) =>
-        lat = Math.round(1000 * e.lngLat.lat) / 1000
-        lon = Math.round(1000 * e.lngLat.lng) / 1000
+        lat = Math.round(10000 * e.lngLat.lat) / 10000
+        lon = Math.round(10000 * e.lngLat.lng) / 10000
         coordinates = "#{lat}, #{lon}"
         @state.set {coordinates}
         @places.next [{

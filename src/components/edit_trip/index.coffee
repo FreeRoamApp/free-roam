@@ -94,8 +94,8 @@ module.exports = class EditTrip extends Base
         ga? 'send', 'event', 'trip', 'clickMap'
         @placePosition.next e.point
 
-        latRounded = Math.round(e.lngLat.lat * 1000) / 1000
-        lonRounded = Math.round(e.lngLat.lng * 1000) / 1000
+        latRounded = Math.round(e.lngLat.lat * 10000) / 10000
+        lonRounded = Math.round(e.lngLat.lng * 10000) / 10000
 
         @place.next {
           name: "#{latRounded}, #{lonRounded}"

@@ -116,7 +116,7 @@ gulp.task 'dev:webpack-server', ->
     plugins: [
       new webpack.HotModuleReplacementPlugin()
       # new webpack.IgnorePlugin /\.json$/, /lang/
-      new HardSourceWebpackPlugin()
+      # new HardSourceWebpackPlugin()
       new webpack.DefinePlugin
         'process.env': _mapValues process.env, (val) -> JSON.stringify val
     ]

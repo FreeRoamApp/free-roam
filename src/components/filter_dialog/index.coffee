@@ -26,6 +26,9 @@ module.exports = class FilterDialog
     }
 
     switch @filter.type
+      when 'maxIntCustom'
+        filterValue = new RxBehaviorSubject @filter.value or ''
+        @$input = new PrimaryInput {value: filterValue}
       when 'maxInt'
         filterValue = new RxBehaviorSubject @filter.value or 5
         @$inputRange = new InputRange {
@@ -159,6 +162,17 @@ module.exports = class FilterDialog
               label: @model.l.get "filterDialog.#{@filter.field}Label"
             }
             @model.l.get "levelText.#{@filter.field}#{value}"
+      when 'maxIntCustom'
+        $title = @model.l.get 'campground.price'
+        $content =
+          z '.content',
+            z '.label', @model.l.get 'filterDialog.maxPrice'
+            z '.fields',
+              z @$input, {
+                type: 'number'
+                hintText:
+                  @model.l.get 'campground.price'
+              }
       when 'maxClearance'
         $title = @model.l.get 'lowClearance.maxClearance'
         $content =

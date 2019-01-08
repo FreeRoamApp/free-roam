@@ -69,6 +69,11 @@ class MapService
   getCampgroundFilters: ({model}) ->
     [
       {
+        field: 'prices.all.mode'
+        type: 'maxIntCustom'
+        name: model.l.get 'campground.price'
+      }
+      {
         field: 'cellSignal'
         type: 'cellSignal'
         name: model.l.get 'campground.cellSignal'

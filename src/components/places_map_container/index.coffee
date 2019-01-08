@@ -301,7 +301,7 @@ module.exports = class PlacesMapContainer
       filter = fieldFilters[0]
 
       switch filter.type
-        when 'maxInt'
+        when 'maxInt', 'maxIntCustom'
           {
             range:
               "#{field}":
