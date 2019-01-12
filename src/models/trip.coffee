@@ -8,6 +8,9 @@ module.exports = class Trip
   getById: (id) =>
     @auth.stream "#{@namespace}.getById", {id}
 
+  getAll: (id) =>
+    @auth.stream "#{@namespace}.getAll", {id}
+
   getByType: (type) =>
     @auth.stream "#{@namespace}.getByType", {type}
 

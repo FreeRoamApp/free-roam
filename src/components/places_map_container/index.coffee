@@ -9,7 +9,7 @@ _reduce = require 'lodash/reduce'
 _groupBy = require 'lodash/groupBy'
 _sumBy = require 'lodash/sumBy'
 _isEmpty = require 'lodash/isEmpty'
-_some = require 'lodash/some'
+_uniq = require 'lodash/uniq'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
@@ -24,6 +24,7 @@ PlacesSearch = require '../places_search'
 Fab = require '../fab'
 Tooltip = require '../tooltip'
 Icon = require '../icon'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -62,11 +63,15 @@ module.exports = class PlacesMapContainer
 
     @currentMapBounds = new RxBehaviorSubject null
 
+    @isFilterTypesVisible = new RxBehaviorSubject false
+    @isLegendVisible = new RxBehaviorSubject false
+
     @dataTypesStream = @getDataTypesStreams @dataTypes
 
     @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
+    placesStream = @getPlacesStream()
     placesWithCounts = RxObservable.combineLatest(
-      @addPlaces, @getPlacesStream(), (vals...) -> vals
+      @addPlaces, placesStream, (vals...) -> vals
     ).map ([addPlaces, {places, visible, total}]) ->
       if places
         places = addPlaces.concat places
@@ -79,12 +84,14 @@ module.exports = class PlacesMapContainer
     places = placesWithCounts
             .map ({places}) -> places
     counts = placesWithCounts.map ({visible, total}) -> {visible, total}
+
+    placesAndIsLegendVisible = RxObservable.combineLatest(
+      places, @isLegendVisible, (vals...) -> vals
+    )
+
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
-
-    @isFilterTypesVisible = new RxBehaviorSubject false
-
     @$fab = new Fab()
     @$layersIcon = new Icon()
     @$tooltip = new Tooltip {
@@ -142,8 +149,12 @@ module.exports = class PlacesMapContainer
         _filter dataTypes, 'isChecked'
       currentDataType: @currentDataType
       place: @place
+      icons: placesAndIsLegendVisible.map ([places, isLegendVisible]) ->
+        if isLegendVisible
+          _filter _uniq _map places, 'icon'
       counts: counts
       isLayersPickerVisible: false
+      isLegendVisible: @isLegendVisible
       isFilterTypesVisible: @isFilterTypesVisible
       layersVisible: layersVisible
 
@@ -269,7 +280,7 @@ module.exports = class PlacesMapContainer
         unless isChecked
           return RxObservable.of []
         filters = filterTypes[dataType]
-        queryFilter = @getQueryFilterFromFilters(
+        queryFilter = MapService.getESQueryFromFilters(
           filters, currentMapBounds?.bounds
         )
 
@@ -292,120 +303,6 @@ module.exports = class PlacesMapContainer
           places: places
         }
 
-  getQueryFilterFromFilters: (filters, currentMapBounds) ->
-    groupedFilters = _groupBy filters, 'field'
-    filter = _filter _map groupedFilters, (fieldFilters, field) ->
-      unless _some fieldFilters, 'value'
-        return
-
-      filter = fieldFilters[0]
-
-      switch filter.type
-        when 'maxInt', 'maxIntCustom'
-          {
-            range:
-              "#{field}":
-                lte: filter.value
-          }
-        when 'minInt'
-          {
-            range:
-              "#{field}":
-                gte: filter.value
-          }
-        when 'maxIntSeasonal'
-          {
-            range:
-              "#{field}.#{filter.value.season}":
-                lte: filter.value.value
-          }
-        when 'maxClearance'
-          feet = parseInt filter.value.feet
-          if isNaN feet
-            feet = 0
-          inches = parseInt filter.value.inches
-          if isNaN inches
-            feet = 0
-          inches = feet * 12 + inches
-          {
-            range:
-              heightInches:
-                lt: inches
-          }
-        when 'maxIntDayNight'
-          {
-            range:
-              "#{field}.#{filter.value.dayNight}":
-                lte: filter.value.value
-          }
-        when 'gtZero'
-          {
-            range:
-              "#{field}":
-                gt: 0
-          }
-        when 'cellSignal'
-          carrier = filter.value.carrier
-          if filter.value.isLte
-            {
-              range:
-                "#{field}.#{carrier}_lte.signal":
-                  gte: filter.value.signal
-            }
-          else
-            # check for lte and non lte
-            bool:
-              should: [
-                {
-                  range:
-                    "#{field}.#{carrier}.signal":
-                      gte: filter.value.signal
-                }
-                {
-                  range:
-                    "#{field}.#{carrier}_lte.signal":
-                      gte: filter.value.signal
-                }
-              ]
-        when 'weather'
-          month = MONTHS[filter.value.month]
-          {
-            range:
-              "#{field}.months.#{month}.#{filter.value.metric}":
-                "#{filter.value.operator}": parseFloat(filter.value.number)
-          }
-        when 'distanceTo'
-          {
-            range:
-              "#{field}.#{filter.value.amenity}.time":
-                lte: parseInt(filter.value.time)
-          }
-        when 'booleanArray'
-          arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'
-          ###
-          alternative is:
-          {terms: {"#{field}": arrayValues}, but terms
-          is case-insensitive and 'contains', not 'equals'.
-          breaks with camelcase restArea since it searches restarea
-          ###
-          {
-            bool:
-              should: _map arrayValues, (value) ->
-                match:
-                  "#{field}": value
-            }
-
-    filter.push {
-      geo_bounding_box:
-        location:
-          top_left:
-            lat: Math.round(1000 * currentMapBounds._ne.lat) / 1000
-            lon: Math.round(1000 * currentMapBounds._sw.lng) / 1000
-          bottom_right:
-            lat: Math.round(1000 * currentMapBounds._sw.lat) / 1000
-            lon: Math.round(1000 * currentMapBounds._ne.lng) / 1000
-    }
-    filter
 
   toggleLayer: (optionalLayer, index) =>
     {source, sourceId, layer, insertBeneathLabels} = optionalLayer
@@ -432,7 +329,7 @@ module.exports = class PlacesMapContainer
 
   render: =>
     {isShell, filterTypes, dataTypes, currentDataType, place, layersVisible,
-      counts, visibleDataTypes, isFilterTypesVisible,
+      counts, visibleDataTypes, isFilterTypesVisible, isLegendVisible, icons,
       isLayersPickerVisible} = @state.getValue()
 
     isCountsBarVisbile = counts?.visible < counts?.total
@@ -440,8 +337,9 @@ module.exports = class PlacesMapContainer
     z '.z-places-map-container', {
       className: z.classKebab {isShell}
       onclick: =>
-        if isLayersPickerVisible or isFilterTypesVisible
+        if isLayersPickerVisible or isFilterTypesVisible or isLegendVisible
           @state.set isLayersPickerVisible: false
+          @isLegendVisible.next false
           @isFilterTypesVisible.next false
     },
       [
@@ -463,6 +361,23 @@ module.exports = class PlacesMapContainer
         z '.map',
           z @$map
           z @$placeTooltip
+
+          z '.legend-fab', {
+            onclick: =>
+              @isLegendVisible.next true
+          },
+            @model.l.get 'placesMapContainer.legend'
+
+          z '.legend', {
+            className: z.classKebab {isVisible: isLegendVisible}
+          },
+            _map icons, (icon) =>
+              z '.item',
+                z 'img.icon',
+                  src: if isLegendVisible \
+                       then "#{config.CDN_URL}/maps/sprite_svgs/#{icon}.svg"
+                z '.name', @model.l.get "mapLegend.#{icon}"
+
           unless _isEmpty @optionalLayers
             z '.layers-fab',
               z @$fab,

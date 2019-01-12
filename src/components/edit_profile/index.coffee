@@ -44,6 +44,18 @@ module.exports = class EditProfile
       valueStreams: @usernameValueStreams
       error: @usernameError
 
+    @instagramValueStreams = new RxReplaySubject 1
+    @instagramValueStreams.next me.map (me) ->
+      me.links?.instagram or ''
+    @$instagramInput = new PrimaryInput
+      valueStreams: @instagramValueStreams
+
+    @webValueStreams = new RxReplaySubject 1
+    @webValueStreams.next me.map (me) ->
+      me.links?.web or ''
+    @$webInput = new PrimaryInput
+      valueStreams: @webValueStreams
+
     @newPasswordValue = new RxBehaviorSubject ''
     @newPasswordError = new RxBehaviorSubject null
     @$newPasswordInput = new PrimaryInput
@@ -64,13 +76,15 @@ module.exports = class EditProfile
       avatarUploadError: null
       group: group
       username: @usernameValueStreams.switch()
+      instagram: @instagramValueStreams.switch()
+      web: @webValueStreams.switch()
       newPassword: @newPasswordValue
       currentPassword: @currentPasswordValue
       isSaving: false
       isSaved: false
 
   save: =>
-    {avatarImage, username, newPassword, currentPassword,
+    {avatarImage, username, instagram, web, newPassword, currentPassword,
       me, isSaving, group} = @state.getValue()
     if isSaving
       return
@@ -80,7 +94,11 @@ module.exports = class EditProfile
     @newPasswordError.next null
     @currentPasswordError.next null
 
-    userDiff = {}
+    if instagram or web
+      links = {instagram, web}
+      userDiff = {links}
+    else
+      userDiff = {}
 
     if username and username isnt me?.username
       userDiff.username = username
@@ -148,6 +166,18 @@ module.exports = class EditProfile
                 hintText: @model.l.get 'editProfile.currentPassword'
                 isFullWidth: false
                 type: 'password'
+
+        z '.section',
+          z '.input',
+            z @$instagramInput,
+              hintText: @model.l.get 'general.instagram'
+              isFullWidth: false
+
+        z '.section',
+          z '.input',
+            z @$webInput,
+              hintText: @model.l.get 'general.web'
+              isFullWidth: false
 
         z '.section',
           z '.title', @model.l.get 'editProfile.changeAvatar'

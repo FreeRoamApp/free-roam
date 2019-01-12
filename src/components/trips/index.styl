@@ -1,0 +1,22 @@
+@require '../../vars'
+
+.z-trips
+  padding: 16px
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .g-grid
+    > .g-cols
+      > .g-col
+        > .trip
+          shadow-1()
+          display: block
+          background: getColor('$tertiary100')
+          padding: 16px
+          border-radius: 4px
+          margin-bottom: 8px
+
+          > .name
+            font-title()
+            margin-bottom: 4px

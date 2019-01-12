@@ -1,16 +1,16 @@
 module.exports = class Experiment
   constructor: ({@cookie}) ->
-    expTravelMap = @cookie.get 'exp:travelMap'
-    unless expTravelMap
+    expNoProductGuides = @cookie.get 'exp:noProductGuides'
+    unless expNoProductGuides
       rand = Math.random()
-      expTravelMap = if rand > 0.5 \
-                         then 'bottomBar'
+      expNoProductGuides = if rand > 0.5 \
+                         then 'travelMap'
                          else 'control'
-      @cookie.set 'exp:travelMap', expTravelMap
-    ga? 'send', 'event', 'exp', "travelMap:#{expTravelMap}"
+      @cookie.set 'exp:noProductGuides', expNoProductGuides
+    ga? 'send', 'event', 'exp', "noProductGuides:#{expNoProductGuides}"
 
     @experiments =
-      travelMap: expTravelMap
+      noProductGuides: expNoProductGuides
 
   get: (key) =>
     @experiments[key]

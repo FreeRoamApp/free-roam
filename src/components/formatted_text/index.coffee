@@ -40,6 +40,10 @@ module.exports = class FormattedText
       isExpanded: false
     }
 
+  beforeUnmount: =>
+    @state.set
+      isExpanded: false
+
   get$: ({text, model, state}) =>
     isSticker = text?.match /^:[a-z_\^0-9]+:$/
 

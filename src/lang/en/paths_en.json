@@ -62,6 +62,7 @@
   "shell": "/shell",
   "termsOfService": "/tos",
   "trip": "/trip/:id",
+  "trips": "/trips",
   "home": "/",
   "404": "/*"
 }

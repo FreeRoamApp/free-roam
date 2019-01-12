@@ -19,8 +19,6 @@ Icon = require '../icon'
 
 SEARCH_DEBOUNCE = 300
 
-# FIXME TODO: replace with locationSearch
-
 module.exports = class PlacesSearch
   constructor: ({@model, @router, @onclick}) ->
     @searchValue = new RxBehaviorSubject ''
@@ -130,7 +128,8 @@ module.exports = class PlacesSearch
                     @isOpen.next false
                 },
                   z '.text',
-                    location.text
+                    # geocoded locations are 'text', campgrounds are 'name'
+                    location.text or location.name
                   z '.locality',
                     if location.locality
                       [

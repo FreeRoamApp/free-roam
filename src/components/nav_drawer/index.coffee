@@ -108,13 +108,6 @@ module.exports = class NavDrawer
             isDefault: true
           }
           {
-            path: @router.get 'productGuides'
-            title: @model.l.get 'drawer.productGuide'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'cart'
-          }
-          {
             path: @model.group.getPath group, 'groupChat', {@router}
             title: @model.l.get 'general.chat'
             $icon: new Icon()
@@ -144,11 +137,25 @@ module.exports = class NavDrawer
             iconName: 'star'
           }
           {
+            path: @router.get 'trips'
+            title: @model.l.get 'general.trips'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'marker-multiple'
+          }
+          {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'info'
+          }
+          {
+            path: @router.get 'productGuides'
+            title: @model.l.get 'drawer.productGuide'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'cart'
           }
           # {
           #   path: @router.get 'backpack'
@@ -172,13 +179,6 @@ module.exports = class NavDrawer
               $ripple: new Ripple()
               iconName: 'profile'
             }
-          {
-            path: @router.get 'editTripByType', {type: 'past'}
-            title: @model.l.get 'editTripPage.title'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'marker-multiple'
-          }
           if navigator?.serviceWorker
             {
               path: @router.get 'settings'

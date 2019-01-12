@@ -1,3 +1,9 @@
+_map = require 'lodash/map'
+_filter = require 'lodash/filter'
+_groupBy = require 'lodash/groupBy'
+_some = require 'lodash/some'
+_uniq = require 'lodash/uniq'
+
 Environment = require './environment'
 colors = require '../colors'
 
@@ -79,11 +85,6 @@ class MapService
         name: model.l.get 'campground.cellSignal'
       }
       {
-        field: 'roadDifficulty'
-        type: 'maxInt'
-        name: model.l.get 'campground.roadDifficulty'
-      }
-      {
         field: 'crowds'
         type: 'maxIntSeasonal'
         name: model.l.get 'campground.crowds'
@@ -99,6 +100,21 @@ class MapService
         name: model.l.get 'campground.distanceTo'
       }
       {
+        field: 'fullness'
+        type: 'maxIntSeasonal'
+        name: model.l.get 'campground.fullness'
+      }
+      {
+        field: 'roadDifficulty'
+        type: 'maxInt'
+        name: model.l.get 'campground.roadDifficulty'
+      }
+      {
+        field: 'shade'
+        type: 'maxInt'
+        name: model.l.get 'campground.shade'
+      }
+      {
         field: 'safety'
         type: 'minInt'
         name: model.l.get 'campground.safety'
@@ -107,16 +123,6 @@ class MapService
         field: 'noise'
         type: 'maxIntDayNight'
         name: model.l.get 'campground.noise'
-      }
-      {
-        field: 'fullness'
-        type: 'maxIntSeasonal'
-        name: model.l.get 'campground.fullness'
-      }
-      {
-        field: 'shade'
-        type: 'maxInt'
-        name: model.l.get 'campground.shade'
       }
       {
         field: 'attachmentCount'
@@ -299,6 +305,122 @@ class MapService
         insertBeneathLabels: true
       }
     ]
+
+
+  getESQueryFromFilters: (filters, currentMapBounds) ->
+    groupedFilters = _groupBy filters, 'field'
+    filter = _filter _map groupedFilters, (fieldFilters, field) ->
+      unless _some fieldFilters, 'value'
+        return
+
+      filter = fieldFilters[0]
+
+      switch filter.type
+        when 'maxInt', 'maxIntCustom'
+          {
+            range:
+              "#{field}":
+                lte: filter.value
+          }
+        when 'minInt'
+          {
+            range:
+              "#{field}":
+                gte: filter.value
+          }
+        when 'maxIntSeasonal'
+          {
+            range:
+              "#{field}.#{filter.value.season}":
+                lte: filter.value.value
+          }
+        when 'maxClearance'
+          feet = parseInt filter.value.feet
+          if isNaN feet
+            feet = 0
+          inches = parseInt filter.value.inches
+          if isNaN inches
+            feet = 0
+          inches = feet * 12 + inches
+          {
+            range:
+              heightInches:
+                lt: inches
+          }
+        when 'maxIntDayNight'
+          {
+            range:
+              "#{field}.#{filter.value.dayNight}":
+                lte: filter.value.value
+          }
+        when 'gtZero'
+          {
+            range:
+              "#{field}":
+                gt: 0
+          }
+        when 'cellSignal'
+          carrier = filter.value.carrier
+          if filter.value.isLte
+            {
+              range:
+                "#{field}.#{carrier}_lte.signal":
+                  gte: filter.value.signal
+            }
+          else
+            # check for lte and non lte
+            bool:
+              should: [
+                {
+                  range:
+                    "#{field}.#{carrier}.signal":
+                      gte: filter.value.signal
+                }
+                {
+                  range:
+                    "#{field}.#{carrier}_lte.signal":
+                      gte: filter.value.signal
+                }
+              ]
+        when 'weather'
+          month = MONTHS[filter.value.month]
+          {
+            range:
+              "#{field}.months.#{month}.#{filter.value.metric}":
+                "#{filter.value.operator}": parseFloat(filter.value.number)
+          }
+        when 'distanceTo'
+          {
+            range:
+              "#{field}.#{filter.value.amenity}.time":
+                lte: parseInt(filter.value.time)
+          }
+        when 'booleanArray'
+          arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'
+          ###
+          alternative is:
+          {terms: {"#{field}": arrayValues}, but terms
+          is case-insensitive and 'contains', not 'equals'.
+          breaks with camelcase restArea since it searches restarea
+          ###
+          {
+            bool:
+              should: _map arrayValues, (value) ->
+                match:
+                  "#{field}": value
+            }
+
+    filter.push {
+      geo_bounding_box:
+        location:
+          top_left:
+            lat: Math.round(1000 * currentMapBounds._ne.lat) / 1000
+            lon: Math.round(1000 * currentMapBounds._sw.lng) / 1000
+          bottom_right:
+            lat: Math.round(1000 * currentMapBounds._sw.lat) / 1000
+            lon: Math.round(1000 * currentMapBounds._ne.lng) / 1000
+    }
+    filter
 
   # This is adapted from the implementation in Project-OSRM
   # https://github.com/DennisOSRM/Project-OSRM-Web/blob/master/WebContent/routing/OSRM.RoutingGeometry.js

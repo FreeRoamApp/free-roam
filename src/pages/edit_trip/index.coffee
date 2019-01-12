@@ -1,7 +1,7 @@
 z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 FlatButton = require '../../components/flat_button'
 EditTrip = require '../../components/edit_trip'
 config = require '../../config'
@@ -11,6 +11,8 @@ if window?
   require './index.styl'
 
 module.exports = class EditTripPage
+  hideDrawer: true
+
   constructor: ({@model, @router, requests, serverData, group}) ->
     trip = requests.switchMap ({route}) =>
       if route.params.id
@@ -19,7 +21,7 @@ module.exports = class EditTripPage
         @model.trip.getByType route.params.type
 
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$viewButton = new FlatButton()
     @$shareButton = new FlatButton()
     @$editTrip = new EditTrip {@model, @router, trip}
@@ -27,8 +29,13 @@ module.exports = class EditTripPage
     @state = z.state {trip}
 
   getMeta: =>
+    {trip} = @state.getValue()
+
     {
-      title: @model.l.get 'editTripPage.title'
+      title: @model.l.get 'editTripPage.title', {
+        replacements:
+          name: trip?.name or ''
+      }
     }
 
   render: =>
@@ -36,9 +43,12 @@ module.exports = class EditTripPage
 
     z '.p-edit-trip',
       z @$appBar, {
-        title: @model.l.get 'editTripPage.title'
+        title: @model.l.get 'editTripPage.title', {
+          replacements:
+            name: trip?.name or ''
+        }
         style: 'primary'
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         $topRightButton:
           z '.p-edit-trip_top-right',
             z @$viewButton,

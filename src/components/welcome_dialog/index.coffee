@@ -33,7 +33,7 @@ module.exports = class WelcomeDialog
                 onclick: (e) =>
                   e?.preventDefault()
                   @model.portal.call 'browser.openWindow', {
-                    url: 'https://youtu.be/yKISmxLF5V8'
+                    url: 'https://youtu.be/bInuqu6JyTI'
                     target: '_system'
                   }
               },

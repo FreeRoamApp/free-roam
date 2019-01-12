@@ -33,9 +33,8 @@ module.exports = class About
             height: Math.min(400, windowSize.width - 32 * 2 - 16 * 2)
         # z '.divider'
         z 'p', @model.l.get 'about.text1'
-        z 'p', @model.l.get 'about.text2'
         z 'p',
-          @model.l.get 'about.text3'
+          @model.l.get 'about.text2'
           ' '
           z 'a', {
             href: 'http://github.com/freeroamapp'
@@ -44,6 +43,7 @@ module.exports = class About
               ga? 'send', 'event', 'about', 'github'
           }, @model.l.get 'general.here'
           '.'
+        z 'p', @model.l.get 'about.text3'
         z 'p', @model.l.get 'about.text4'
         z 'p', @model.l.get 'about.text5'
         z 'p',
@@ -53,7 +53,7 @@ module.exports = class About
             onclick: (e) =>
               e?.preventDefault()
               @model.portal.call 'browser.openWindow', {
-                url: 'https://youtu.be/yKISmxLF5V8'
+                url: 'https://youtu.be/bInuqu6JyTI'
                 target: '_system'
               }
           },

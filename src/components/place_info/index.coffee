@@ -77,7 +77,7 @@ module.exports = class PlaceInfo extends Base
       @model
       @router
       truncate:
-        maxLength: 200
+        maxLength: 250
         height: 200
     }
 
@@ -190,11 +190,13 @@ module.exports = class PlaceInfo extends Base
             z '.price',
               if place?.prices?.all?.mode is 0
                 @model.l.get 'general.free'
-              else if places?.prices?.all?.mode
-                @model.l.get 'placeInfo.approx'
-                " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
+              else if place?.prices?.all?.mode
+                [
+                  @model.l.get 'placeInfo.approx'
+                  " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
+                ]
               else
-                "$#{@model.l.get 'general.unknown'}"
+                "$ #{@model.l.get 'general.unknown'}"
 
 
         z '.action-box',
@@ -320,6 +322,14 @@ module.exports = class PlaceInfo extends Base
                         z '.bars',
                           z $bars, widthPx: 40
                         z '.type', type
+
+
+              # z '.section',
+
+                # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
+                # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
+
+
               if place?.crowds
                 z '.section',
                   z '.title', @model.l.get 'campground.crowds'
@@ -349,6 +359,7 @@ module.exports = class PlaceInfo extends Base
                   z '.title', @model.l.get 'campground.cleanliness'
                   z @$cleanlinessInfoLevel, {
                     value: place?.cleanliness
+                    isReversed: true # 5 is bad 1 is good
                   }
               if place?.safety
                 z '.section',

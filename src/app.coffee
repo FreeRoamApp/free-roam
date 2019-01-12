@@ -75,6 +75,7 @@ Pages =
   ThreadPage: require './pages/thread'
   TosPage: require './pages/tos'
   TripPage: require './pages/trip'
+  TripsPage: require './pages/trips'
   FourOhFourPage: require './pages/404'
 
 TIME_UNTIL_ADD_TO_HOME_PROMPT_MS = 90000 # 1.5 min
@@ -277,6 +278,7 @@ module.exports = class App
     route 'shell', 'ShellPage'
     route 'termsOfService', 'TosPage'
     route 'trip', 'TripPage'
+    route 'trips', 'TripsPage'
 
     route '404', 'FourOhFourPage'
     routes

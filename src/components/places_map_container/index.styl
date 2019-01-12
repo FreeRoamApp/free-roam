@@ -40,16 +40,25 @@
     display: flex
     position: relative
 
+    > .legend-fab
+      font-caption1()
+      shadow-1()
+      position: absolute
+      bottom: 32px
+      left: 16px
+      background: getColor('$tertiary100')
+      border-radius: 8px
+      padding: 4px 8px
+      cursor: pointer
+
     > .layers-fab
       position: absolute
       top: 16px
       right: 16px
 
-    > .layers
+    > .layers, > .legend
       shadow-1()
       position: absolute
-      top: 16px
-      right: 16px
       background: getColor('$tertiary100')
       border-radius: 8px
       padding: 12px 16px
@@ -77,6 +86,27 @@
         transition: opacity 0.2s
         transition-delay: 0.2s
 
+    > .legend
+      bottom: 32px
+      left: 16px
+      transform-origin: bottom left
+      min-height: 80px
+
+      > .item
+        font-caption1()
+        display: flex
+        margin-bottom: 4px
+
+        > .icon
+          margin-right: 8px
+          width: 24px
+          height: 24px
+
+    > .layers
+      top: 16px
+      right: 16px
+
+      > .content
         > .title
           font-subhead2()
           margin-bottom: 8px
