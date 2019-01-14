@@ -49,8 +49,6 @@ module.exports = class PlacesSearch
   render: ({dataTypes}) =>
     {locations, isOpen} = @state.getValue()
 
-    console.log locations
-
     z '.z-places-search', {
       className: z.classKebab {isOpen}
     },

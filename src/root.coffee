@@ -230,13 +230,13 @@ init = ->
   .then ->
     model.portal.call 'app.isLoaded'
 
-    # untilStable hangs many seconds and the
-    # timeout (200ms) doesn't actually work
+    # untilStable hangs many seconds and the timeout (200ms) doesn't  work
     if model.wasCached()
       new Promise (resolve) ->
         # give time for exoid combinedStreams to resolve
         # (dataStreams are cached, combinedStreams are technically async)
-        setTimeout resolve, 300
+        # so we don't get flicker or no data
+        setTimeout resolve, 1 # dropped from 300 to see if it causes any issues
         # z.untilStable $app, {timeout: 200} # arbitrary
     else
       null
@@ -246,8 +246,8 @@ init = ->
         ga? 'send', 'pageview', path
     ).subscribe()
 
-    # nextTick prevents white flash
-    setTimeout ->
+    # nextTick prevents white flash, lets first render happen
+    window.requestAnimationFrame ->
       $$root = document.getElementById 'zorium-root'
       $$root.parentNode.replaceChild root, $$root
 

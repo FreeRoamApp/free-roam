@@ -112,6 +112,8 @@ x Let people add their website link / Instagram
 
 
 - Performance
+  x Zorium v2? Tried it out, render seems a little slower (20-50%) vs current
+    x replacing just z.state with v2 also seems 50-100% slower
   x current 269kb gzipped
   x remark-parse is pretty large
     x includes parse-entities and character-entities

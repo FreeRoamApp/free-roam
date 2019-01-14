@@ -123,8 +123,8 @@ module.exports = class Model
         JSON.parse localStorage?.offlineCache
       catch
         {}
-    #
-    @initialCache = offlineCache or cache.exoid
+
+    @initialCache = _defaults offlineCache, cache.exoid
 
     @exoid = new Exoid
       ioEmit: ioEmit
@@ -189,6 +189,7 @@ module.exports = class Model
     }
     @window = new Window {@cookie, @experiment, userAgent}
 
+  # after page has loaded, refetch all initial (cached) requests to verify they're still up-to-date
   validateInitialCache: =>
     cache = @initialCache
     @initialCache = null

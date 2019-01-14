@@ -23,8 +23,6 @@ module.exports = class MyPlaces
   render: =>
     {places} = @state.getValue()
 
-    console.log places
-
     z '.z-my-places',
       if places and _isEmpty places
         z '.empty',

@@ -8,7 +8,7 @@ _clone = require 'lodash/clone'
 _find = require 'lodash/find'
 _some = require 'lodash/some'
 RxObservable = require('rxjs/Observable').Observable
-require 'rxjs/add/observable/combineLatest'
+require 'rxjs/add/observable/merge'
 require 'rxjs/add/operator/map'
 
 Icon = require '../icon'
@@ -45,7 +45,9 @@ module.exports = class NavDrawer
       RxObservable.of null
 
     me = @model.user.getMe()
-    menuItemsInfo = RxObservable.combineLatest(
+    # settle as soon as one is ready, otherwise the nav menu might flash blank
+    # while the others load
+    menuItemsInfo = RxObservable.merge(
       me
       group
       @model.l.getLanguage()

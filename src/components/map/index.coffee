@@ -117,6 +117,7 @@ module.exports = class Map
         layout:
           'icon-image': 'empty'
           'icon-allow-overlap': true
+          'icon-ignore-placement': true
           'icon-size': 1
           'icon-anchor': 'bottom'
           'text-field': '{number}'
@@ -135,8 +136,12 @@ module.exports = class Map
         source: 'places'
         layout:
           'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
-          'icon-allow-overlap': true
-          # 'icon-ignore-placement': true
+
+          # one of these needs to be on or all icons won't show.
+          # if icon-allow-overlap is true, fading in/out doesn't work
+          # 'icon-allow-overlap': true
+          'icon-ignore-placement': true
+
           'icon-size': 1
           'icon-anchor': 'bottom'
           # having text causes icons to occasionally show then fade out and
@@ -153,8 +158,8 @@ module.exports = class Map
           'text-size':
             stops: [
               [0, 0]
-              [6, 0]
-              [6.001, 12]
+              [8, 0]
+              [8.001, 12]
             ]
           'text-font': ['Open Sans Regular'] # must exist in tilejson
 

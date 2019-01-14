@@ -7,7 +7,10 @@ module.exports = class Experiment
                          then 'travelMap'
                          else 'control'
       @cookie.set 'exp:noProductGuides', expNoProductGuides
-    ga? 'send', 'event', 'exp', "noProductGuides:#{expNoProductGuides}"
+
+    setTimeout ->
+      ga? 'send', '/event', 'exp', "noProductGuides:#{expNoProductGuides}"
+    , 0
 
     @experiments =
       noProductGuides: expNoProductGuides

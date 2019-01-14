@@ -212,8 +212,9 @@ gulp.task 'dist:scripts', ['dist:clean'], ->
     # https://github.com/webpack/webpack/issues/4240
     node:
       Buffer: false
-      process: false
+      # process: false
     optimization: {
+      # minimize: false
       minimizer: [
         new TerserPlugin {
           parallel: true
