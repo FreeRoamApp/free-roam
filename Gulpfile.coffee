@@ -207,6 +207,12 @@ gulp.task 'dist:scripts', ['dist:clean'], ->
 
   scriptsConfig = _defaultsDeep {
     mode: 'production'
+    # not sure which module is doing it, but the node buffer module is being
+    # pulled in. can disable with this
+    # https://github.com/webpack/webpack/issues/4240
+    node:
+      Buffer: false
+      process: false
     optimization: {
       minimizer: [
         new TerserPlugin {

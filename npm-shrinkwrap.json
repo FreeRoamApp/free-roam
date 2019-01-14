@@ -1691,6 +1691,12 @@
         }
       }
     },
+    "coffeescript": {
+      "version": "1.12.7",
+      "resolved": "https://registry.npmjs.org/coffeescript/-/coffeescript-1.12.7.tgz",
+      "integrity": "sha512-pLXHFxQMPklVoEekowk8b3erNynC+DVJzChxS/LCBBgR6/8AJkHivkm//zbowcfc7BTCAjryuhx6gPqPRfsFoA==",
+      "dev": true
+    },
     "collapse-white-space": {
       "version": "1.0.4",
       "resolved": "https://registry.npmjs.org/collapse-white-space/-/collapse-white-space-1.0.4.tgz",
@@ -8276,23 +8282,10 @@
       }
     },
     "portal-gun": {
-      "version": "git://github.com/claydotio/portal-gun.git#8529e60c8b8fe4f4433437c65e305bb06f69bf8e",
+      "version": "git://github.com/claydotio/portal-gun.git#4c49d5a359f6f8c3c658630136eb1d2b98ff4ef6",
       "from": "git://github.com/claydotio/portal-gun.git",
       "requires": {
-        "promiz": "1.0.3",
-        "uuid": "^2.0.1"
-      },
-      "dependencies": {
-        "promiz": {
-          "version": "1.0.3",
-          "resolved": "https://registry.npmjs.org/promiz/-/promiz-1.0.3.tgz",
-          "integrity": "sha1-2Fr+Z9saBlFt4V1Zl8Hhq8EC7TU="
-        },
-        "uuid": {
-          "version": "2.0.3",
-          "resolved": "https://registry.npmjs.org/uuid/-/uuid-2.0.3.tgz",
-          "integrity": "sha1-Z+LoY3lyFVMN/zGOW/nc6/1Hsho="
-        }
+        "uuid": "^3.3.2"
       }
     },
     "portfinder": {
