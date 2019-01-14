@@ -7,6 +7,9 @@ _uniq = require 'lodash/uniq'
 Environment = require './environment'
 colors = require '../colors'
 
+MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
+          'oct', 'nov', 'dec']
+
 class MapService
   getDirections: (place, {model}) ->
     target = '_system'
@@ -85,9 +88,9 @@ class MapService
         name: model.l.get 'campground.cellSignal'
       }
       {
-        field: 'crowds'
+        field: 'fullness'
         type: 'maxIntSeasonal'
-        name: model.l.get 'campground.crowds'
+        name: model.l.get 'campground.fullness'
       }
       {
         field: 'weather'
@@ -100,9 +103,9 @@ class MapService
         name: model.l.get 'campground.distanceTo'
       }
       {
-        field: 'fullness'
+        field: 'crowds'
         type: 'maxIntSeasonal'
-        name: model.l.get 'campground.fullness'
+        name: model.l.get 'campground.crowds'
       }
       {
         field: 'roadDifficulty'

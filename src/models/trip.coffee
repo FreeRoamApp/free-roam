@@ -23,11 +23,6 @@ module.exports = class Trip
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
 
-  addCheckIn: (options) =>
-    @auth.call "#{@namespace}.addCheckIn", options, {
-      invalidateAll: true
-    }
-
   upsert: (options) =>
     @auth.call "#{@namespace}.upsert", options, {
       invalidateAll: true

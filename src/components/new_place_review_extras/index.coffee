@@ -14,6 +14,7 @@ Checkbox = require '../checkbox'
 Dropdown = require '../dropdown'
 InputRange = require '../input_range'
 PrimaryButton = require '../primary_button'
+RigInfo = require '../rig_info'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -26,6 +27,7 @@ module.exports = class PlaceNewReviewExtras
     me = @model.user.getMe()
 
     @$addCarrierButton = new PrimaryButton()
+    @$rigInfo = new RigInfo {@model, @router}
 
     @seasons =  [
       {key: 'spring', text: @model.l.get 'seasons.spring'}
@@ -120,12 +122,11 @@ module.exports = class PlaceNewReviewExtras
   render: =>
     {season, carriers, fieldsValues} = @state.getValue()
 
-    ###
-    TODO: rig
-    ###
-
     z '.z-place-new-review-extras',
       z '.g-grid',
+
+        z '.field',
+          z @$rigInfo
         z '.field.cell',
           z '.name', @model.l.get 'newReviewExtras.cellSignal'
           z '.carriers',

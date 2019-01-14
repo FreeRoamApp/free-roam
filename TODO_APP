@@ -1,11 +1,14 @@
 - Reputation & Leveling, plan it out
-  - Start with 10 levels
+  - Start with 10 levels?
     -
   - Earn for:
     - Posting a review (initially, eventually get rid of in favor of likes)
     - Review getting likes
     - Photo getting likes
     - Forum thread getting likes
+
+### what are the real rewards? eg talent points in wow, new gear available, dungeons
+### WHY does a user want to level up?
 
 
 
@@ -22,18 +25,31 @@
 - See who other sites have partnered with for gear giveaways and reach out to company
   - See what they got out of it, what they wish they got out of it
 - Run contests for people w/ most rep each week
+- Notification when someone likes your review? A la Instagram?
+- I think badges (achievements) are a must
+- Leaderboard
+- Turn this into an agent for good. Huge points for attending cleanup events
+
+- Should you get points for checking in?
+- Need to figure out if points should be given as reputation/karma (reviews, etc..) or activity (check-ins, etc..)
+
+Activity route:
+-No levels, just points
+- Earn for:
+  - First check-in bonus points
+  - Check-in
+  - Review
+  - Photos
+
+Karma route
+- Earn for
+  - People thumbing up reviews, posts, photos
+
+
+Definitely want at least badges. Still undecided on activity based points (exp) vs solely reputation based (karma)
 
 TODOS:
-- Legend
-- Cluster backend, send client coordinates only of clustered points then cluster client?
-  - Problem with clustering is we're showing data points from multiple sources (eg campgrounds & overnights)
-    so clustering would overlap. Would need to fetch all points in 1 req
-  - Better solution is probbly just a more even distribution
-
-  - Maybe cluster only when map is zoomed out AND there are more than 250 results?
-    - That would require 2 ES queries though and not be great for offline mode?
-
-
+x Legend
 - Google Play exp w/ new iOS style screenshots
 - Review voting
 - Photo voting
@@ -144,6 +160,33 @@ x Let people add their website link / Instagram
     - Only ~10-15 queries over a month for dump station, so probably not worth to add yet?
 - "Location you're searching not showing? Let us know! **button**"
 - Warning message on campgrounds w/o reviews
+- Campground description
+- Ask for rig information on first review (review extras)
+- link to MVUM for USFS https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
+- make road condition seasonal
+- usfs roads?
+- offline
+  - only cache map searches when recording enabled
+    - cache w/o the bounds, so all show? or cache by zoom level?
+  x better shells
+- improve the shell/loading pages to have less thrashing / be more than just a spinner
+  x homepage
+  - place page
+- And maybe somewhere that would help us find out where/when gatherings are because I get a lot of questions about them! But I usually only know the west coast ones. So it would be nice to have one app that shared all the known gatherings and info.
+  - divineontheroad
+
+- ATV trails as a nearby amenity
+  - Filter by distance to ATV trails
+  - https://bit.ly/2JnjQBD
+
+- "We don't have any data for this season yet, but here\'s what it was like in *season*"
+- no reviews -> loading
+- pad types, mark seasonal campgrounds (checkbox when creating + dates its open / link)
+- compress images before upload
+- Add gyms
+- Don't load nearby map until tab is active
+- only 6% go to nearby tab from main tab
+
 x Places nearby: show closest & show all toggle (so it's not a bunch of walmarts)
   x went with fading out non-closest
 x Merge reviewless_campgrounds into campgrounds.
@@ -163,21 +206,7 @@ x Better coloring for overlapping like Verizon + BLM (hard to make out which par
 n Inline css req for shell, then load in the rest async
   n Seems to difficult and if we were to do it, we'd have to generate css for every page, or just the home page
 x I think it's asking for PWA update after cache gets cleared when exoid doesn't match up (eg when group updates)
-- Campground description
-- Ask for rig information on first review (review extras)
-- link to MVUM for USFS https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
-- make road condition seasonal
-- usfs roads?
-- offline
-  - only cache map searches when recording enabled
-    - cache w/o the bounds, so all show? or cache by zoom level?
-  x better shells
-- improve the shell/loading pages to have less thrashing / be more than just a spinner
-  x homepage
-  - place page
-- And maybe somewhere that would help us find out where/when gatherings are because I get a lot of questions about them! But I usually only know the west coast ones. So it would be nice to have one app that shared all the known gatherings and info.
-  - divineontheroad
-- rec.gov campgrounds
+x rec.gov campgrounds
   x "Unvetted Campgrounds"
   x COE, WMA (wma too difficult to automate)
   n "We think this campsite is free, but you should verify through their website or phone number. If you've been here, please add a review so we can move this to our normal campground section!"
@@ -187,18 +216,10 @@ x I think it's asking for PWA update after cache gets cleared when exoid doesn't
 x Favorite GPS points (not just campgrounds)
   x Be able to send that GPS point as a clickable Google Map link to other apps (text, Slack, email, Google Auto)
   x roadpickle
-- ATV trails as a nearby amenity
-  - Filter by distance to ATV trails
-  - https://bit.ly/2JnjQBD
 x Edit review use initial season for value?
 x Tooltip picture and reviews
 x Swipe / tap through gallery of images
-- "We don't have any data for this season yet, but here\'s what it was like in *season*"
-- no reviews -> loading
-- pad types, mark seasonal campgrounds (checkbox when creating + dates its open / link)
-- compress images before upload
 x Mark low overhangs, sharp turns
-- Add gyms
 x overlay$ -> model. get all overlay, sheet, dialog components
 x method to input sliders for other seasons w/o adding review score
 x 4g/3g toggle for signal
@@ -214,11 +235,18 @@ n Map doesn't show after locking and unlocking phone?
   n probably webgl losing context https://github.com/mapbox/mapbox-gl-js/issues/2656
   n can plugin to inspect after it happens?
   n couldn't replicate anymore
-- Don't load nearby map until tab is active
-  - only 6% go to nearby tab from main tab
 x Add review redirect back to reviews
 x Reviews add to photos
 x Show photos on place page
+
+- Cluster points on backend? send client coordinates only of clustered points then cluster client?
+  - Problem with clustering is we're showing data points from multiple sources (eg campgrounds & overnights)
+    so clustering would overlap. Would need to fetch all points in 1 req
+  - Better solution is probbly just a more even distribution
+
+  - Maybe cluster only when map is zoomed out AND there are more than 250 results?
+    - That would require 2 ES queries though and not be great for offline mode?
+
 
 
 Feedback:
@@ -227,11 +255,11 @@ Feedback:
 
 
 x Update Google Play & iOS descriptions
-- Onboarding in chat. The community for Boondockers
+x Onboarding in chat. The community for Boondockers
 x "Find me a WALMART!", maybe some people-of-walmart personality here while it's loading
 x Nearest dump, fresh water
-- Find campgrounds YouTubers have been to, link videos, Instagram posts?
-  - Ask YouTuber if it's alright if we link to video from the page, explain FreeRoam
+n Find campgrounds YouTubers have been to, link videos, Instagram posts?
+  n Ask YouTuber if it's alright if we link to video from the page, explain FreeRoam
 
 ---
 

@@ -31,9 +31,6 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
-          'oct', 'nov', 'dec']
-
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, isShell, @dataTypes, showScale, mapBoundsStreams,

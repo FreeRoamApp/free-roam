@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
@@ -64,7 +65,7 @@ module.exports = class PlaceInfo extends Base
     }
     @$spinner = new Spinner()
     @$directionsIcon = new Icon()
-    @$addReviewIcon = new Icon()
+    @$checkInIcon = new Icon()
     @$saveIcon = new Icon()
     @$respectCard = new UiCard()
 
@@ -81,16 +82,18 @@ module.exports = class PlaceInfo extends Base
         height: 200
     }
 
-    myPlacesAndPlace = RxObservable.combineLatest(
-      @model.checkIn.getAll()
-      @place
-      (vals...) -> vals
-    )
+    @checkInsStreams = new RxReplaySubject 1
+    @resetValueStreams()
+    checkIns = @checkInsStreams.switch()
 
     @state = z.state
-      isSaving: false
-      isSaved: myPlacesAndPlace.map ([myPlaces, place]) ->
-        Boolean _find myPlaces, {sourceId: place?.id}
+      visitedSaving: false
+      plannedSaving: false
+      visitedCheckIn: checkIns.map (checkIns) ->
+        _find(checkIns, {status: 'visited'}) or false
+      plannedCheckIn: checkIns.map (checkIns) ->
+        _find(checkIns, {status: 'planned'}) or false
+      checkIns: checkIns
       amenities: @place.map (place) ->
         _map place?.amenities, (amenity) ->
           {
@@ -111,6 +114,16 @@ module.exports = class PlaceInfo extends Base
             }
         }
 
+  resetValueStreams: =>
+    checkInsAndPlace = RxObservable.combineLatest(
+      @model.checkIn.getAll()
+      @place
+      (vals...) -> vals
+    )
+
+    @checkInsStreams.next checkInsAndPlace.map ([checkIns, place]) ->
+      _filter checkIns, {sourceId: place?.id}
+
   afterMount: =>
     super
     # FIXME: figure out why i can't use take(1) here...
@@ -123,39 +136,57 @@ module.exports = class PlaceInfo extends Base
   beforeUnmount: =>
     super
     @disposable?.unsubscribe()
+    @state.set isSaving: false
+    @resetValueStreams()
 
   getCoverUrl: (place) =>
     @model.image.getSrcByPrefix(
       place.attachmentsPreview.first.prefix, 'large'
     )
 
-  addReview: (place) =>
-    path = "new#{_startCase(place?.type)}Review"
-    @router.go path, {slug: place?.slug}
-
-  save: =>
-    {place, isSaved} = @state.getValue()
+  checkIn: (status) =>
+    {place, checkIns} = @state.getValue()
     place = place.place
 
-    @state.set isSaving: true
-    if isSaved
+    ga? 'send', 'event', 'placeInfo', 'checkIn', status
+
+    @state.set "#{status}Saving": true
+    checkIn = _find checkIns, {status}
+    if checkIn
       @model.checkIn.deleteByRow {
-        sourceType: place.type
-        sourceId: place.id
+        id: checkIn.id
       }
-      .then =>
-        @state.set isSaving: false
+      .then (checkIn) =>
+        @state.set "#{status}Saving": false
+        @checkInsStreams.next RxObservable.of _filter checkIns, (checkIn) ->
+          checkIn.status isnt status
     else
       @model.checkIn.upsert {
+        name: place.name
         sourceType: place.type
         sourceId: place.id
+        status: status
       }
-      .then =>
-        @state.set isSaving: false
+      .then (checkIn) =>
+        @state.set "#{status}Saving": false
+        @checkInsStreams.next RxObservable.of checkIns.concat checkIn
+        @model.statusBar.open {
+          text: @model.l.get "placeInfo.#{status}Saved"
+          type: 'snack'
+          timeMs: 5000
+          action:
+            text: @model.l.get 'placeInfo.viewTrip'
+            onclick: =>
+              @router.go 'editTripByType', {
+                type: if status is 'visited' then 'past' else 'future'
+              }
+              @model.statusBar.close()
+
+        }
 
   render: =>
-    {place, isSaved, isSaving, amenities,
-      hasSeenRespectCard} = @state.getValue()
+    {place, visitedCheckIn, plannedCheckIn, checkIns, visitedSaving,
+      plannedSaving, amenities, hasSeenRespectCard} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
 
@@ -216,27 +247,34 @@ module.exports = class PlaceInfo extends Base
                 z '.divider'
                 z '.action', {
                   onclick: =>
-                    @addReview place
+                    @checkIn 'visited'
                 },
                   z '.icon',
-                    z @$addReviewIcon,
-                      icon: 'add-circle'
+                    z @$checkInIcon,
+                      icon: 'location'
                       isTouchTarget: false
-                      color: colors.$bgText54
-                  z '.text', @model.l.get 'placeInfo.addReview'
+                      color: if visitedCheckIn \
+                             then colors.$primary500
+                             else colors.$bgText54
+                  z '.text',
+                    if visitedSaving then @model.l.get 'general.saving'
+                    else if visitedCheckIn then @model.l.get 'placeInfo.checkedIn'
+                    else @model.l.get 'placeInfo.checkIn'
               ]
             z '.divider'
             z '.action', {
-              onclick: @save
+              onclick: => @checkIn 'planned'
             },
               z '.icon',
                 z @$saveIcon,
                   icon: 'star'
                   isTouchTarget: false
-                  color: colors.$bgText54
+                  color: if plannedCheckIn \
+                         then colors.$primary500
+                         else colors.$bgText54
               z '.text',
-                if isSaving then @model.l.get 'general.saving'
-                else if isSaved then @model.l.get 'general.saved'
+                if plannedSaving then @model.l.get 'general.saving'
+                else if plannedCheckIn then @model.l.get 'general.saved'
                 else @model.l.get 'general.save'
 
         z '.contact',

@@ -296,8 +296,10 @@ module.exports = class App
     if @router.preservedRequest
       $page = @router.preservedRequest?.$page
       $overlayPage = request?.$page
+      hasBottomBar = $overlayPage.hasBottomBar
     else
       $page = request?.$page or $backupPage
+      hasBottomBar = $page?.$bottomBar
 
     hasOverlayPage = $overlayPage?
 
@@ -320,9 +322,7 @@ module.exports = class App
             },
               if isStatusBarVisible
                 if statusBarData.type is 'snack'
-                  z @$snackBar, {
-                    hasBottomBar: $page?.$bottomBar
-                  }
+                  z @$snackBar, {hasBottomBar}
                 else
                   z @$statusBar
               z '.page', {key: 'page'},

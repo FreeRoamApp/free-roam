@@ -9,6 +9,8 @@ module.exports = class StatusBar
 
   open: (data) =>
     @_data.next data
+    if data?.timeMs
+      setTimeout @close, data.timeMs
 
   close: =>
     @_data.next null

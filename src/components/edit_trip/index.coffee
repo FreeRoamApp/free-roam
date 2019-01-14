@@ -180,8 +180,8 @@ module.exports = class EditTrip extends Base
       location: "#{checkIn.location.lat}, #{checkIn.location.lon}"
     }, {invalidateAll: false}
     .then ({id}) =>
-      @model.trip.addCheckIn {
-        id: trip.id
+      @model.checkIn.upsert {
+        tripIds: [trip.id]
         name: checkIn.name
         sourceType: 'coordinate'
         sourceId: id

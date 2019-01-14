@@ -47,6 +47,7 @@ module.exports = class PlaceTooltip extends MapTooltip
       @model.checkIn.upsert {
         sourceType: 'coordinate'
         sourceId: id
+        status: 'planned'
       }
     .then =>
       @state.set isSaving: false, isSaved: true

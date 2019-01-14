@@ -15,6 +15,7 @@ PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
 FlatButton = require '../flat_button'
 PrimaryInput = require '../primary_input'
+RigInfo = require '../rig_info'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -35,6 +36,8 @@ module.exports = class EditProfile
     @$recordButton = new SecondaryButton()
     @$cacheSizeButton = new FlatButton()
     @$clearCacheButton = new FlatButton()
+
+    @$rigInfo = new RigInfo {@model, @router}
 
     @usernameValueStreams = new RxReplaySubject 1
     @usernameValueStreams.next me.map (me) ->
@@ -158,6 +161,8 @@ module.exports = class EditProfile
               isFullWidth: false
               type: 'password'
               disableAutoComplete: true
+
+        z @$rigInfo
 
         if newPassword
           z '.section',
