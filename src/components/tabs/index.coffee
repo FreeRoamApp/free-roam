@@ -126,8 +126,10 @@ module.exports = class Tabs
     {tabs, barColor, barBgColor, barInactiveColor, isBarFixed, isBarFlat,
       barTabWidth, windowSize, vDomKey, barStyle} = options
 
+    {selectedIndex, hideTabBar, windowSize} = @state.getValue()
+
     tabs ?= [{$el: ''}]
-    x = @iScrollContainer?.x
+    x = @iScrollContainer?.x or -1 * selectedIndex * (windowSize?.width or 0)
 
     # if @lastTabsLength and tabs?.length and @lastTabsLength isnt tabs?.length
     #   @beforeUnmount true
@@ -136,7 +138,6 @@ module.exports = class Tabs
     #   , 100
     # @lastTabsLength = tabs?.length
 
-    {selectedIndex, hideTabBar, windowSize} = @state.getValue()
 
     vDomKey = "#{vDomKey}-tabs-#{tabs?.length}"
     isBarFixed ?= true

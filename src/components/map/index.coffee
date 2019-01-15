@@ -130,6 +130,29 @@ module.exports = class Map
           'text-color': '#ffffff'
       }
     else
+      # two separate layers because mapbox is kind of buggy with all in one
+      # layer. main problem is icon-allow-overlap: false gets rid of the
+      # nice fading in and out. once fixed, try having in same layer again?
+      # https://github.com/mapbox/mapbox-gl-js/issues/6052
+      @map.addLayer {
+        id: 'places-text'
+        type: 'symbol'
+        source: 'places'
+        minzoom: 8
+        layout:
+          'text-field': '{name}'
+
+          'text-ignore-placement': false
+          'text-allow-overlap': false
+          'text-anchor': 'bottom-left'
+          'text-font': ['Open Sans Regular'] # must exist in tilejson
+          'text-size': 12
+        paint:
+          'text-opacity': ['get', 'iconOpacity']
+          'text-translate': [12, -4]
+          'text-halo-color': 'rgba(255, 255, 255, 1)'
+          'text-halo-width': 2
+      }
       @map.addLayer {
         id: 'places'
         type: 'symbol'
@@ -144,31 +167,9 @@ module.exports = class Map
 
           'icon-size': 1
           'icon-anchor': 'bottom'
-          # having text causes icons to occasionally show then fade out and
-          # back. i think??? because of the opacity stops hack.
-          # alternative is creating two layers using same source, with minzoom
-          # and maxzoom, but i think that's less performant.
-          # text-opacity isn't a good solution as it has same fading issue,
-          # and the transparent text is still clickable
-          # maybe this fixes:
-          # https://github.com/mapbox/mapbox-gl-js/issues/6692
-          'text-field': '{name}'
-          'text-optional': true
-          'text-anchor': 'bottom-left'
-          'text-size':
-            stops: [
-              [0, 0]
-              [8, 0]
-              [8.001, 12]
-            ]
-          'text-font': ['Open Sans Regular'] # must exist in tilejson
 
         paint:
           'icon-opacity': ['get', 'iconOpacity']
-          'text-opacity': ['get', 'iconOpacity']
-          'text-translate': [12, -4]
-          'text-halo-color': 'rgba(255, 255, 255, 1)'
-          'text-halo-width': 2
       }
 
   addRouteLayers: =>
@@ -305,7 +306,7 @@ module.exports = class Map
             location: [e.lngLat.lng, e.lngLat.lat]
           }
 
-        @map.on 'click', 'places', (e) =>
+        onclick = (e) =>
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
           number = e.features[0].properties.number
@@ -333,14 +334,20 @@ module.exports = class Map
             position: position
             location: coordinates
           }
+        @map.on 'click', 'places', onclick
+        @map.on 'click', 'places-text', onclick
 
       # Change the cursor to a pointer when the mouse is over the places layer.
-      @map.on 'mouseenter', 'places', =>
+      onmouseenter = =>
         @map.getCanvas().style.cursor = 'pointer'
+      @map.on 'mouseenter', 'places', onmouseenter
+      @map.on 'mouseenter', 'places-text', onmouseenter
 
       # Change it back to a pointer when it leaves.
-      @map.on 'mouseleave', 'places', =>
+      onmouseleave = =>
         @map.getCanvas().style.cursor = ''
+      @map.on 'mouseleave', 'places', onmouseleave
+      @map.on 'mouseleave', 'places-text', onmouseleave
 
   beforeUnmount: =>
     console.log 'rm subscription'

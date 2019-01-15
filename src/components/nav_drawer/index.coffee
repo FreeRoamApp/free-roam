@@ -8,8 +8,9 @@ _clone = require 'lodash/clone'
 _find = require 'lodash/find'
 _some = require 'lodash/some'
 RxObservable = require('rxjs/Observable').Observable
-require 'rxjs/add/observable/merge'
+require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/map'
+require 'rxjs/add/operator/startWith'
 
 Icon = require '../icon'
 FlatButton = require '../flat_button'
@@ -47,12 +48,11 @@ module.exports = class NavDrawer
     me = @model.user.getMe()
     # settle as soon as one is ready, otherwise the nav menu might flash blank
     # while the others load
-    menuItemsInfo = RxObservable.merge(
+    menuItemsInfo = RxObservable.combineLatest(
       me
-      group
-      @model.l.getLanguage()
-      hasUnreadMessages
-      (vals...) -> vals
+      group.startWith(null)
+      @model.l.getLanguage().startWith(null)
+      hasUnreadMessages.startWith(null)
     )
 
     myGroups = me.switchMap (me) =>

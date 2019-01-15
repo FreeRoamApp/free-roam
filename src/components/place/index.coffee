@@ -28,7 +28,10 @@ module.exports = class Place
 
     @$placeInfo = new PlaceInfo {@model, @router, place}
     @$reviews = new Reviews {@model, @router, parent: place}
-    @$nearby = new PlaceNearby {@model, @router, place}
+    @$nearby = new PlaceNearby {
+      @model, @router, place
+      isActive: @selectedIndex.map (index) -> index is 2
+    }
 
     # @$reviewsTooltip = new Tooltip {
     #   @model

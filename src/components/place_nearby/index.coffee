@@ -23,7 +23,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceNearby
-  constructor: ({@model, @router, @place}) ->
+  constructor: ({@model, @router, @place, @isActive}) ->
     nearestAmenities = @place.switchMap (place) =>
       unless place
         return RxObservable.of []
@@ -62,6 +62,7 @@ module.exports = class PlaceNearby
 
     @$fab = new Fab()
     @$addIcon = new Icon()
+
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, initialZoom: 9, defaultOpacity: 0.3
       showScale: true, addPlaces, mapBoundsStreams, isSearchHidden: true
@@ -116,10 +117,24 @@ module.exports = class PlaceNearby
             nearbyPlace
     }
 
+    # don't fully load map to DOM / subscribe until user switches to this tab
+    @isMapVisible = new RxBehaviorSubject false
+
     @state = z.state {
       @isCellTowersChecked
       @place
+      @isMapVisible
     }
+
+  beforeUnmount: =>
+    @disposable.unsubscribe()
+    @isMapVisible.next false
+
+  afterMount: =>
+    @disposable = @isActive.subscribe (isActive) =>
+      if isActive and not @isMapVisible.getValue()
+        @isMapVisible.next true
+
 
   getAmenityFilters: =>
     []
@@ -128,14 +143,15 @@ module.exports = class PlaceNearby
     []
 
   render: =>
-    {isCellTowersChecked, place} = @state.getValue()
+    {isCellTowersChecked, place, isMapVisible} = @state.getValue()
 
     z '.z-place-nearby',
       z '.map', {
         ontouchstart: (e) -> e.stopPropagation()
         onmousedown: (e) -> e.stopPropagation()
       },
-        z @$placesMapContainer
+        if isMapVisible
+          z @$placesMapContainer
         z '.toggle-cell-towers', {
           onclick: =>
             @isCellTowersChecked.next not isCellTowersChecked
