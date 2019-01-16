@@ -9,9 +9,14 @@ if window?
 
 
 module.exports = class PlacesFilterBar
-  constructor: ({@model, @isFilterTypesVisible, @currentDataType}) ->
+  constructor: (options) ->
+    {@model, @isFilterTypesVisible, @currentDataType,
+      trip, @isTripFilterEnabled} = options
+
     @state = z.state {
       @isFilterTypesVisible
+      trip
+      @isTripFilterEnabled
     }
 
   showFilterDialog: (filter) =>
@@ -20,7 +25,9 @@ module.exports = class PlacesFilterBar
     }
 
   render: ({dataTypes, currentDataType, filterTypes, visibleDataTypes}) =>
-    {isFilterTypesVisible} = @state.getValue()
+    {isFilterTypesVisible, trip, isTripFilterEnabled} = @state.getValue()
+
+    console.log 'trip', trip, isTripFilterEnabled
 
     z '.z-places-filter-bar', {
       className: z.classKebab {
@@ -38,6 +45,14 @@ module.exports = class PlacesFilterBar
         z '.filters', {
           className: z.classKebab {"#{currentDataType}": true}
         },
+          if trip
+            z '.filter', {
+              className: z.classKebab {
+                hasValue: isTripFilterEnabled
+              }
+              onclick: =>
+                @isTripFilterEnabled.next not isTripFilterEnabled
+            }, @model.l.get 'placesFilterBar.alongRoute'
           _map filterTypes?[currentDataType], (filter) =>
             if filter.name
               z '.filter', {

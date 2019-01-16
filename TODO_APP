@@ -49,6 +49,7 @@ Karma route
 Definitely want at least badges. Still undecided on activity based points (exp) vs solely reputation based (karma)
 
 TODOS:
+- Get less people tapping on new campground link (don't think they know that's what it is)
 x Legend
 - Google Play exp w/ new iOS style screenshots
 - Review voting
@@ -146,7 +147,7 @@ x Let people add their website link / Instagram
 
     - Exoid cache gets very large with all of the place.search reqs. Clear them out
     - Message first time clicking on a filter saying it's only for that data type?
-- Ask for RV size when reviewing (stored rig info) and filter by rv size
+x Ask for RV size when reviewing (stored rig info) and filter by rv size
 - Delete campground
   - https://freeroam.app/campground/the-salty-spot-iqualuit/reviews
 - Cost and discounts would be useful. For example, New Mexico state parks are crazy-cheap with an annual pass, which is why so many full-timers come here. Some BLM campgrounds offer 1/2 price camping for someone with a National Parks pass. Etc.
@@ -155,7 +156,7 @@ x Let people add their website link / Instagram
   - https://github.com/Esri/cordova-plugin-advanced-geolocation
   - Get carrier, band, strength, maybe download speed?
 - Search
-  - Allow searching campground name
+  x Allow searching campground name
   - Allow searching type? Eg "Walmarts" gets them to the right place
   - Common queries:
     - Florida, Dump / Dump Station, Tucson, Arizona, Moab, Bakersfield, Las Cruces, Ohio
@@ -163,7 +164,7 @@ x Let people add their website link / Instagram
 - "Location you're searching not showing? Let us know! **button**"
 - Warning message on campgrounds w/o reviews
 - Campground description
-- Ask for rig information on first review (review extras)
+x Ask for rig information on first review (review extras)
 - link to MVUM for USFS https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
 - make road condition seasonal
 - usfs roads?
@@ -186,8 +187,8 @@ x Let people add their website link / Instagram
 - pad types, mark seasonal campgrounds (checkbox when creating + dates its open / link)
 - compress images before upload
 - Add gyms
-- Don't load nearby map until tab is active
-- only 6% go to nearby tab from main tab
+x Don't load nearby map until tab is active
+x only 6% go to nearby tab from main tab
 
 x Places nearby: show closest & show all toggle (so it's not a bunch of walmarts)
   x went with fading out non-closest

@@ -33,7 +33,7 @@ if window?
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, isShell, @dataTypes, showScale, mapBoundsStreams,
+    {@model, @router, isShell, @trip, @dataTypes, showScale, mapBoundsStreams,
       @persistentCookiePrefix, @addPlaces, @optionalLayers, @isSearchHidden,
       @limit, @sort, defaultOpacity, @currentDataType, initialCenter, center,
       initialZoom, zoom} = options
@@ -64,6 +64,10 @@ module.exports = class PlacesMapContainer
     @isLegendVisible = new RxBehaviorSubject false
 
     @dataTypesStream = @getDataTypesStreams @dataTypes
+
+    @isTripFilterEnabled = new RxBehaviorSubject Boolean @trip
+    route = @trip?.map (trip) ->
+      trip?.route
 
     @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
     placesStream = @getPlacesStream()
@@ -112,7 +116,7 @@ module.exports = class PlacesMapContainer
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
       defaultOpacity, initialCenter, center, initialZoom,  zoom,
-      initialLayers
+      initialLayers, route
     }
     @$placeTooltip = new PlaceTooltip {
       @model, @router, @place, position: @placePosition, @mapSize
@@ -136,6 +140,7 @@ module.exports = class PlacesMapContainer
     }
     @$placesFilterBar = new PlacesFilterBar {
       @model, @isFilterTypesVisible, @currentDataType
+      @trip, @isTripFilterEnabled
     }
 
     @state = z.state
@@ -260,11 +265,15 @@ module.exports = class PlacesMapContainer
       return RxObservable.of []
 
     streamValues = RxObservable.combineLatest(
-      @filterTypesStream, @currentMapBounds, @dataTypesStream, @sort, @limit
+      @filterTypesStream, @currentMapBounds, @dataTypesStream
+      @sort, @limit, @trip, @isTripFilterEnabled
       (vals...) -> vals
     )
     streamValues.switchMap (response) =>
-      [filterTypes, currentMapBounds, dataTypes, sort, limit] = response
+      [
+        filterTypes, currentMapBounds, dataTypes, sort, limit, trip,
+        isTripFilterEnabled
+      ] = response
 
       boundsTooSmall = not currentMapBounds or Math.abs(
         currentMapBounds.bounds._ne.lat - currentMapBounds.bounds._sw.lat
@@ -281,10 +290,10 @@ module.exports = class PlacesMapContainer
           filters, currentMapBounds?.bounds
         )
 
-
         @model[dataType].search {
           limit: limit
           sort: sort
+          tripId: if isTripFilterEnabled then trip?.id
           query:
             bool:
               filter: queryFilter
@@ -345,6 +354,7 @@ module.exports = class PlacesMapContainer
             z @$placesSearch, {dataTypes}
             z @$placesFilterBar, {
               dataTypes, currentDataType, filterTypes, visibleDataTypes
+              @trip, @isTripFilterEnabled
             }
         z '.counts-bar', {
           className: z.classKebab {isVisible: isCountsBarVisbile}

@@ -96,7 +96,6 @@ model = new Model {
     document.cookie = cookie.serialize \
       key, value, options
 }
-model.portal.listen()
 
 onOnline = ->
   model.statusBar.close()
@@ -113,6 +112,7 @@ onOffline = ->
 ###
 ServiceWorkerService.register {model}
 
+model.portal.listen()
 
 ###
 # DOM stuff

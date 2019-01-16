@@ -9,7 +9,7 @@ module.exports = class Experiment
       @cookie.set 'exp:noProductGuides', expNoProductGuides
 
     setTimeout ->
-      ga? 'send', '/event', 'exp', "noProductGuides:#{expNoProductGuides}"
+      ga? 'send', 'event', 'exp', "noProductGuides:#{expNoProductGuides}"
     , 0
 
     @experiments =

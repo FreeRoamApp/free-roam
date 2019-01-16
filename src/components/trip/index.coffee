@@ -19,7 +19,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class EditTrip extends Base
+module.exports = class Trip extends Base
   constructor: ({@model, @router, @trip}) ->
     checkIns = @trip.map (trip) ->
       trip?.checkIns

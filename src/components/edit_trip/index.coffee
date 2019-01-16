@@ -214,6 +214,14 @@ module.exports = class EditTrip extends Base
             z '.distance',
               @model.l.get 'trip.totalDistance'
               ": #{FormatService.number routeStats?.distance}mi"
+        z '.places-along-route', {
+          onclick: =>
+            @router.go 'home', null, {
+              qs:
+                tripId: trip.id
+            }
+        },
+          @model.l.get 'editTrip.findAlongRoute'
       z '.info',
         z @$locationSearch, {
           placeholder: @model.l.get 'editTrip.searchPlaceholder'

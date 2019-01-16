@@ -7,8 +7,8 @@ module.exports = class PlaceBase
     @auth.stream "#{@namespace}.getBySlug", {slug}
 
   # socket.io compresses responses, so a 50kb response is more like 10kb
-  search: ({query, sort, limit}) =>
-    @auth.stream "#{@namespace}.search", {query, sort, limit}
+  search: ({query, tripId, sort, limit}) =>
+    @auth.stream "#{@namespace}.search", {query, tripId, sort, limit}
 
   upsert: (options, {invalidateAll} = {}) =>
     invalidateAll ?= true

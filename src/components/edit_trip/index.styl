@@ -14,6 +14,7 @@
   > .map
     flex1()
     display: flex
+    position: relative
 
     > .stats
       position: absolute
@@ -28,6 +29,16 @@
 
         > .distance
           margin-left: auto
+
+    > .places-along-route
+      shadow-1()
+      position: absolute
+      bottom: 32px
+      right: 16px
+      background: getColor('$tertiary100')
+      padding: 8px
+      border-radius: 4px
+      cursor: pointer
 
   > .info
     flex1()
