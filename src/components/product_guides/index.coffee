@@ -6,6 +6,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 Icon = require '../icon'
 SearchInput = require '../search_input'
 Spinner = require '../spinner'
+UiCard = require '../ui_card'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -25,16 +26,31 @@ module.exports = class ProductGuides
     @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
+    @$infoCard = new UiCard()
+
     @$spinner = new Spinner()
 
     @state = z.state
       categories: @model.category.getAll()
+      hasSeenProductGuidesCard: @model.cookie.get 'hasSeenProductGuidesCard'
 
   render: =>
-    {categories} = @state.getValue()
+    {categories, hasSeenProductGuidesCard} = @state.getValue()
 
     z '.z-product-guides',
       z '.g-grid',
+        unless hasSeenProductGuidesCard
+          z '.info-card',
+            z @$infoCard, {
+              $title: @model.l.get 'productGuides.infoCardTitle'
+              $content: @model.l.get 'productGuides.infoCard'
+              submit:
+                text: @model.l.get 'general.gotIt'
+                onclick: =>
+                  @state.set hasSeenProductGuidesCard: true
+                  @model.cookie.set 'hasSeenProductGuidesCard', '1'
+            }
+
         z '.search',
           z @$searchInput, {
             isSearchOnSubmit: true
@@ -42,6 +58,7 @@ module.exports = class ProductGuides
             onsubmit: =>
               @router.go 'itemsBySearch', {query: @searchValue.getValue()}
           }
+
         z '.g-cols.lt-md-no-padding',
           if categories
             _map categories, (category, i) =>

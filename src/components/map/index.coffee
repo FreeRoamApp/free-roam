@@ -67,8 +67,8 @@ module.exports = class Map
     if index isnt -1
       @layers.splice index, 1
     layer = @map.getLayer id
-    source = layer.source
     @map.removeLayer id
+    # source = layer.source
     # @map.removeSource source
 
   toggleLayer: (layer, options) =>

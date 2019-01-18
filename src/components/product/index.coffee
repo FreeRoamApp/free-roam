@@ -42,8 +42,12 @@ module.exports = class Product
                 text: @model.l.get 'product.buyAmazon'
                 onclick: =>
                   ga? 'send', 'event', 'amazon', partner?.amazonAffiliateCode, product.slug
+                  affiliateCode = partner?.amazonAffiliateCode or ''
+
                   @model.portal.call 'browser.openWindow', {
-                    url: "https://amazon.com/dp/#{product.sourceId}?tag=#{partner?.amazonAffiliateCode}"
+                    url: if affiliateCode and affiliateCode isnt 'freeroam02-20' \
+                         then "https://amazon.com/dp/#{product.sourceId}?tag=#{affiliateCode}"
+                         else "https://amazon.com/dp/#{product.sourceId}"
                     target: '_system'
                   }
               }

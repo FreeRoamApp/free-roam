@@ -2,7 +2,6 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _startCase = require 'lodash/startCase'
 
-Fab = require '../fab'
 Icon = require '../icon'
 ClearanceWarningDialog = require '../clearance_warning_dialog'
 OvernightWarningDialog = require '../overnight_warning_dialog'
@@ -16,7 +15,6 @@ if window?
 
 module.exports = class Places
   constructor: ({@model, @router, isShell, trip}) ->
-    @$fab = new Fab()
     @$addIcon = new Icon()
 
     @currentDataType = new RxBehaviorSubject 'campground'
@@ -62,19 +60,3 @@ module.exports = class Places
 
     z '.z-places',
       z @$placesMapContainer
-
-      z '.fab',
-        z @$fab,
-          colors:
-            c500: colors.$tertiary100
-            ripple: colors.$bgText70
-          $icon: z @$addIcon, {
-            icon: 'add'
-            isTouchTarget: false
-            color: colors.$bgText70
-          }
-          onclick: =>
-            path = if currentDataType is 'overnight' \
-                   then 'newOvernight'
-                   else 'newCampground'
-            @router.go path

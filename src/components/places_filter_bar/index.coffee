@@ -27,8 +27,6 @@ module.exports = class PlacesFilterBar
   render: ({dataTypes, currentDataType, filterTypes, visibleDataTypes}) =>
     {isFilterTypesVisible, trip, isTripFilterEnabled} = @state.getValue()
 
-    console.log 'trip', trip, isTripFilterEnabled
-
     z '.z-places-filter-bar', {
       className: z.classKebab {
         hasMultipleDataTypes: visibleDataTypes?.length > 1

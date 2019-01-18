@@ -94,8 +94,9 @@ module.exports = class NavDrawer
         meGroupUser = group?.meGroupUser
 
         userAgent = @model.window.getUserAgent()
+        isNativeApp = Environment.isNativeApp('freeroam', {userAgent})
         needsApp = userAgent and
-                  not Environment.isNativeApp('freeroam', {userAgent}) and
+                  not isNativeApp and
                   not window?.matchMedia('(display-mode: standalone)').matches
 
         isMember = Boolean me?.username
@@ -203,6 +204,27 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'profile'
           # }
+
+          {
+            # path: @model.group.getPath group, 'groupAdminSettings', {@router}
+            expandOnClick: true
+            title: @model.l.get 'drawer.addPlace'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'add'
+            $chevronIcon: new Icon()
+            children: [
+              {
+                path: @router.get 'newCampground'
+                title: @model.l.get 'drawer.newCampground'
+              }
+              {
+                path: @router.get 'newOvernight'
+                title: @model.l.get 'drawer.newOvernight'
+              }
+            ]
+          }
+
           if @model.groupUser.hasPermission {
             meGroupUser, me, permissions: ['manageRole']
           }
@@ -244,7 +266,7 @@ module.exports = class NavDrawer
                 }
               ]
             }
-          if needsApp
+          if needsApp or isNativeApp
             {
               isDivider: true
             }
@@ -256,6 +278,16 @@ module.exports = class NavDrawer
               $icon: new Icon()
               $ripple: new Ripple()
               iconName: 'get'
+            }
+          else if isNativeApp
+            {
+              onclick: =>
+                ga? 'send', 'event', 'drawer', 'rate'
+                @model.portal.call 'app.rate'
+              title: @model.l.get 'drawer.menuItemRate'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'star'
             }
           ])
 
@@ -282,9 +314,9 @@ module.exports = class NavDrawer
 
     translateX = if isOpen then 0 else "-#{drawerWidth}px"
     # adblock plus blocks has-ad
-    hasA = @model.ad.isVisible({isWebOnly: true}) and
-      windowSize?.height > 880 and
-      not Environment.isMobile()
+    hasA = false #@model.ad.isVisible({isWebOnly: true}) and
+      # windowSize?.height > 880 and
+      # not Environment.isMobile()
 
     isGroupApp = group.slug and Environment.isGroupApp group.slug
 

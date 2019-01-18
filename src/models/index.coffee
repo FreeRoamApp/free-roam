@@ -16,7 +16,6 @@ require 'rxjs/add/observable/of'
 require 'rxjs/add/operator/take'
 
 Auth = require './auth'
-Ad = require './ad'
 Amenity = require './amenity'
 AdditionalScript = require './additional_script'
 Ban = require './ban'
@@ -144,7 +143,6 @@ module.exports = class Model
     @userBlock = new UserBlock {@auth}
     @userFollower = new UserFollower {@auth}
     @userRig = new UserRig {@auth}
-    @ad = new Ad {@portal, @cookie, userAgent}
     @additionalScript = new AdditionalScript()
     @amenity = new Amenity {@auth}
     @ban = new Ban {@auth}

@@ -70,7 +70,7 @@ module.exports = class About
 
         z '.divider.clear'
 
-        z 'p.disclaimer', @model.l.get 'about.amazon'
+        # z 'p.disclaimer', @model.l.get 'about.amazon'
         z 'p.disclaimer', @model.l.get 'about.opencellid'
 
         # Goals:

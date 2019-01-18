@@ -266,13 +266,13 @@ module.exports = class PlacesMapContainer
 
     streamValues = RxObservable.combineLatest(
       @filterTypesStream, @currentMapBounds, @dataTypesStream
-      @sort, @limit, @trip, @isTripFilterEnabled
+      @sort, @limit, @isTripFilterEnabled, @trip or RxObservable.of null
       (vals...) -> vals
     )
     streamValues.switchMap (response) =>
       [
-        filterTypes, currentMapBounds, dataTypes, sort, limit, trip,
-        isTripFilterEnabled
+        filterTypes, currentMapBounds, dataTypes, sort, limit,
+        isTripFilterEnabled, trip
       ] = response
 
       boundsTooSmall = not currentMapBounds or Math.abs(

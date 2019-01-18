@@ -31,6 +31,6 @@ module.exports = class FourOhFourPage
         z 'br'
         '(╯°□°)╯︵ ┻━┻'
         z @$homeButton,
-          text: @model.l.get 'stepBar.back'
+          text: @model.l.get 'general.back'
           onclick: =>
             @router.goPath '/'
