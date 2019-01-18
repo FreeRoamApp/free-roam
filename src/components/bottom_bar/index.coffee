@@ -44,20 +44,22 @@ module.exports = class BottomBar
         text: @model.l.get 'general.places'
         isDefault: true
       }
-      if @model.experiment.get('noProductGuides') is 'travelMap'
-        {
-          $icon: new Icon()
-          icon: 'marker-multiple'
-          route: @router.get 'trips'
-          text: @model.l.get 'general.trips'
-        }
-      else
-        {
-          $icon: new Icon()
-          icon: 'cart'
-          route: @router.get 'productGuides'
-          text: @model.l.get 'drawer.productGuide'
-        }
+      # have run 2 experiments with this. 1 where it replaces product guide
+      # in this menu, the other where it is in addition to product guide.
+      # in both experiments, the versions that had this (trip) in it performed
+      # significantly worse in session duration & retention
+      # {
+      #   $icon: new Icon()
+      #   icon: 'marker-multiple'
+      #   route: @router.get 'trips'
+      #   text: @model.l.get 'general.trips'
+      # }
+      {
+        $icon: new Icon()
+        icon: 'cart'
+        route: @router.get 'productGuides'
+        text: @model.l.get 'drawer.productGuide'
+      }
       {
         $icon: new Icon()
         icon: 'chat'
