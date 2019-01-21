@@ -29,6 +29,7 @@ ConversationMessage = require './conversation_message'
 Conversation = require './conversation'
 Coordinate = require './coordinate'
 Cookie = require './cookie'
+# EarnAction = require './earn_action'
 Experiment = require './experiment'
 Geocoder = require './geocoder'
 Gif = require './gif'
@@ -59,7 +60,9 @@ UserBlock = require './user_block'
 UserFollower = require './user_follower'
 UserRig = require './user_rig'
 Drawer = require './drawer'
+EarnAlert = require './earn_alert'
 Overlay = require './overlay'
+Tooltip = require './tooltip'
 InstallOverlay = require './install_overlay'
 Window = require './window'
 request = require '../services/request'
@@ -155,6 +158,7 @@ module.exports = class Model
     @conversationMessage = new ConversationMessage {@auth, proxy, @exoid}
     @conversation = new Conversation {@auth}
     @coordinate = new Coordinate {@auth}
+    # @earnAction = new EarnAction {@auth}
     @experiment = new Experiment {@cookie}
     @geocoder = new Geocoder {@auth}
     @gif = new Gif()
@@ -180,7 +184,9 @@ module.exports = class Model
     @trip = new Trip {@auth, proxy}
 
     @drawer = new Drawer()
+    @earnAlert = new EarnAlert()
     @installOverlay = new InstallOverlay {@l, @overlay}
+    @tooltip = new Tooltip()
     @offlineData = new OfflineData {@exoid, @portal, @statusBar, @l}
     @portal?.setModels {
       @user, @pushToken, @l, @installOverlay, @overlay

@@ -44,14 +44,6 @@ module.exports = class GroupManageMember
     @$addRoleButton = new PrimaryButton()
 
 
-    @addXpValue = new RxBehaviorSubject ''
-    @addXpError = new RxBehaviorSubject null
-    @$addXpInput = new PrimaryInput {
-      value: @addXpValue
-      error: @addXpError
-    }
-    @$addXpButton = new PrimaryButton()
-
     groupAndUser = RxObservable.combineLatest(group, user, (vals...) -> vals)
 
     @state = z.state
@@ -72,10 +64,6 @@ module.exports = class GroupManageMember
   render: =>
     {groupUser, group, user, me, windowSize,
       appBarHeight, roles, roleId} = @state.getValue()
-
-    hasAddXpPermission = @model.groupUser.hasPermission {
-      meGroupUser: group?.meGroupUser, me, permissions: ['addXp']
-    }
 
     z '.z-group-manage-member', {
       style:
@@ -113,20 +101,3 @@ module.exports = class GroupManageMember
               z @$addRoleButton,
                 text: @model.l.get 'groupManageMember.addRole'
                 onclick: @addRole
-
-          if hasAddXpPermission
-            z '.xp',
-              z '.current-xp', "#{groupUser?.xp}xp"
-              z '.add-xp',
-                z @$addXpInput, {
-                  type: 'number'
-                  hintText: @model.l.get 'groupManageMember.addXp'
-                }
-                z @$addXpButton, {
-                  text: @model.l.get 'groupManageMember.addXp'
-                  onclick: =>
-                    xp = @addXpValue.getValue()
-                    @model.groupUser.addXpByGroupIdAndUserId(
-                      group.id, user.id, xp
-                    )
-                }

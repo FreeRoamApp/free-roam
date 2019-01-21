@@ -9,7 +9,6 @@ _isEmpty = require 'lodash/isEmpty'
 
 SearchInput = require '../search_input'
 FlatButton = require '../flat_button'
-Tooltip = require '../tooltip'
 colors = require '../../colors'
 
 if window?

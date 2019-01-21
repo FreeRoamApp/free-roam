@@ -1,13 +1,7 @@
 z = require 'zorium'
-RxObservable = require('rxjs/Observable').Observable
-RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
-require 'rxjs/add/observable/combineLatest'
-_find = require 'lodash/find'
 _uniq = require 'lodash/uniq'
-_every = require 'lodash/every'
 
 Icon = require '../icon'
-Rating = require '../rating'
 Base = require '../base'
 colors = require '../../colors'
 
@@ -15,78 +9,43 @@ if window?
   require './index.styl'
 
 module.exports = class Tooltip extends Base
-  TOOLTIPS:
-    placeSearch:
-      prereqs: null
-    mapLayers:
-      prereqs: ['placeSearch']
-    placeTooltip:
-      prereqs: null
+  constructor: (options) ->
+    {@model, @key, @anchor, @offset, @isVisible, @zIndex
+      @$title, @$content, @initialPosition} = options
 
-  constructor: ({@model, @isVisible, @offset, @key, @anchor}) ->
-    unless window? # could also return right away if cookie exists for perf
-      return
     @$closeIcon = new Icon()
 
-    @isVisible ?= new RxBehaviorSubject false
-
-    @isNecessary = @model.cookie.getStream().map (cookies) =>
-      completed = cookies.completedTooltips?.split(',') or []
-      isCompleted = completed.indexOf(@key) isnt -1
-      prereqs = @TOOLTIPS[@key]?.prereqs
-      not isCompleted and _every prereqs, (prereq) ->
-        completed.indexOf(prereq) isnt -1
-    .publishReplay(1).refCount()
+    @isPositionSet = false
 
     @state = z.state {
-      isNecessary: @isNecessary
       @isVisible
       anchor: null
       transform: null
     }
 
   afterMount: (@$$el) =>
-    super
-    @disposable = @isNecessary.subscribe (isNecessary) =>
-      if isNecessary and not @isPositionSet
-        @isPositionSet = true
-        # despite having this, ios still calls this twice, hence the flag above
-        @disposable?.unsubscribe()
-        setTimeout =>
-          checkIsReady = =>
-            if @$$el and @$$el.clientWidth
-              @_setPosition @$$el
-            else
-              setTimeout checkIsReady, 100
-          checkIsReady()
-        , 0 # give time for re-render...
-
-  beforeUnmount: =>
-    clearTimeout @timeout
-    @disposable?.unsubscribe()
+    unless @isPositionSet
+      setTimeout =>
+        checkIsReady = =>
+          if @$$el and @$$el.clientWidth
+            @_setPosition @$$el
+          else
+            setTimeout checkIsReady, 100
+        checkIsReady()
+      , 0 # give time for re-render...
 
   _setPosition: ($$el) =>
+    @isPositionSet = true
     rect = $$el.getBoundingClientRect()
     windowSize = @model.window.getSize().getValue()
     position = {x: rect.left, y: rect.top}
     size = {width: rect.width, height: rect.height}
-    console.log 'anchor', @anchor
     anchor = @anchor or @getAnchor position, windowSize, size
-    @state.set
-      anchor: anchor
+    @state.set {
+      anchor
       transform: @getTransform position, anchor
+    }
     @isVisible.next true
-
-  close: =>
-    completedTooltips = try
-      @model.cookie.get('completedTooltips').split(',')
-    catch error
-      []
-    completedTooltips ?= []
-    @model.cookie.set 'completedTooltips', _uniq(
-      completedTooltips.concat [@key]
-    ).join(',')
-    @isVisible.next false
 
   getAnchor: (position, windowSize, size) ->
     width = windowSize?.width
@@ -116,29 +75,37 @@ module.exports = class Tooltip extends Base
                then -50
                else -100
     xPx = (position?.x or 8) + (@offset?.left or 0)
-    yPx = position?.y
+    yPx = position?.y + (@offset?.top or 0)
     "translate(#{xPercent}%, #{yPercent}%) translate(#{xPx}px, #{yPx}px)"
 
-  render: ({$title, $content} = {}) =>
-    if not window?
-      return
+  close: =>
+    completedTooltips = try
+      @model.cookie.get('completedTooltips').split(',')
+    catch error
+      []
+    completedTooltips ?= []
+    @model.cookie.set 'completedTooltips', _uniq(
+      completedTooltips.concat [@key]
+    ).join(',')
 
-    {isVisible, anchor, transform, isNecessary} = @state.getValue()
+    @isVisible.next false
+    @model.tooltip.set$ null
 
-    isPositionSet = Boolean anchor
+  render: =>
+    {anchor, transform, isVisible} = @state.getValue()
 
-    # doing this causes weird things to happen (multiple mounts, ...)
-    # unless isNecessary
-    #   return z ''
-    if not isNecessary
-      return z '.z-tooltip', {key: "tooltip-#{@key}"}
+    style =
+      top: if transform then 0 else "#{@initialPosition?.y or 0}px"
+      left: if transform then 0 else "#{@initialPosition?.x or 0}px"
+      transform: transform
+      webkitTransform: transform
+
+    if @zIndex
+      style.zIndex = @zIndex
 
     z ".z-tooltip.anchor-#{anchor}", {
-      key: "tooltip-#{@key}"
-      className: z.classKebab {isVisible, isPositionSet}
-      style:
-        transform: if isPositionSet then transform
-        webkitTransform: if isPositionSet then transform
+      className: z.classKebab {isVisible}
+      style: style
     },
       z '.close',
         z @$closeIcon,
@@ -148,5 +115,5 @@ module.exports = class Tooltip extends Base
           color: colors.$bgText54
           onclick: @close
       z '.content',
-        z '.title', $title
-        $content
+        z '.title', @$title
+        @$content

@@ -16,8 +16,9 @@ InfoLevel = require '../info_level'
 EmbeddedVideo = require '../embedded_video'
 FormattedText = require '../formatted_text'
 MasonryGrid = require '../masonry_grid'
-Spinner = require '../spinner'
 Rating = require '../rating'
+Spinner = require '../spinner'
+TooltipPositioner = require '../tooltip_positioner'
 UiCard = require '../ui_card'
 Environment = require '../../services/environment'
 MapService = require '../../services/map'
@@ -68,6 +69,15 @@ module.exports = class PlaceInfo extends Base
     @$checkInIcon = new Icon()
     @$saveIcon = new Icon()
     @$respectCard = new UiCard()
+    @$saveTooltip = new TooltipPositioner {
+      @model
+      key: 'saveLocation'
+      anchor: 'top-right'
+      zIndex: 999 # show for overlayPage
+      offset:
+        left: 32
+        top: 16
+    }
 
     @$details = new FormattedText {
       text: @place.map (place) ->
@@ -209,6 +219,8 @@ module.exports = class PlaceInfo extends Base
             @model.l.get 'placeInfo.seeAll', {
               replacements: {count: place.attachmentsPreview.count}
             }
+      else
+        z '.no-cover' # we want a div here so vdom doesn't move everything else
       z '.g-grid',
         z '.top-info',
           z '.left',
@@ -277,6 +289,9 @@ module.exports = class PlaceInfo extends Base
                 else if plannedCheckIn then @model.l.get 'general.saved'
                 else @model.l.get 'general.save'
 
+              if @model.experiment.get('saveTooltip') is 'visible'
+                z @$saveTooltip
+
         z '.contact',
           z '.coordinates',
             z 'span.title', "#{@model.l.get 'newPlaceInitialInfo.coordinates'}: "
@@ -322,7 +337,6 @@ module.exports = class PlaceInfo extends Base
 
         if place?.type is 'amenity'
           _map amenities, ({amenity, $icon}) ->
-            console.log amenity, $icon
             z '.amenity',
               z '.icon',
                 z $icon,

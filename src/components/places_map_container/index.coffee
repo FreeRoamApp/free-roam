@@ -22,7 +22,7 @@ PlaceTooltip = require '../place_tooltip'
 PlacesFilterBar = require '../places_filter_bar'
 PlacesSearch = require '../places_search'
 Fab = require '../fab'
-Tooltip = require '../tooltip'
+TooltipPositioner = require '../tooltip_positioner'
 Icon = require '../icon'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -95,7 +95,7 @@ module.exports = class PlacesMapContainer
     @mapSize = new RxBehaviorSubject null
     @$fab = new Fab()
     @$layersIcon = new Icon()
-    @$tooltip = new Tooltip {
+    @$tooltip = new TooltipPositioner {
       @model
       key: 'mapLayers'
       offset:
@@ -402,11 +402,7 @@ module.exports = class PlacesMapContainer
                   @state.set isLayersPickerVisible: true
                   @$tooltip.close()
 
-              # tooltip here. need easy way of adding this
-              z @$tooltip, {
-                $title: 'Show map layers'
-                $content: 'Tap above to show satellite, public land, and cell coverage overlays'
-              }
+              z @$tooltip
 
 
           z '.layers', {

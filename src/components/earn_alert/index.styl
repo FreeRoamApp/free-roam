@@ -1,0 +1,29 @@
+@require '../../vars'
+
+@keyframes z-earn-alert-animation-fade-in
+  0%
+    transform: scale(1)
+    opacity: 1
+  50%
+    transform: scale(1)
+    opacity: 1
+  100%
+    transform: scale(2)
+    opacity: 0
+
+.z-earn-alert
+  > .reward
+    font-caption1()
+    position: fixed
+    z-index: 9999
+    opacity: 0
+    pointer-events: none
+    background: getColor('$tertiary500')
+    padding: 4px 8px
+    border-radius: 2px
+    margin-top: -22px
+    transform-origin: bottom
+    animation: z-earn-alert-animation-fade-in 1.5s
+
+    > .image
+      vertical-align: bottom

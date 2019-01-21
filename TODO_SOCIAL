@@ -1,11 +1,38 @@
+Points reflect social good
+
+Maybe levels are too much for this demographic. Could just do points / coins
+
+Name: Karma
+
 - Reputation & Leveling, plan it out
-  - Start with 10 levels?
-    -
   - Earn for:
     - Posting a review (initially, eventually get rid of in favor of likes)
+    - Sharing
     - Review getting likes
     - Photo getting likes
-    - Forum thread getting likes
+    - Forum thread getting likes?
+      - Maybe have separation between likes and "helpful"/"thank you"
+  - Later on
+    - Cleaning up
+    - Donating?
+  - Should downvotes remove karma?
+    - Yes, cap negative at -100
+  - Is there anything that has a maxCount per time?
+    - Maybe daily chat message? Daily chat message "thank you"
+- Is there any advantage to storing all earn_transactions?
+  - User can see log of where they got their karma from?
+    - Would need to get rid of ttl / txn check
+  - Will do it since earn_transactions will also be for coins if we do it, need to prevent abuse
+
+
+
+
+- Actual steps
+  x Have it per user instead of per group
+  - Increase / decrease count
+    - If karma is <= -100, don't decrease
+  - If maxCount, don't insert transaction
+
 
 ### what are the real rewards? eg talent points in wow, new gear available, dungeons
 ### WHY does a user want to level up?

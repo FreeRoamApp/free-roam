@@ -191,6 +191,7 @@ module.exports = class App
       $backupPage: $backupPage
       me: me
       $overlays: @model.overlay.get$()
+      $tooltip: @model.tooltip.get$()
       statusBarData: @model.statusBar.getData()
       windowSize: @model.window.getSize()
       hideDrawer: @requests.switchMap (request) =>
@@ -285,7 +286,7 @@ module.exports = class App
 
   render: =>
     {request, $backupPage, me, hideDrawer, statusBarData, windowSize,
-      $overlays} = @state.getValue()
+      $overlays, $tooltip} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isiOS {userAgent}
@@ -343,6 +344,9 @@ module.exports = class App
 
             _map $overlays, ($overlay) ->
               z $overlay
+
+            z $tooltip
+
             # if not window?
             #   z '#server-loading', {
             #     key: 'server-loading'

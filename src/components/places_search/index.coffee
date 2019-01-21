@@ -9,7 +9,7 @@ _isEmpty = require 'lodash/isEmpty'
 
 SearchInput = require '../search_input'
 FlatButton = require '../flat_button'
-Tooltip = require '../tooltip'
+TooltipPositioner = require '../tooltip_positioner'
 colors = require '../../colors'
 
 if window?
@@ -33,7 +33,7 @@ module.exports = class PlacesSearch
     @isOpen = new RxBehaviorSubject false
     @$searchInput = new SearchInput {@model, @router, @searchValue, @isOpen}
     @$doneButton = new FlatButton()
-    @$tooltip = new Tooltip {
+    @$tooltip = new TooltipPositioner {
       @model
       key: 'placeSearch'
       anchor: 'top-left'
@@ -79,11 +79,7 @@ module.exports = class PlacesSearch
               @isOpen.next false
           }
 
-      # tooltip here. need easy way of adding this
-      z @$tooltip, {
-        $title: 'Search for campgrounds and more'
-        $content: 'Tap above to find whatever you\'re looking for. Campsites, dump stations, Walmarts, you name it!'
-      }
+      z @$tooltip
 
       z '.overlay',
         z '.overlay-inner',

@@ -282,6 +282,7 @@
   "productGuides.infoCardTitle": "Buyer guides without bias",
   "productGuides.infoCard": "Our goal is to provide helpful information for products you might need on the road. Each item has a buyer guide where we compiled information and videos about it. We don't accept free products for review or make a commission on these products, so you can trust there is no bias.",
   "productGuides.searchPlaceholder": "Looking for something?",
+  "profile.karma": "You have {karma} karma",
   "profileDialog.message": "Message",
   "profileDialog.block": "Block",
   "profileDialog.unblock": "Unblock",
@@ -413,7 +414,6 @@
   "permissions.deleteForumThread": "Delete forum thread",
   "permissions.deleteForumComment": "Delete forum comment",
   "permissions.pinForumThread": "Pin thread",
-  "permissions.addXp": "Add XP",
 
   "campground.cellSignal": "Cell signal",
   "campground.distanceTo": "Distance to",
@@ -540,6 +540,13 @@
   "rigs.truckCamper": "Truck camper",
   "rigs.tent": "Tent",
   "rigs.car": "Car",
+
+  "tooltips.mapLayersTitle": "Show map layers",
+  "tooltips.mapLayersContent": "Tap above to show satellite, public land, and cell coverage overlays",
+  "tooltips.placeSearchTitle": "Search for campgrounds and more",
+  "tooltips.placeSearchContent": "Tap above to find whatever you're looking for. Campsites, dump stations, Walmarts, you name it!",
+  "tooltips.saveLocationTitle": "Save for later",
+  "tooltips.saveLocationContent": "Tapping save will add this to your planned locations",
 
   "status.newVersion": "Refresh to get the latest FreeRoam update",
   "status.offline": "You are offline, some features may not work",

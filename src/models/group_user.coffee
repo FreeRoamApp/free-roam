@@ -20,11 +20,6 @@ module.exports = class GroupUser
       userId, groupId, roleId
     }, {invalidateAll: true}
 
-  addXpByGroupIdAndUserId: (groupId, userId, xp) =>
-    @auth.call "#{@namespace}.addXpByGroupIdAndUserId", {
-      userId, groupId, xp
-    }, {invalidateAll: true}
-
   getByGroupIdAndUserId: (groupId, userId) =>
     @auth.stream "#{@namespace}.getByGroupIdAndUserId", {groupId, userId}
 

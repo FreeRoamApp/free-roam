@@ -4,9 +4,11 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
+_startCase = require 'lodash/startCase'
 
 Base = require '../base'
 Icon = require '../icon'
+PrimaryButton = require '../primary_button'
 FormattedText = require '../formatted_text'
 ProfileDialog = require '../profile_dialog'
 Review = require '../review'
@@ -27,6 +29,8 @@ module.exports = class Reviews extends Base
     @$profileDialog = new ProfileDialog {
       @model, @router, selectedProfileDialogUser
     }
+
+    @$addReviewButton = new PrimaryButton()
 
     @state = z.state {
       parent: parent
@@ -64,7 +68,15 @@ module.exports = class Reviews extends Base
         #   }
         z '.reviews',
           if _isEmpty reviews
-            z '.empty', @model.l.get 'reviews.empty'
+            z '.empty',
+              "We don't have any reviews for this yet. If you've been here and have a few minutes, leaving a review would be incredibly helpful to other campers!"
+              z '.add-review',
+                z @$addReviewButton,
+                  text: @model.l.get 'placeInfo.addReview'
+                  onclick: =>
+                    @router.go "new#{_startCase parent.type}Review", {
+                      slug: parent.slug
+                    }, {ignoreHistory: true}
           else
             _map reviews, ($review) ->
               z '.review',
