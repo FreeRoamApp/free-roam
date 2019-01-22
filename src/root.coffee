@@ -107,6 +107,40 @@ onOffline = ->
     text: model.l.get 'status.offline'
   }
 
+# TODO: show status bar for translating
+# @isTranslateCardVisibleStreams = new RxReplaySubject 1
+model.l.getLanguage().take(1).subscribe (lang) ->
+  console.log 'lang', lang
+  needTranslations = ['fr', 'es']
+  isNeededLanguage = lang in needTranslations
+  translation =
+    ko: '한국어'
+    ja: '日本語'
+    zh: '中文'
+    de: 'deutsche'
+    es: 'español'
+    fr: 'français'
+    pt: 'português'
+
+  if isNeededLanguage and not model.cookie.get 'hideTranslateBar'
+    model.statusBar.open {
+      text: model.l.get 'translateBar.request', {
+        replacements:
+          language: translation[language] or language
+        }
+      type: 'snack'
+      onClose: =>
+        model.cookie.set 'hideTranslateBar', '1'
+      action:
+        text: model.l.get 'general.yes'
+        onclick: ->
+          ga? 'send', 'event', 'translate', 'click', language
+          model.portal.call 'browser.openWindow',
+            url: 'https://crowdin.com/project/freeroam'
+            target: '_system'
+    }
+
+
 ###
 # Service workers
 ###

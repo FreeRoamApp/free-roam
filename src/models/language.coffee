@@ -10,13 +10,6 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 DateService = require '../services/date'
 config = require '../config'
 
-# missing: card_info, channel picker, edit group, edit group change badge
-# events 'participants', 'begins', 'ends'
-# group list 'members'
-# thread points
-# friendspage
-# profile page share
-
 class Language
   constructor: ({language, @cookie} = {}) ->
     language ?= 'en'
@@ -44,18 +37,7 @@ class Language
 
   getLanguageByCountry: (country) ->
     country = country?.toUpperCase()
-    if country in [
-      'AR', 'BO', 'CR', 'CU', 'DM', 'EC', 'SV', 'GQ', 'GT', 'HN', 'MX'
-      'NI', 'PA', 'PE', 'ES', 'UY', 'VE'
-    ]
-      'es'
-    else if country is 'IT'
-      'it'
-    else if country is 'BR'
-      'pt'
-    else if country is 'PL'
-      'pl'
-    else if country is 'FR'
+    if country is 'FR'
       'fr'
     else
       'en'
@@ -74,7 +56,7 @@ class Language
     config.LANGUAGES
 
   getAllUrlLanguages: ->
-    ['en', 'es', 'pt']
+    ['en']
 
   # some of this would probably make more sense in router...
   getNonGamePages: ->

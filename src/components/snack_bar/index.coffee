@@ -45,4 +45,5 @@ module.exports = class SnackBar
               isTouchTarget: false
               color: colors.$bgText54
               onclick: =>
+                data?.onClose?()
                 @model.statusBar.close()
