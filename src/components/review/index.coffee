@@ -5,6 +5,7 @@ _truncate = require 'lodash/truncate'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
 _startCase = require 'lodash/startCase'
+_isEmpty = require 'lodash/isEmpty'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
@@ -15,6 +16,7 @@ Icon = require '../icon'
 AttachmentsList = require '../attachments_list'
 Rating = require '../rating'
 FormatService = require '../../services/format'
+VoteButton = require '../vote_button'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -26,38 +28,60 @@ DESCRIPTION_LENGTH = 100
 
 module.exports = class Review
   constructor: (options) ->
-    {review, parent, @$body, isGrouped, isMe, @model, @isTextareaFocused
+    {@review, parent, @$body, isGrouped, isMe, @model, @isTextareaFocused
       @selectedProfileDialogUser, @router} = options
 
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}
     @$rating = new Rating {
-      value: RxObservable.of review?.rating
+      value: RxObservable.of @review?.rating
     }
     @$attachmentsList = new AttachmentsList {
       @model, @router
       attachments:
-        RxObservable.of review?.attachments
+        RxObservable.of @review?.attachments
     }
+
+    @$upvoteButton = new VoteButton {@model}
+    @$downvoteButton = new VoteButton {@model}
 
     me = @model.user.getMe()
 
     @state = z.state
-      review: review
+      review: @review
       parent: parent
       isMe: isMe
       isGrouped: isGrouped
       isMeMentioned: me.map (me) ->
-        mentions = review?.body?.match? config.MENTION_REGEX
+        mentions = @review?.body?.match? config.MENTION_REGEX
         _find mentions, (mention) ->
           username = mention.replace('@', '').toLowerCase()
           username and username is me?.username
       windowSize: @model.window.getSize()
 
+  # for cached components
+  setReview: (review) =>
+    @state.set review: review
+    # isChildUpdated = _map review.children, (child, i) =>
+    #   if child.body isnt @review?.children[i]?.body
+    #     @$children[i] ?= new Review {
+    #       review: child
+    #       depth: @depth + 1
+    #       @isMe
+    #       @model
+    #       @selectedProfileDialogUser
+    #       @router
+    #       @group
+    #     }
+    #     @$children[i].setReview child
+
+    if review.body isnt @review.body
+      @review = review
+
   openProfileDialog: ({user, review, parent}) =>
     @selectedProfileDialogUser.next _defaults user, {
       onDeleteMessage: =>
-        @model["#{review.type}Review"].deleteById review.id
+        @model[review.type].deleteById review.id
       onEditMessage: =>
         @router.go "edit#{_startCase review.type}Review", {
           slug: parent.slug
@@ -81,11 +105,8 @@ module.exports = class Review
     oncontextmenu = =>
       @openProfileDialog {user, review, parent}
 
-    isModerator = groupUser?.roleNames and
-                  (
-                    groupUser.roleNames.indexOf('mod') isnt -1 or
-                    groupUser.roleNames.indexOf('mods') isnt -1
-                  )
+    hasVotedUp = review?.myVote?.vote is 1
+    hasVotedDown = review?.myVote?.vote is -1
 
     z '.z-review', {
       # re-use elements in v-dom. doesn't seem to work with prepending more
@@ -113,5 +134,37 @@ module.exports = class Review
         z '.title', title
         z '.body',
           @$body
-        z '.attachments',
-          @$attachmentsList
+        unless _isEmpty review?.attachments
+          z '.attachments',
+            @$attachmentsList
+
+        z '.points',
+          z '.icon',
+            z @$upvoteButton, {
+              vote: 'up'
+              hasVoted: hasVotedUp
+              parent:
+                id: review?.id
+                type: review?.type
+                topId: parent?.id
+                topType: parent?.type
+              isTouchTarget: false
+              color: colors.$bgText54
+              size: '14px'
+            }
+
+          review.upvotes or 0
+
+          z '.icon',
+            z @$downvoteButton, {
+              vote: 'down'
+              hasVoted: hasVotedDown
+              parent:
+                id: review?.id
+                type: review?.type
+                topId: parent?.id
+                topType: parent?.type
+              isTouchTarget: false
+              color: colors.$bgText54
+              size: '14px'
+            }

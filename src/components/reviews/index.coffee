@@ -51,6 +51,8 @@ module.exports = class Reviews extends Base
               review, parent, @model, @router,
               selectedProfileDialogUser, $body
             }
+            # update cached version
+            $el.setReview review
             $el
     }
 

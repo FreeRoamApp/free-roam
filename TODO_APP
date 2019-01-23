@@ -1,11 +1,24 @@
 TODOS:
+
+- Review voting
+  - reviews_by_userId table with parentType and parentId
+    - should be on review_base
+    - get rid of other ___reviews_by_userId tables
+
+  - vote model?
+    - topId, topType
+      - partition: ['userId', 'parentTopId', 'parentType']
+
+  - places and placeReviews? should probably still have own model since they have their own elasticsearch table
+  - reviewVote, reviewComment OR vote, comment
+- Photo voting
+
+
 x Tooltip for planning/check-in on place info
 - Tooltip for when two dataTypes are selected to switch between filter sets
 x Get less people tapping on new campground link (don't think they know that's what it is)
 x Legend
 x Google Play exp w/ new iOS style screenshots
-- Review voting
-- Photo voting
 - Way to report spots for being illegal to camp in, and show on map like low clearance icons (Contraindications)
 
 x First-time pack-in, pack-out educational tips

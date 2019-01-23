@@ -3,7 +3,7 @@ colors = require '../../colors'
 
 Icon = require '../icon'
 
-module.exports = class ThreadVoteButton
+module.exports = class VoteButton
   constructor: ({@model}) ->
     @$icon = new Icon()
 
@@ -36,7 +36,7 @@ module.exports = class ThreadVoteButton
             onclick?()
             @model.user.requestLoginIfGuest me
             .then =>
-              @model.threadVote.upsertByParent(
+              @model.vote.upsertByParent(
                 parent
                 {vote}
               )

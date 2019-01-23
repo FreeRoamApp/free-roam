@@ -22,11 +22,11 @@ ButtonBack = require '../button_back'
 Icon = require '../icon'
 Avatar = require '../avatar'
 Author = require '../author'
-ThreadComment = require '../thread_comment'
+Comment = require '../comment'
 ConversationInput = require '../conversation_input'
 Spinner = require '../spinner'
 FormattedText = require '../formatted_text'
-ThreadVoteButton = require '../thread_vote_button'
+VoteButton = require '../vote_button'
 FilterCommentsDialog = require '../filter_comments_dialog'
 Fab = require '../fab'
 ProfileDialog = require '../profile_dialog'
@@ -53,8 +53,8 @@ module.exports = class Thread extends Base
     @$deleteIcon = new Icon()
     @$filterIcon = new Icon()
     @$starIcon = new Icon()
-    @$threadUpvoteButton = new ThreadVoteButton {@model}
-    @$threadDownvoteButton = new ThreadVoteButton {@model}
+    @$threadUpvoteButton = new VoteButton {@model}
+    @$threadDownvoteButton = new VoteButton {@model}
 
     @$fab = new Fab()
     @$avatar = new Avatar()
@@ -114,19 +114,20 @@ module.exports = class Thread extends Base
       }
       isPostLoading: @isPostLoading
       windowSize: @model.window.getSize()
-      threadComments: commentsAndThread.map ([threadComments, thread]) =>
-        if threadComments?.length is 1 and threadComments[0] is null
+      comments: commentsAndThread.map ([comments, thread]) =>
+        console.log 'thread', thread
+        if comments?.length is 1 and comments[0] is null
           return null
-        threadComments = _filter threadComments
-        _map threadComments, (threadComment) =>
+        comments = _filter comments
+        _map comments, (comment) =>
           # cache, otherwise there's a flicker on invalidate
-          cacheId = "threadComment-#{threadComment.id}"
-          $el = @getCached$ cacheId, ThreadComment, {
-            @model, @router, @selectedProfileDialogUser, threadComment
+          cacheId = "comment-#{comment.id}"
+          $el = @getCached$ cacheId, Comment, {
+            @model, @router, @selectedProfileDialogUser, comment
             @commentStreams, group
           }
           # update cached version
-          $el.setThreadComment threadComment
+          $el.setComment comment
           $el
 
   afterMount: (@$$el) =>
@@ -162,7 +163,7 @@ module.exports = class Thread extends Base
   getTopStream: (skip = 0) =>
     @filterAndThread.switchMap ([filter, thread]) =>
       if thread?.id
-        @model.threadComment.getAllByThreadId thread.id, {
+        @model.comment.getAllByTopId thread.id, {
           limit: SCROLL_COMMENT_LOAD_COUNT
           skip: skip
           sort: filter?.sort
@@ -206,9 +207,10 @@ module.exports = class Thread extends Base
 
     @model.user.requestLoginIfGuest me
     .then =>
-      @model.threadComment.create {
+      @model.comment.create {
         body: messageBody
-        threadId: thread.id
+        topId: thread.id
+        topType: 'thread'
         parentId: thread.id
         parentType: 'thread'
       }
@@ -219,7 +221,7 @@ module.exports = class Thread extends Base
         @isPostLoading.next false
 
   render: =>
-    {me, thread, $body, threadComments, windowSize,
+    {me, thread, $body, comments, windowSize,
       selectedProfileDialogUser, isLoading, group,
       isPostLoading} = @state.getValue()
 
@@ -241,8 +243,6 @@ module.exports = class Thread extends Base
     points = if thread then thread.upvotes else 0
 
     isNativeApp = Environment.isNativeApp('freeroam')
-
-    console.log thread
 
     z '.z-thread',
       z @$appBar, {
@@ -362,16 +362,16 @@ module.exports = class Thread extends Base
           z '.g-grid',
             z '.reply',
               @$conversationInput
-            if not threadComments
+            if not comments
               @$spinner
-            else if threadComments and _isEmpty threadComments
+            else if comments and _isEmpty comments
               z '.no-comments', @model.l.get 'thread.noComments'
-            else if threadComments
+            else if comments
               z '.comments',
                 [
-                  _map threadComments, ($threadComment) ->
+                  _map comments, ($comment) ->
                     [
-                      z $threadComment
+                      z $comment
                       z '.divider'
                     ]
                   if isLoading

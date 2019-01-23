@@ -3,7 +3,7 @@ z = require 'zorium'
 colors = require '../../colors'
 Icon = require '../icon'
 ThreadPreview = require '../thread_preview'
-ThreadVoteButton = require '../thread_vote_button'
+VoteButton = require '../vote_button'
 FormatService = require '../../services/format'
 DateService = require '../../services/date'
 
@@ -14,8 +14,8 @@ module.exports = class ThreadListItem
   constructor: ({@model, @router, thread, group}) ->
     @$threadPreview = new ThreadPreview {@model, thread}
     @$pointsIcon = new Icon()
-    @$threadUpvoteButton = new ThreadVoteButton {@model}
-    @$threadDownvoteButton = new ThreadVoteButton {@model}
+    @$threadUpvoteButton = new VoteButton {@model}
+    @$threadDownvoteButton = new VoteButton {@model}
     @$commentsIcon = new Icon()
     @$textIcon = new Icon()
     @$starIcon = new Icon()

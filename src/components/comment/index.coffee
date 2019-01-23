@@ -10,7 +10,7 @@ Icon = require '../icon'
 Message = require '../message'
 ConversationInput = require '../conversation_input'
 FormattedText = require '../formatted_text'
-ThreadVoteButton = require '../thread_vote_button'
+VoteButton = require '../vote_button'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -20,9 +20,9 @@ if window?
 TITLE_LENGTH = 30
 MAX_COMMENT_DEPTH = 3
 
-module.exports = class ThreadComment
+module.exports = class Comment
   constructor: (options) ->
-    {@threadComment, @depth, @isMe, @model,
+    {@comment, @depth, @isMe, @model,
       @selectedProfileDialogUser, @router, @commentStreams,
       @group} = options
 
@@ -30,14 +30,14 @@ module.exports = class ThreadComment
 
     @$message = new Message {
       message: {
-        user: @threadComment.user
-        time: @threadComment.time
-        groupUser: @threadComment.groupUser
-        card: @threadComment.card
-        id: @threadComment.id
+        user: @comment.user
+        time: @comment.time
+        groupUser: @comment.groupUser
+        card: @comment.card
+        id: @comment.id
       }
       $body: new FormattedText {
-        text: @threadComment.body
+        text: @comment.body
         isFullWidth: true
         useThumbnails: true
         @model, @router
@@ -46,16 +46,16 @@ module.exports = class ThreadComment
       @group, @isMe, @model, @selectedProfileDialogUser, @router
     }
 
-    @$upvoteButton = new ThreadVoteButton {@model}
-    @$downvoteButton = new ThreadVoteButton {@model}
-    @$threadReplyIcon = new Icon()
+    @$upvoteButton = new VoteButton {@model}
+    @$downvoteButton = new VoteButton {@model}
+    @$replyIcon = new Icon()
 
     @reply = new RxBehaviorSubject null
     @isPostLoading = new RxBehaviorSubject null
 
-    @$children = _map @threadComment.children, (childThreadComment) =>
-      new ThreadComment {
-        threadComment: childThreadComment
+    @$children = _map @comment.children, (childComment) =>
+      new Comment {
+        comment: childComment
         depth: @depth + 1
         @isMe
         @model
@@ -67,7 +67,7 @@ module.exports = class ThreadComment
     @state = z.state
       me: @model.user.getMe()
       depth: @depth
-      threadComment: @threadComment
+      comment: @comment
       $children: @$children
       isMe: @isMe
       isReplyVisible: false
@@ -76,12 +76,12 @@ module.exports = class ThreadComment
       windowSize: @model.window.getSize()
 
   # for cached components
-  setThreadComment: (threadComment) =>
-    @state.set threadComment: threadComment
-    isChildUpdated = _map threadComment.children, (child, i) =>
-      if child.body isnt @theadComment?.children[i]?.body
-        @$children[i] ?= new ThreadComment {
-          threadComment: child
+  setComment: (comment) =>
+    @state.set comment: comment
+    isChildUpdated = _map comment.children, (child, i) =>
+      if child.body isnt @comment?.children[i]?.body
+        @$children[i] ?= new Comment {
+          comment: child
           depth: @depth + 1
           @isMe
           @model
@@ -89,18 +89,14 @@ module.exports = class ThreadComment
           @router
           @group
         }
-        @$children[i].setThreadComment child
+        @$children[i].setComment child
 
-    if threadComment.body isnt @threadComment.body
-      @threadComment = threadComment
-      @state.set
-        $body: new FormattedText {
-          text: threadComment.body, useThumbnails: true, @model, @router
-        }
+    if comment.body isnt @comment.body
+      @comment = comment
 
 
   postReply: =>
-    {me, isPostLoading, threadComment} = @state.getValue()
+    {me, isPostLoading, comment} = @state.getValue()
 
     if isPostLoading
       return
@@ -110,11 +106,12 @@ module.exports = class ThreadComment
 
     @model.user.requestLoginIfGuest me
     .then =>
-      @model.threadComment.create {
+      @model.comment.create {
         body: body
-        threadId: threadComment.threadId
-        parentId: threadComment.id
-        parentType: 'threadComment'
+        topId: comment.topId
+        parentId: comment.id
+        parentType: 'comment'
+        topType: 'thread' # FIXME
       }
       .then (response) =>
         @isPostLoading.next false
@@ -124,25 +121,25 @@ module.exports = class ThreadComment
         @isPostLoading.next false
 
   render: =>
-    {depth, isMe, threadComment, isReplyVisible, $body, group,
+    {depth, isMe, comment, isReplyVisible, group,
       windowSize, $children} = @state.getValue()
 
-    {user, time, card, body, id, clientId} = threadComment
+    {user, time, card, body, id, clientId} = comment
 
-    hasVotedUp = threadComment?.myVote?.vote is 1
-    hasVotedDown = threadComment?.myVote?.vote is -1
+    hasVotedUp = comment?.myVote?.vote is 1
+    hasVotedDown = comment?.myVote?.vote is -1
 
     # pass these when voting so we can update scylla properly (no index on id)
-    voteParent = _pick threadComment, [
-      'id', 'threadId', 'userId', 'parentId', 'parentType',
+    voteParent = _pick comment, [
+      'id', 'topId', 'userId', 'parentId', 'parentType',
       'timeBucket'
     ]
-    voteParent.topId = threadComment.threadId
-    voteParent.type = 'threadComment'
+    voteParent.topId = comment.topId
+    voteParent.type = 'comment'
 
-    z '.z-thread-comment', {
+    z '.z-comment', {
       # re-use elements in v-dom
-      key: "thread-comment-#{clientId or id}"
+      key: "comment-#{clientId or id}"
       className: z.classKebab {isMe}
     },
       z '.comment',
@@ -151,15 +148,15 @@ module.exports = class ThreadComment
           openProfileDialogFn: (id, user, groupUser) =>
             @selectedProfileDialogUser.next _defaults {
               onDeleteMessage: =>
-                @model.threadComment.deleteByThreadComment voteParent, {
+                @model.comment.deleteByComment voteParent, {
                   groupId: group?.id
                 }
                 .then =>
                   @commentStreams.take(1).toPromise()
               onDeleteMessagesLast7d: =>
-                @model.threadComment.deleteAllByGroupIdAndUserId(
+                @model.comment.deleteAllByGroupIdAndUserId(
                   groupUser.groupId, user.id, {
-                    duration: '7d', threadId: threadComment.threadId
+                    duration: '7d', topId: comment.topId
                   }
                 )
                 .then =>
@@ -188,7 +185,7 @@ module.exports = class ThreadComment
                   @state.set isReplyVisible: true
             },
               @model.l.get 'general.reply'
-              # z @$threadReplyIcon,
+              # z @$replyIcon,
               #   icon: 'reply'
               #   isTouchTarget: false
               #   color: colors.$bgText
@@ -203,7 +200,7 @@ module.exports = class ThreadComment
                 size: '14px'
               }
 
-            threadComment.upvotes or 0
+            comment.upvotes or 0
 
             z '.icon',
               z @$downvoteButton, {
