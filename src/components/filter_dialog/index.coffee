@@ -96,6 +96,35 @@ module.exports = class FilterDialog
           (vals...) -> vals
         ).map ([carrier, signal, isLte]) ->
           {carrier, signal, isLte}
+      when 'hookups'
+        @hasFreshWaterValue = new RxBehaviorSubject(
+          @filter.value?.hasFreshWater
+        )
+        @$hasFreshWaterCheckbox = new Checkbox {value: @hasFreshWaterValue}
+
+        @hasSewageValue = new RxBehaviorSubject(
+          @filter.value?.hasSewage
+        )
+        @$hasSewageCheckbox = new Checkbox {value: @hasSewageValue}
+
+        @has30AmpValue = new RxBehaviorSubject(
+          @filter.value?.has30Amp
+        )
+        @$has30AmpCheckbox = new Checkbox {value: @has30AmpValue}
+
+        @has50AmpValue = new RxBehaviorSubject(
+          @filter.value?.has50Amp
+        )
+        @$has50AmpCheckbox = new Checkbox {value: @has50AmpValue}
+
+        filterValue = RxObservable.combineLatest(
+          @hasFreshWaterValue
+          @hasSewageValue
+          @has30AmpValue
+          @has50AmpValue
+          (vals...) -> vals
+        ).map ([hasFreshWater, hasSewage, has30Amp, has50Amp]) ->
+          {hasFreshWater, hasSewage, has30Amp, has50Amp}
       when 'weather'
         @monthDropdownValue = new RxBehaviorSubject(
           if @filter.value?.month?
@@ -189,6 +218,26 @@ module.exports = class FilterDialog
                 hintText:
                   @model.l.get 'filterDialog.inches'
               }
+      when 'hookups'
+        $title = @model.l.get 'general.hookups'
+        $content =
+          z '.content',
+            z 'label.checkbox-label',
+              z '.checkbox',
+                z @$hasFreshWaterCheckbox
+              z '.text', @model.l.get 'filterDialog.hasFreshWater'
+            z 'label.checkbox-label',
+              z '.checkbox',
+                z @$hasSewageCheckbox
+              z '.text', @model.l.get 'filterDialog.hasSewage'
+            z 'label.checkbox-label',
+              z '.checkbox',
+                z @$has30AmpCheckbox
+              z '.text', @model.l.get 'filterDialog.has30Amp'
+            z 'label.checkbox-label',
+              z '.checkbox',
+                z @$has50AmpCheckbox
+              z '.text', @model.l.get 'filterDialog.has50Amp'
       when 'cellSignal'
         $content =
           z '.content',
@@ -203,7 +252,7 @@ module.exports = class FilterDialog
                 ]
             z '.label', @model.l.get 'filterDialog.minSignal'
             z '.bars', z @$cellBars, {widthPx: 200}
-            z 'label.is-lte',
+            z 'label.checkbox-label',
               z '.checkbox',
                 z @$isLteCheckbox
               z '.text', @model.l.get 'filterDialog.requireLte'

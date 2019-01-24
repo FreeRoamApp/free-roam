@@ -103,6 +103,11 @@ class MapService
         name: model.l.get 'campground.distanceTo'
       }
       {
+        field: 'hookups'
+        type: 'hookups'
+        name: model.l.get 'general.hookups'
+      }
+      {
         field: 'crowds'
         type: 'maxIntSeasonal'
         name: model.l.get 'campground.crowds'
@@ -361,6 +366,14 @@ class MapService
             range:
               "#{field}":
                 gt: 0
+          }
+        # TODO: this could be a generic 'checkboxes' type
+        when 'hookups'
+          {
+            bool:
+              must: _filter _map filter.value, (value, key) ->
+                if value
+                  match: "#{key}": value
           }
         when 'cellSignal'
           carrier = filter.value.carrier

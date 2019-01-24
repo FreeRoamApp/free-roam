@@ -1,14 +1,10 @@
 z = require 'zorium'
-RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
-RxObservable = require('rxjs/Observable').Observable
-require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 _filter = require 'lodash/filter'
-_find = require 'lodash/find'
-_startCase = require 'lodash/startCase'
 
 Base = require '../base'
+ActionBox = require '../place_info_action_box'
 CellBars = require '../cell_bars'
 Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
@@ -18,10 +14,8 @@ FormattedText = require '../formatted_text'
 MasonryGrid = require '../masonry_grid'
 Rating = require '../rating'
 Spinner = require '../spinner'
-TooltipPositioner = require '../tooltip_positioner'
 UiCard = require '../ui_card'
 Environment = require '../../services/environment'
-MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -37,6 +31,7 @@ module.exports = class PlaceInfo extends Base
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
     currentSeason = @model.time.getCurrentSeason()
+    @$actionBox = new ActionBox {@model, @router, @place}
     @$masonryGrid = new MasonryGrid {@model}
     @$crowdsInfoLevelTabs = new InfoLevelTabs {
       @model, @router, tabs: seasons
@@ -65,19 +60,7 @@ module.exports = class PlaceInfo extends Base
       value: @place.map (place) -> place?.rating
     }
     @$spinner = new Spinner()
-    @$directionsIcon = new Icon()
-    @$checkInIcon = new Icon()
-    @$saveIcon = new Icon()
     @$respectCard = new UiCard()
-    @$saveTooltip = new TooltipPositioner {
-      @model
-      key: 'saveLocation'
-      anchor: 'top-right'
-      zIndex: 999 # show for overlayPage
-      offset:
-        left: 32
-        top: 16
-    }
 
     @$details = new FormattedText {
       text: @place.map (place) ->
@@ -92,18 +75,7 @@ module.exports = class PlaceInfo extends Base
         height: 200
     }
 
-    @checkInsStreams = new RxReplaySubject 1
-    @resetValueStreams()
-    checkIns = @checkInsStreams.switch()
-
     @state = z.state
-      visitedSaving: false
-      plannedSaving: false
-      visitedCheckIn: checkIns.map (checkIns) ->
-        _find(checkIns, {status: 'visited'}) or false
-      plannedCheckIn: checkIns.map (checkIns) ->
-        _find(checkIns, {status: 'planned'}) or false
-      checkIns: checkIns
       amenities: @place.map (place) ->
         _map place?.amenities, (amenity) ->
           {
@@ -124,16 +96,6 @@ module.exports = class PlaceInfo extends Base
             }
         }
 
-  resetValueStreams: =>
-    checkInsAndPlace = RxObservable.combineLatest(
-      @model.checkIn.getAll()
-      @place
-      (vals...) -> vals
-    )
-
-    @checkInsStreams.next checkInsAndPlace.map ([checkIns, place]) ->
-      _filter checkIns, {sourceId: place?.id}
-
   afterMount: =>
     super
     # FIXME: figure out why i can't use take(1) here...
@@ -146,57 +108,14 @@ module.exports = class PlaceInfo extends Base
   beforeUnmount: =>
     super
     @disposable?.unsubscribe()
-    @state.set isSaving: false
-    @resetValueStreams()
 
   getCoverUrl: (place) =>
     @model.image.getSrcByPrefix(
       place.attachmentsPreview.first.prefix, 'large'
     )
 
-  checkIn: (status) =>
-    {place, checkIns} = @state.getValue()
-    place = place.place
-
-    ga? 'send', 'event', 'placeInfo', 'checkIn', status
-
-    @state.set "#{status}Saving": true
-    checkIn = _find checkIns, {status}
-    if checkIn
-      @model.checkIn.deleteByRow {
-        id: checkIn.id
-      }
-      .then (checkIn) =>
-        @state.set "#{status}Saving": false
-        @checkInsStreams.next RxObservable.of _filter checkIns, (checkIn) ->
-          checkIn.status isnt status
-    else
-      @model.checkIn.upsert {
-        name: place.name
-        sourceType: place.type
-        sourceId: place.id
-        status: status
-      }
-      .then (checkIn) =>
-        @state.set "#{status}Saving": false
-        @checkInsStreams.next RxObservable.of checkIns.concat checkIn
-        @model.statusBar.open {
-          text: @model.l.get "placeInfo.#{status}Saved"
-          type: 'snack'
-          timeMs: 5000
-          action:
-            text: @model.l.get 'placeInfo.viewTrip'
-            onclick: =>
-              @router.go 'editTripByType', {
-                type: if status is 'visited' then 'past' else 'future'
-              }
-              @model.statusBar.close()
-
-        }
-
   render: =>
-    {place, visitedCheckIn, plannedCheckIn, checkIns, visitedSaving,
-      plannedSaving, amenities, hasSeenRespectCard} = @state.getValue()
+    {place, amenities, hasSeenRespectCard} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
 
@@ -241,56 +160,7 @@ module.exports = class PlaceInfo extends Base
               else
                 "$ #{@model.l.get 'general.unknown'}"
 
-
-        z '.action-box',
-          z '.actions',
-            z '.action', {
-              onclick: =>
-                MapService.getDirections place, {@model}
-            },
-              z '.icon',
-                z @$directionsIcon,
-                  icon: 'directions'
-                  isTouchTarget: false
-                  color: colors.$bgText54
-              z '.text', @model.l.get 'general.directions'
-            if place?.type isnt 'amenity'
-              [
-                z '.divider'
-                z '.action', {
-                  onclick: =>
-                    @checkIn 'visited'
-                },
-                  z '.icon',
-                    z @$checkInIcon,
-                      icon: 'location'
-                      isTouchTarget: false
-                      color: if visitedCheckIn \
-                             then colors.$primary500
-                             else colors.$bgText54
-                  z '.text',
-                    if visitedSaving then @model.l.get 'general.saving'
-                    else if visitedCheckIn then @model.l.get 'placeInfo.checkedIn'
-                    else @model.l.get 'placeInfo.checkIn'
-              ]
-            z '.divider'
-            z '.action', {
-              onclick: => @checkIn 'planned'
-            },
-              z '.icon',
-                z @$saveIcon,
-                  icon: 'star'
-                  isTouchTarget: false
-                  color: if plannedCheckIn \
-                         then colors.$primary500
-                         else colors.$bgText54
-              z '.text',
-                if plannedSaving then @model.l.get 'general.saving'
-                else if plannedCheckIn then @model.l.get 'general.saved'
-                else @model.l.get 'general.save'
-
-              if @model.experiment.get('saveTooltip') is 'visible'
-                z @$saveTooltip
+        z @$actionBox
 
         z '.contact',
           z '.coordinates',

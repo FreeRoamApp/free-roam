@@ -237,11 +237,9 @@ init = ->
         data: {path}
       }
     else if path?
-      ga? 'send', 'event', 'hit_from_share', 'hit', path
+      ga? 'send', 'event', 'hit_from_share', 'hit', JSON.stringify path
       if path?.key
         router.go path.key, path.params
-      else if path # legacy
-        router.goPath path
     # else
     #   router.go()
 
