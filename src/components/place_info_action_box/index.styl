@@ -28,34 +28,3 @@
 
       > .text
         font-title()
-
-
-> .masonry
-  margin: -4px -16px // account for padding in .section
-// TODO: move each section into own component, so we don't have to
-// do a broad selector like this (ie without >)
-.section
-  padding: 4px 16px
-
-  > .title
-    font-title()
-    margin-bottom: 8px
-
-  > .graph
-    width: 100%
-
-  > .carriers
-    white-space: nowrap
-    overflow-x: auto
-
-    > .carrier
-      font-caption2()
-      display: inline-block
-      text-align: center
-      margin-right: 16px
-
-      > .bars
-        padding: 5px 10px
-
-      > .type
-        font-caption3()

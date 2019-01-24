@@ -10,14 +10,14 @@ if window?
 module.exports = class UiCard
   constructor: ->
     @$cancelButton = new FlatButton()
+    @$idkButton = new FlatButton()
     @$submitButton = new FlatButton()
 
-    @state = z.state {
-      state: 'ask'
-    }
+    # @state = z.state {}
 
-  render: ({minHeightPx, isHighlighted, $title, $content, cancel, submit}) =>
-    {state} = @state.getValue()
+  render: (props) =>
+    # {state} = @state.getValue()
+    {minHeightPx, isHighlighted, $title, $content, cancel, idk, submit} = props
 
     z '.z-ui-card', {
       className: z.classKebab {isHighlighted}
@@ -35,6 +35,12 @@ module.exports = class UiCard
               text: cancel.text
               isFullWidth: false
               onclick: cancel.onclick
+        if idk
+          z 'div',
+            z @$idkButton,
+              text: idk.text
+              isFullWidth: false
+              onclick: idk.onclick
         if submit
           z 'div',
             z @$submitButton,

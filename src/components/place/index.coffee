@@ -8,7 +8,7 @@ Fab = require '../fab'
 Icon = require '../icon'
 PlaceInfo = require '../place_info'
 PlaceNearby = require '../place_nearby'
-Reviews = require '../reviews'
+PlaceReviews = require '../place_reviews'
 Tabs = require '../tabs'
 colors = require '../../colors'
 config = require '../../config'
@@ -27,7 +27,7 @@ module.exports = class Place
     @$tabs = new Tabs {@model, @selectedIndex}
 
     @$placeInfo = new PlaceInfo {@model, @router, place}
-    @$reviews = new Reviews {@model, @router, parent: place}
+    @$reviews = new PlaceReviews {@model, @router, place}
     @$nearby = new PlaceNearby {
       @model, @router, place
       isActive: @selectedIndex.map (index) -> index is 2

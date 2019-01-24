@@ -85,6 +85,8 @@ module.exports = class EditProfile
       currentPassword: @currentPasswordValue
       isSaving: false
       isSaved: false
+      reviews: me.switchMap (me) =>
+        @model.placeReview.getAllByUserId me.id
 
   save: =>
     {avatarImage, username, instagram, web, newPassword, currentPassword,
@@ -143,7 +145,9 @@ module.exports = class EditProfile
 
   render: =>
     {me, avatarUploadError, avatarDataUrl, group, newPassword
-      players, isSaving, isSaved} = @state.getValue()
+      players, isSaving, isSaved, reviews} = @state.getValue()
+
+    console.log 'reviews', reviews
 
     z '.z-edit-profile',
       z '.g-grid',

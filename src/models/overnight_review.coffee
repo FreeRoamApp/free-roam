@@ -1,6 +1,6 @@
 config = require '../config'
 
-ReviewBase = require './review_base'
+PlaceReviewBase = require './place_review_base'
 
-module.exports = class OvernightReview extends ReviewBase
+module.exports = class OvernightReview extends PlaceReviewBase
   namespace: 'overnightReviews'

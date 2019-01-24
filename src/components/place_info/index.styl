@@ -55,6 +55,21 @@
         margin-left: auto
         text-align: right
 
+    > .is-overnight-allowed
+      padding: 16px
+      margin-bottom: 16px
+      border-radius: 4px
+      background: getColor('$yellow500')
+      color: getColor('$yellow500Text')
+
+      &.is-red
+        background: getColor('$red500')
+        color: getColor('$red500Text')
+
+      &.is-green
+        background: getColor('$green500')
+        color: getColor('$green500Text')
+
     > .card
       margin-bottom: 16px
 
@@ -63,17 +78,6 @@
 
       > .name
         margin-left: 8px
-
-    > .contact
-      margin-bottom: 8px
-
-      > .phone, > .website, > .coordinates
-        white-space: nowrap
-        text-overflow: ellipsis
-        overflow: hidden
-
-        > .title
-          font-title()
 
     > .driving-instructions, > .details
       margin-bottom: 8px

@@ -1,6 +1,6 @@
 config = require '../config'
 
-ReviewBase = require './review_base'
+PlaceReviewBase = require './place_review_base'
 
-module.exports = class CampgroundReview extends ReviewBase
+module.exports = class CampgroundReview extends PlaceReviewBase
   namespace: 'campgroundReviews'

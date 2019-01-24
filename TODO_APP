@@ -1,19 +1,20 @@
 TODOS:
 
-- Review voting
-  - reviews_by_userId table with parentType and parentId
-    - should be on review_base
-    - get rid of other ___reviews_by_userId tables
-
-  - vote model?
-    - topId, topType
-      - partition: ['userId', 'parentTopId', 'parentType']
-
-  - places and placeReviews? should probably still have own model since they have their own elasticsearch table
-  - reviewVote, reviewComment OR vote, comment
 - Photo voting
 
+- List of user reviews, user photos
+- Make seasons we don't know about gray
+x Review voting
+  x reviews_by_userId table with parentType and parentId
+    n should be on review_base
+    n get rid of other ___reviews_by_userId tables
 
+  x vote model?
+    x topId, topType
+      x partition: ['userId', 'parentTopId', 'parentType']
+
+  x places and placeReviews? should probably still have own model since they have their own elasticsearch table
+  x reviewVote, reviewComment OR vote, comment
 x Tooltip for planning/check-in on place info
 - Tooltip for when two dataTypes are selected to switch between filter sets
 x Get less people tapping on new campground link (don't think they know that's what it is)

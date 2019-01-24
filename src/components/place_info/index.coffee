@@ -6,6 +6,7 @@ _filter = require 'lodash/filter'
 Base = require '../base'
 ActionBox = require '../place_info_action_box'
 CellBars = require '../cell_bars'
+Contact = require '../place_info_contact'
 Icon = require '../icon'
 InfoLevelTabs = require '../info_level_tabs'
 InfoLevel = require '../info_level'
@@ -15,6 +16,7 @@ MasonryGrid = require '../masonry_grid'
 Rating = require '../rating'
 Spinner = require '../spinner'
 UiCard = require '../ui_card'
+WalmartInfoCard = require '../walmart_info_card'
 Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
@@ -32,6 +34,7 @@ module.exports = class PlaceInfo extends Base
     ]
     currentSeason = @model.time.getCurrentSeason()
     @$actionBox = new ActionBox {@model, @router, @place}
+    @$contact = new Contact {@model, @router, @place}
     @$masonryGrid = new MasonryGrid {@model}
     @$crowdsInfoLevelTabs = new InfoLevelTabs {
       @model, @router, tabs: seasons
@@ -61,6 +64,7 @@ module.exports = class PlaceInfo extends Base
     }
     @$spinner = new Spinner()
     @$respectCard = new UiCard()
+    @$walmartInfoCard = new WalmartInfoCard {@model, @place}
 
     @$details = new FormattedText {
       text: @place.map (place) ->
@@ -148,46 +152,22 @@ module.exports = class PlaceInfo extends Base
                 "#{place.address.locality}, #{place.address.administrativeArea}"
             z '.rating',
               z @$rating, {size: '20px'}
-          z '.right',
-            z '.price',
-              if place?.prices?.all?.mode is 0
-                @model.l.get 'general.free'
-              else if place?.prices?.all?.mode
-                [
-                  @model.l.get 'placeInfo.approx'
-                  " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
-                ]
-              else
-                "$ #{@model.l.get 'general.unknown'}"
+          if place?.type is 'campground'
+            z '.right',
+              z '.price',
+                if place?.prices?.all?.mode is 0
+                  @model.l.get 'general.free'
+                else if place?.prices?.all?.mode
+                  [
+                    @model.l.get 'placeInfo.approx'
+                    " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
+                  ]
+                else
+                  "$ #{@model.l.get 'general.unknown'}"
 
         z @$actionBox
 
-        z '.contact',
-          z '.coordinates',
-            z 'span.title', "#{@model.l.get 'newPlaceInitialInfo.coordinates'}: "
-            "#{place?.location?.lat}, #{place?.location?.lon}"
-
-          if place?.contact?.phone
-            matches = place.contact?.phone?.number.match(
-              /^(\d{3})(\d{3})(\d{4})$/
-            )
-            phone = if matches
-              "(#{matches[1]}) #{matches[2]}-#{matches[3]}"
-            z '.phone',
-              z 'span.title', @model.l.get 'place.phone'
-              phone
-          if place?.contact?.website
-            z '.website',
-              z 'span.title', @model.l.get 'place.website'
-              z 'a', {
-                href: place.contact?.website
-                onclick: (e) =>
-                  e?.preventDefault()
-                  @model.portal.call 'browser.openWindow', {
-                    url: place.contact?.website
-                    target: '_system'
-                  }
-              }, place.contact?.website
+        z @$contact
 
         if place?.type is 'campground' and not hasSeenRespectCard
           z '.card',
@@ -204,6 +184,32 @@ module.exports = class PlaceInfo extends Base
                   @state.set hasSeenRespectCard: true
                   @model.cookie.set 'hasSeenRespectCard', '1'
             }
+
+        if place?.subType is 'walmart'
+          totalCount = (place.isAllowedCount or 0) +
+                          (place.isNotAllowedCount or 0)
+          z '.is-overnight-allowed', {
+            className: z.classKebab {
+              isRed: totalCount and place.isAllowedScore < 0.4
+              isYellow: not totalCount or (
+                place.isAllowedScore >= 0.4 and place.isAllowedScore <= 0.7
+              )
+              isGreen: place.isAllowedScore > 0.7
+            }
+          },
+            if totalCount
+              @model.l.get 'placeInfo.isOvernightAllowed', {
+                replacements:
+                  yesCount: place.isAllowedCount or 0
+                  totalCount: totalCount
+              }
+            else
+              @model.l.get 'placeInfo.isOvernightAllowedIDK'
+
+
+        if place?.subType is 'walmart' #and not hasSeenRespectCard
+          z '.card',
+            z @$walmartInfoCard
 
         if place?.type is 'amenity'
           _map amenities, ({amenity, $icon}) ->
