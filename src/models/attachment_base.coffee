@@ -1,5 +1,3 @@
-config = require '../config'
-
 module.exports = class Attachment
   constructor: ({@auth, @proxy, @exoid}) -> null
 

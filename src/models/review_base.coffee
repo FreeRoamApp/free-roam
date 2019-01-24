@@ -1,5 +1,3 @@
-_defaults = require 'lodash/defaults'
-
 config = require '../config'
 
 module.exports = class Review

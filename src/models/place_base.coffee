@@ -1,5 +1,3 @@
-config = require '../config'
-
 module.exports = class PlaceBase
   constructor: ({@auth}) -> null
 

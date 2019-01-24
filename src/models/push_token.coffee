@@ -1,5 +1,3 @@
-Environment = require '../services/environment'
-
 module.exports = class PushToken
   namespace: 'pushTokens'
 

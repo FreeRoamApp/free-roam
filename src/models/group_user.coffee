@@ -1,7 +1,6 @@
 _every = require 'lodash/every'
 _find = require 'lodash/find'
 _defaults = require 'lodash/defaults'
-_clone = require 'lodash/clone'
 
 config = require '../config'
 

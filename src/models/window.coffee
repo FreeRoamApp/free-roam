@@ -1,10 +1,7 @@
-Environment = require '../services/environment'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 require 'rxjs/add/operator/map'
 id = require 'uuid'
 _forEach = require 'lodash/forEach'
-
-config = require '../config'
 
 DRAWER_RIGHT_PADDING = 56
 DRAWER_MAX_WIDTH = 336

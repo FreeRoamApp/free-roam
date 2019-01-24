@@ -71,7 +71,7 @@ request = require '../services/request'
 config = require '../config'
 
 SERIALIZATION_KEY = 'MODEL'
-SERIALIZATION_EXPIRE_TIME_MS = 1000 * 10 # 10 seconds
+# SERIALIZATION_EXPIRE_TIME_MS = 1000 * 10 # 10 seconds
 
 module.exports = class Model
   constructor: (options) ->

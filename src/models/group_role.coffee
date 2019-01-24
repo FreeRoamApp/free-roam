@@ -1,8 +1,4 @@
-_every = require 'lodash/every'
-_find = require 'lodash/find'
 _defaults = require 'lodash/defaults'
-
-config = require '../config'
 
 module.exports = class GroupRole
   namespace: 'groupRoles'

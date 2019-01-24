@@ -1,5 +1,3 @@
-RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
-
 InstallOverlay = require '../components/install_overlay'
 
 module.exports = class InstallOverlayModel

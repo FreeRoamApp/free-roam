@@ -1,4 +1,3 @@
-_defaults = require 'lodash/defaults'
 _pick = require 'lodash/pick'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/defer'
@@ -13,7 +12,7 @@ config = require '../config'
 module.exports = class Auth
   constructor: (options) ->
     {@exoid, @pushToken, @l, @cookie, @userAgent, @portal} = options
-    initPromise = null
+
     @waitValidAuthCookie = RxObservable.defer =>
       accessToken = @cookie.get config.AUTH_COOKIE
       language = @l.getLanguageStr()

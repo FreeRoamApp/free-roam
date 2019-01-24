@@ -1,5 +1,3 @@
-config = require '../config'
-
 module.exports = class Time
   constructor: ({@auth}) ->
     @serverTime = Date.now()

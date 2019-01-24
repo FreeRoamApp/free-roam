@@ -1,5 +1,3 @@
-config = require '../config'
-
 PlaceReviewBase = require './place_review_base'
 
 module.exports = class CampgroundReview extends PlaceReviewBase

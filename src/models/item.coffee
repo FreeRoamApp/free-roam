@@ -1,5 +1,3 @@
-config = require '../config'
-
 module.exports = class Item
   namespace: 'items'
 

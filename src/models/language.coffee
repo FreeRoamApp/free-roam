@@ -1,10 +1,7 @@
 _reduce = require 'lodash/reduce'
-_defaultsDeep = require 'lodash/defaultsDeep'
 _mapValues = require 'lodash/mapValues'
-_keys = require 'lodash/keys'
 _reduce = require 'lodash/reduce'
 _findKey = require 'lodash/findKey'
-_filter = require 'lodash/filter'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 DateService = require '../services/date'

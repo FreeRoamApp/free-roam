@@ -1,5 +1,3 @@
-config = require '../config'
-
 module.exports = class Group
   namespace: 'groups'
 

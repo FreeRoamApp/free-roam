@@ -1,4 +1,3 @@
-_map = require 'lodash/map'
 Fingerprint = require 'fingerprintjs'
 getUuidByString = require 'uuid-by-string'
 

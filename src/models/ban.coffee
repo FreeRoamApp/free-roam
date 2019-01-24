@@ -1,5 +1,3 @@
-_defaults = require 'lodash/defaults'
-
 module.exports = class Ban
   namespace: 'bans'
 

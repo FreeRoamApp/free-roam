@@ -1,5 +1,3 @@
-config = require '../config'
-
 module.exports = class OfflineDataModel
   constructor: ({@exoid, @portal, @l, @statusBar}) -> null
 

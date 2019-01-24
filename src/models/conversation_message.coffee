@@ -1,8 +1,6 @@
 id = require 'uuid'
 _sortBy = require 'lodash/sortBy'
 _merge = require 'lodash/merge'
-_cloneDeep = require 'lodash/cloneDeep'
-_defaults = require 'lodash/defaults'
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 
 config = require '../config'
