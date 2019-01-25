@@ -276,15 +276,15 @@ module.exports = class ProfileDialog
     isMe = user?.id is me?.id
 
     _filter [
-      # {
-      #   icon: 'profile'
-      #   $icon: @$profileIcon
-      #   text: @model.l.get 'general.profile'
-      #   isVisible: not isMe
-      #   onclick: =>
-      #     @router.go 'userById', {id: user?.id}
-      #     @selectedProfileDialogUser.next null
-      # }
+      {
+        icon: 'profile'
+        $icon: @$profileIcon
+        text: @model.l.get 'general.reviews'
+        # isVisible: not isMe
+        onclick: =>
+          @router.go 'profileReviews', {username: user?.username}
+          @selectedProfileDialogUser.next null
+      }
       {
         icon: 'chat-bubble'
         $icon: @$messageIcon

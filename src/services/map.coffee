@@ -70,6 +70,13 @@ class MapService
         field: 'amenities'
         type: 'booleanArray'
         isBoolean: true
+        arrayValue: 'water'
+        name: model.l.get 'amenities.npwater'
+      }
+      {
+        field: 'amenities'
+        type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'trash'
         name: model.l.get 'amenities.trash'
       }

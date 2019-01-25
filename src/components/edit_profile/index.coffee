@@ -16,6 +16,7 @@ SecondaryButton = require '../secondary_button'
 FlatButton = require '../flat_button'
 PrimaryInput = require '../primary_input'
 RigInfo = require '../rig_info'
+ProfileReviews = require '../profile_reviews'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -27,6 +28,9 @@ B_IN_MB = 1024 * 1024
 module.exports = class EditProfile
   constructor: ({@model, @router, group}) ->
     me = @model.user.getMe()
+
+    # FIXME: rm
+    @$profileReviews = new ProfileReviews {@model, @router, user: me}
 
     @$avatar = new Avatar()
     @$avatarButton = new PrimaryButton()
@@ -150,6 +154,7 @@ module.exports = class EditProfile
     console.log 'reviews', reviews
 
     z '.z-edit-profile',
+      z @$profileReviews
       z '.g-grid',
 
         z '.section',

@@ -5,6 +5,7 @@ _startCase = require 'lodash/startCase'
 
 Reviews = require '../reviews'
 PrimaryButton = require '../primary_button'
+PlaceReview = require '../place_review'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -19,7 +20,8 @@ module.exports = class PlaceReviews
       @model["#{place.type}Review"].getAllByParentId place.id
 
     @$reviews = new Reviews {
-      @model, @router, reviews: reviews
+      @model, @router, reviews, parent: place
+      Review: PlaceReview
     }
     @$addReviewButton = new PrimaryButton()
 
@@ -33,7 +35,7 @@ module.exports = class PlaceReviews
       z @$reviews, {
         $emptyState:
           z '.empty',
-            "We don't have any reviews for this yet. If you've been here and have a few minutes, leaving a review would be incredibly helpful to other campers!"
+            @model.l.get 'placeReviews.empty'
             z '.add-review',
               z @$addReviewButton,
                 text: @model.l.get 'placeInfo.addReview'

@@ -57,7 +57,7 @@ module.exports = class NewPlaceReview
     @step = new RxBehaviorSubject 0
     @$stepBar = new StepBar {@model, @step}
 
-    @$steps = [
+    @$steps = _filter [
       new NewReviewCompose {
         @model, @router, fields: @reviewFields, @season
         uploadFn: (args...) =>
@@ -66,11 +66,12 @@ module.exports = class NewPlaceReview
             args
           )
       }
-      new @NewPlaceReviewExtras {
-        @model, @router, fields: @reviewExtraFields,
-        fieldsValues: reviewExtraFieldsValues, @season
-        isOptional: true
-      }
+      if @reviewExtraFields
+        new @NewPlaceReviewExtras {
+          @model, @router, fields: @reviewExtraFields,
+          fieldsValues: reviewExtraFieldsValues, @season
+          isOptional: true
+        }
     ]
 
     @state = z.state {
@@ -170,7 +171,7 @@ module.exports = class NewPlaceReview
 
       z @$stepBar, {
         isLoading: isLoading
-        steps: 2
+        steps: @$steps.length
         isStepCompleted: @$steps[step]?.isCompleted?()
         save:
           icon: 'arrow-right'

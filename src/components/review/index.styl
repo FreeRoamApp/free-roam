@@ -1,47 +1,27 @@
 @require '../../vars'
 
 .z-review
-  display: flex
-  width: 100%
-  box-sizing: border-box
-  overflow: hidden
-  position: relative
+  > .title
+    font-title()
+    margin-bottom: 8px
 
-  > .avatar
-    margin-right: 16px
-    cursor: pointer
+  > .body
+    font-body2(no)
+    // font-size: 14px
     position: relative
+    z-index: 2
+    padding-right: 16px
+    // margin-top: 6px
+    overflow: hidden
 
-  > .content
-    flex1()
-    min-width: 0 // fix
+  > .attachments
+    margin: 8px 0
 
-    > .title
-      font-title()
-      margin-bottom: 8px
+  > .points
+    display: flex
+    align-items: center
+    justify-content: flex-end
+    margin-left: 8px
 
-    > .body
-      font-body2(no)
-      // font-size: 14px
-      position: relative
-      z-index: 2
-      padding-right: 16px
-      // margin-top: 6px
-      overflow: hidden
-
-    > .attachments
-      margin: 8px 0
-
-    > .points
-      display: flex
-      align-items: center
-      justify-content: flex-end
-      margin-left: 8px
-
-      > .icon
-        margin: 0 8px
-
-  @media (min-width: $breakPointMedium)
-    > .content
-      > .info > .name
-        max-width: none
+    > .icon
+      margin: 0 8px

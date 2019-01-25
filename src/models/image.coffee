@@ -19,4 +19,6 @@ module.exports = class ImageModel
     window? and @loadedImages.indexOf(url) isnt -1
 
   getSrcByPrefix: (prefix, size = 'small') ->
+    unless prefix
+      return ''
     "#{config.USER_CDN_URL}/#{prefix}.#{size}.jpg"

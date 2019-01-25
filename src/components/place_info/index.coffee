@@ -212,7 +212,7 @@ module.exports = class PlaceInfo extends Base
             z @$walmartInfoCard
 
         if place?.type is 'amenity'
-          _map amenities, ({amenity, $icon}) ->
+          _map amenities, ({amenity, $icon}) =>
             z '.amenity',
               z '.icon',
                 z $icon,
@@ -221,7 +221,7 @@ module.exports = class PlaceInfo extends Base
                   size: '16px'
                   color: colors["$amenity#{amenity}"]
 
-              z '.name', amenity
+              z '.name', @model.l.get "amenities.#{amenity}"
 
         if place?.drivingInstructions
           z '.driving-instructions',

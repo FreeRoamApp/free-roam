@@ -39,6 +39,7 @@ module.exports = class NewAmenity
     amenities = [
       {amenity: 'dump', hasPrice: true}
       {amenity: 'water', hasPrice: true}
+      {amenity: 'npwater', hasPrice: true}
       {amenity: 'groceries'}
       {amenity: 'propane'}
       {amenity: 'gas'}
@@ -143,7 +144,7 @@ module.exports = class NewAmenity
             z '.amenity',
               z 'label.label',
                 z '.checkbox', z $checkbox
-                z '.name', amenity
+                z '.name', @model.l.get "amenities.#{amenity}"
               z '.price-input', {
                 className: z.classKebab {isVisible: isPriceInputVisible}
               },

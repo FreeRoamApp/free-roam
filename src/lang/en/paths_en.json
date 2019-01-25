@@ -18,7 +18,11 @@
 
 
   "about": "/about",
+
   "amenity": "/amenity/:slug",
+  "amenityAttachments": "/amenity/:slug/attachments",
+  "amenityWithTab": "/amenity/:slug/:tab",
+
   "backpack": "/backpack",
 
   "campground": "/campground/:slug",
@@ -38,6 +42,7 @@
   "itemsBySearch": "/product-guides/search/:query",
   "myPlaces": "/my-places",
   "newAmenity": "/new-amenity",
+  "newAmenityReview": "/amenity/:slug/new-review",
   "newCampground": "/new-campground",
   "newCampgroundReview": "/campground/:slug/new-review",
   "newOvernight": "/new-overnight",
@@ -56,6 +61,7 @@
   "preservation": "/respect-the-land",
   "productGuides": "/product-guides",
   "product": "/product/:slug",
+  "profileReviews": "/user/:username/reviews",
 
   "settings": "/settings",
   "shell": "/shell",

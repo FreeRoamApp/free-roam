@@ -17,6 +17,8 @@ require 'rxjs/add/operator/take'
 
 Auth = require './auth'
 Amenity = require './amenity'
+AmenityAttachment = require './amenity_attachment'
+AmenityReview = require './amenity_review'
 AdditionalScript = require './additional_script'
 Ban = require './ban'
 Campground = require './campground'
@@ -149,6 +151,8 @@ module.exports = class Model
     @userRig = new UserRig {@auth}
     @additionalScript = new AdditionalScript()
     @amenity = new Amenity {@auth}
+    @amenityAttachment = new AmenityAttachment {@auth}
+    @amenityReview = new AmenityReview {@auth, @exoid, proxy}
     @ban = new Ban {@auth}
     @category = new Category {@auth}
     @campground = new Campground {@auth}
