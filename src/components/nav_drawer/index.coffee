@@ -132,6 +132,14 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'rss'
           # }
+          if @model.experiment.get('profile') is 'visible'
+            {
+              path: @router.get 'profileMe'
+              title: @model.l.get 'general.profile'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'profile'
+            }
           {
             path: @router.get 'myPlaces'
             title: @model.l.get 'myPlacesPage.title'
@@ -180,7 +188,7 @@ module.exports = class NavDrawer
               title: @model.l.get 'editProfilePage.title'
               $icon: new Icon()
               $ripple: new Ripple()
-              iconName: 'profile'
+              iconName: 'edit'
             }
           if navigator?.serviceWorker
             {

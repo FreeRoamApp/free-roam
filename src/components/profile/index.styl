@@ -26,6 +26,9 @@
       bottom: -40px
 
   > .info
+    background: getColor('$tertiary100')
+    padding-bottom: 16px
+
     > .g-grid
       > .karma
         padding: 16px
@@ -37,52 +40,52 @@
           font-title()
           margin-bottom: 4px
 
-  > .links
-    display: flex
-    margin-top: 16px
-    justify-content: center
-    height: 32px
-
-    > .link
-      margin: 0 16px
-
-    > .divider
-      width: 1px
-      height: 100%
-      background: getColor('$bgText26')
-      margin: 0 8px
-
-  > .g-grid
-    padding: 16px
-    box-sizing: border-box
-    margin-top: 16px
-
-    > .g-cols > .g-col
-      .box
-        display: block
-        height: 76px
-        padding: 12px
-        box-sizing: border-box
-        border-radius: 4px
+      > .links
         display: flex
-        align-items: center
+        margin-top: 16px
+        justify-content: center
+        height: 32px
 
-        &.reviews
-          background-color: getColor('$salmon500')
-          color: getColor('$salmon500Text')
+        > .link
+          margin: 0 16px
 
-        &.check-ins
-          background-color: getColor('$pacific500')
-          color: getColor('$pacific500Text')
+        > .divider
+          width: 1px
+          height: 100%
+          background: getColor('$bgText26')
+          margin: 0 8px
 
-        &.planned
-          background-color: getColor('$mustard500')
-          color: getColor('$mustard500Text')
+      > .boxes
+        padding: 16px
+        box-sizing: border-box
+        margin-top: 16px
 
-        &.photos
-          background-color: getColor('$quaternary500')
-          color: getColor('$white')
+        > .g-cols > .g-col
+          .box
+            display: block
+            height: 76px
+            padding: 12px
+            box-sizing: border-box
+            border-radius: 4px
+            display: flex
+            align-items: center
 
-        > .title
-          font-title()
-          color: inherit
+            &.reviews
+              background-color: getColor('$salmon500')
+              color: getColor('$salmon500Text')
+
+            &.check-ins
+              background-color: getColor('$pacific500')
+              color: getColor('$pacific500Text')
+
+            &.planned
+              background-color: getColor('$mustard500')
+              color: getColor('$mustard500Text')
+
+            &.photos
+              background-color: getColor('$quaternary500')
+              color: getColor('$white')
+
+            > .title
+              font-title()
+              color: inherit

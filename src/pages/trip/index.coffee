@@ -25,11 +25,14 @@ module.exports = class TripPage
 
   getMeta: =>
     @trip.map (trip) =>
+      cacheBust = new Date(trip?.lastUpdateTime).getTime()
       {
         title: @model.l.get 'tripPage.title'
         description:  @model.l.get 'tripPage.description'
         openGraph:
-          image: @model.image.getSrcByPrefix trip?.imagePrefix, {size: 'large'}
+          image: @model.image.getSrcByPrefix trip?.imagePrefix, {
+            size: 'large', cacheBust
+          }
       }
 
   render: =>

@@ -10,7 +10,7 @@ if window?
 
 
 module.exports = class ShareMapDialog
-  constructor: ({@model, @isLoading, @imagePrefix, @blob, shareInfo}) ->
+  constructor: ({@model, @trip, shareInfo}) ->
     @$dialog = new Dialog {
       onLeave: =>
         @model.overlay.close()
@@ -19,16 +19,19 @@ module.exports = class ShareMapDialog
 
     @state = z.state {
       shareInfo
-      @isLoading
-      @imagePrefix
-      @blob
+      @trip
     }
 
   render: =>
-    {shareInfo, isLoading, imagePrefix, blob} = @state.getValue()
+    {trip, shareInfo} = @state.getValue()
 
-    createObjectURL = window?.URL?.createObjectURL or
-                      window?.webkitURL?.createObjectURL
+    cacheBust = new Date(trip?.lastUpdateTime).getTime()
+    prefix = trip?.imagePrefix or 'trips/default'
+    tripImage = @model.image.getSrcByPrefix(
+      prefix, {size: 'large', cacheBust}
+    )
+
+    isLoading = not trip?
 
     z '.z-share-map-dialog',
       z @$dialog,
@@ -42,7 +45,7 @@ module.exports = class ShareMapDialog
             else
               z '.content',
                 z 'img.preview', {
-                  src: @model.image.getSrcByPrefix imagePrefix
+                  src: tripImage
                 }
                 z '.actions',
                   z '.action', {
@@ -72,8 +75,7 @@ module.exports = class ShareMapDialog
                   },
                     @model.l.get 'shareMapDialog.shareOther'
                   z 'a.action', {
-                    href: if blob
-                      createObjectURL blob
+                    href: tripImage
                     attributes:
                       download: 'travel_map.png'
                     onclick: ->

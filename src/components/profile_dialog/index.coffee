@@ -277,10 +277,10 @@ module.exports = class ProfileDialog
       {
         icon: 'profile'
         $icon: @$profileIcon
-        text: @model.l.get 'general.reviews'
+        text: @model.l.get 'general.profile'
         # isVisible: not isMe
         onclick: =>
-          @router.go 'profileReviews', {username: user?.username}
+          @router.go 'profile', {username: user?.username}
           @selectedProfileDialogUser.next null
       }
       {

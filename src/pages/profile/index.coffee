@@ -52,5 +52,10 @@ module.exports = class ProfilePage
       #   style: 'primary'
       #   $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
       # }
+
+      # this is here so vdom doesn't change which div bototmBar is for
+      # (other page components all have appBars)
+      z '.app-bar-placeholder'
+
       @$profile
       @$bottomBar

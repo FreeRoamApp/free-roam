@@ -54,5 +54,8 @@ module.exports = class NewCampground extends NewPlace
       safety:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+      pricePaid:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
 
     super

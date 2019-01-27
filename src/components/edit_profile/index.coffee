@@ -227,10 +227,3 @@ module.exports = class EditProfile
                     else if isSaved
                     then @model.l.get 'general.saved'
                     else @model.l.get 'general.save'
-
-        z '.karma',
-          @model.l.get 'profile.karma', {
-            replacements:
-              karma: me?.karma or 0
-          }
-        #   'You have 0 karma. Karma is earned by doing helpful things for others. You earn 1 karma for every review you post, and additional karma any time someone marks your review or photos as helpful.'

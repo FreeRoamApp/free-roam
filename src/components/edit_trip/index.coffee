@@ -205,4 +205,13 @@ module.exports = class EditTrip extends Base
                 z '.attachments',
                   $attachmentsList
 
-      z @$shareMap
+          z '.privacy', {
+            onclick: =>
+              @model.trip.upsert {
+                id: trip.id
+                privacy: if trip?.privacy is 'private' \
+                         then 'public'
+                         else 'private'
+              }
+          },
+            "#{@model.l.get 'general.privacy'}: #{trip?.privacy or 'public'}"

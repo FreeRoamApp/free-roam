@@ -14,6 +14,7 @@ Checkbox = require '../checkbox'
 Dropdown = require '../dropdown'
 InputRange = require '../input_range'
 PrimaryButton = require '../primary_button'
+PrimaryInput = require '../primary_input'
 RigInfo = require '../rig_info'
 colors = require '../../colors'
 config = require '../../config'
@@ -28,6 +29,11 @@ module.exports = class PlaceNewReviewExtras
 
     @$addCarrierButton = new PrimaryButton()
     @$rigInfo = new RigInfo {@model, @router}
+
+    if @fields.pricePaid
+      @$pricePaidInput = new PrimaryInput {
+        valueStreams: @fields.pricePaid.valueStreams
+      }
 
     @seasons =  [
       {key: 'spring', text: @model.l.get 'seasons.spring'}
@@ -164,6 +170,16 @@ module.exports = class PlaceNewReviewExtras
                   onclick: =>
                     @carrierCount.next @carrierCount.getValue() + 1
             ]
+
+        if @fields.pricePaid
+          z '.field.price',
+            z '.name', @model.l.get 'newReviewExtras.howMuch'
+            z '.input',
+              z @$pricePaidInput, {
+                hintText: @model.l.get 'newReviewExtras.pricePaid'
+                type: 'number'
+              }
+
         z '.field.when',
           z '.name', @model.l.get 'newReviewExtras.whenVisit'
           z '.seasons',

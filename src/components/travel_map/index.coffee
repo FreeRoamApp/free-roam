@@ -7,7 +7,7 @@ _filter = require 'lodash/filter'
 _defaults = require 'lodash/defaults'
 
 Map = require '../map'
-ShareMap = require '../share_map'
+ShareMapDialog = require '../share_map_dialog'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
 config = require '../../config'
@@ -58,19 +58,12 @@ module.exports = class TravelMap
 
     @$map = new Map mapOptions
 
-    @$shareMap = new ShareMap {
-      @model, mapOptions
+    @$shareMapDialog = new ShareMapDialog {
+      @model, @isLoading, @trip
       shareInfo: @trip.map (trip) ->
         {
           text: 'editTrip.shareText'
           url: "#{config.HOST}/trip/#{trip.id}"
-        }
-      onUpload: (response) =>
-        {trip} = @state.getValue()
-        console.log 'set prefix', @trip.id, response.prefix
-        @model.trip.upsert {
-          id: @trip.id
-          imagePrefix: response.prefix
         }
     }
 
@@ -84,7 +77,7 @@ module.exports = class TravelMap
 
   share: =>
     ga? 'send', 'event', 'trip', 'share', 'click'
-    @$shareMap.share()
+    @model.overlay.open @$shareMapDialog
 
 
   render: =>

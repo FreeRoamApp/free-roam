@@ -1,19 +1,39 @@
 module.exports = class Experiment
   constructor: ({@cookie}) ->
-    expNoProductGuides = @cookie.get 'exp:saveTooltip'
-    unless expNoProductGuides
+    expControl = @cookie.get 'exp:control'
+    unless expControl
       rand = Math.random()
-      expNoProductGuides = if rand > 0.5 \
+      expControl = if rand > 0.5 \
                          then 'visible'
                          else 'control'
-      @cookie.set 'exp:saveTooltip', expNoProductGuides
+      @cookie.set 'exp:control', expControl
 
-    setTimeout ->
-      ga? 'send', 'event', 'exp', "saveTooltip:#{expNoProductGuides}"
-    , 0
+    ga? 'send', 'event', 'exp', "control:#{expControl}"
+
+    expSaveTooltip = @cookie.get 'exp:saveTooltip'
+    unless expSaveTooltip
+      rand = Math.random()
+      expSaveTooltip = if rand > 0.5 \
+                         then 'visible'
+                         else 'control'
+      @cookie.set 'exp:saveTooltip', expSaveTooltip
+
+    ga? 'send', 'event', 'exp', "saveTooltip:#{expSaveTooltip}"
+
+    expProfile = @cookie.get 'exp:profile'
+    unless expProfile
+      rand = Math.random()
+      expProfile = if rand > 0.5 \
+                         then 'visible'
+                         else 'control'
+      @cookie.set 'exp:profile', expProfile
+
+    ga? 'send', 'event', 'exp', "profile:#{expProfile}"
 
     @experiments =
-      saveTooltip: expNoProductGuides
+      control: expControl
+      saveTooltip: expSaveTooltip
+      profile: expProfile
 
   get: (key) =>
     @experiments[key]
