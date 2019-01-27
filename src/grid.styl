@@ -33,8 +33,8 @@ grid(class = 'xs', columns = 12)
         box-sizing: border-box
         // reset smaller sizes (eg reset xs when sm)
         &:nth-child(n)
-          padding-left: 8px
-          padding-right: 8px
+          padding-left: 4px
+          padding-right: 4px
           clear: none
         &:nth-child({12 / colCount}n + 1)
           clear: both
@@ -57,13 +57,13 @@ grid(class = 'xs', columns = 12)
   clearfix()
 
   .g-cols
-    margin-left: -8px
-    margin-right: -8px
+    margin-left: -4px
+    margin-right: -4px
 
     > .g-col
       float left
       position relative
-      padding 8px
+      padding 4px
 
       img
         max-width 100%
@@ -75,7 +75,7 @@ grid(class = 'xs', columns = 12)
       margin-right: 0
 
       > .g-col
-        padding: 0
+        padding: 0 !important
 
   *
     box-sizing border-box

@@ -12,7 +12,7 @@ ONE_DAY_MS = 3600 * 24 * 1000
 
 class PushService
   constructor: ->
-    if window? and not Environment.isNativeApp 'freeroam'
+    if window? and not Environment.isNativeApp('freeroam') and not Environment.isScreenshotter()
       @isReady = new Promise (@resolveReady) => null
       @isFirebaseImported = Promise.all [
         `import(/* webpackChunkName: "firebase" */'firebase/app')`

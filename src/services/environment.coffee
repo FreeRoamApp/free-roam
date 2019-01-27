@@ -31,6 +31,10 @@ class Environment
   isTwitch: ->
     window?.Twitch
 
+  isScreenshotter: ({userAgent} = {}) ->
+    userAgent ?= navigator?.userAgent
+    _includes userAgent, 'SCREENSHOTTER'
+
   isAndroid: ({userAgent} = {}) ->
     userAgent ?= navigator?.userAgent
     _includes userAgent, 'Android'

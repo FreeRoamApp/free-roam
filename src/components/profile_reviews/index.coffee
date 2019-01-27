@@ -33,6 +33,5 @@ module.exports = class ProfileReviews
     z '.z-profile-reviews',
       z @$reviews, {
         $emptyState:
-          z '.empty',
-            ''
+          z '.empty', @model.l.get 'reviews.empty'
       }

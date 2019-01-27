@@ -41,7 +41,8 @@ module.exports = class ConversationInput
       @model
       uploadFn: @model.conversationMessage.uploadImage
       onUpload: ({prefix, aspectRatio}) =>
-        @message.next "![](<#{@model.image.getSrcByPrefix(prefix, 'small')}" +
+        src = @model.image.getSrcByPrefix prefix, {size: 'small'}
+        @message.next "![](<#{src}" +
                           " =#{aspectRatio}>)"
         @onPost()
     }

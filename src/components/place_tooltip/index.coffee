@@ -32,7 +32,7 @@ module.exports = class PlaceTooltip extends MapTooltip
     super
 
   getThumbnailUrl: (place) =>
-    @model.image.getSrcByPrefix place?.thumbnailPrefix, 'tiny'
+    @model.image.getSrcByPrefix place?.thumbnailPrefix, {size: 'tiny'}
 
   saveCoordinate: =>
     {place} = @state.getValue()

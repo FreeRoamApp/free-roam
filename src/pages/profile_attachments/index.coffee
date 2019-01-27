@@ -2,14 +2,14 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-ProfileReviews = require '../../components/profile_reviews'
+ProfileAttachments = require '../../components/profile_attachments'
 config = require '../../config'
 colors = require '../../colors'
 
 if window?
   require './index.styl'
 
-module.exports = class ProfileReviewsPage
+module.exports = class ProfileAttachmentsPage
   hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group}) ->
@@ -21,7 +21,7 @@ module.exports = class ProfileReviewsPage
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$profileReviews = new ProfileReviews {@model, @router, @user, type: 'user'}
+    @$profileAttachments = new ProfileAttachments {@model, @router, @user, type: 'user'}
 
     @state = z.state
       user: @user
@@ -29,11 +29,11 @@ module.exports = class ProfileReviewsPage
   getMeta: =>
     @user.map (user) =>
       {
-        title: @model.l.get 'profileReviewsPage.title', {
+        title: @model.l.get 'profileAttachmentsPage.title', {
           replacements:
             name: @model.user.getDisplayName user
         }
-        description: @model.l.get 'profileReviewsPage.description', {
+        description: @model.l.get 'profileAttachmentsPage.description', {
           replacements:
             name: @model.user.getDisplayName user
         }
@@ -42,14 +42,14 @@ module.exports = class ProfileReviewsPage
   render: =>
     {user} = @state.getValue()
 
-    z '.p-profile-reviews',
+    z '.p-profile-attachments',
       z @$appBar, {
         title: if user
-          @model.l.get 'profileReviewsPage.title', {
+          @model.l.get 'profileAttachmentsPage.title', {
             replacements:
               name: @model.user.getDisplayName user
           }
         style: 'primary'
         $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
       }
-      @$profileReviews
+      @$profileAttachments

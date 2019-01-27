@@ -34,7 +34,7 @@ module.exports = class MarkdownEditor
           {type: 'image', prefix}
         ])
 
-        src = @model.image.getSrcByPrefix prefix, 'large'
+        src = @model.image.getSrcByPrefix prefix, {size: 'large'}
 
         @$textarea.setModifier {
           pattern: "![](<#{src} =#{aspectRatio}>)"

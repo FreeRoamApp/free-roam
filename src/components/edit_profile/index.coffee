@@ -15,8 +15,8 @@ PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
 FlatButton = require '../flat_button'
 PrimaryInput = require '../primary_input'
+PrimaryTextarea = require '../primary_textarea'
 RigInfo = require '../rig_info'
-ProfileReviews = require '../profile_reviews'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -28,9 +28,6 @@ B_IN_MB = 1024 * 1024
 module.exports = class EditProfile
   constructor: ({@model, @router, group}) ->
     me = @model.user.getMe()
-
-    # FIXME: rm
-    @$profileReviews = new ProfileReviews {@model, @router, user: me}
 
     @$avatar = new Avatar()
     @$avatarButton = new PrimaryButton()
@@ -63,6 +60,12 @@ module.exports = class EditProfile
     @$webInput = new PrimaryInput
       valueStreams: @webValueStreams
 
+    @bioValueStreams = new RxReplaySubject 1
+    @bioValueStreams.next me.map (me) ->
+      me.bio or ''
+    @$bioTextarea = new PrimaryTextarea
+      valueStreams: @bioValueStreams
+
     @newPasswordValue = new RxBehaviorSubject ''
     @newPasswordError = new RxBehaviorSubject null
     @$newPasswordInput = new PrimaryInput
@@ -85,15 +88,14 @@ module.exports = class EditProfile
       username: @usernameValueStreams.switch()
       instagram: @instagramValueStreams.switch()
       web: @webValueStreams.switch()
+      bio: @bioValueStreams.switch()
       newPassword: @newPasswordValue
       currentPassword: @currentPasswordValue
       isSaving: false
       isSaved: false
-      reviews: me.switchMap (me) =>
-        @model.placeReview.getAllByUserId me.id
 
   save: =>
-    {avatarImage, username, instagram, web, newPassword, currentPassword,
+    {avatarImage, username, instagram, web, bio, newPassword, currentPassword,
       me, isSaving, group} = @state.getValue()
     if isSaving
       return
@@ -108,6 +110,9 @@ module.exports = class EditProfile
       userDiff = {links}
     else
       userDiff = {}
+
+    if bio
+      userDiff.bio = bio
 
     if username and username isnt me?.username
       userDiff.username = username
@@ -149,12 +154,9 @@ module.exports = class EditProfile
 
   render: =>
     {me, avatarUploadError, avatarDataUrl, group, newPassword
-      players, isSaving, isSaved, reviews} = @state.getValue()
-
-    console.log 'reviews', reviews
+      players, isSaving, isSaved} = @state.getValue()
 
     z '.z-edit-profile',
-      z @$profileReviews
       z '.g-grid',
 
         z '.section',
@@ -191,6 +193,12 @@ module.exports = class EditProfile
           z '.input',
             z @$webInput,
               hintText: @model.l.get 'general.web'
+              isFullWidth: false
+
+        z '.section',
+          z '.input',
+            z @$bioTextarea,
+              hintText: @model.l.get 'general.bio'
               isFullWidth: false
 
         z '.section',

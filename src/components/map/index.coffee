@@ -273,11 +273,13 @@ module.exports = class Map
       @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapLocation
 
-      @map.addControl new mapboxgl.GeolocateControl({
-        positionOptions:
-          enableHighAccuracy: true
-        trackUserLocation: true
-      }), 'bottom-left'
+      unless @hideLabels
+        @map.addControl new mapboxgl.GeolocateControl({
+          positionOptions:
+            enableHighAccuracy: true
+          trackUserLocation: true
+        }), 'bottom-left'
+
       if @showScale
         @map.addControl new mapboxgl.ScaleControl {
           maxWidth: 100

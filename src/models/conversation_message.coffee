@@ -87,5 +87,5 @@ module.exports = class ConversationMessage
       body: formData
     }
     .then (response) =>
-      @exoid.invalidateAll()
+      # @exoid.invalidateAll()
       response

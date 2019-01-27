@@ -115,7 +115,7 @@ module.exports = class PlaceInfo extends Base
 
   getCoverUrl: (place) =>
     @model.image.getSrcByPrefix(
-      place.attachmentsPreview.first.prefix, 'large'
+      place.attachmentsPreview.first.prefix, {size: 'large'}
     )
 
   render: =>

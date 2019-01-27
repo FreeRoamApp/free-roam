@@ -16,6 +16,7 @@ if window?
 module.exports = class BottomBar
   constructor: ({@model, @router, requests, group, @serverData}) ->
     @state = z.state
+      me: @model.user.getMe()
       requests: requests
       group: group
       currentPath: requests.map ({req}) ->
@@ -31,7 +32,7 @@ module.exports = class BottomBar
     @$$el?.classList.remove 'is-hidden'
 
   render: ({isAbsolute} = {}) =>
-    {requests, group, currentPath, serverData} = @state.getValue()
+    {me, requests, group, currentPath, serverData} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isLoaded = true # Boolean group
@@ -59,6 +60,12 @@ module.exports = class BottomBar
         icon: 'cart'
         route: @router.get 'productGuides'
         text: @model.l.get 'drawer.productGuide'
+      }
+      {
+        $icon: new Icon()
+        icon: 'profile'
+        route: @router.get 'profileMe'
+        text: @model.l.get 'general.profile'
       }
       {
         $icon: new Icon()

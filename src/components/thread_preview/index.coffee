@@ -35,7 +35,9 @@ module.exports = class ThreadPreview
       if @$embeddedVideo
         z @$embeddedVideo, {width}
       else if imageAttachment
-        mediaSrc = @model.image.getSrcByPrefix imageAttachment.prefix, 'large'
+        mediaSrc = @model.image.getSrcByPrefix imageAttachment.prefix, {
+          size: 'large'
+        }
         z 'img.image', {
           src: mediaSrc?.split(' ')[0]
         }

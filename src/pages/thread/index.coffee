@@ -33,7 +33,9 @@ module.exports = class ThreadPage
   getMeta: =>
     @groupAndThread.map ([group, thread]) =>
       imageAttachment = _find thread?.attachments, {type: 'image'}
-      mediaSrc = @model.image.getSrcByPrefix imageAttachment?.prefix, 'large'
+      mediaSrc = @model.image.getSrcByPrefix imageAttachment?.prefix, {
+        size: 'large'
+      }
       {
         title: thread?.title
         description: thread?.body.replace(/\\n/g, ' ').split(/\s+/)

@@ -29,7 +29,7 @@ module.exports = class TripPage
         title: @model.l.get 'tripPage.title'
         description:  @model.l.get 'tripPage.description'
         openGraph:
-          image: @model.image.getSrcByPrefix trip?.imagePrefix, 'large'
+          image: @model.image.getSrcByPrefix trip?.imagePrefix, {size: 'large'}
       }
 
   render: =>

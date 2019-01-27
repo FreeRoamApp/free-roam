@@ -16,7 +16,6 @@
   "groupThread": "/g/:groupId/thread/:slug",
   "groupThreadEdit": "/g/:groupId/thread/:slug/edit",
 
-
   "about": "/about",
 
   "amenity": "/amenity/:slug",
@@ -61,13 +60,19 @@
   "preservation": "/respect-the-land",
   "productGuides": "/product-guides",
   "product": "/product/:slug",
+  "profile": "/user/:username",
+  "profileMe": "/profile",
+  "profileAttachments": "/user/:username/media",
+  "profileAttachmentsById": "/user/id/:id/media",
   "profileReviews": "/user/:username/reviews",
+  "profileReviewsById": "/user/id/:id/reviews",
 
   "settings": "/settings",
   "shell": "/shell",
   "termsOfService": "/tos",
   "trip": "/trip/:id",
   "trips": "/trips",
+  "travelMapScreenshot": "/travel-map-screenshot/:id",
   "home": "/",
   "404": "/*"
 }

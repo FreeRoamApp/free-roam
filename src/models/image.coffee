@@ -18,7 +18,12 @@ module.exports = class ImageModel
     # then hides, then shows again
     window? and @loadedImages.indexOf(url) isnt -1
 
-  getSrcByPrefix: (prefix, size = 'small') ->
+  getSrcByPrefix: (prefix, {size, cacheBust} = {}) ->
+    size ?= 'small'
+
     unless prefix
       return ''
-    "#{config.USER_CDN_URL}/#{prefix}.#{size}.jpg"
+    src = "#{config.USER_CDN_URL}/#{prefix}.#{size}.jpg"
+    if cacheBust
+      src += "?#{cacheBust}"
+    src

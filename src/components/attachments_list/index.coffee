@@ -18,13 +18,13 @@ module.exports = class AttachmentsList
 
     images = _map attachments, (attachment) =>
       {
-        url: @model.image.getSrcByPrefix attachment.prefix, 'large'
+        url: @model.image.getSrcByPrefix attachment.prefix, {size: 'large'}
         aspectRatio: attachment.aspectRatio
       }
 
     z '.z-attachments-list',
       _map attachments, (attachment, i) =>
-        src = @model.image.getSrcByPrefix attachment.prefix, 'small'
+        src = @model.image.getSrcByPrefix attachment.prefix, {size: 'small'}
         z '.attachment',
           title: attachment.caption
           onclick: =>
@@ -34,7 +34,9 @@ module.exports = class AttachmentsList
               images: images
               imageIndex: i
               imageData:
-                url: @model.image.getSrcByPrefix attachment.prefix, 'large'
+                url: @model.image.getSrcByPrefix attachment.prefix, {
+                  size: 'large'
+                }
                 aspectRatio: attachment.aspectRatio
             }
           style:

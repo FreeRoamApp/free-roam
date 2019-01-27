@@ -1,0 +1,88 @@
+@require '../../vars'
+
+.z-profile
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .header
+    width: 100%
+    height: 180px
+    padding: 8px 16px
+    box-sizing: border-box
+    position: relative
+    background-color: #94c1e2 // ocean blue color from map
+    background-size: auto 100%
+    background-repeat: no-repeat
+    background-position: center
+
+    > .menu
+      display: inline-block
+
+    > .avatar
+      position: absolute
+      left: 50%
+      margin-left: -40px
+      bottom: -40px
+
+  > .info
+    > .g-grid
+      > .karma
+        padding: 16px
+
+      > .name, > .bio
+        text-align: center
+
+        &.name
+          font-title()
+          margin-bottom: 4px
+
+  > .links
+    display: flex
+    margin-top: 16px
+    justify-content: center
+    height: 32px
+
+    > .link
+      margin: 0 16px
+
+    > .divider
+      width: 1px
+      height: 100%
+      background: getColor('$bgText26')
+      margin: 0 8px
+
+  > .g-grid
+    padding: 16px
+    box-sizing: border-box
+    margin-top: 16px
+
+    > .g-cols > .g-col
+      .box
+        display: block
+        height: 76px
+        padding: 12px
+        box-sizing: border-box
+        border-radius: 4px
+        display: flex
+        align-items: center
+
+        &.reviews
+          background-color: getColor('$salmon500')
+          color: getColor('$salmon500Text')
+
+        &.check-ins
+          background-color: getColor('$pacific500')
+          color: getColor('$pacific500Text')
+
+        &.planned
+          background-color: getColor('$mustard500')
+          color: getColor('$mustard500Text')
+
+        &.photos
+          background-color: getColor('$quaternary500')
+          color: getColor('$white')
+
+        > .title
+          font-title()
+          color: inherit

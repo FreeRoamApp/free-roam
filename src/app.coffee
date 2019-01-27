@@ -71,12 +71,15 @@ Pages =
   PreservationPage: require './pages/preservation'
   ProductPage: require './pages/product'
   ProductGuidesPage: require './pages/product_guides'
+  ProfilePage: require './pages/profile'
+  ProfileAttachmentsPage: require './pages/profile_attachments'
   ProfileReviewsPage: require './pages/profile_reviews'
   PoliciesPage: require './pages/policies'
   PrivacyPage: require './pages/privacy'
   SettingsPage: require './pages/settings'
   ShellPage: require './pages/shell'
   ThreadPage: require './pages/thread'
+  TravelMapScreenshotPage: require './pages/travel_map_screenshot'
   TosPage: require './pages/tos'
   TripPage: require './pages/trip'
   TripsPage: require './pages/trips'
@@ -281,12 +284,15 @@ module.exports = class App
     route 'preservation', 'PreservationPage'
     route 'product', 'ProductPage'
     route 'productGuides', 'ProductGuidesPage'
-    route 'profileReviews', 'ProfileReviewsPage'
+    route ['profile', 'profileMe'], 'ProfilePage'
+    route ['profileAttachments', 'profileAttachmentsById'], 'ProfileAttachmentsPage'
+    route ['profileReviews', 'profileReviewsById'], 'ProfileReviewsPage'
     route 'policies', 'PoliciesPage'
     route 'privacy', 'PrivacyPage'
     route 'settings', 'SettingsPage'
     route 'shell', 'ShellPage'
     route 'termsOfService', 'TosPage'
+    route 'travelMapScreenshot', 'TravelMapScreenshotPage'
     route 'trip', 'TripPage'
     route 'trips', 'TripsPage'
 
@@ -317,58 +323,66 @@ module.exports = class App
       attributes:
         lang: 'en'
     },
-      z @$head, {meta: $page?.getMeta?()}
+      z @$head, {isPlain: $page?.isPlain, meta: $page?.getMeta?()}
       z 'body',
         z '#zorium-root', {
           className: z.classKebab {isIos, isAndroid, hasOverlayPage}
         },
-          z '.z-root',
-            unless hideDrawer
-              z @$navDrawer, {currentPath: request?.req.path}
+          # used for screenshotting
+          if $page?.isPlain
+            z '.z-root',
+              z '.content', {
+                style:
+                  height: "#{windowSize.height}px"
+              }, $page
+          else
+            z '.z-root',
+              unless hideDrawer
+                z @$navDrawer, {currentPath: request?.req.path}
 
-            z '.content', {
-              style:
-                height: "#{windowSize.height}px"
-            },
-              if isStatusBarVisible
-                if statusBarData.type is 'snack'
-                  z @$snackBar, {hasBottomBar}
-                else
-                  z @$statusBar
-              z '.page', {key: 'page'},
-                $page
-
-            if @$nps.shouldBeShown()
-              z @$nps,
-                onRate: =>
-                  @model.portal.call 'app.rate'
-
-            if $overlayPage
-              z '.overlay-page', {
-                key: 'overlay-page'
+              z '.content', {
                 style:
                   height: "#{windowSize.height}px"
               },
-                z $overlayPage
+                if isStatusBarVisible
+                  if statusBarData.type is 'snack'
+                    z @$snackBar, {hasBottomBar}
+                  else
+                    z @$statusBar
+                z '.page', {key: 'page'},
+                  $page
 
-            _map $overlays, ($overlay) ->
-              z $overlay
+              if @$nps.shouldBeShown()
+                z @$nps,
+                  onRate: =>
+                    @model.portal.call 'app.rate'
 
-            z $tooltip
+              if $overlayPage
+                z '.overlay-page', {
+                  key: 'overlay-page'
+                  style:
+                    height: "#{windowSize.height}px"
+                },
+                  z $overlayPage
 
-            # if not window?
-            #   z '#server-loading', {
-            #     key: 'server-loading'
-            #     attributes:
-            #       onmousedown: "document.getElementById('server-loading')" +
-            #         ".classList.add('is-clicked')"
-            #       ontouchstart: "document.getElementById('server-loading')" +
-            #         ".classList.add('is-clicked')"
-            #
-            #   },
-            #     @model.l.get 'app.stillLoading'
-            # used in color.coffee to detect support
-            z '#css-variable-test',
-              style:
-                display: 'none'
-                backgroundColor: 'var(--test-color)'
+              _map $overlays, ($overlay) ->
+                z $overlay
+
+              z $tooltip
+
+              # if not window?
+              #   z '#server-loading', {
+              #     key: 'server-loading'
+              #     attributes:
+              #       onmousedown: "document.getElementById('server-loading')" +
+              #         ".classList.add('is-clicked')"
+              #       ontouchstart: "document.getElementById('server-loading')" +
+              #         ".classList.add('is-clicked')"
+              #
+              #   },
+              #     @model.l.get 'app.stillLoading'
+              # used in color.coffee to detect support
+              z '#css-variable-test',
+                style:
+                  display: 'none'
+                  backgroundColor: 'var(--test-color)'

@@ -6,22 +6,15 @@ require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
-_filter = require 'lodash/filter'
 _isEmpty = require 'lodash/isEmpty'
 _omit = require 'lodash/omit'
 
 Base = require '../base'
 AttachmentsList = require '../attachments_list'
-PrimaryButton = require '../primary_button'
 FlatButton = require '../flat_button'
-Map = require '../map'
+TravelMap = require '../travel_map'
 EditTripTooltip = require '../edit_trip_tooltip'
-ShareMap = require '../share_map'
 LocationSearch = require '../location_search'
-DateService = require '../../services/date'
-FormatService = require '../../services/format'
-MapService = require '../../services/map'
-# UiCard = require '../ui_card'
 config = require '../../config'
 
 if window?
@@ -47,24 +40,7 @@ module.exports = class EditTrip extends Base
     serverCheckIns = @trip.map (trip) ->
       trip?.checkIns
     # .publishReplay(1).refCount()
-    route = @trip.map (trip) ->
-      trip?.route
-    stats = @trip.map (trip) ->
-      trip?.stats
     @clientCheckIns = new RxBehaviorSubject []
-
-    allStates = @model.trip.getStatesGeoJson()
-    allStatesAndStats = RxObservable.combineLatest(
-      allStates, stats, (vals...) -> vals
-    )
-    filledStates = allStatesAndStats.map ([allStates, stats]) ->
-      {
-        type: 'FeatureCollection'
-        features: _filter allStates.features, ({id}) ->
-          stats?.stateCounts?[id] > 0
-      }
-
-
     @resetValueStreams()
     checkIns = RxObservable.merge @clientCheckIns, serverCheckIns
 
@@ -83,13 +59,9 @@ module.exports = class EditTrip extends Base
           @place.next null
     }
 
-    mapOptions = {
-      @model, @router
-      places: checkIns
-      route: route
-      fill: filledStates
-      usePlaceNumbers: true
-      initialBounds: [[-156.187, 18.440], [-38.766, 55.152]]
+
+    @$travelMap = new TravelMap {
+      @model, @router, @trip, checkIns
       onclick: (e) =>
         ga? 'send', 'event', 'trip', 'clickMap'
         @placePosition.next e.point
@@ -104,27 +76,10 @@ module.exports = class EditTrip extends Base
           location: [e.lngLat.lng, e.lngLat.lat]
         }
     }
-    @$map = new Map mapOptions
-    @$shareMap = new ShareMap {
-      @model, mapOptions
-      shareInfo: @trip.map (trip) ->
-        {
-          text: 'editTrip.shareText'
-          url: "#{config.HOST}/trip/#{trip.id}"
-        }
-      onUpload: (response) =>
-        {trip} = @state.getValue()
-        @model.trip.upsert {
-          id: trip.id
-          imagePrefix: response.prefix
-        }
-    }
 
     @state = z.state {
       trip: @trip.map (trip) ->
         _omit trip, ['route']
-      routeStats: route.map (route) ->
-        {time: route?.time, distance: route?.distance}
       name: @nameValueStreams.switch()
       checkIns: checkIns.map (checkIns) =>
         _map checkIns, (checkIn) =>
@@ -164,7 +119,7 @@ module.exports = class EditTrip extends Base
 
   share: =>
     ga? 'send', 'event', 'trip', 'share', 'click'
-    @$shareMap.share()
+    @$travelMap.share()
 
   addCheckIn: (checkIn) =>
     ga? 'send', 'event', 'trip', 'share', 'addCheckIn', checkIn.name
@@ -196,24 +151,13 @@ module.exports = class EditTrip extends Base
     }
 
   render: =>
-    {name, checkIns, trip, routeStats} = @state.getValue()
+    {name, checkIns, trip} = @state.getValue()
 
-    hasStats = Boolean routeStats?.time
-
-    z '.z-edit-trip', {
-      className: z.classKebab {hasStats}
-    },
+    z '.z-edit-trip',
       z '.map',
-        z @$map
+        z @$travelMap
         z @$editTripTooltip
-        z '.stats',
-          z '.g-grid',
-            z '.time',
-              @model.l.get 'trip.totalTime'
-              ": #{DateService.formatSeconds routeStats?.time, 1}"
-            z '.distance',
-              @model.l.get 'trip.totalDistance'
-              ": #{FormatService.number routeStats?.distance}mi"
+
         if checkIns?.length > 1
           z '.places-along-route', {
             onclick: =>

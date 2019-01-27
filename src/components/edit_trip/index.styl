@@ -7,28 +7,10 @@
   overflow: hidden
   position: relative
 
-  &.has-stats
-    > .map > .stats
-      display: block
-
   > .map
     flex1()
     display: flex
     position: relative
-
-    > .stats
-      position: absolute
-      display: none
-      width: 100%
-      padding: 4px 8px
-      background: getColor('$white70')
-      box-sizing: border-box
-
-      > .g-grid
-        display: flex
-
-        > .distance
-          margin-left: auto
 
     > .places-along-route
       shadow-1()

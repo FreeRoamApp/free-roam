@@ -92,7 +92,7 @@ module.exports = class UploadImagesList
                   @model.overlay.open @$uploadImagesPreview
             }
         _map attachments, ({dataUrl, prefix, isUploading, progress}) =>
-          src = @model.image.getSrcByPrefix prefix, 'small'
+          src = @model.image.getSrcByPrefix prefix, {size: 'small'}
           z '.attachment', {
             className: z.classKebab {isUploading}
             style:

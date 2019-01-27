@@ -189,6 +189,15 @@ colors = _defaults {
 
   '$quaternary500': '#ff7b45'
 
+  '$salmon500': '#f3a37e'
+  '$salmon500Text': '#ffffff'
+
+  '$pacific500': '#30799e'
+  '$pacific500Text': '#ffffff'
+
+  '$mustard500': '#f6b944'
+  '$mustard500Text': '#ffffff'
+
   '$white4': 'rgba(255, 255, 255, 0.04)'
 
   '$black': '#0c0c0c'

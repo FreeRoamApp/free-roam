@@ -86,10 +86,11 @@ module.exports = class Textarea
       }
       style:
         backgroundColor: colors.background
+        color: colors.c500
       z '.hint', {
         style:
           color: if isFocused and not error? \
-                 then colors.c500 else null
+                 then colors.c500
       },
         hintText
       z 'textarea.textarea',

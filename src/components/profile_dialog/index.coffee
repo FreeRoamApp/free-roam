@@ -45,8 +45,6 @@ module.exports = class ProfileDialog
     @$deleteChevronIcon = new Icon()
     @$closeIcon = new Icon()
     @$copyIcon = new Icon()
-    @$instagramIcon = new Icon()
-    @$webIcon = new Icon()
 
     me = @model.user.getMe()
 
