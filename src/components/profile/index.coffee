@@ -6,6 +6,7 @@ _map = require 'lodash/map'
 
 Avatar = require '../avatar'
 ButtonMenu = require '../button_menu'
+ButtonBack = require '../button_back'
 PrimaryButton = require '../primary_button'
 Icon = require '../icon'
 colors = require '../../colors'
@@ -23,6 +24,7 @@ module.exports = class Profile
     @$avatar = new Avatar()
 
     @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
 
     @state = z.state {
       user
@@ -70,7 +72,10 @@ module.exports = class Profile
         z '.menu', {
           onclick: (e) -> e?.stopPropagation()
         },
-          z @$buttonMenu, {color: colors.$header500Icon}
+          if isMe
+            z @$buttonMenu, {color: colors.$header500Icon}
+          else
+            z @$buttonBack, {color: colors.$header500Icon}
         z '.avatar',
           z @$avatar, {user, size: '80px'}
       z '.info',
@@ -119,8 +124,8 @@ module.exports = class Profile
                     z '.g-col.g-xs-6.md-6',
                       @router.link z 'a.box.planned', {
                         href: if isMe \
-                              then @router.get 'editTripByType', {type: 'past'}
-                              else @router.get 'trip', {id: pastTrip?.id}
+                              then @router.get 'editTripByType', {type: 'future'}
+                              else @router.get 'trip', {id: futureTrip?.id}
                       },
                         z '.title',
                           @model.l.get 'general.planned'

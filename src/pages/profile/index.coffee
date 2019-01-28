@@ -24,6 +24,7 @@ module.exports = class ProfilePage
     @$profile = new Profile {@model, @router, @user, type: 'user'}
 
     @state = z.state
+      me: @model.user.getMe()
       user: @user
 
   getMeta: =>
@@ -40,7 +41,9 @@ module.exports = class ProfilePage
       }
 
   render: =>
-    {user} = @state.getValue()
+    {user, me} = @state.getValue()
+
+    isMe = user and user?.id is me?.id
 
     z '.p-profile',
       # z @$appBar, {
@@ -58,4 +61,5 @@ module.exports = class ProfilePage
       z '.app-bar-placeholder'
 
       @$profile
-      @$bottomBar
+      if not user or isMe
+        @$bottomBar

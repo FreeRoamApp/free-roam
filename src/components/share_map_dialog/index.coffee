@@ -74,14 +74,15 @@ module.exports = class ShareMapDialog
                       }
                   },
                     @model.l.get 'shareMapDialog.shareOther'
-                  z 'a.action', {
-                    href: tripImage
-                    attributes:
-                      download: 'travel_map.png'
-                    onclick: ->
-                      ga? 'send', 'event', 'trip', 'share', 'download'
-                  },
-                    @model.l.get 'shareMapDialog.saveImage'
+                  # not working properly
+                  # z 'a.action', {
+                  #   href: tripImage
+                  #   attributes:
+                  #     download: 'travel_map.png'
+                  #   onclick: ->
+                  #     ga? 'send', 'event', 'trip', 'share', 'download'
+                  # },
+                  #   @model.l.get 'shareMapDialog.saveImage'
         cancelButton:
           text: @model.l.get 'general.done'
           onclick: =>
