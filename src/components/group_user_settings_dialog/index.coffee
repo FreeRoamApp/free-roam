@@ -1,6 +1,7 @@
 z = require 'zorium'
 _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
+_find = require 'lodash/find'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/operator/combineLatest'
@@ -17,21 +18,33 @@ if window?
   require './index.styl'
 
 module.exports = class GroupUserSettingsDialog
-  constructor: ({@model, @router, group}) ->
-    notificationTypes = [
-      {
-        name: @model.l.get 'groupSettings.chatMessage'
-        key: 'chatMessage'
-      }
-      {
-        name: @model.l.get 'groupSettings.chatMessageMention'
-        key: 'chatMention'
-      }
-      # {
-      #   name: 'New announcments'
-      #   key: 'announcement'
-      # }
-    ]
+  constructor: ({@model, @router, group, conversation}) ->
+    notificationTypes = {
+      group: [
+        {
+          name: @model.l.get 'groupSettings.chatMessage'
+          sourceType: 'groupMessage'
+          isTopic: true
+        }
+        {
+          name: @model.l.get 'groupSettings.chatMessageMention'
+          sourceType: 'groupMention'
+        }
+      ]
+      channel: [
+        {
+          name: @model.l.get 'groupSettings.chatMessage'
+          sourceType: 'channelMessage'
+          groupSourceType: 'groupMessage' # either needs to be on
+          isTopic: true
+        }
+        {
+          name: @model.l.get 'groupSettings.chatMessageMention'
+          sourceType: 'channelMention'
+          groupSourceType: 'groupMention' # either needs to be on
+        }
+      ]
+    }
 
     me = @model.user.getMe()
     @$leaveIcon = new Icon()
@@ -40,27 +53,44 @@ module.exports = class GroupUserSettingsDialog
         @model.overlay.close()
     }
 
-    groupAndMe = RxObservable.combineLatest(group, me, (vals...) -> vals)
+    groupAndConversationAndMe = RxObservable.combineLatest(
+      group, conversation, me, (vals...) -> vals
+    )
 
     @state = z.state
       me: me
       group: group
+      conversation: conversation
       isSaving: false
       isLeaveGroupLoading: false
-      notificationTypes: groupAndMe.switchMap ([group, me]) =>
-        @model.groupUser.getMeSettingsByGroupId group.id
-        .map (groupUserSettings) ->
-          _map notificationTypes, (type) ->
-            notifications = _defaults(
-              groupUserSettings?.globalNotifications
-              config.DEFAULT_NOTIFICATIONS
-            )
-            isSelected = new RxBehaviorSubject notifications?[type.key]
+      notificationTypes: groupAndConversationAndMe.switchMap (vals) =>
+        [group, conversation, me] = vals
 
-            _defaults {
-              $toggle: new Toggle {isSelected}
-              isSelected: isSelected
-            }, type
+        @model.subscription.getAllByGroupId group.id
+        .map (subscriptions) ->
+          {
+            group: _map notificationTypes.group, (type) ->
+              isSubscribed = new RxBehaviorSubject(
+                _find(subscriptions, {
+                  sourceType: type.sourceType
+                })?.isEnabled
+              )
+              _defaults {
+                $toggle: new Toggle {isSelected: isSubscribed}
+                isSelected: isSubscribed
+              }, type
+            channel: _map notificationTypes.channel, (type) ->
+              isSubscribed = new RxBehaviorSubject(
+                (
+                  _find(subscriptions, {sourceType: type.sourceType})?.isEnabled or
+                  _find(subscriptions, {sourceType: type.groupSourceType})?.isEnabled
+                )
+              )
+              _defaults {
+                $toggle: new Toggle {isSelected: isSubscribed}
+                isSelected: isSubscribed
+              }, type
+          }
 
   leaveGroup: =>
     {isLeaveGroupLoading, group} = @state.getValue()
@@ -74,7 +104,7 @@ module.exports = class GroupUserSettingsDialog
         @model.overlay.close()
 
   render: =>
-    {me, notificationTypes, group, isLeaveGroupLoading,
+    {me, notificationTypes, group, conversation, isLeaveGroupLoading,
       isSaving} = @state.getValue()
 
     items = []
@@ -107,17 +137,41 @@ module.exports = class GroupUserSettingsDialog
                       isTouchTarget: false
                       color: colors.$primary500
                   z '.text', text
-            z '.title', @model.l.get 'general.notifications'
+            z '.title', @model.l.get 'groupSettings.groupNotifications'
             z 'ul.list',
-              _map notificationTypes, ({name, key, $toggle, isSelected}) =>
+              _map notificationTypes?.group, (notificationType) =>
+                {name, sourceType, $toggle, isSelected, isTopic} = notificationType
                 z 'li.item',
                   z '.text', name
                   z '.toggle',
                     z $toggle, {
                       onToggle: (isSelected) =>
-                        @model.groupUser.updateMeSettingsByGroupId group.id, {
-                          globalNotifications:
-                            "#{key}": isSelected
+                        method = if isSelected \
+                                 then @model.subscription.subscribe
+                                 else @model.subscription.unsubscribe
+                        method {
+                          groupId: group.id
+                          isTopic: isTopic
+                          sourceType: sourceType
+                        }
+                    }
+            z '.title', @model.l.get 'groupSettings.channelNotifications'
+            z 'ul.list',
+              _map notificationTypes?.channel, (notificationType) =>
+                {name, sourceType, $toggle, isSelected, isTopic} = notificationType
+                z 'li.item',
+                  z '.text', name
+                  z '.toggle',
+                    z $toggle, {
+                      onToggle: (isSelected) =>
+                        method = if isSelected \
+                                 then @model.subscription.subscribe
+                                 else @model.subscription.unsubscribe
+                        method {
+                          groupId: group.id
+                          isTopic: isTopic
+                          sourceType: sourceType
+                          sourceId: conversation.id
                         }
                     }
 

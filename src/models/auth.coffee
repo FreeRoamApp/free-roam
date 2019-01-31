@@ -53,8 +53,8 @@ module.exports = class Auth
     @setAccessToken accessToken
     @exoid.invalidateAll()
     pushToken = @pushToken.getValue()
-    pushToken ?= 'none'
     if pushToken
+      pushToken ?= 'none'
       @portal.call 'app.getDeviceId'
       .catch -> null
       .then (deviceId) =>

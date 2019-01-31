@@ -113,7 +113,7 @@ module.exports = class GroupChatPage
       @model
       @router
       @group
-      @group
+      conversation
     }
 
     @$channelDrawer = new ChannelDrawer {
@@ -198,12 +198,12 @@ module.exports = class GroupChatPage
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
         $topRightButton:
           z '.p-group-chat_top-right',
-            # z '.icon',
-            #   z @$settingsIcon,
-            #     icon: 'settings'
-            #     color: colors.$header500Icon
-            #     onclick: =>
-            #       @model.overlay.open @$groupUserSettingsDialog
+            z '.icon',
+              z @$settingsIcon,
+                icon: 'settings'
+                color: colors.$header500Icon
+                onclick: =>
+                  @model.overlay.open @$groupUserSettingsDialog
             z '.channels-icon',
               z @$channelsIcon,
                 icon: 'channels'

@@ -1,8 +1,11 @@
 TODOS:
 
 - Photo voting
-
-- List of user reviews, user photos
+- "What is boondocking"
+  - Beginners guide
+  - Intermediate
+  - Advanced
+x List of user reviews, user photos
 - Make seasons we don't know about gray
 x Review voting
   x reviews_by_userId table with parentType and parentId

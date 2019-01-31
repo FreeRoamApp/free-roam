@@ -34,7 +34,12 @@ module.exports = class GroupUser
   updateMeSettingsByGroupId: (groupId, {globalNotifications}) =>
     @auth.call "#{@namespace}.updateMeSettingsByGroupId", {
       groupId, globalNotifications
-    }
+    }, {invalidateAll: true}
+
+  updateMeSettingsByGroupIdAndChannelId: ({groupId, channelId, diff}) =>
+    @auth.call "#{@namespace}.updateMeSettingsByGroupIdAndChannelId", {
+      groupId, channelId, diff
+    }, {invalidateAll: true}
 
   hasPermission: ({meGroupUser, me, permissions, channelId, roles}) ->
     roles ?= meGroupUser?.roles
