@@ -24,14 +24,25 @@ module.exports = class ProfileReviews
     }
     @$addReviewButton = new PrimaryButton()
 
-
-    @state = z.state {user}
+    @state = z.state {
+      me: @model.user.getMe()
+      user
+    }
 
   render: =>
-    {user} = @state.getValue()
+    {me, user} = @state.getValue()
+
+    isMe = user and user.id is me?.id
 
     z '.z-profile-reviews',
       z @$reviews, {
         $emptyState:
-          z '.empty', @model.l.get 'reviews.empty'
+          z '.empty',
+            if isMe
+              @model.l.get 'profileReviews.meEmpty'
+            else
+              @model.l.get 'profileReviews.empty', {
+                replacements:
+                  name: @model.user.getDisplayName user
+              }
       }

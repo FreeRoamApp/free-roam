@@ -59,10 +59,10 @@ module.exports = class TravelMap
     @$map = new Map mapOptions
 
     @$shareMapDialog = new ShareMapDialog {
-      @model, @isLoading, @trip
+      @model, @trip
       shareInfo: @trip.map (trip) ->
         {
-          text: 'editTrip.shareText'
+          text: @model.l.get 'editTrip.shareText'
           url: "#{config.HOST}/trip/#{trip.id}"
         }
     }

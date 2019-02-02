@@ -1,6 +1,7 @@
 z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
+_isEmpty = require 'lodash/isEmpty'
 _startCase = require 'lodash/startCase'
 
 Attachments = require '../attachments'
@@ -21,10 +22,26 @@ module.exports = class ProfileAttachments
       @model, @router, attachments
     }
 
-    @state = z.state {user}
+    @state = z.state {
+      me: @model.user.getMe()
+      user
+      attachments
+    }
 
   render: =>
-    {user} = @state.getValue()
+    {me, user, attachments} = @state.getValue()
+
+    isMe = user and user?.id is me?.id
 
     z '.z-profile-attachments',
+      if attachments and _isEmpty attachments
+        z '.empty',
+          z '.g-grid',
+            if isMe
+              @model.l.get 'profileAttachments.meEmpty'
+            else
+              @model.l.get 'profileAttachments.empty', {
+                replacements:
+                  name: @model.user.getDisplayName user
+              }
       z @$attachments

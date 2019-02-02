@@ -11,6 +11,7 @@ require 'rxjs/add/operator/switchMap'
 Toggle = require '../toggle'
 Dialog = require '../dialog'
 Icon = require '../icon'
+Spinner = require '../spinner'
 config = require '../../config'
 colors = require '../../colors'
 
@@ -48,6 +49,7 @@ module.exports = class GroupUserSettingsDialog
 
     me = @model.user.getMe()
     @$leaveIcon = new Icon()
+    @$spinner = new Spinner()
     @$dialog = new Dialog {
       onLeave: =>
         @model.overlay.close()
@@ -82,7 +84,7 @@ module.exports = class GroupUserSettingsDialog
             channel: _map notificationTypes.channel, (type) ->
               isSubscribed = new RxBehaviorSubject(
                 (
-                  _find(subscriptions, {sourceType: type.sourceType})?.isEnabled or
+                  _find(subscriptions, {sourceType: type.sourceType, sourceId: conversation.id})?.isEnabled or
                   _find(subscriptions, {sourceType: type.groupSourceType})?.isEnabled
                 )
               )
@@ -138,42 +140,47 @@ module.exports = class GroupUserSettingsDialog
                       color: colors.$primary500
                   z '.text', text
             z '.title', @model.l.get 'groupSettings.groupNotifications'
-            z 'ul.list',
-              _map notificationTypes?.group, (notificationType) =>
-                {name, sourceType, $toggle, isSelected, isTopic} = notificationType
-                z 'li.item',
-                  z '.text', name
-                  z '.toggle',
-                    z $toggle, {
-                      onToggle: (isSelected) =>
-                        method = if isSelected \
-                                 then @model.subscription.subscribe
-                                 else @model.subscription.unsubscribe
-                        method {
-                          groupId: group.id
-                          isTopic: isTopic
-                          sourceType: sourceType
+            if not notificationTypes
+              @$spinner
+            else
+              [
+                z 'ul.list',
+                  _map notificationTypes?.group, (notificationType) =>
+                    {name, sourceType, $toggle, isSelected, isTopic} = notificationType
+                    z 'li.item',
+                      z '.text', name
+                      z '.toggle',
+                        z $toggle, {
+                          onToggle: (isSelected) =>
+                            method = if isSelected \
+                                     then @model.subscription.subscribe
+                                     else @model.subscription.unsubscribe
+                            method {
+                              groupId: group.id
+                              isTopic: isTopic
+                              sourceType: sourceType
+                            }
                         }
-                    }
-            z '.title', @model.l.get 'groupSettings.channelNotifications'
-            z 'ul.list',
-              _map notificationTypes?.channel, (notificationType) =>
-                {name, sourceType, $toggle, isSelected, isTopic} = notificationType
-                z 'li.item',
-                  z '.text', name
-                  z '.toggle',
-                    z $toggle, {
-                      onToggle: (isSelected) =>
-                        method = if isSelected \
-                                 then @model.subscription.subscribe
-                                 else @model.subscription.unsubscribe
-                        method {
-                          groupId: group.id
-                          isTopic: isTopic
-                          sourceType: sourceType
-                          sourceId: conversation.id
+                z '.title', @model.l.get 'groupSettings.channelNotifications'
+                z 'ul.list',
+                  _map notificationTypes?.channel, (notificationType) =>
+                    {name, sourceType, $toggle, isSelected, isTopic} = notificationType
+                    z 'li.item',
+                      z '.text', name
+                      z '.toggle',
+                        z $toggle, {
+                          onToggle: (isSelected) =>
+                            method = if isSelected \
+                                     then @model.subscription.subscribe
+                                     else @model.subscription.unsubscribe
+                            method {
+                              groupId: group.id
+                              isTopic: isTopic
+                              sourceType: sourceType
+                              sourceId: conversation.id
+                            }
                         }
-                    }
+              ]
 
         cancelButton:
           text: @model.l.get 'general.close'

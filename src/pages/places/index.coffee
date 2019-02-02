@@ -31,5 +31,8 @@ module.exports = class PlacesPage
 
   render: =>
     z '.p-places',
+      # this is here so vdom doesn't change which div bototmBar is for
+      # (other page components all have appBars)
+      z '.app-bar-placeholder'
       @$places
       @$bottomBar

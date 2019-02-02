@@ -7,7 +7,9 @@ _map = require 'lodash/map'
 Avatar = require '../avatar'
 ButtonMenu = require '../button_menu'
 ButtonBack = require '../button_back'
+FlatButton = require '../flat_button'
 PrimaryButton = require '../primary_button'
+ShareMapDialog = require '../share_map_dialog'
 Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
@@ -26,15 +28,30 @@ module.exports = class Profile
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$buttonBack = new ButtonBack {@model, @router}
 
+    @$shareButton = new FlatButton()
+
+    pastTrip = user.switchMap (user) =>
+      if user
+        @model.trip.getByUserIdAndType user.id, 'past'
+      else
+        RxObservable.of null
+
+    @$shareMapDialog = new ShareMapDialog {
+      @model, trip: pastTrip
+      shareInfo: user.map (user) =>
+        {
+          text: @model.l.get 'editTrip.shareText'
+          url: if user.username \
+               then "#{config.HOST}/user/#{user.username}"
+               else "#{config.HOST}/user/id/#{user.id}"
+        }
+    }
+
     @state = z.state {
       user
       me: @model.user.getMe()
-      pastTrip: user.switchMap (user) =>
-        if user
-          @model.trip.getByUserIdAndType user.id, 'past'
-        else
-          RxObservable.of null
-      futuretTrip: user.switchMap (user) =>
+      pastTrip: pastTrip
+      futureTrip: user.switchMap (user) =>
         if user
           @model.trip.getByUserIdAndType user.id, 'future'
         else
@@ -76,7 +93,19 @@ module.exports = class Profile
             z @$buttonMenu, {color: colors.$header500Icon}
           else
             z @$buttonBack, {color: colors.$header500Icon}
+        if isMe
+          z '.share', {
+            onclick: (e) -> e?.stopPropagation()
+          },
+            z @$shareButton,
+              text: @model.l.get 'general.share'
+              colors:
+                cText: colors.$bgText87
+              onclick: =>
+                ga? 'send', 'event', 'profile', 'share', 'click'
+                @model.overlay.open @$shareMapDialog
         z '.avatar',
+          # TODO: upload photo option if isMe
           z @$avatar, {user, size: '80px'}
       z '.info',
         z '.g-grid',

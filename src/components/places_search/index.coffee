@@ -81,7 +81,12 @@ module.exports = class PlacesSearch
 
       z @$tooltip
 
-      z '.overlay',
+      z '.overlay', {
+        # without this, when switching to this tab a dom element is recycled for
+        # this and occasionally is 100% visible for a split second when it
+        # should be opacity 0
+        key: 'places-search-overlay'
+      },
         z '.overlay-inner',
           z '.data-types',
             z '.title', @model.l.get 'placesSearch.dataTypesTitle'
