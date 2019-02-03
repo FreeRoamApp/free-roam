@@ -13,6 +13,10 @@ module.exports = class CheckIn
 
   upsert: (options) =>
     @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
+    .then (response) ->
+      # TODO: figure out way to listen to stream
+
+      response
 
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}

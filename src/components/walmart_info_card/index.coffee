@@ -1,4 +1,6 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 UiCard = require '../ui_card'
 
@@ -11,7 +13,10 @@ module.exports = class WalmartInfoCard
     @state = z.state {
       place
       isAllowedByMe: place.switchMap (place) =>
-        @model.overnight.getIsAllowedByMeAndId place.id
+        if place
+          @model.overnight.getIsAllowedByMeAndId place.id
+        else
+          RxObservable.of null
     }
 
   markIsAllowed: (isAllowed) =>

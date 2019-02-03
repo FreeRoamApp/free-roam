@@ -20,20 +20,9 @@ module.exports = class Experiment
 
     ga? 'send', 'event', 'exp', "saveTooltip:#{expSaveTooltip}"
 
-    expProfile = @cookie.get 'exp:profile'
-    unless expProfile
-      rand = Math.random()
-      expProfile = if rand > 0.5 \
-                         then 'visible'
-                         else 'control'
-      @cookie.set 'exp:profile', expProfile
-
-    ga? 'send', 'event', 'exp', "profile:#{expProfile}"
-
     @experiments =
       control: expControl
       saveTooltip: expSaveTooltip
-      profile: expProfile
 
   get: (key) =>
     @experiments[key]

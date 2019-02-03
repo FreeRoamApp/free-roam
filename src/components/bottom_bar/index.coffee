@@ -61,13 +61,12 @@ module.exports = class BottomBar
         route: @router.get 'productGuides'
         text: @model.l.get 'drawer.productGuide'
       }
-      if @model.experiment.get('profile') is 'visible'
-        {
-          $icon: new Icon()
-          icon: 'profile'
-          route: @router.get 'profileMe'
-          text: @model.l.get 'general.profile'
-        }
+      {
+        $icon: new Icon()
+        icon: 'profile'
+        route: @router.get 'profileMe'
+        text: @model.l.get 'general.profile'
+      }
       {
         $icon: new Icon()
         icon: 'chat'
