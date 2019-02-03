@@ -19,10 +19,11 @@
     > .menu
       display: inline-block
 
-    > .share
+    > .buttons
       position: absolute
       top: 8px
       right: 8px
+      display: flex
 
     > .avatar
       position: absolute
@@ -44,6 +45,12 @@
         &.name
           font-title()
           margin-bottom: 4px
+          display: flex
+          align-items: center
+          justify-content: center
+
+          > .icon
+            margin-left: 4px
 
       > .links
         display: flex

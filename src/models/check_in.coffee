@@ -1,3 +1,4 @@
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 config = require '../config'
 
 module.exports = class CheckIn
@@ -12,10 +13,25 @@ module.exports = class CheckIn
     @auth.stream "#{@namespace}.getAll", {includeDetails}
 
   upsert: (options) =>
-    @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
-    .then (response) ->
-      # TODO: figure out way to listen to stream
+    additionalDataStream = new RxReplaySubject()
 
+    @auth.call "#{@namespace}.upsert", options, {
+      invalidateAll: true
+      additionalDataStream: additionalDataStream # stream in results after promise finishes
+    }
+    .then (response) =>
+      invalidateTripMap = (trip) =>
+        console.log trip
+        console.log 'inv', {
+          userId: trip.userId, type: 'past'
+        }
+        @auth.exoid.invalidate 'trips.getByUserIdAndType', {
+          userId: trip.userId, type: 'past'
+        }
+
+      additionalDataStream.switch().subscribe (response) ->
+        @unsubscribe() #
+        invalidateTripMap response.updatedTrip
       response
 
   deleteByRow: (row) =>

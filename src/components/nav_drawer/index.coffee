@@ -181,14 +181,14 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'star'
           # }
-          if isMember
-            {
-              path: @router.get 'editProfile'
-              title: @model.l.get 'editProfilePage.title'
-              $icon: new Icon()
-              $ripple: new Ripple()
-              iconName: 'edit'
-            }
+          # if isMember
+          #   {
+          #     path: @router.get 'editProfile'
+          #     title: @model.l.get 'editProfilePage.title'
+          #     $icon: new Icon()
+          #     $ripple: new Ripple()
+          #     iconName: 'edit'
+          #   }
           if navigator?.serviceWorker
             {
               path: @router.get 'settings'

@@ -28,7 +28,10 @@ module.exports = class Profile
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$buttonBack = new ButtonBack {@model, @router}
 
+    @$editButton = new FlatButton()
     @$shareButton = new FlatButton()
+
+    @$editUsernameIcon = new Icon()
 
     pastTrip = user.switchMap (user) =>
       if user
@@ -94,23 +97,43 @@ module.exports = class Profile
           else
             z @$buttonBack, {color: colors.$header500Icon}
         if isMe
-          z '.share', {
+          z '.buttons', {
             onclick: (e) -> e?.stopPropagation()
           },
-            z @$shareButton,
-              text: @model.l.get 'general.share'
-              colors:
-                cText: colors.$bgText87
-              onclick: =>
-                ga? 'send', 'event', 'profile', 'share', 'click'
-                @model.overlay.open @$shareMapDialog
-        z '.avatar',
-          # TODO: upload photo option if isMe
+            z '.edit',
+              z @$editButton,
+                text: @model.l.get 'general.edit'
+                colors:
+                  cText: colors.$bgText87
+                onclick: =>
+                  @router.go 'editProfile'
+            z '.share',
+              z @$shareButton,
+                text: @model.l.get 'general.share'
+                colors:
+                  cText: colors.$bgText87
+                onclick: =>
+                  ga? 'send', 'event', 'profile', 'share', 'click'
+                  @model.overlay.open @$shareMapDialog
+        z '.avatar', {
+          onclick: (e) =>
+            e?.stopPropagation()
+            if isMe
+              @router.go 'editProfile'
+        },
           z @$avatar, {user, size: '80px'}
       z '.info',
         z '.g-grid',
           z '.karma', "#{@model.l.get 'general.karma'}: #{user?.karma or 0}"
-          z '.name', @model.user.getDisplayName user
+          z '.name',
+            @model.user.getDisplayName user
+            if isMe and not user.username
+              z '.icon',
+                z @$editUsernameIcon,
+                  icon: 'edit'
+                  isTouchTarget: false
+                  onclick: =>
+                    @router.go 'editProfile'
           z '.bio', user?.bio
 
           unless _isEmpty $links

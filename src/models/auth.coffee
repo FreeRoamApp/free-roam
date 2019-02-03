@@ -74,10 +74,12 @@ module.exports = class Auth
     .switchMap =>
       @exoid.stream path, body, options
 
-  call: (path, body, {invalidateAll, invalidateSingle} = {}) =>
+  call: (path, body, options = {}) =>
+    {invalidateAll, invalidateSingle, additionalDataStream} = options
+
     @waitValidAuthCookie.take(1).toPromise()
     .then =>
-      @exoid.call path, body
+      @exoid.call path, body, {additionalDataStream}
     .then (response) =>
       if invalidateAll
         console.log 'Invalidating all'

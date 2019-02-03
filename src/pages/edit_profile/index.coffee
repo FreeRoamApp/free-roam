@@ -1,7 +1,7 @@
 z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 EditProfile = require '../../components/edit_profile'
 config = require '../../config'
 
@@ -11,7 +11,7 @@ if window?
 module.exports = class EditProfilePage
   constructor: ({@model, requests, router, serverData, group}) ->
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model, router}
+    @$buttonBack = new ButtonBack {@model, router}
     @$editProfile = new EditProfile {@model, router, group}
 
   getMeta: =>
@@ -24,7 +24,7 @@ module.exports = class EditProfilePage
       z @$appBar, {
         title: @model.l.get 'editProfilePage.title'
         style: 'primary'
-        $topLeftButton: z @$buttonMenu
+        $topLeftButton: z @$buttonBack
         $topRightButton: z '.p-edit-profile_top-right', {
           onclick: (e) =>
             e?.preventDefault()

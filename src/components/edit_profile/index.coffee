@@ -100,57 +100,59 @@ module.exports = class EditProfile
     if isSaving
       return
 
-    @state.set isSaving: true, avatarUploadError: null
-    @usernameError.next null
-    @newPasswordError.next null
-    @currentPasswordError.next null
-
-    if instagram or web
-      links = {instagram, web}
-      userDiff = {links}
-    else
-      userDiff = {}
-
-    if bio
-      userDiff.bio = bio
-
-    if username and username isnt me?.username
-      userDiff.username = username
-
-    if newPassword
-      userDiff.password = newPassword
-      userDiff.currentPassword = currentPassword
-
-    @model.user.upsert userDiff, {file: avatarImage}
+    @model.user.requestLoginIfGuest me
     .then =>
-      @state.set
-        avatarImage: null
-        avatarDataUrl: null
-        isSaving: false
-        isSaved: true
+      @state.set isSaving: true, avatarUploadError: null
+      @usernameError.next null
+      @newPasswordError.next null
+      @currentPasswordError.next null
 
-    .catch (err) =>
-      error = try
-        JSON.parse err.message
-      catch
-        {}
-      @state.set
-        isSaving: false
-      if error.info?.field is 'password'
-        @newPasswordError.next(
-          @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
-        )
-      else if error.info?.field is 'currentPassword'
-        @currentPasswordError.next(
-          @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
-        )
-      else if error.info?.field is 'avatarImage'
-        @state.set avatarUploadError:
-          @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+      if instagram or web
+        links = {instagram, web}
+        userDiff = {links}
       else
-        @usernameError.next(
-          @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
-        )
+        userDiff = {}
+
+      if bio
+        userDiff.bio = bio
+
+      if username and username isnt me?.username
+        userDiff.username = username
+
+      if newPassword
+        userDiff.password = newPassword
+        userDiff.currentPassword = currentPassword
+
+      @model.user.upsert userDiff, {file: avatarImage}
+      .then =>
+        @state.set
+          avatarImage: null
+          avatarDataUrl: null
+          isSaving: false
+          isSaved: true
+
+      .catch (err) =>
+        error = try
+          JSON.parse err.message
+        catch
+          {}
+        @state.set
+          isSaving: false
+        if error.info?.field is 'password'
+          @newPasswordError.next(
+            @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+          )
+        else if error.info?.field is 'currentPassword'
+          @currentPasswordError.next(
+            @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+          )
+        else if error.info?.field is 'avatarImage'
+          @state.set avatarUploadError:
+            @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+        else
+          @usernameError.next(
+            @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+          )
 
   render: =>
     {me, avatarUploadError, avatarDataUrl, group, newPassword
