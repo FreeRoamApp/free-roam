@@ -5,8 +5,10 @@ TODOS:
   - Beginners guide
   - Intermediate
   - Advanced
-- Make sure content is good for these:
-  - https://analytics.google.com/analytics/web/?authuser=1#/report/content-pages/a123979730w182345587p180055840/_u.date00=20190108&_u.date01=20190130&_.useg=&explorer-table.filter=campground&explorer-table.plotKeys=%5B%5D/
+- Ability to set hookups, contact info when adding campground
+  - Need to enable hookups for free sites: coleman-rv-park (https://brownfieldchamber.com/2018/09/27/coleman-rv-park/)
+x Make sure content is good for these:
+  x https://analytics.google.com/analytics/web/?authuser=1#/report/content-pages/a123979730w182345587p180055840/_u.date00=20190108&_u.date01=20190130&_.useg=&explorer-table.filter=campground&explorer-table.plotKeys=%5B%5D/
 x List of user reviews, user photos
 - Make seasons we don't know about gray
 x Review voting
@@ -62,6 +64,7 @@ x Let people add their website link / Instagram
 
 
 - Performance
+  - exoid invalidate partials
   x Zorium v2? Tried it out, render seems a little slower (20-50%) vs current
     x replacing just z.state with v2 also seems 50-100% slower
   x current 269kb gzipped
@@ -116,7 +119,7 @@ x Ask for RV size when reviewing (stored rig info) and filter by rv size
 x Ask for rig information on first review (review extras)
 - link to MVUM for USFS https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
 - make road condition seasonal
-- usfs roads?
+n usfs roads?
 - offline
   - only cache map searches when recording enabled
     - cache w/o the bounds, so all show? or cache by zoom level?

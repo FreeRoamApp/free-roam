@@ -2,6 +2,7 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
+require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _range = require 'lodash/range'
 _startCase = require 'lodash/startCase'
@@ -26,7 +27,7 @@ module.exports = class FilterDialog
     }
 
     switch @filter.type
-      when 'maxIntCustom'
+      when 'maxIntCustom', 'minIntCustom'
         filterValue = new RxBehaviorSubject @filter.value or ''
         @$input = new PrimaryInput {value: filterValue}
       when 'maxInt'
@@ -191,16 +192,16 @@ module.exports = class FilterDialog
               label: @model.l.get "filterDialog.#{@filter.field}Label"
             }
             @model.l.get "levelText.#{@filter.field}#{value}"
-      when 'maxIntCustom'
-        $title = @model.l.get 'campground.price'
+      when 'maxIntCustom', 'minIntCustom'
+        $title = @model.l.get "campground.#{@filter.key}"
         $content =
           z '.content',
-            z '.label', @model.l.get 'filterDialog.maxPrice'
+            z '.label', @model.l.get "filterDialog.#{@filter.key}"
             z '.fields',
               z @$input, {
                 type: 'number'
                 hintText:
-                  @model.l.get 'campground.price'
+                  @model.l.get "campground.#{@filter.key}"
               }
       when 'maxClearance'
         $title = @model.l.get 'lowClearance.maxClearance'
@@ -323,7 +324,7 @@ module.exports = class FilterDialog
     resetButton = {
       text: @model.l.get 'general.reset'
       onclick: =>
-        @filter.valueSubject.next null
+        @filter.valueStreams.next RxObservable.of null
         @model.overlay.close()
     }
 
@@ -342,5 +343,5 @@ module.exports = class FilterDialog
         submitButton:
           text: @model.l.get 'general.done'
           onclick: =>
-            @filter.valueSubject.next filterValue
+            @filter.valueStreams.next RxObservable.of filterValue
             @model.overlay.close()

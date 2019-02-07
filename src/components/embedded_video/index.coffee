@@ -11,7 +11,7 @@ PADDING_PX = 16
 
 module.exports = class EmbeddedVideo
   constructor: ({@model, video, @useParentWidth}) ->
-    unless video.map
+    unless video?.map
       @video = video
     @state = z.state
       windowSize: @model.window.getSize()
@@ -40,21 +40,21 @@ module.exports = class EmbeddedVideo
         z '.thumbnail', {
           onclick: =>
             @model.portal.call 'browser.openWindow', {
-              url: "https://www.youtube.com/watch?v=#{video.sourceId}&t=#{video.timestamp}"
+              url: "https://www.youtube.com/watch?v=#{video?.sourceId}&t=#{video?.timestamp}"
               target: '_system'
             }
         },
           z 'img', {
             width
             height
-            src: "https://img.youtube.com/vi/#{video.sourceId}/hqdefault.jpg"
+            src: "https://img.youtube.com/vi/#{video?.sourceId}/hqdefault.jpg"
           }
           z '.play'
       else
         z 'iframe.iframe',
           width: width
           height: height
-          src: "https://www.youtube.com/embed/#{video.sourceId}?start=#{video.timestamp}"
+          src: "https://www.youtube.com/embed/#{video?.sourceId}?start=#{video?.timestamp}"
           frameborder: 0
           allow: 'autoplay; encrypted-media'
           attributes:

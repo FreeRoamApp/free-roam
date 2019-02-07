@@ -14,14 +14,18 @@ module.exports = class PlacesPage
   @hasBottomBar: true
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
-    isShell = requests.map ({req}) =>
-      req.path is @router.get('placesShell')
+    isShell = requests.map ({route}) ->
+      route.params.type is 'shell'
+    type = requests.map ({route}) ->
+      route.params.type
+    subType = requests.map ({route}) ->
+      route.params.subType
     trip = requests.switchMap ({req}) =>
       if req.query.tripId
         @model.trip.getById req.query.tripId
       else
         RxObservable.of null
-    @$places = new Places {@model, @router, isShell, trip}
+    @$places = new Places {@model, @router, isShell, type, subType, trip}
 
   getMeta: =>
     {

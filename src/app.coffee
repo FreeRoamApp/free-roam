@@ -280,7 +280,9 @@ module.exports = class App
     route ['overnight', 'overnightWithTab'], 'OvernightPage'
     route 'overnightAttachments', 'OvernightAttachmentsPage'
     route 'partners', 'PartnersPage'
-    route ['places', 'home', 'placesShell'], 'PlacesPage'
+    route [
+      'places', 'home', 'placesWithType', 'placesWithTypeAndSubType'
+    ], 'PlacesPage'
     route 'preservation', 'PreservationPage'
     route 'product', 'ProductPage'
     route 'productGuides', 'ProductGuidesPage'

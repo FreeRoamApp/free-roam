@@ -53,8 +53,11 @@
   "overnightWithTab": "/overnight/:slug/:tab",
 
   "partners": "/partners",
+
   "places": "/places",
-  "placesShell": "/places/shell",
+  "placesWithType": "/places/:type",
+  "placesWithTypeAndSubType": "/places/:type/:subType",
+
   "policies": "/policies",
   "privacy": "/privacy",
   "preservation": "/respect-the-land",

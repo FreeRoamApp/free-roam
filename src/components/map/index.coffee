@@ -279,6 +279,9 @@ module.exports = class Map
             enableHighAccuracy: true
           trackUserLocation: true
         }), 'bottom-left'
+        @map.addControl new mapboxgl.NavigationControl({
+          showZoom: false
+        }), 'bottom-right'
 
       if @showScale
         @map.addControl new mapboxgl.ScaleControl {

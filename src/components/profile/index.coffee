@@ -10,6 +10,7 @@ ButtonBack = require '../button_back'
 FlatButton = require '../flat_button'
 PrimaryButton = require '../primary_button'
 ShareMapDialog = require '../share_map_dialog'
+UiCard = require '../ui_card'
 Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
@@ -50,9 +51,12 @@ module.exports = class Profile
         }
     }
 
+    @$infoCard = new UiCard()
+
     @state = z.state {
       user
       me: @model.user.getMe()
+      hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
       pastTrip: pastTrip
       futureTrip: user.switchMap (user) =>
         if user
@@ -69,7 +73,8 @@ module.exports = class Profile
     }
 
   render: =>
-    {user, me, pastTrip, futureTrip, $links} = @state.getValue()
+    {user, me, pastTrip, futureTrip,
+      hasSeenProfileCard, $links} = @state.getValue()
 
     cacheBust = new Date(pastTrip?.lastUpdateTime).getTime()
     prefix = pastTrip?.imagePrefix or 'trips/default'
@@ -154,7 +159,29 @@ module.exports = class Profile
                       color: colors.$bgText54
                     }
                 ]
+
           z '.boxes',
+            if isMe and not hasSeenProfileCard and @model.experiment.get('profileVideo') is 'visible'
+              z '.info-card',
+                z @$infoCard, {
+                  $title: @model.l.get 'profile.infoCardTitle'
+                  $content: @model.l.get 'profile.infoCard'
+                  cancel:
+                    text: @model.l.get 'general.noThanks'
+                    onclick: =>
+                      @state.set hasSeenProfileCard: true
+                      @model.cookie.set 'hasSeenProfileCard', '1'
+                  submit:
+                    text: @model.l.get 'profile.watchVideo'
+                    onclick: =>
+                      @model.portal.call 'browser.openWindow', {
+                        url: 'https://youtu.be/Fsw0VbgfB2c'
+                        target: '_system'
+                      }
+                      @state.set hasSeenProfileCard: true
+                      @model.cookie.set 'hasSeenProfileCard', '1'
+                }
+
             z '.g-cols',
               z '.g-col.g-xs-12.md-12',
                 @router.link z 'a.box.reviews', {

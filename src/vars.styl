@@ -84,12 +84,23 @@ font-h2(scale = yes)
   font-family: Maven Pro
   color: getColor('$bgText87')
   font-weight: 500
-  font-size: 20px
+  font-size: 18px
   letter-spacing: 1px
 
   if scale is yes
     @media (min-width: $breakPointLarge)
-      font-size: 24px
+      font-size: 20px
+
+font-h3(scale = yes)
+  font-family: Maven Pro
+  color: getColor('$bgText87')
+  font-weight: 500
+  font-size: 16px
+  letter-spacing: 1px
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 18px
 
 font-title(scale = yes)
   font-family: Maven Pro

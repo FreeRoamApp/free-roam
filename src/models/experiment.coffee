@@ -20,9 +20,20 @@ module.exports = class Experiment
 
     ga? 'send', 'event', 'exp', "saveTooltip:#{expSaveTooltip}"
 
+    expProfileVideo = @cookie.get 'exp:profileVideo'
+    unless expProfileVideo
+      rand = Math.random()
+      expProfileVideo = if rand > 0.5 \
+                         then 'visible'
+                         else 'control'
+      @cookie.set 'exp:profileVideo', expProfileVideo
+
+    ga? 'send', 'event', 'exp', "profileVideo:#{expProfileVideo}"
+
     @experiments =
       control: expControl
       saveTooltip: expSaveTooltip
+      profileVideo: expProfileVideo
 
   get: (key) =>
     @experiments[key]

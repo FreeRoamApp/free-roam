@@ -86,8 +86,9 @@ class MapService
     [
       {
         field: 'prices.all.mode'
+        key: 'maxPrice'
         type: 'maxIntCustom'
-        name: model.l.get 'campground.price'
+        name: model.l.get 'campground.maxPrice'
       }
       {
         field: 'cellSignal'
@@ -113,6 +114,12 @@ class MapService
         field: 'hookups'
         type: 'hookups'
         name: model.l.get 'general.hookups'
+      }
+      {
+        field: 'maxLength'
+        key: 'minLength'
+        type: 'minIntCustom'
+        name: model.l.get 'campground.minLength'
       }
       {
         field: 'crowds'
@@ -337,7 +344,7 @@ class MapService
               "#{field}":
                 lte: filter.value
           }
-        when 'minInt'
+        when 'minInt', 'minIntCustom'
           {
             range:
               "#{field}":

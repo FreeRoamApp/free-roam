@@ -94,7 +94,7 @@ module.exports = class PlacesSearch
             z '.g-grid',
               z '.g-cols',
               _map dataTypes, (type) =>
-                {dataType, onclick, $checkbox, isCheckedSubject, layer} = type
+                {dataType, onclick, $checkbox, layer} = type
                 z '.g-col.g-xs-6.g-md-3',
                   z 'label.type', {
                     onclick: ->

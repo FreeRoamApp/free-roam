@@ -35,15 +35,19 @@ module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, isShell, @trip, @dataTypes, showScale, mapBoundsStreams,
       @persistentCookiePrefix, @addPlaces, @optionalLayers, @isSearchHidden,
-      @limit, @sort, defaultOpacity, @currentDataType, initialCenter, center,
-      initialZoom, zoom} = options
+      @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
+      @initialFilters, initialCenter, center, initialZoom, zoom} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
     @sort ?= new RxBehaviorSubject undefined
     @limit ?= new RxBehaviorSubject null
     center ?= new RxBehaviorSubject null
     zoom ?= new RxBehaviorSubject null
-    @currentDataType ?= new RxBehaviorSubject @dataTypes[0].dataType
+    unless @currentDataType
+      @currentDataType = new RxReplaySubject 1
+      @currentDataType.next RxObservable.of @dataTypes[0].dataType
+    @initialDataType ?= new RxBehaviorSubject null
+    @initialFilters ?= new RxBehaviorSubject null
 
     @persistentCookiePrefix ?= 'default'
     @addPlaces ?= RxObservable.of []
@@ -149,7 +153,7 @@ module.exports = class PlacesMapContainer
       dataTypes: @dataTypesStream
       visibleDataTypes: @dataTypesStream.map (dataTypes) ->
         _filter dataTypes, 'isChecked'
-      currentDataType: @currentDataType
+      currentDataType: @currentDataType.switch()
       place: @place
       icons: placesAndIsLegendVisible.map ([places, isLegendVisible]) ->
         if isLegendVisible
@@ -178,22 +182,25 @@ module.exports = class PlacesMapContainer
     catch
       {}
 
-    dataTypes = _map dataTypes, (options) ->
-      {dataType, onclick, filters, defaultValue, isCheckedSubject} = options
+    dataTypes = _map dataTypes, (options) =>
+      {dataType, onclick, filters, defaultValue, isCheckedValueStreams} = options
       savedValue = savedDataTypes[dataType]
-      isCheckedSubject ?= new RxBehaviorSubject(
-        if savedValue? then savedValue else defaultValue
-      )
+      isCheckedValueStreams ?= new RxReplaySubject 1
+      isCheckedValueStreams.next @initialDataType.map (initialDataType) ->
+        if initialDataType then dataType is initialDataType
+        else if savedValue? then savedValue
+        else defaultValue
       {
         dataType: dataType
         filters: filters
         onclick: onclick
-        isCheckedSubject: isCheckedSubject
-        $checkbox: new Checkbox {value: isCheckedSubject}
+        isCheckedValueStreams: isCheckedValueStreams
+        $checkbox: new Checkbox {valueStreams: isCheckedValueStreams}
       }
 
     RxObservable.combineLatest(
-      _map dataTypes, 'isCheckedSubject'
+      _map dataTypes, ({isCheckedValueStreams}) ->
+        isCheckedValueStreams.switch()
       (vals...) -> vals
     )
     .map (values) =>
@@ -212,7 +219,7 @@ module.exports = class PlacesMapContainer
       # if unchecking data type, set a new current
       {currentDataType} = @state.getValue()
       unless dataTypesWithValue[currentDataType]?.isChecked
-        @currentDataType.next _find(dataTypesWithValue, 'isChecked')?.dataType
+        @currentDataType.next RxObservable.of _find(dataTypesWithValue, 'isChecked')?.dataType
 
       dataTypesWithValue
 
@@ -222,25 +229,32 @@ module.exports = class PlacesMapContainer
       JSON.parse @model.cookie.get persistentCookie
     catch
       {}
-    filters = _flatten _map @dataTypes, ({dataType, filters}) ->
-      _map filters, (filter) ->
-        if filter.type is 'booleanArray'
-          savedValueKey = "#{dataType}.#{filter.field}.#{filter.arrayValue}"
-        else
-          savedValueKey = "#{dataType}.#{filter.field}"
-        savedValue = savedFilters[savedValueKey]
-        _defaults {
-          dataType: dataType
-          valueSubject: new RxBehaviorSubject(
-            if savedValue? then savedValue else filter.defaultValue
-          )
-        }, filter
+    # TODO: can we only map over visible dataTypes?
+    filters = _flatten _map @dataTypes, ({dataType, filters}) =>
+      _map filters, (filter) =>
+        valueStreams = new RxReplaySubject 1
+        # TODO: more efficient way to do this?
+        # can we move the map outside of the _maps above?
+        valueStreams.next @initialFilters.map (initialFilters) ->
+          if filter.type is 'booleanArray'
+            savedValueKey = "#{dataType}.#{filter.field}.#{filter.arrayValue}"
+          else
+            savedValueKey = "#{dataType}.#{filter.field}"
+
+          if initialFilters
+            initialValue = initialFilters[savedValueKey]
+          else
+            initialValue = savedFilters[savedValueKey]
+
+          if initialValue? then initialValue else filter.defaultValue
+
+        _defaults {dataType, valueStreams}, filter
 
     if _isEmpty filters
       return RxObservable.of {}
 
     RxObservable.combineLatest(
-      _map filters, 'valueSubject'
+      _map filters, ({valueStreams}) -> valueStreams.switch()
       (vals...) -> vals
     )
     .map (values) =>

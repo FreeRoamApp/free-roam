@@ -3,6 +3,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
+require 'rxjs/add/observable/of'
 _defaults = require 'lodash/defaults'
 _map = require 'lodash/map'
 _reduce = require 'lodash/reduce'
@@ -58,7 +59,8 @@ module.exports = class PlaceNearby
         }
     )
 
-    @isCellTowersChecked = new RxBehaviorSubject false
+    @isCellTowersCheckedStreams = new RxReplaySubject 1
+    @isCellTowersCheckedStreams.next RxObservable.of false
 
     @$fab = new Fab()
     @$addIcon = new Icon()
@@ -87,7 +89,7 @@ module.exports = class PlaceNearby
         {
           dataType: 'cellTower'
           filters: @getCellTowerFilters()
-          isCheckedSubject: @isCellTowersChecked
+          isCheckedValueStreams: @isCellTowersCheckedStreams
         }
       ]
       optionalLayers: MapService.getOptionalLayers {@model}
@@ -121,7 +123,8 @@ module.exports = class PlaceNearby
     @isMapVisible = new RxBehaviorSubject false
 
     @state = z.state {
-      @isCellTowersChecked
+      isCellTowersChecked:
+        @isCellTowersCheckedStreams.switch()
       @place
       @isMapVisible
     }
@@ -154,7 +157,7 @@ module.exports = class PlaceNearby
           z @$placesMapContainer
         z '.toggle-cell-towers', {
           onclick: =>
-            @isCellTowersChecked.next not isCellTowersChecked
+            @isCellTowersCheckedStreams.next RxObservable.of not isCellTowersChecked
         },
           if isCellTowersChecked
             @model.l.get 'campgroundNearby.hideCellTowers'

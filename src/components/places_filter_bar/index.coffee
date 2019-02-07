@@ -1,4 +1,6 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 
 FilterDialog = require '../filter_dialog'
@@ -61,7 +63,9 @@ module.exports = class PlacesFilterBar
                 onclick: =>
                   ga? 'send', 'event', 'map', 'filterClick', filter.field
                   if filter.isBoolean
-                    filter.valueSubject.next (not filter.value) or null
+                    filter.valueStreams.next(
+                      RxObservable.of (not filter.value) or null
+                    )
                   else
                     @showFilterDialog filter
               }, filter.name
@@ -81,6 +85,6 @@ module.exports = class PlacesFilterBar
             }
             onclick: =>
               ga? 'send', 'event', 'map', 'typeClick', dataType
-              @currentDataType.next dataType
+              @currentDataType.next RxObservable.of dataType
           },
             z '.name', @model.l.get "placeTypes.#{dataType}"
