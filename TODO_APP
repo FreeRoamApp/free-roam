@@ -5,6 +5,12 @@ TODOS:
   - Beginners guide
   - Intermediate
   - Advanced
+- Guides
+  - freeroam.app/guides/boondocking-on-public-lands (advanced guide)
+  - freeroam.app/guides/walmart-overnight (advanced guide)
+  - format: https://jekyllrb.com/docs/usage/ w/ side drawer and tooltip to open it
+    - "There's a lot to tell you, so if you want to jump to specific parts of this guide, tap here"
+
 - Ability to set hookups, contact info when adding campground
   - Need to enable hookups for free sites: coleman-rv-park (https://brownfieldchamber.com/2018/09/27/coleman-rv-park/)
 x Make sure content is good for these:

@@ -146,14 +146,14 @@ module.exports = class FormattedText
           if youtubeId and @embedVideos
             $embeddedVideo = new EmbeddedVideo {
               model
-              videoAttachment:
-                src: "https://www.youtube.com/embed/#{youtubeId}"
+              video:
+                sourceId: youtubeId
             }
             z $embeddedVideo
           else if imgurId and @embedVideos and props.href?.match /\.(gif|mp4|webm)/i
             $embeddedVideo = new EmbeddedVideo {
               model
-              videoAttachment:
+              video:
                 src: "https://i.imgur.com/#{imgurId}.mp4"
                 previewSrc: "https://i.imgur.com/#{imgurId}h.jpg"
                 mp4Src: "https://i.imgur.com/#{imgurId}.mp4"

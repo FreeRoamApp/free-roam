@@ -3,6 +3,7 @@ _map = require 'lodash/map'
 
 AppBar = require '../../components/app_bar'
 ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 ProductGuides = require '../../components/product_guides'
 colors = require '../../colors'
 config = require '../../config'
@@ -15,8 +16,10 @@ module.exports = class ProductGuidesPage
   @hasBottomBar: true
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
+
     @$appBar = new AppBar {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$productGuides = new ProductGuides {@model, @router}
 
   getMeta: =>
@@ -30,7 +33,11 @@ module.exports = class ProductGuidesPage
       z @$appBar, {
         title: @model.l.get 'productGuidesPage.title'
         style: 'primary'
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton:
+          if @model.experiment.get('guides') is 'visible'
+          then z @$buttonBack, {color: colors.$header500Icon}
+          else z @$buttonMenu, {color: colors.$header500Icon}
       }
       @$productGuides
-      @$bottomBar
+      if @model.experiment.get('guides') is 'control'
+        @$bottomBar

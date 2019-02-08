@@ -115,7 +115,6 @@ module.exports = class Thread extends Base
       isPostLoading: @isPostLoading
       windowSize: @model.window.getSize()
       comments: commentsAndThread.map ([comments, thread]) =>
-        console.log 'thread', thread
         if comments?.length is 1 and comments[0] is null
           return null
         comments = _filter comments

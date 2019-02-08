@@ -36,6 +36,8 @@
   "editProfile": "/edit-profile",
   "editCampgroundReview": "/campground/:slug/review/:reviewId/edit",
   "editOvernightReview": "/overnight/:slug/review/:reviewId/edit",
+  "guide": "/guide/:slug",
+  "guides": "/guides",
   "item": "/item/:slug",
   "itemsByCategory": "/product-guides/:category",
   "itemsBySearch": "/product-guides/search/:query",

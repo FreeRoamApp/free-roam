@@ -404,6 +404,8 @@
   "groupManageRolesPage.title": "Manage roles",
   "groupManageMemberPage.title": "Manage member",
   "groupSettingsPage.title": "Group settings",
+  "guidesPage.title": "Guides",
+  "guidesPage.description": "Helpful guides for boondocking",
   "itemPage.title": "{name} for Boondocking",
   "itemsPage.title": "{name} Products",
   "itemsPage.products": "Products",

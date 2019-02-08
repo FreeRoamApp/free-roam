@@ -378,6 +378,8 @@
   "itemsPage.products": "Products",
   "itemsPage.guide": "Buyer guide",
   "itemsPage.description": "Browse through helpful {title}. Learn why you might need certain products, and what to look for.",
+  "guidesPage.title": "Guides",
+  "guidesPage.description": "Helpful guides for boondocking",
   "myPlacesPage.title": "My places",
   "newPlacePage.title": "New {prettyType}",
   "newReviewPage.title": "Your review",

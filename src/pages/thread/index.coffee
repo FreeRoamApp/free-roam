@@ -9,6 +9,7 @@ require 'rxjs/add/operator/map'
 Thread = require '../../components/thread'
 Icon = require '../../components/icon'
 colors = require '../../colors'
+config = require '../../config'
 
 WORDS_IN_DESCRIPTION = 70
 
@@ -36,15 +37,18 @@ module.exports = class ThreadPage
       mediaSrc = @model.image.getSrcByPrefix imageAttachment?.prefix, {
         size: 'large'
       }
+
       {
         title: thread?.title
         description: thread?.body.replace(/\\n/g, ' ').split(/\s+/)
                     .slice(0, WORDS_IN_DESCRIPTION).join(' ')
         openGraph:
           image: mediaSrc?.split(' ')[0]
+        canonical: if thread?.slug is 'how-to-boondock' \ # TODO: do for all guides
+                   then "https://#{config.HOST}/guide/how-to-boondock"
         twitter: # TODO: group twitter handle
-          siteHandle: '@freeroamapp'
-          creatorHandle: '@freeroamapp'
+          siteHandle: '@freeroamhq'
+          creatorHandle: '@freeroamhq'
       }
 
   beforeUnmount: =>

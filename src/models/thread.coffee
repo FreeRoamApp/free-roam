@@ -47,11 +47,16 @@ module.exports = class Thread
     }
 
   getPath: (thread, group, router) ->
-    @group.getPath group, 'groupThread', {
-      router
-      replacements:
+    if thread?.slug is 'how-to-boondock' # TODO: all guides
+      router.get 'guide', {
         slug: thread?.slug
-    }
+      }
+    else
+      @group.getPath group, 'groupThread', {
+        router
+        replacements:
+          slug: thread?.slug
+      }
 
   uploadImage: (file) =>
     formData = new FormData()
