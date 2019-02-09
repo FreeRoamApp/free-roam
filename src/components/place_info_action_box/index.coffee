@@ -19,15 +19,15 @@ module.exports = class PlaceInfoActionBox
     @$directionsIcon = new Icon()
     @$checkInIcon = new Icon()
     @$saveIcon = new Icon()
-    @$saveTooltip = new TooltipPositioner {
-      @model
-      key: 'saveLocation'
-      anchor: 'top-right'
-      zIndex: 999 # show for overlayPage
-      offset:
-        left: 32
-        top: 16
-    }
+    # @$saveTooltip = new TooltipPositioner {
+    #   @model
+    #   key: 'saveLocation'
+    #   anchor: 'top-right'
+    #   zIndex: 999 # show for overlayPage
+    #   offset:
+    #     left: 32
+    #     top: 16
+    # }
 
     @checkInsStreams = new RxReplaySubject 1
     @resetValueStreams()
@@ -145,5 +145,7 @@ module.exports = class PlaceInfoActionBox
             else if plannedCheckIn then @model.l.get 'general.saved'
             else @model.l.get 'general.save'
 
-          if @model.experiment.get('saveTooltip') is 'visible'
-            z @$saveTooltip
+          # A/B test with this on yielded ~10% increase in check-ins and
+          # not statistical downside (other than for some reason less
+          # trip events) but still not sure if it's worth hit
+          # z @$saveTooltip

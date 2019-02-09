@@ -10,16 +10,6 @@ module.exports = class Experiment
 
     ga? 'send', 'event', 'exp', "control:#{expControl}"
 
-    expSaveTooltip = @cookie.get 'exp:saveTooltip'
-    unless expSaveTooltip
-      rand = Math.random()
-      expSaveTooltip = if rand > 0.5 \
-                         then 'visible'
-                         else 'control'
-      @cookie.set 'exp:saveTooltip', expSaveTooltip
-
-    ga? 'send', 'event', 'exp', "saveTooltip:#{expSaveTooltip}"
-
     expProfileVideo = @cookie.get 'exp:profileVideo'
     unless expProfileVideo
       rand = Math.random()
@@ -42,7 +32,6 @@ module.exports = class Experiment
 
     @experiments =
       control: expControl
-      saveTooltip: expSaveTooltip
       profileVideo: expProfileVideo
       guides: expGuides
 

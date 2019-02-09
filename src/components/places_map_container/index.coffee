@@ -7,6 +7,7 @@ _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _reduce = require 'lodash/reduce'
 _groupBy = require 'lodash/groupBy'
+_some = require 'lodash/some'
 _sumBy = require 'lodash/sumBy'
 _isEmpty = require 'lodash/isEmpty'
 _uniq = require 'lodash/uniq'
@@ -182,6 +183,10 @@ module.exports = class PlacesMapContainer
     catch
       {}
 
+    # FIXME: rm after 2/21/2019
+    unless _some savedDataTypes
+      savedDataTypes = {}
+
     dataTypes = _map dataTypes, (options) =>
       {dataType, onclick, filters, defaultValue, isCheckedValueStreams} = options
       savedValue = savedDataTypes[dataType]
@@ -214,7 +219,9 @@ module.exports = class PlacesMapContainer
           obj[dataType] = isChecked
         obj
       , {}
-      @model.cookie.set persistentCookie, JSON.stringify savedDataTypes
+
+      if _some savedDataTypes
+        @model.cookie.set persistentCookie, JSON.stringify savedDataTypes
 
       # if unchecking data type, set a new current
       {currentDataType} = @state.getValue()
