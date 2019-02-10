@@ -118,17 +118,21 @@ module.exports = class PlaceTooltip extends MapTooltip
                   isTouchTarget: false
                   color: colors.$bgText54
               z '.text', @model.l.get 'general.directions'
-            # z '.action', {
-            #   onclick: =>
-            #     # TODO: pass in coordinates
-            #     @router.go 'newCampground'
-            # },
-            #   z '.icon',
-            #     z @$addCampsiteIcon,
-            #       icon: 'add-circle'
-            #       isTouchTarget: false
-            #       color: colors.$bgText54
-            #   z '.text', @model.l.get 'placeTooltip.addCampsite'
+            z '.action', {
+              onclick: =>
+                @router.go 'newCampground', {}, {
+                  qs:
+                    location: Math.round(place.location[1] * 1000) / 1000 +
+                              ',' +
+                              Math.round(place.location[0] * 1000) / 1000
+                }
+            },
+              z '.icon',
+                z @$addCampsiteIcon,
+                  icon: 'add-circle'
+                  isTouchTarget: false
+                  color: colors.$bgText54
+              z '.text', @model.l.get 'placeTooltip.addCampsite'
             z '.action', {
               onclick: @saveCoordinate
             },

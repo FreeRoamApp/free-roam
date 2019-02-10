@@ -34,7 +34,7 @@ if window?
 
 
 module.exports = class NewPlace
-  constructor: ({@model, @router}) ->
+  constructor: ({@model, @router, @location}) ->
     me = @model.user.getMe()
 
     @$appBar = new AppBar {@model}
@@ -82,6 +82,7 @@ module.exports = class NewPlace
       @step
       me: @model.user.getMe()
       isLoading: false
+      locationValue: @initialInfoFields.location.valueStreams.switch()
       titleValue: @reviewFields.titleValueStreams.switch()
       bodyValue: @reviewFields.bodyValueStreams.switch()
       attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
@@ -90,7 +91,7 @@ module.exports = class NewPlace
     }
 
   upsert: =>
-    {me, attachmentsValue} = @state.getValue()
+    {me, locationValue, attachmentsValue} = @state.getValue()
 
     @state.set isLoading: true
 
@@ -104,7 +105,7 @@ module.exports = class NewPlace
       if isReady
         @placeModel.upsert {
           name: @initialInfoFields.name.valueSubject.getValue()
-          location: @initialInfoFields.location.valueSubject.getValue()
+          location: locationValue
           videos: @initialInfoFields.videos.valueSubject.getValue()
           subType: @initialInfoFields.subType?.valueSubject.getValue()
         }
@@ -156,8 +157,11 @@ module.exports = class NewPlace
 
   resetValueStreams: =>
     @initialInfoFields.name.valueSubject.next ''
-    @initialInfoFields.location.valueSubject.next ''
+
+    @initialInfoFields.location.valueStreams.next @location
+
     @initialInfoFields.videos.valueSubject.next []
+
 
     @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
     @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
@@ -169,7 +173,7 @@ module.exports = class NewPlace
     @$steps?[1].reset()
 
   render: =>
-    {step, isLoading} = @state.getValue()
+    {step, isLoading, locationValue} = @state.getValue()
 
     z '.z-new-place',
       z @$appBar, {

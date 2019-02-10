@@ -23,7 +23,7 @@ module.exports = class NewPlaceInitialInfo
       error: @fields.name.errorSubject
 
     @$locationInput = new PrimaryInput
-      value: @fields.location.valueSubject
+      valueStreams: @fields.location.valueStreams
       error: @fields.location.errorSubject
 
     if @fields.subType
@@ -39,14 +39,15 @@ module.exports = class NewPlaceInitialInfo
     @$addVideoButton = new PrimaryButton()
 
     @state = z.state {
+      locationValue: @fields.location.valueStreams.switch()
       videos: @fields.videos.valueSubject.map (videos) ->
         _map videos, (video) ->
           {video, $removeIcon: new Icon()}
     }
 
   isCompleted: =>
-    @fields.name.valueSubject.getValue() and
-      @fields.location.valueSubject.getValue()
+    {locationValue} = @state.getValue()
+    @fields.name.valueSubject.getValue() and locationValue
 
   getTitle: =>
     @model.l.get 'newPlacePage.title', {
@@ -89,7 +90,8 @@ module.exports = class NewPlaceInitialInfo
                 isFullWidth: false
                 onclick: =>
                   @model.overlay.open new CoordinatePicker {
-                    @model, @router, coordinates: @fields.location.valueSubject
+                    @model, @router
+                    coordinatesSteams: @fields.location.valueStreams
                   }
 
         z 'label.field',

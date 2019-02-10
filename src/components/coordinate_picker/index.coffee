@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _find = require 'lodash/find'
 
 ActionBar = require '../action_bar'
@@ -10,7 +12,10 @@ if window?
   require './index.styl'
 
 module.exports = class CoordinatePicker
-  constructor: ({@model, @router, @coordinates, center, initialZoom}) ->
+  constructor: (options) ->
+    {@model, @router, @coordinates, @coordinatesSteams,
+      center, initialZoom} = options
+
     @$actionBar = new ActionBar {@model}
 
     @places = new RxBehaviorSubject []
@@ -67,7 +72,8 @@ module.exports = class CoordinatePicker
         save:
           text: @model.l.get 'general.done'
           onclick: (e) =>
-            @coordinates.next coordinates
+            @coordinates?.next coordinates
+            @coordinatesSteams?.next RxObservable.of coordinates
             @model.overlay.close()
       }
       z '.map',

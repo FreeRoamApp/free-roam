@@ -7,7 +7,10 @@ module.exports = class NewPlacePage
   hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData}) ->
-    @$newPlace = new @NewPlace {@model, @router}
+    location = requests.map ({req}) =>
+      req.query.location or ''
+
+    @$newPlace = new @NewPlace {@model, @router, location}
 
   getMeta: =>
     {
