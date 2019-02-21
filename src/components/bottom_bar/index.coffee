@@ -55,20 +55,12 @@ module.exports = class BottomBar
       #   route: @router.get 'trips'
       #   text: @model.l.get 'general.trips'
       # }
-      if @model.experiment.get('guides') is 'control'
-        {
-          $icon: new Icon()
-          icon: 'cart'
-          route: @router.get 'productGuides'
-          text: @model.l.get 'drawer.productGuide'
-        }
-      else
-        {
-          $icon: new Icon()
-          icon: 'guides'
-          route: @router.get 'guides'
-          text: @model.l.get 'guidesPage.title'
-        }
+      {
+        $icon: new Icon()
+        icon: 'guides'
+        route: @router.get 'guides'
+        text: @model.l.get 'guidesPage.title'
+      }
       {
         $icon: new Icon()
         icon: 'profile'

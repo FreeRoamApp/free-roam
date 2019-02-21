@@ -34,10 +34,6 @@ module.exports = class ProductGuidesPage
         title: @model.l.get 'productGuidesPage.title'
         style: 'primary'
         $topLeftButton:
-          if @model.experiment.get('guides') is 'visible'
-          then z @$buttonBack, {color: colors.$header500Icon}
-          else z @$buttonMenu, {color: colors.$header500Icon}
+          z @$buttonBack, {color: colors.$header500Icon}
       }
       @$productGuides
-      if @model.experiment.get('guides') is 'control'
-        @$bottomBar

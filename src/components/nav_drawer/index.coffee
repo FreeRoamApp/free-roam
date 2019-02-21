@@ -160,22 +160,13 @@ module.exports = class NavDrawer
             $ripple: new Ripple()
             iconName: 'info'
           }
-          if @model.experiment.get('guides') is 'visible'
-            {
-              path: @router.get 'guides'
-              title: @model.l.get 'guidesPage.title'
-              $icon: new Icon()
-              $ripple: new Ripple()
-              iconName: 'guides'
-            }
-          else
-            {
-              path: @router.get 'productGuides'
-              title: @model.l.get 'drawer.productGuide'
-              $icon: new Icon()
-              $ripple: new Ripple()
-              iconName: 'cart'
-            }
+          {
+            path: @router.get 'guides'
+            title: @model.l.get 'guidesPage.title'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'guides'
+          }
           # {
           #   path: @router.get 'backpack'
           #   title: @model.l.get 'drawer.backpack'
