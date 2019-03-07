@@ -19,13 +19,13 @@ module.exports = class About
 
     z '.z-about',
       z '.g-grid',
-        z '.h1.title', @model.l.get 'about.mission'
+        z 'h1.title', @model.l.get 'about.mission'
         z 'p', @model.l.get 'about.mission1'
         z 'ul',
           z 'li', @model.l.get 'about.mission1a'
           z 'li', @model.l.get 'about.mission1b'
           z 'li', @model.l.get 'about.mission1c'
-        z '.h1.title', @model.l.get 'about.meet'
+        z 'h1.title', @model.l.get 'about.meet'
         z '.us',
           z 'img',
             src: "#{config.CDN_URL}/us.jpg"
@@ -61,12 +61,21 @@ module.exports = class About
 
         z '.clear'
 
-        z '.h1.title', @model.l.get 'about.help'
+        z 'h1.title', @model.l.get 'about.help'
         z 'p', @model.l.get 'about.help1'
         z 'ul',
           z 'li', @model.l.get 'about.help1a'
           z 'li', @model.l.get 'about.help1b'
           z 'li', @model.l.get 'about.help1c'
+
+        z 'h1.title', @model.l.get 'about.documents'
+        z 'p', @model.l.get 'about.documents1'
+        z 'ul',
+          z 'li',
+            z 'a', {
+              href: 'https://fdn.uno/documents/irs-determination.pdf'
+              target: '_system'
+            }, @model.l.get 'about.irsDetermination'
 
         z '.divider.clear'
 

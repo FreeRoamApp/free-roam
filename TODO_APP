@@ -1,5 +1,39 @@
 TODOS:
 
+- Suggest dump stations checkbox when searching "dump"???
+  - only 18 searches vs 336 unique events clicking 'amenity'
+- Suggest free filter when searching "free"?
+- Trip show drive time between spots
+x Warning message on filters that reduce greatly
+
+###
+These probably aren't super-worth-it until we get a higher velocity of reviews. Only getting a few per week right now...
+- New filters / data improvements
+  - RV vs tent camping (need data update)
+  - Multiple weather filter inputs (high and low)
+  - Restrooms
+  - Showers (need data update)
+  - Smarter pricing structure
+    - Way to input whether or not the rate reviewer paid was a special
+    - How to do pricing correctly? Some campgrounds have different prices per spot, rig type, time of year, etc...
+
+- Review updates
+  - Ask if they had hookups / which ones (can be used for pricing too)
+
+- New campground updates
+  - Contact info
+  - Details
+  - Driving instructions
+
+- Edit campground feature
+###
+
+- Zoom out to show some campsites when searching for location
+x British Columbia
+- Canadian big-3 cell: bell, telus, rogers
+x Weather for all Canadian campgrounds
+
+
 - Photo voting
 - "What is boondocking"
   - Beginners guide

@@ -334,6 +334,9 @@ module.exports = class FilterDialog
         $title: $title
         $content:
           z '.z-filter-dialog_dialog',
+            if @filter.field in ['rigLength', 'crowds', 'roadDifficulty', 'shade', 'safety', 'noise']
+              z '.warning',
+                @model.l.get 'filterDialog.userInputWarning'
             $content
         cancelButton:
           text: @model.l.get 'general.cancel'

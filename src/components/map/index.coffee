@@ -41,7 +41,7 @@ module.exports = class Map
     if window.devicePixelRatio > 1.5 then 2 else 1
 
   getFirstSymbolId: =>
-    layers = @map.getStyle().layers
+    layers = @map?.getStyle().layers
     # Find the index of the first symbol layer in the map style
     firstSymbolId = undefined
     i = 0

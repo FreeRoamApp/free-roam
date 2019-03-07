@@ -308,7 +308,7 @@ module.exports = class PlaceInfo extends Base
                   z '.title', @model.l.get 'placeInfo.averageWeather'
                   z 'img.graph', {
                     src:
-                      "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?12"
+                      "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?2"
                   }
 
               unless _isEmpty $videos
