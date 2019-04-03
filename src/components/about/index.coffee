@@ -36,11 +36,8 @@ module.exports = class About
         z 'p',
           @model.l.get 'about.text2'
           ' '
-          z 'a', {
+          @router.link z 'a', {
             href: 'http://github.com/freeroamapp'
-            target: '_system'
-            onclick: ->
-              ga? 'send', 'event', 'about', 'github'
           }, @model.l.get 'general.here'
           '.'
         z 'p', @model.l.get 'about.text3'
@@ -48,14 +45,8 @@ module.exports = class About
         z 'p', @model.l.get 'about.text5'
         z 'p',
           @model.l.get 'welcomeDialog.video'
-          z 'a', {
-            href: '#'
-            onclick: (e) =>
-              e?.preventDefault()
-              @model.portal.call 'browser.openWindow', {
-                url: 'https://youtu.be/bInuqu6JyTI'
-                target: '_system'
-              }
+          @router.link z 'a', {
+            href: 'https://youtu.be/bInuqu6JyTI'
           },
             @model.l.get 'welcomeDialog.watch'
 
@@ -73,7 +64,7 @@ module.exports = class About
         z 'ul',
           z 'li',
             z 'a', {
-              href: 'https://fdn.uno/documents/irs-determination.pdf'
+              href: 'https://fdn.uno/d/documents/irs-determination.pdf'
               target: '_system'
             }, @model.l.get 'about.irsDetermination'
 

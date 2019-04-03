@@ -329,9 +329,9 @@ class MapService
     ]
 
 
-  getESQueryFromFilters: (filters, currentMapBounds) ->
+  getESQueryFromFilters: (filters, currentMapBounds) =>
     groupedFilters = _groupBy filters, 'field'
-    filter = _filter _map groupedFilters, (fieldFilters, field) ->
+    filter = _filter _map groupedFilters, (fieldFilters, field) =>
       unless _some fieldFilters, 'value'
         return
 
@@ -444,13 +444,23 @@ class MapService
       geo_bounding_box:
         location:
           top_left:
-            lat: Math.round(1000 * currentMapBounds._ne.lat) / 1000
-            lon: Math.round(1000 * currentMapBounds._sw.lng) / 1000
+            lat: @formatLatitude currentMapBounds._ne.lat
+            lon: @formatLongitude currentMapBounds._sw.lng
           bottom_right:
-            lat: Math.round(1000 * currentMapBounds._sw.lat) / 1000
-            lon: Math.round(1000 * currentMapBounds._ne.lng) / 1000
+            lat: @formatLatitude currentMapBounds._sw.lat
+            lon: @formatLongitude currentMapBounds._ne.lng
     }
     filter
+
+  formatLatitude: (lat) ->
+    lat = Math.round(1000 * lat) / 1000
+    lat = Math.max -90, lat
+    Math.min 90, lat
+
+  formatLongitude: (lon) ->
+    lon = Math.round(1000 * lon) / 1000
+    lon = Math.max -180, lon
+    Math.min 180, lon
 
   # This is adapted from the implementation in Project-OSRM
   # https://github.com/DennisOSRM/Project-OSRM-Web/blob/master/WebContent/routing/OSRM.RoutingGeometry.js

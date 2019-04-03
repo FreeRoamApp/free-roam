@@ -15,6 +15,8 @@ FlatButton = require '../flat_button'
 TravelMap = require '../travel_map'
 EditTripTooltip = require '../edit_trip_tooltip'
 LocationSearch = require '../location_search'
+DateService = require '../../services/date'
+FormatService = require '../../services/format'
 config = require '../../config'
 
 if window?
@@ -43,6 +45,9 @@ module.exports = class EditTrip extends Base
     @clientCheckIns = new RxBehaviorSubject []
     @resetValueStreams()
     checkIns = RxObservable.merge @clientCheckIns, serverCheckIns
+    checkInsAndTrip = RxObservable.combineLatest(
+      checkIns, @trip, (vals...) -> vals
+    )
 
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
@@ -81,8 +86,8 @@ module.exports = class EditTrip extends Base
       trip: @trip.map (trip) ->
         _omit trip, ['route']
       name: @nameValueStreams.switch()
-      checkIns: checkIns.map (checkIns) =>
-        _map checkIns, (checkIn) =>
+      checkIns: checkInsAndTrip.map ([checkIns, trip]) =>
+        _map checkIns, (checkIn, i) =>
           # doesn't update when new attachments added
           # $attachmentsList = @getCached$(
           #   "attachmentsList-#{checkIn.id}", AttachmentsList, {
@@ -92,6 +97,8 @@ module.exports = class EditTrip extends Base
           # )
           {
             checkIn
+            routeInfo: if trip.route?.legs?[i]
+              _omit trip.route.legs[i], ['shape']
             $attachmentsList: new AttachmentsList {
               @model, @router
               attachments: RxObservable.of checkIn.attachments
@@ -168,17 +175,19 @@ module.exports = class EditTrip extends Base
           },
             @model.l.get 'editTrip.findAlongRoute'
       z '.info',
-        z @$locationSearch, {
-          placeholder: @model.l.get 'editTrip.searchPlaceholder'
-          locationsTitle: @model.l.get 'editTrip.locationsTitle'
-          isAppBar: false
-        }
+        z '.overlay',
+          z @$locationSearch, {
+            placeholder: @model.l.get 'editTrip.searchPlaceholder'
+            locationsTitle: @model.l.get 'editTrip.locationsTitle'
+            isAppBar: false
+          }
 
         z '.g-grid',
           z '.check-ins',
             if _isEmpty checkIns
               z '.placeholder', @model.l.get 'editTrip.placeHolder'
-            _map checkIns, ({checkIn, $addInfoButton, $attachmentsList}) =>
+            _map checkIns, (checkIn) =>
+              {checkIn, routeInfo,  $addInfoButton, $attachmentsList} = checkIn
               z '.check-in.draggable', {
                 attributes:
                   if @onReorder then {draggable: 'true'} else {}
@@ -204,6 +213,14 @@ module.exports = class EditTrip extends Base
                           }
                 z '.attachments',
                   $attachmentsList
+
+                if routeInfo
+                  z '.travel-time',
+                    @model.l.get 'editTrip.travelTime'
+                    ': '
+                    DateService.formatSeconds routeInfo?.time, 1
+                    " (#{FormatService.number routeInfo?.distance}mi)"
+
 
           z '.privacy', {
             onclick: =>

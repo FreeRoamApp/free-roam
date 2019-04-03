@@ -177,6 +177,7 @@
   "editTrip.placeHolder": "Search above to add stops you've made in the last year and we'll map them out for you!",
   "editTrip.searchPlaceholder": "Add a trip location",
   "editTrip.shareText": "View my travel map",
+  "editTrip.travelTime": "Travel time",
   "editTripTooltip.addToTrip": "Add to trip",
   "filterDialog.userInputWarning": "This filter relies on user-inputted data and currently greatly reduces the number of visible campgrounds.",
   "filterDialog.cellCarrier": "Carrier",
