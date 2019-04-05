@@ -85,6 +85,20 @@ colors = _defaults {
     '--tertiary-800-text': materialColors.$black
     '--tertiary-900-text': materialColors.$black
 
+    '--quaternary-50': '#E2F6F5'
+    '--quaternary-100': '#B6E8E7'
+    '--quaternary-200': '#85D9D7'
+    '--quaternary-300': '#54C9C6'
+    '--quaternary-400': '#2FBEBA'
+    '--quaternary-500': '#0AB2AE'
+    '--quaternary-600': '#09ABA7'
+    '--quaternary-700': '#07A29D'
+    '--quaternary-800': '#059994'
+    '--quaternary-900': '#038A84'
+
+    '--quaternary-500-text': materialColors.$white
+
+
     # '--bg-500': '#f0efed'
     '--bg-500': '#f4f4f4'
     '--bg-600': '#ececec'
@@ -153,9 +167,7 @@ colors = _defaults {
   '$tertiary50': 'var(--tertiary-50)'
   '$tertiary100': 'var(--tertiary-100)'
   '$tertiary200': 'var(--tertiary-200)'
-
   '$tertiary300': 'var(--tertiary-300)'
-
   '$tertiary400': 'var(--tertiary-400)'
   '$tertiary500': 'var(--tertiary-500)'
   '$tertiary600': 'var(--tertiary-600)'
@@ -175,6 +187,29 @@ colors = _defaults {
   '$tertiary800Text': 'var(--tertiary-800-text)'
   '$tertiary900Text': 'var(--tertiary-900-text)'
 
+  '$quaternary50': 'var(--quaternary-50)'
+  '$quaternary100': 'var(--quaternary-100)'
+  '$quaternary200': 'var(--quaternary-200)'
+  '$quaternary300': 'var(--quaternary-300)'
+  '$quaternary400': 'var(--quaternary-400)'
+  '$quaternary500': 'var(--quaternary-500)'
+  '$quaternary600': 'var(--quaternary-600)'
+  '$quaternary700': 'var(--quaternary-700)'
+  '$quaternary800': 'var(--quaternary-800)'
+  '$quaternary900': 'var(--quaternary-900)'
+  # '$quaternary90012': 'var(--quaternary-90012)'
+  # '$quaternary90054': 'var(--quaternary-90054)'
+  # '$quaternary100Text': 'var(--quaternary-100-text)'
+  # '$quaternary200Text': 'var(--quaternary-200-text)'
+  # '$quaternary300Text': 'var(--quaternary-300-text)'
+  # '$quaternary400Text': 'var(--quaternary-400-text)'
+  '$quaternary500Text': 'var(--quaternary-500-text)'
+  # '$quaternary500Text70': 'var(--quaternary-500-text-70)'
+  # '$quaternary600Text': 'var(--quaternary-600-text)'
+  # '$quaternary700Text': 'var(--quaternary-700-text)'
+  # '$quaternary800Text': 'var(--quaternary-800-text)'
+  # '$quaternary900Text': 'var(--quaternary-900-text)'
+
   '$bg500': 'var(--bg-500)'
   '$bg600': 'var(--bg-600)'
   '$bg700': 'var(--bg-700)'
@@ -187,7 +222,7 @@ colors = _defaults {
   '$bgText70': 'var(--bg-text-70)'
   '$bgText87': 'var(--bg-text-87)'
 
-  '$quaternary500': '#ff7b45'
+  '$orange500': '#ff7b45'
 
   '$salmon500': '#f3a37e'
   '$salmon500Text': '#ffffff'

@@ -83,6 +83,7 @@
   "general.shop": "Shop",
   "general.signIn": "Sign in",
   "general.signUp": "Sign up",
+  "general.skip": "Skip",
   "general.social": "Social",
   "general.sort": "Sort",
   "general.submit": "Submit",
@@ -391,7 +392,12 @@
   "welcomeDialog.text4": "Thank you!",
   "welcomeDialog.text5": "Austin & Rachel",
   "welcomeDialog.video": "Here's a video on how to use FreeRoam: ",
-  "welcomeDialog.watch": "watch",
+  "welcomeDialog.watch": "Watch",
+  "welcomeDialog.getRoamingTitle": "Get Roaming",
+  "welcomeDialog.getRoamingContent": "Find your next campground using a variety of filters. Visual learner? Check out this short video that explains how to use the app.",
+  "welcomeDialog.helpTitle": "How you can help",
+  "welcomeDialog.helpContent": "Post your reviews and add new campsites you've visited. And introduce yourself in chat; we love hearing your feedback on ways we can improve!",
+
 
   "404Page.text": "Page not found!",
   "editCheckInPage.title": "Edit check-In",

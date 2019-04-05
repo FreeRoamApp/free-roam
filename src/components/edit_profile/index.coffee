@@ -12,7 +12,6 @@ Avatar = require '../avatar'
 Icon = require '../icon'
 UploadOverlay = require '../upload_overlay'
 PrimaryButton = require '../primary_button'
-SecondaryButton = require '../secondary_button'
 FlatButton = require '../flat_button'
 PrimaryInput = require '../primary_input'
 PrimaryTextarea = require '../primary_textarea'
@@ -34,7 +33,6 @@ module.exports = class EditProfile
     @$uploadOverlay = new UploadOverlay {@model}
 
     @$saveButton = new PrimaryButton()
-    @$recordButton = new SecondaryButton()
     @$cacheSizeButton = new FlatButton()
     @$clearCacheButton = new FlatButton()
 

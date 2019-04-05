@@ -3,7 +3,6 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Dialog = require '../dialog'
 PrimaryInput = require '../primary_input'
-PrimaryButton = require '../secondary_button'
 FlatButton = require '../flat_button'
 Icon = require '../icon'
 colors = require '../../colors'

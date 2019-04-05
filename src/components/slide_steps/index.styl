@@ -1,0 +1,47 @@
+@require '../../vars'
+
+.p-slide-steps
+  flex1()
+  display: flex
+  padding-bottom: 56px
+
+  > .bottom-bar
+    position: absolute
+    z-index: 999
+    bottom: 0
+    left: 0
+    display: flex
+    width: 100%
+    height: 56px
+    align-items: center
+    padding: 0 8px
+    box-sizing: border-box
+    // background: getColor('$tertiary100')
+
+    > .icon, > .text
+      width: 48px
+      cursor: pointer
+
+    > .text
+      font-button()
+      color: getColor('$primary500')
+      text-transform: lowercase
+      text-align: center
+      padding: 8px
+
+    > .step-counter
+      flex1()
+      display: flex
+      justify-content: center
+      width: 100%
+      margin: 16px 0
+
+      > .step-dot
+        width: 6px
+        height: 6px
+        border-radius: 50%
+        margin-right: 4px
+        background: getColor('$bgText26')
+
+        &.is-active
+          background: getColor('$bgText')
