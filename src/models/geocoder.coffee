@@ -11,3 +11,6 @@ module.exports = class Geocoder
     @auth.stream "#{@namespace}.getBoundingFromRegion", {
       country, state, city
     }
+
+  getBoundingFromLocation: ({location}) ->
+    @auth.call "#{@namespace}.getBoundingFromLocation", {location}

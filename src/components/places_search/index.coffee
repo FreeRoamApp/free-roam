@@ -127,7 +127,19 @@ module.exports = class PlacesSearch
               _map locations, (location) =>
                 z '.location', {
                   onclick: =>
-                    @onclick? location
+                    @model.geocoder.getBoundingFromLocation {
+                      location: location.location
+                    }
+                    .then (bboxWithPlaces) =>
+                      # combine, since bboxWithPlaces is too small for states
+                      if location.bbox
+                        bboxWithPlaces = {
+                          x1: Math.min location.bbox[0], bboxWithPlaces.x1
+                          y1: Math.min location.bbox[1], bboxWithPlaces.y1
+                          x2: Math.max location.bbox[2], bboxWithPlaces.x2
+                          y2: Math.max location.bbox[3], bboxWithPlaces.y2
+                        }
+                      @onclick bboxWithPlaces
                     @searchValueStreams.next RxObservable.of location.text
                     @isOpen.next false
                 },

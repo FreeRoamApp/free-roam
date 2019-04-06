@@ -129,20 +129,8 @@ module.exports = class PlacesMapContainer
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery
-      onclick: (location) ->
-        if location.bbox and location.bbox[0] isnt location.bbox[2]
-          mapBoundsStreams.next RxObservable.of {
-            x1: location.bbox[0]
-            y1: location.bbox[1]
-            x2: location.bbox[2]
-            y2: location.bbox[3]
-          }
-        else
-          center.next [
-            location.location.lon
-            location.location.lat
-          ]
-          zoom.next 9
+      onclick: (bbox) ->
+        mapBoundsStreams.next RxObservable.of bbox
     }
     @$placesFilterBar = new PlacesFilterBar {
       @model, @isFilterTypesVisible, @currentDataType
