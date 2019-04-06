@@ -1,6 +1,8 @@
 z = require 'zorium'
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
-require 'rxjs/observable/of'
+require 'rxjs/add/observable/of'
+_startCase = require 'lodash/startCase'
 
 Places = require '../../components/places'
 colors = require '../../colors'
@@ -25,7 +27,26 @@ module.exports = class PlacesPage
         @model.trip.getById req.query.tripId
       else
         RxObservable.of null
-    @$places = new Places {@model, @router, isShell, type, subType, trip}
+
+    mapBoundsStreams = new RxReplaySubject 1
+    mapBoundsStreams.next requests.switchMap ({route}) =>
+      region = {
+        country: route.params.country
+        state: route.params.state
+        city: route.params.city
+      }
+      unless route.params.country
+        return RxObservable.of undefined
+      @model.geocoder.getBoundingFromRegion region
+
+    searchQuery = requests.map ({route}) ->
+      if route.params.city
+        "#{_startCase route.params.city}, #{route.params.state.toUpperCase()}"
+
+    @$places = new Places {
+      @model, @router, isShell, type, subType, trip, mapBoundsStreams
+      searchQuery
+    }
 
   getMeta: =>
     {

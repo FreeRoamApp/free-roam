@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 colors = require '../../colors'
 
@@ -10,7 +12,8 @@ ButtonMenu = require '../button_menu'
 Icon = require '../icon'
 
 module.exports = class SearchInput
-  constructor: ({@model, @searchValue, @router, @isFocused}) ->
+  constructor: (options) ->
+    {@model, @searchValue, @searchValueStreams, @router, @isFocused} = options
     @$backIcon = new Icon()
     @$clearIcon = new Icon()
     @$buttonMenu = new ButtonMenu {@model, @router}
@@ -19,7 +22,7 @@ module.exports = class SearchInput
 
     @state = z.state
       isFocused: @isFocused
-      searchValue: @searchValue
+      searchValue: @searchValueStreams?.switch() or @searchValue
 
   afterMount: (@$$el) => null
 
@@ -30,7 +33,10 @@ module.exports = class SearchInput
     @isFocused.next false
 
   clear: =>
-    @searchValue.next ''
+    if @searchValueStreams
+      @searchValueStreams.next RxObservable.of ''
+    else
+      @searchValue.next ''
 
   render: (options = {}) =>
     {placeholder, onBack, height, bgColor, clearOnBack, isAppBar, alwaysShowBack
@@ -106,4 +112,7 @@ module.exports = class SearchInput
           style:
             backgroundColor: bgColor
           oninput: (e) =>
-            @searchValue.next e.target.value
+            if @searchValueStreams
+              @searchValueStreams.next RxObservable.of e.target.value
+            else
+              @searchValue.next e.target.value

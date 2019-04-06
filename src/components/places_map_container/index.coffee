@@ -37,7 +37,8 @@ module.exports = class PlacesMapContainer
     {@model, @router, isShell, @trip, @dataTypes, showScale, mapBoundsStreams,
       @persistentCookiePrefix, @addPlaces, @optionalLayers, @isSearchHidden,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
-      @initialFilters, initialCenter, center, initialZoom, zoom} = options
+      @initialFilters, initialCenter, center, initialZoom, zoom,
+      searchQuery} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
     @sort ?= new RxBehaviorSubject undefined
@@ -127,7 +128,7 @@ module.exports = class PlacesMapContainer
       @model, @router, @place, position: @placePosition, @mapSize
     }
     @$placesSearch = new PlacesSearch {
-      @model, @router
+      @model, @router, searchQuery
       onclick: (location) ->
         if location.bbox and location.bbox[0] isnt location.bbox[2]
           mapBoundsStreams.next RxObservable.of {

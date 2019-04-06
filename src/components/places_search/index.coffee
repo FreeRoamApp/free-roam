@@ -1,5 +1,6 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/operator/switchMap'
 require 'rxjs/add/observable/of'
@@ -20,10 +21,12 @@ Icon = require '../icon'
 SEARCH_DEBOUNCE = 300
 
 module.exports = class PlacesSearch
-  constructor: ({@model, @router, @onclick}) ->
-    @searchValue = new RxBehaviorSubject ''
+  constructor: ({@model, @router, @onclick, searchQuery}) ->
+    @searchValueStreams = new RxReplaySubject 1
+    @searchValueStreams.next searchQuery or (new RxBehaviorSubject '')
 
-    locations = @searchValue.debounceTime(SEARCH_DEBOUNCE).switchMap (query) =>
+    locations = @searchValueStreams.switch()
+    .debounceTime(SEARCH_DEBOUNCE).switchMap (query) =>
       if query
         ga? 'send', 'event', 'mapSearch', 'search', query
         @model.geocoder.autocomplete {query}
@@ -31,7 +34,9 @@ module.exports = class PlacesSearch
         RxObservable.of []
 
     @isOpen = new RxBehaviorSubject false
-    @$searchInput = new SearchInput {@model, @router, @searchValue, @isOpen}
+    @$searchInput = new SearchInput {
+      @model, @router, @searchValueStreams, @isOpen
+    }
     @$doneButton = new FlatButton()
     @$tooltip = new TooltipPositioner {
       @model
@@ -123,7 +128,7 @@ module.exports = class PlacesSearch
                 z '.location', {
                   onclick: =>
                     @onclick? location
-                    @searchValue.next location.text
+                    @searchValueStreams.next RxObservable.of location.text
                     @isOpen.next false
                 },
                   z '.text',

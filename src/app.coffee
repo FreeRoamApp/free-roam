@@ -288,6 +288,7 @@ module.exports = class App
     route 'partners', 'PartnersPage'
     route [
       'places', 'home', 'placesWithType', 'placesWithTypeAndSubType'
+      'placesWithLocation'
     ], 'PlacesPage'
     route 'preservation', 'PreservationPage'
     route 'product', 'ProductPage'

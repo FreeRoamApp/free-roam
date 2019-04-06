@@ -1,3 +1,4 @@
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 module.exports = class Geocoder
   namespace: 'geocoder'
 
@@ -5,3 +6,8 @@ module.exports = class Geocoder
 
   autocomplete: ({query}) =>
     @auth.stream "#{@namespace}.autocomplete", {query}
+
+  getBoundingFromRegion: ({country, state, city}) ->
+    @auth.stream "#{@namespace}.getBoundingFromRegion", {
+      country, state, city
+    }

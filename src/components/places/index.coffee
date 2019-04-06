@@ -17,7 +17,10 @@ if window?
   require './index.styl'
 
 module.exports = class Places
-  constructor: ({@model, @router, isShell, type, subType, trip}) ->
+  constructor: (options) ->
+    {@model, @router, isShell, type, subType,
+      trip, mapBoundsStreams, searchQuery} = options
+
     @$addIcon = new Icon()
 
     @currentDataType = new RxReplaySubject 1
@@ -31,6 +34,8 @@ module.exports = class Places
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, isShell, trip
       persistentCookiePrefix: 'home'
+      searchQuery
+      mapBoundsStreams
       currentDataType: @currentDataType
       initialDataType: type # from url
       initialFilters: typeAndSubType.map ([type, subType]) ->

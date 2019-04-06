@@ -59,6 +59,7 @@
   "places": "/places",
   "placesWithType": "/places/:type",
   "placesWithTypeAndSubType": "/places/:type/:subType",
+  "placesWithLocation": "/places/location/:country/:state/:city",
 
   "policies": "/policies",
   "privacy": "/privacy",
