@@ -219,6 +219,8 @@ class MapService
             # 'fill-color': colors.$mapLayerBlm
             'fill-pattern': 'blm_bg'
             'fill-opacity': 0.5
+          metadata:
+            zIndex: 2
         insertBeneathLabels: true
       }
 
@@ -237,6 +239,8 @@ class MapService
             # 'fill-color': colors.$mapLayerUsfs
             'fill-pattern': 'usfs_bg'
             'fill-opacity': 0.5
+          metadata:
+            zIndex: 2
         insertBeneathLabels: true
       }
 
@@ -255,6 +259,8 @@ class MapService
             # 'fill-color': colors.$verizon
             'fill-pattern': 'verizon_bg'
             'fill-opacity': 0.4
+          metadata:
+            zIndex: 2
         insertBeneathLabels: true
       }
 
@@ -273,6 +279,8 @@ class MapService
             # 'fill-color': colors.$att
             'fill-pattern': 'att_bg'
             'fill-opacity': 0.4
+          metadata:
+            zIndex: 2
         insertBeneathLabels: true
       }
 
@@ -291,6 +299,8 @@ class MapService
             # 'fill-color': colors.$tmobile
             'fill-pattern': 'tmobile_bg'
             'fill-opacity': 0.4
+          metadata:
+            zIndex: 2
         insertBeneathLabels: true
       }
 
@@ -309,6 +319,8 @@ class MapService
             # 'fill-color': colors.$sprint
             'fill-pattern': 'sprint_bg'
             'fill-opacity': 0.4
+          metadata:
+            zIndex: 2
         insertBeneathLabels: true
       }
 
@@ -324,6 +336,8 @@ class MapService
           type: 'raster'
           source: 'mapbox'
           'source-layer': 'mapbox_satellite_full'
+          metadata:
+            zIndex: 1
         insertBeneathLabels: true
       }
     ]

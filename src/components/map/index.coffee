@@ -40,22 +40,24 @@ module.exports = class Map
   getClosestPixelRatio: ->
     if window.devicePixelRatio > 1.5 then 2 else 1
 
-  getFirstSymbolId: =>
+  getBeforeLayer: (zIndex = 0) =>
     layers = @map?.getStyle().layers
     # Find the index of the first symbol layer in the map style
-    firstSymbolId = undefined
+    # also use layer zIndexes to keep certain layers always on top of others
+    beforeLayer = undefined
     i = 0
     while i < layers.length
-      if layers[i].type is 'symbol'
-        firstSymbolId = layers[i].id
-        break
+      if layers[i].type is 'symbol' or layers[i]?.metadata?.zIndex
+        beforeLayer = layers[i].id
+        if not layers[i].metadata?.zIndex or layers[i].metadata.zIndex > zIndex
+          break
       i += 1
-    return firstSymbolId
+    return beforeLayer
 
   addLayer: (layer, {source, sourceId, insertBeneathLabels} = {}) =>
     if @layers.indexOf(layer.id) is -1
       @layers.push layer.id
-      layerId = if insertBeneathLabels then @getFirstSymbolId() else undefined
+      layerId = if insertBeneathLabels then @getBeforeLayer(layer.metadata?.zIndex) else undefined
       try
         @map.addSource sourceId or layer.id, source
       catch err
