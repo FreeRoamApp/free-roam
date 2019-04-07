@@ -1,17 +1,17 @@
 TODOS:
 
-- BLM overlay sometimes disappears. Probably has to do with ordering of showing them on load
+x BLM overlay sometimes disappears. Probably has to do with ordering of showing them on load
 - Username in sidebar when logged in
 - Filters for state parks, national park, etc...
 - Suggest dump stations checkbox when searching "dump"???
   - only 18 searches vs 336 unique events clicking 'amenity'
 - Suggest free filter when searching "free"?
-- Trip show drive time between spots
+x Trip show drive time between spots
 x Warning message on filters that reduce greatly
 - Some sort of message "Meet other boondockers in chat"
 - Fix the fact that some people are reviewing Walmarts under amenities instead of overnights (and migrate those)
 - Elevation map when planning routes?
-- When reviews are scrollable, the plus button covers thumbing up a review
+x When reviews are scrollable, the plus button covers thumbing up a review
 - Edit review doesn't work
 - Should save review progress to localstorage
 - Make it clear what rig length means
@@ -20,6 +20,8 @@ x Warning message on filters that reduce greatly
 - Allow webp uploads
 - http://freeroam.app/places/location/us/:state
 - PM notification settings
+- Rig info on profile page, maybe edit rig too
+- 4x4 filter
 
 ###
 These probably aren't super-worth-it until we get a higher velocity of reviews. Only getting a few per week right now...
