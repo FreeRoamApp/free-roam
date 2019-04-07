@@ -173,6 +173,7 @@
   "editRigDialog.title": "Rig info",
   "editRigDialog.length": "Length (ft)",
   "editRigDialog.type": "Type",
+  "editRigDialog.is4x4": "Has 4WD / AWD",
   "editTrip.findAlongRoute": "Find places along route",
   "editTrip.locationsTitle": "Locations",
   "editTrip.placeHolder": "Search above to add stops you've made in the last year and we'll map them out for you!",

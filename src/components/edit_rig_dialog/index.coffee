@@ -85,6 +85,11 @@ module.exports = class EditRigDialog
               z @$lengthInput,
                 hintText: @model.l.get 'editRigDialog.length'
                 type: 'number'
+            z '.block',
+              z 'label.checkbox-label',
+                z '.checkbox',
+                  z @$is4x4Checkbox
+                z '.text', @model.l.get 'editRigDialog.is4x4'
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>
