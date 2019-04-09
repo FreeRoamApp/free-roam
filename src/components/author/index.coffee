@@ -32,7 +32,7 @@ module.exports = class Author
                   )
 
     z '.z-author', {onclick},
-      if user?.flags?.isDev
+      if user?.username in ['austin', 'rachel']
         z '.icon',
           z @$statusIcon,
             icon: 'dev'

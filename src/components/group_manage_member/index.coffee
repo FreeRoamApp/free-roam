@@ -77,10 +77,6 @@ module.exports = class GroupManageMember
           z '.g-grid',
             z '.flex',
               z '.name', @model.user.getDisplayName user
-              z '.join-date',
-                z '.title', 'Joined'
-                z '.date', DateService.fromNow user?.joinTime
-
         z '.g-grid',
           z '.row',
             z '.roles',

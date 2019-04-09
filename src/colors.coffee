@@ -31,16 +31,16 @@ colors = _defaults {
     '--primary-800-text': materialColors.$white
     '--primary-900-text': materialColors.$white
 
-    '--secondary-50': '#FFF6F1'
-    '--secondary-100': '#FFE9DC'
-    '--secondary-200': '#FFDBC4'
-    '--secondary-300': '#FFCCAC'
-    '--secondary-400': '#FFC19B'
-    '--secondary-500': '#FFB689'
-    '--secondary-600': '#FFAF81'
-    '--secondary-700': '#FFA676'
-    '--secondary-800': '#FF9E6C'
-    '--secondary-900': '#FF8E5'
+    '--secondary-50': '#EDF6F0'
+    '--secondary-100': '#D2E7DB'
+    '--secondary-200': '#B4D8C3'
+    '--secondary-300': '#95C8AA'
+    '--secondary-400': '#7FBC98'
+    '--secondary-500': '#68B086'
+    '--secondary-600': '#60A97E'
+    '--secondary-700': '#55A073'
+    '--secondary-800': '#4B9769'
+    '--secondary-900': '#3A8756'
     '--secondary-100-text': materialColors.$black
     '--secondary-200-text': materialColors.$black
     '--secondary-300-text': materialColors.$black
@@ -65,7 +65,7 @@ colors = _defaults {
     # '--tertiary-50': '#FAF1E0 '
     '--tertiary-100': '#ffffff'
     '--tertiary-200': '#FBF5E8'
-    '--tertiary-300': '#f0efed'
+    '--tertiary-300': '#f8f8f8'
     '--tertiary-400': '#FCF7ED'
     '--tertiary-500': '#FCF8F0'
     '--tertiary-600': '#f3f0ea'
@@ -97,12 +97,6 @@ colors = _defaults {
     '--quaternary-900': '#038A84'
 
     '--quaternary-500-text': materialColors.$white
-
-
-    # '--bg-500': '#f0efed'
-    '--bg-500': '#f4f4f4'
-    '--bg-600': '#ececec'
-    '--bg-700': '#e4e4e4'
 
     '--bg-text': '#B62E00' # primary900
     '--bg-text-6': 'rgba(0, 0, 0, 0.06)'
@@ -209,10 +203,6 @@ colors = _defaults {
   # '$quaternary700Text': 'var(--quaternary-700-text)'
   # '$quaternary800Text': 'var(--quaternary-800-text)'
   # '$quaternary900Text': 'var(--quaternary-900-text)'
-
-  '$bg500': 'var(--bg-500)'
-  '$bg600': 'var(--bg-600)'
-  '$bg700': 'var(--bg-700)'
 
   '$bgText': 'var(--bg-text)'
   '$bgText6': 'var(--bg-text-6)'

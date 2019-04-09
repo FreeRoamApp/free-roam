@@ -51,7 +51,7 @@ module.exports = class Attachments
                   oncontextmenu: (e) =>
                     if (attachment.userId is me.id or me.username is 'austin') and confirm 'Delete?'
                       e?.preventDefault()
-                      @attachmentsAttachmentModel.deleteByRow attachment
+                      @model.campgroundAttachment.deleteByRow attachment
                 },
                   z '.image',
                     style:
