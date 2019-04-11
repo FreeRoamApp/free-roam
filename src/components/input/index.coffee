@@ -66,7 +66,7 @@ module.exports = class Input
           readonly: if disableAutoComplete then true else undefined
           autocapitalize: if not autoCapitalize then 'off' else undefined
           type: type
-        value: value or ''
+        value: "#{value}" or ''
         oninput: z.ev (e, $$el) =>
           if @valueStreams
             @valueStreams.next RxObservable.of $$el.value

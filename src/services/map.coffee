@@ -63,6 +63,13 @@ class MapService
         field: 'amenities'
         type: 'booleanArray'
         isBoolean: true
+        arrayValue: 'shower'
+        name: model.l.get 'amenities.shower'
+      }
+      {
+        field: 'amenities'
+        type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'gas'
         name: model.l.get 'amenities.gas'
       }

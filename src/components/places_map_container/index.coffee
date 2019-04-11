@@ -35,10 +35,10 @@ if window?
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, isShell, @trip, @dataTypes, showScale, mapBoundsStreams,
-      @persistentCookiePrefix, @addPlaces, @optionalLayers, @isSearchHidden,
+      @persistentCookiePrefix, @addPlacesStreams, @optionalLayers,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
       @initialFilters, initialCenter, center, initialZoom, zoom,
-      searchQuery} = options
+      searchQuery, @isSearchHidden} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
     @sort ?= new RxBehaviorSubject undefined
@@ -52,7 +52,9 @@ module.exports = class PlacesMapContainer
     @initialFilters ?= new RxBehaviorSubject null
 
     @persistentCookiePrefix ?= 'default'
-    @addPlaces ?= RxObservable.of []
+    unless @addPlacesStreams
+      @addPlacesStreams = new RxReplaySubject 1
+      @addPlacesStreams.next RxObservable.of []
 
     zoomCookie = "#{@persistentCookiePrefix}_zoom"
     initialZoom ?= @model.cookie.get zoomCookie
@@ -78,10 +80,10 @@ module.exports = class PlacesMapContainer
     @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
     placesStream = @getPlacesStream()
     placesWithCounts = RxObservable.combineLatest(
-      @addPlaces, placesStream, (vals...) -> vals
+      @addPlacesStreams.switch(), placesStream, (vals...) -> vals
     ).map ([addPlaces, {places, visible, total}]) ->
       if places
-        places = addPlaces.concat places
+        places = places.concat addPlaces # addPlaces should "under" places on map
       else
         places = addPlaces
 
@@ -129,7 +131,12 @@ module.exports = class PlacesMapContainer
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery
-      onclick: (bbox) ->
+      onclick: ({location, bbox, name}) =>
+        @addPlacesStreams.next RxObservable.of [{
+          location: location
+          name: @model.l.get 'placesMapContainer.yourSearchQuery'
+          icon: 'search'
+        }]
         mapBoundsStreams.next RxObservable.of bbox
     }
     @$placesFilterBar = new PlacesFilterBar {

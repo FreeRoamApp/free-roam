@@ -34,11 +34,14 @@ module.exports = class PlaceNearby
       @place, nearestAmenities, (vals...) -> vals
     )
 
-    addPlaces = placeAndNearestAmenities.map ([place, nearestAmenities]) ->
+    addPlacesStreams = new RxReplaySubject 1
+    addPlacesStreams.next(placeAndNearestAmenities
+    .map ([place, nearestAmenities]) ->
       unless place
         return []
       _map _filter([place].concat nearestAmenities), (place) ->
         _defaults place, {iconOpacity: 1}
+    )
 
     mapBoundsStreams = new RxReplaySubject 1
     mapBoundsStreams.next(
@@ -67,7 +70,7 @@ module.exports = class PlaceNearby
 
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, initialZoom: 9, defaultOpacity: 0.3
-      showScale: true, addPlaces, mapBoundsStreams, isSearchHidden: true
+      showScale: true, addPlacesStreams, mapBoundsStreams, isSearchHidden: true
       sort: @place.map (place) ->
         unless place
           return undefined

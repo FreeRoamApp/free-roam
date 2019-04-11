@@ -139,7 +139,9 @@ module.exports = class PlacesSearch
                           x2: Math.max location.bbox[2], bboxWithPlaces.x2
                           y2: Math.max location.bbox[3], bboxWithPlaces.y2
                         }
-                      @onclick bboxWithPlaces
+                      @onclick {
+                        bbox: bboxWithPlaces, location: location.location
+                      }
                     @searchValueStreams.next RxObservable.of location.text
                     @isOpen.next false
                 },

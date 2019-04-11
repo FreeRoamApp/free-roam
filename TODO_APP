@@ -12,7 +12,8 @@ x Warning message on filters that reduce greatly
 - Fix the fact that some people are reviewing Walmarts under amenities instead of overnights (and migrate those)
 - Elevation map when planning routes?
 x When reviews are scrollable, the plus button covers thumbing up a review
-- Edit review doesn't work
+x Edit review doesn't work
+- Editing review gets rid of ratings
 - Should save review progress to localstorage
 - Make it clear what rig length means
 - Component mounted twice on place page, related to editing / adding review?

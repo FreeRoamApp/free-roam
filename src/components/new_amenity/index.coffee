@@ -42,6 +42,7 @@ module.exports = class NewAmenity
       {amenity: 'npwater', hasPrice: true}
       {amenity: 'groceries'}
       {amenity: 'propane'}
+      {amenity: 'shower'}
       {amenity: 'gas'}
       {amenity: 'trash'}
       {amenity: 'laundry'}
