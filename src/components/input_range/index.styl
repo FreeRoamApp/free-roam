@@ -1,6 +1,22 @@
 @require '../../vars'
 
 .z-input-range
+  $height = 30px // tappable area
+  $thumbHeight = 16px
+  $trackHeight = 2px
+  $upperColor = getColor('$tertiary500')
+  $lowerColor = getColor('$secondary500')
+  $upperBackground = linear-gradient(to bottom, $upperColor, $upperColor) 100% 50% \/ 100% $trackHeight no-repeat transparent
+  $lowerBackground = linear-gradient(to bottom, $lowerColor, $lowerColor) 100% 50% \/ 100% $trackHeight no-repeat transparent
+
+  // Webkit cannot style progress so we fake it with a long shadow
+  // on the thumb element. src: https://codepen.io/dbushell/pen/awgLZK
+  webkit-slider-thumb-shadow($i = 1)
+    $val = '' + $i + 'px 0 0 -' + ($thumbHeight - $trackHeight) / 2 + ' ' + $upperColor
+    if $i == 1
+      for $k in (2)..(1000)
+        $val = $val + ', ' + webkit-slider-thumb-shadow($k)
+    $val
 
   &.has-value
     > .label
@@ -17,21 +33,49 @@
       height: 28px
 
       > .range
+        display: block
         cursor: pointer
         appearance: none
         width: 100%
-        height: 4px
-        background: getColor('$primary500')
+        overflow: hidden
+        margin: 0
+        height: $height
         -webkit-tap-highlight-color: rgba(255, 255, 255, 0)
         outline: none
+        background: $lowerBackground
+
+        &::-webkit-slider-runnable-track
+          width: 100%
+          height: $height
+          background: $lowerBackground
 
         &::-webkit-slider-thumb
+          position: relative
           cursor: pointer
           appearance: none
-          width: 16px
-          height: 16px
+          width: $thumbHeight
+          height: $thumbHeight
           border-radius: 50%
-          background: getColor('$primary500')
+          border: 0
+          top: 50%
+          margin-top: -($thumbHeight / 2)
+          background: $lowerColor
+          box-shadow: webkit-slider-thumb-shadow()
+
+        &::-moz-range-track,
+        &::-moz-range-progress
+          width: 100%
+          height: $height
+          background: $upperBackground
+
+        &::-moz-range-thumb
+          appearance: none
+          margin: 0
+          height: $thumbHeight
+          width: $thumbHeight
+          background: $lowerColor
+          border-radius: 100%
+          border: 0
 
     > .info
       position: relative

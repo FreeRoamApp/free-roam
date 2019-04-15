@@ -4,20 +4,29 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
+Environment = require '../../services/environment'
 allColors = require '../../colors'
 
 if window?
   require './index.styl'
 
+DEFAULT_TEXTAREA_HEIGHT = 54
+
 module.exports = class Textarea
-  constructor: ({@value, @valueStreams, @error, @isFocused} = {}) ->
+  constructor: (options = {}) ->
+    {@value, @valueStreams, @error, @isFocused, @defaultHeight} = options
+
     @value ?= new RxBehaviorSubject ''
     @error ?= new RxBehaviorSubject null
 
     @isFocused ?= new RxBehaviorSubject false
+    @textareaHeight = new RxBehaviorSubject(
+      @defaultHeight or DEFAULT_TEXTAREA_HEIGHT
+    )
 
     @state = z.state {
       isFocused: @isFocused
+      textareaHeight: @textareaHeight
       value: @valueStreams?.switch() or @value
       error: @error
     }
@@ -57,11 +66,36 @@ module.exports = class Textarea
     @$$textarea.focus()
     @$$textarea.setSelectionRange startPos + newOffset, endPos + newOffset
 
+  afterMount: (@$$el) =>
+    @$$textarea = @$$el.querySelector('#textarea')
+    @$$textarea?.value = @message.getValue()
+    @$$textarea?.setSelectionRange(
+      @selectionStart.getValue(), @selectionEnd.getValue()
+    )
+    if Environment.isiOS()
+      # ios focuses on setSelectionRange
+      @$$textarea?.blur()
+
+  resizeTextarea: (e) =>
+    {textareaHeight} = @state.getValue()
+    $$textarea = e.target
+    $$textarea.style.height = "#{@defaultHeight or DEFAULT_TEXTAREA_HEIGHT}px"
+    newHeight = $$textarea.scrollHeight
+    $$textarea.style.height = "#{newHeight}px"
+    $$textarea.scrollTop = newHeight
+    unless textareaHeight is newHeight
+      @textareaHeight.next newHeight
+      @onResize?()
+
+  getHeightPx: =>
+    @textareaHeight.map (height) ->
+      Math.min height, 150 # max height in css
+
   render: (props) =>
     {colors, hintText, type, isFloating, isDisabled, isFull,
       isDark, isCentered} = props
 
-    {value, error, isFocused} = @state.getValue()
+    {value, error, isFocused, textareaHeight} = @state.getValue()
 
     colors = _defaults colors, {
       c500: allColors.$bgText54
@@ -85,8 +119,9 @@ module.exports = class Textarea
         isError: error?
       }
       style:
-        backgroundColor: colors.background
+        # backgroundColor: colors.background
         color: colors.c500
+        height: "#{textareaHeight}px"
       z '.hint', {
         style:
           color: if isFocused and not error? \
@@ -99,6 +134,7 @@ module.exports = class Textarea
           type: type
         value: value
         oninput: z.ev (e, $$el) =>
+          @resizeTextarea e
           if @valueStreams
             @valueStreams.next RxObservable.of $$el.value
           else

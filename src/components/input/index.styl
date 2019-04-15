@@ -37,14 +37,14 @@
   > .underline-wrapper
     position: absolute
     bottom: 0
-    height: 2px
+    height: 1px
     width: 100%
     box-sizing: border-box
 
     > .underline
       width: 100%
-      height: 2px
-      background: getColor('$tertiary500Text')
+      height: 1px
+      background: getColor('$tertiary500Text70')
 
   > .error
     font-caption1()
@@ -70,11 +70,13 @@
     min-height: 56px
 
     > .hint
-      transform: translate(16px, 20px)
+      // transform: translate(16px, 20px)
+      transform: translate(0, 20px)
       font-size: 16px
 
     > .input
-      padding: 20px 16px 0 16px
+      // padding: 20px 16px 0 16px
+      padding: 20px 0 0 0
       height: 56px
 
     > .underline-wrapper
@@ -83,7 +85,8 @@
   &.is-floating&.is-focused, &.is-floating&.has-value
     > .hint
       font-size: 12px
-      transform: translate(16px, 6px)
+      // transform: translate(16px, 6px)
+      transform: translate(0, 6px)
       display: block
 
   &:not(.is-floating)&.has-value

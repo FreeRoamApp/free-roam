@@ -39,9 +39,6 @@ module.exports = class EditCheckIn
     me = @model.user.getMe()
 
     @fields =
-      # location:
-      #   valueStreams: new RxReplaySubject 1
-      #   errorSubject: new RxBehaviorSubject null
       name:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
@@ -59,10 +56,6 @@ module.exports = class EditCheckIn
     @$nameInput = new PrimaryInput
       valueStreams: @fields.name.valueStreams
       error: @fields.name.errorSubject
-
-    # @$locationInput = new PrimaryInput
-    #   valueStreams: @fields.location.valueStreams
-    #   error: @fields.location.errorSubject
 
     @$startTimeInput = new PrimaryInput
       valueStreams: @fields.startTime.valueStreams
@@ -173,17 +166,3 @@ module.exports = class EditCheckIn
                   then @model.l.get 'general.saving'
                   else @model.l.get 'general.save'
             onclick: @upsert
-        # z 'label.field.where',
-        #   z '.name', @model.l.get 'newPlaceInitialInfo.where'
-        #   z '.form',
-        #     z '.input',
-        #       z @$locationInput,
-        #         hintText: @model.l.get 'newPlaceInitialInfo.coordinates'
-        #     z '.button',
-        #       z @$mapButton,
-        #         text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
-        #         isFullWidth: false
-        #         onclick: =>
-        #           @model.overlay.open new CoordinatePicker {
-        #             @model, @router, coordinates: @fields.location.valueStreams
-        #           }

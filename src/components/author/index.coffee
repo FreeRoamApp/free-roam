@@ -56,7 +56,7 @@ module.exports = class Author
           z '.icon',
             z @$fireIcon,
               icon: 'fire'
-              color: colors.$quaternary500
+              color: colors.$secondary500
               isTouchTarget: false
               size: '14px'
         else if subBadgeImage

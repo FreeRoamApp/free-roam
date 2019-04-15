@@ -106,7 +106,6 @@ module.exports = class NewPlace
         @placeModel.upsert {
           name: @initialInfoFields.name.valueSubject.getValue()
           location: locationValue
-          videos: @initialInfoFields.videos.valueSubject.getValue()
           subType: @initialInfoFields.subType?.valueSubject.getValue()
         }
         .then @upsertReview
@@ -157,11 +156,9 @@ module.exports = class NewPlace
 
   resetValueStreams: =>
     @initialInfoFields.name.valueSubject.next ''
+    @initialInfoFields.details.valueSubject.next ''
 
     @initialInfoFields.location.valueStreams.next @location
-
-    @initialInfoFields.videos.valueSubject.next []
-
 
     @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
     @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''

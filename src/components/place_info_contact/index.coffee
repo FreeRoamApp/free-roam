@@ -13,7 +13,7 @@ module.exports = class PlaceInfoContact
 
     z '.z-place-info-contact',
       z '.coordinates',
-        z 'span.title', "#{@model.l.get 'newPlaceInitialInfo.coordinates'}: "
+        z 'span.title', "#{@model.l.get 'general.coordinates'}: "
         "#{place?.location?.lat}, #{place?.location?.lon}"
 
       if place?.contact?.phone

@@ -100,6 +100,8 @@ module.exports = class FormattedText
           else
             imageAspectRatio = null
 
+          console.log 'mmm', matches
+
           if matches = localImageRegex.exec imageSrc
             imageSrc = "#{config.USER_CDN_URL}/cm/#{matches[1]}.small.jpg"
             largeImageSrc = "#{config.USER_CDN_URL}/cm/#{matches[1]}.large.jpg"

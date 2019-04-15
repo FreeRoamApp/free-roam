@@ -12,18 +12,7 @@
 
       > .name
         font-body1()
-        margin-bottom: 4px
-
-      > .form
-        display: flex
-        align-items: center
-
-        > .input
-          flex1()
-          max-width: 300px
-
-        > .button
-          margin-left: 8px
+        color: getColor('$primary500')
 
       > .videos
         margin-top: 16px
@@ -34,3 +23,22 @@
 
           > .remove
             margin-left: 8px
+
+    > .where
+      > .form
+        > .or
+          text-align: center
+          margin: 8px 0
+
+    @media (min-width: $breakPointMedium)
+      > .where
+        > .form
+          display: flex
+          align-items: center
+
+          > .input
+            flex: 1
+            max-width: 360px
+
+          > .or
+            margin: 0 16px

@@ -11,16 +11,26 @@
       display: block
 
       > .name
-        font-title()
+        font-label()
         margin-bottom: 4px
 
     > .cell
       > .carriers
+        display: flex
+        align-items: center
+        overflow-x: auto
+
         > .carrier
-          margin-bottom: 16px
+          margin-bottom: 0
+          margin-right: 24px
+
+          > .name
+            text-align: center
+            color: getColor('$secondary500')
+            margin: 8px 0
 
           > .bars
-            margin: 16px 0
+            margin: 8px 0
 
           > .lte
             display: flex
@@ -48,14 +58,3 @@
           &.is-selected
             background: getColor('$tertiary500')
             font-title()
-
-  @media (min-width: $breakPointLarge)
-    > .g-grid
-      > .cell
-        > .carriers
-          display: flex
-          align-items: center
-
-          > .carrier
-            margin-bottom: 0
-            margin-right: 16px

@@ -123,20 +123,23 @@ module.exports = class NewAmenity
 
         z 'label.field.where',
           z '.name', @model.l.get 'newPlaceInitialInfo.where'
-          z '.form',
-            z '.input',
-              z @$locationInput,
-                hintText: @model.l.get 'newPlaceInitialInfo.coordinates'
-            z '.button',
-              z @$mapButton,
-                text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
-                isFullWidth: false
-                onclick: =>
-                  @model.overlay.open new CoordinatePicker {
-                    @model, @router, center
-                    coordinates: @locationValue
-                    initialZoom: 9
-                  }
+          z @$locationInput,
+            hintText: @model.l.get 'newPlaceInitialInfo.coordinates', {
+              prettyType: 'Amenity'
+            }
+
+        z 'or', @model.l.get 'general.or'
+
+        z '.button',
+          z @$mapButton,
+            text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
+            onclick: =>
+              @model.overlay.open new CoordinatePicker {
+                @model, @router, center
+                coordinates: @locationValue
+                initialZoom: 9
+              }
+
         z '.field.amenities',
           z '.name', @model.l.get 'newAmenity.amenities'
           _map @amenities, (amenity) =>

@@ -1,6 +1,7 @@
 @require '../../vars'
 
 .z-step-bar
+  shadow-upper-1()
   width: 100%
   box-sizing: border-box
   background: getColor('$tertiary100')
@@ -17,8 +18,8 @@
     justify-content: center
 
     > .previous, > .next
-      font-body1()
-      text-transform: uppercase
+      font-button()
+      text-transform: lowercase
       color: getColor('$primary500')
       -webkit-tap-highlight-color: transparent
       width: 60px

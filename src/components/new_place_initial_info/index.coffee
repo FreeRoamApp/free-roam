@@ -1,11 +1,15 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _uniq = require 'lodash/uniq'
 
 PrimaryInput = require '../primary_input'
 PrimaryButton = require '../primary_button'
+SecondaryButton = require '../secondary_button'
 Dropdown = require '../dropdown'
+Textarea = require '../textarea'
 CoordinatePicker = require '../coordinate_picker'
 Icon = require '../icon'
 colors = require '../../colors'
@@ -26,23 +30,19 @@ module.exports = class NewPlaceInitialInfo
       valueStreams: @fields.location.valueStreams
       error: @fields.location.errorSubject
 
+    @$detailsTextarea = new Textarea {
+      defaultHeight: 100
+      value: @fields.details.valueSubject
+    }
+
     if @fields.subType
       @$subTypeDropdown = new Dropdown {value: @fields.subType.valueSubject}
 
-    @videoValue = new RxBehaviorSubject ''
-    @videoError = new RxBehaviorSubject null
-    @$videoInput = new PrimaryInput
-      value: @videoValue
-      error: @videoError
-
     @$mapButton = new PrimaryButton()
-    @$addVideoButton = new PrimaryButton()
+    @$currentLocationButton = new SecondaryButton()
 
     @state = z.state {
       locationValue: @fields.location.valueStreams.switch()
-      videos: @fields.videos.valueSubject.map (videos) ->
-        _map videos, (video) ->
-          {video, $removeIcon: new Icon()}
     }
 
   isCompleted: =>
@@ -55,8 +55,6 @@ module.exports = class NewPlaceInitialInfo
     }
 
   render: =>
-    {videos} = @state.getValue()
-
     z '.z-new-place-initial-info',
       z '.g-grid',
         z 'label.field',
@@ -64,9 +62,7 @@ module.exports = class NewPlaceInitialInfo
             replacements: {@prettyType}
           }
           z @$nameInput,
-            hintText: @model.l.get 'newPlaceInitialInfo.placeName', {
-              replacements: {@prettyType}
-            }
+            hintText: @prettyType
 
         if @fields.subType
           z 'label.field',
@@ -83,44 +79,35 @@ module.exports = class NewPlaceInitialInfo
           z '.form',
             z '.input',
               z @$locationInput,
-                hintText: @model.l.get 'newPlaceInitialInfo.coordinates'
+                hintText: @model.l.get 'newPlaceInitialInfo.coordinates', {
+                  replacements: {@prettyType}
+                }
+
+            z '.or', @model.l.get 'general.or'
+
             z '.button',
               z @$mapButton,
+                icon: 'map'
                 text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
-                isFullWidth: false
                 onclick: =>
                   @model.overlay.open new CoordinatePicker {
                     @model, @router
                     coordinatesSteams: @fields.location.valueStreams
                   }
 
-        z 'label.field',
-          z '.name', @model.l.get 'newPlaceInitialInfo.video'
-          z '.form',
-            z '.input',
-              z @$videoInput,
-                hintText: @model.l.get 'newPlaceInitialInfo.videoHint'
-            z '.button',
-              z @$addVideoButton,
-                text: @model.l.get 'general.add'
-                isFullWidth: false
-                onclick: =>
-                  oldVideos = _map videos, 'video'
-                  @fields.videos.valueSubject.next _uniq oldVideos.concat [
-                    @videoValue.getValue()
-                  ]
-                  @videoValue.next ''
-          z '.videos',
-            _map videos, ({video, $removeIcon}) =>
-              z '.video',
-                z '.url', video
-                z '.remove',
-                  z $removeIcon,
-                    icon: 'close'
-                    isTouchTarget: false
-                    color: colors.$bgText500
-                    onclick: =>
-                      oldVideos = _map videos, 'video'
-                      index = oldVideos.indexOf(video)
-                      oldVideos.splice index, 1
-                      @fields.videos.valueSubject.next oldVideos
+            if navigator?.geolocation
+              z '.button',
+                z @$currentLocationButton,
+                  icon: 'crosshair'
+                  isOutline: true
+                  text: @model.l.get 'general.currentLocation'
+                  onclick: =>
+                    navigator.geolocation.getCurrentPosition (pos) =>
+                      @fields.location.valueStreams.next RxObservable.of(
+                        "#{pos.coords.latitude}, #{pos.coords.longitude}"
+                      )
+
+        z 'label.field.details',
+          z '.name', @model.l.get 'newPlaceInitialInfo.details'
+          z @$detailsTextarea,
+            hintText: @model.l.get 'newPlaceInitialInfo.placeDetails'

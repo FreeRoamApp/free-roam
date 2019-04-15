@@ -17,7 +17,9 @@
 
   > .button
     font-button()
-    display: inline-block
+    display: flex
+    align-items: center
+    justify-content: center
     position: relative
     box-sizing: border-box
     vertical-align: middle
@@ -37,6 +39,9 @@
     white-space: nowrap
     border: none
     -webkit-tap-highlight-color: transparent
+
+    > .icon
+      margin-right: 12px
 
   &.is-disabled
     cursor: default

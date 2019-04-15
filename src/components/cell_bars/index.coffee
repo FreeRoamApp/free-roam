@@ -35,9 +35,10 @@ module.exports = class CellBars
     {cellBars} = @state.getValue()
 
     widthPx ?= 30
-    heightPx ?= widthPx * 0.5
+    heightPx ?= widthPx * 0.6
 
     z ".z-cell-bars.bars-#{cellBars}", {
+      className: z.classKebab {@isInteractive}
       style:
         width: "#{widthPx}px"
         height: "#{heightPx}px"
@@ -50,12 +51,12 @@ module.exports = class CellBars
             size: "#{widthPx / 5}px"
             onclick: if @isInteractive then (=> @setCellBars 0)
             color: if cellBars is 0 \
-                   then colors.$primary500
-                   else colors.$primary100
+                   then colors.$secondary500
+                   else colors.$tertiary500
       _map _range(MAX_BARS), (i) =>
         z ".bar.bar-#{i + 1}", {
           onclick: if @isInteractive then (=> @setCellBars i + 1) else null
           className: z.classKebab {isVisible: cellBars > i}
           style:
-            height: "#{(i + 1) * 20}%"
+            height: "#{10 + (i + 1) * 18}%"
         }

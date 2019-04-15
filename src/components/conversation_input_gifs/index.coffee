@@ -85,7 +85,7 @@ module.exports = class ConversationInputGifs
               height: height
               onclick: =>
                 @message.next "![](<#{gif.images.fixed_height.url} " +
-                              "=#{width}x#{height}>)"
+                              "=#{width / height}>)"
                 @onPost()
                 .then =>
                   @currentPanel.next 'text'

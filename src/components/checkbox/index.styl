@@ -5,21 +5,18 @@
   display: inline-block
 
   > .checkbox
-    width: 16px
-    height: 16px
+    width: 18px
+    height: 18px
     vertical-align: middle
     cursor: pointer
     // No IE support!
     appearance: none
     outline: 0
     box-sizing: border-box
-    background: getColor('$tertiary100')
-    border: 1px solid getColor('$bgText26')
     border-radius: 2px
 
     &:checked
       background: getColor('$primary500')
-      border: 1px solid getColor('$primary900')
       color: getColor('$primary500Text')
       outline: 0
 
@@ -31,6 +28,6 @@
     position: absolute
     left: 50%
     top: 50%
-    margin-left: -7px
-    margin-top: -5px
+    margin-left: -8px
+    margin-top: -7px
     pointer-events: none

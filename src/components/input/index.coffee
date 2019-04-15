@@ -50,8 +50,8 @@ module.exports = class Input
         isCentered
         isError: error?
       }
-      style:
-        backgroundColor: colors.background
+      # style:
+      #   backgroundColor: colors.background
       z '.hint', {
         # style:
         #   color: if isFocused and not error? \

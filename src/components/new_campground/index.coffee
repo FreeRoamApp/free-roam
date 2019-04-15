@@ -19,6 +19,9 @@ module.exports = class NewCampground extends NewPlace
       name:
         valueSubject: new RxBehaviorSubject ''
         errorSubject: new RxBehaviorSubject null
+      details:
+        valueSubject: new RxBehaviorSubject ''
+        errorSubject: new RxBehaviorSubject null
       location:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null

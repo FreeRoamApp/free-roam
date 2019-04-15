@@ -5,13 +5,17 @@
   align-items: flex-end
   position: relative
 
+  &.is-interactive
+    cursor: pointer
+
   > .bar
-    width: 15%
-    margin: 0 2.5%
-    background: getColor('$primary100')
+    width: 12%
+    margin: 0 4%
+    background: getColor('$tertiary500')
+    border-radius: 15px
 
     &.is-visible
-      background: getColor('$primary500')
+      background: getColor('$secondary500')
 
   > .no-signal
     position: absolute

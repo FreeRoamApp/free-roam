@@ -1,5 +1,6 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
@@ -11,7 +12,7 @@ _defaults = require 'lodash/defaults'
 
 CellBars = require '../cell_bars'
 Checkbox = require '../checkbox'
-Dropdown = require '../dropdown'
+DropdownMultiple = require '../dropdown_multiple'
 InputRange = require '../input_range'
 PrimaryButton = require '../primary_button'
 PrimaryInput = require '../primary_input'
@@ -27,7 +28,6 @@ module.exports = class PlaceNewReviewExtras
     {@model, @router, @fields, @season, @isOptional, fieldsValues} = options
     me = @model.user.getMe()
 
-    @$addCarrierButton = new PrimaryButton()
     @$rigInfo = new RigInfo {@model, @router}
 
     if @fields.pricePaid
@@ -51,69 +51,81 @@ module.exports = class PlaceNewReviewExtras
         }
       }
 
-    @carrierCount = new RxBehaviorSubject 1
-
     @carrierCache = []
-    @disposables = []
+
+    carriersValueStreams = new RxReplaySubject 1
+    @$carrierDropdown = new DropdownMultiple {
+      @model
+      valueStreams: carriersValueStreams
+      options: [
+        {
+          value: 'verizon'
+          text: @model.l.get 'carriers.verizon'
+        }
+        {value: 'att', text: @model.l.get 'carriers.att'}
+        {
+          value: 'tmobile'
+          text: @model.l.get 'carriers.tmobile'
+        }
+        {value: 'sprint', text: @model.l.get 'carriers.sprint'}
+      ]
+    }
+
+    carriersWithExtras = carriersValueStreams.switch().map (carriers) =>
+      _map carriers, (carrier) =>
+        if @carrierCache[carrier.value]
+          return @carrierCache[carrier.value]
+
+        # TODO: use cellSignal valueStreams when editing review
+        barsValueSubject = new RxBehaviorSubject null
+        lteValueSubject = new RxBehaviorSubject true
+
+        @carrierCache[carrier.value] = {
+          carrier
+          barsValueSubject
+          lteValueSubject
+          $lteCheckbox: new Checkbox {value: lteValueSubject}
+          $bars: new CellBars {
+            value: barsValueSubject, isInteractive: true
+            includeNoSignal: true
+          }
+        }
+
+    @fields.cellSignal.valueStreams.next(
+      carriersWithExtras.switchMap (carriersWithExtras) ->
+        barsChangesFeed = RxObservable.combineLatest(
+          _map carriersWithExtras, 'barsValueSubject'
+          (vals...) -> vals
+        )
+        lteChangesFeed = RxObservable.combineLatest(
+          _map carriersWithExtras, 'lteValueSubject'
+          (vals...) -> vals
+        )
+        changesFeed = RxObservable.combineLatest(
+          barsChangesFeed, lteChangesFeed, (vals...) -> vals
+        )
+
+        changesFeed.map (changes) ->
+          _reduce carriersWithExtras, (obj, carrierWithExtras) ->
+            {carrier, barsValueSubject, lteValueSubject} = carrierWithExtras
+            key = carrier.value
+            if lteValueSubject.getValue()
+              key += '_lte'
+            obj[key] = barsValueSubject.getValue()
+            obj
+          , {}
+
+    )
 
     @state = z.state {
       @season
       me: @model.user.getMe()
       fieldsValues: fieldsValues
-      carrierCount: @carrierCount
-      carriers: @carrierCount.map (count) =>
-        _map _range(count), (i) =>
-          if @carrierCache[i]
-            return @carrierCache[i]
-          initialCarrier = @model.cookie.get('cellCarrier') or 'placeholder'
-          carrierValueSubject = new RxBehaviorSubject(initialCarrier)
-          @disposables.push carrierValueSubject.subscribe (carrier) =>
-            @model.cookie.set 'cellCarrier', carrier
-            @onCellChange()
-          # TODO: use cellSignal valueStreams when editing review
-          barsValueSubject = new RxBehaviorSubject null
-          @disposables.push barsValueSubject.subscribe @onCellChange
-          lteValueSubject = new RxBehaviorSubject true
-          @disposables.push lteValueSubject.subscribe @onCellChange
-
-          @carrierCache[i] = {
-            carrierValueSubject
-            barsValueSubject
-            lteValueSubject
-            $lteCheckbox: new Checkbox {value: lteValueSubject}
-            $carrierDropdown: new Dropdown {value: carrierValueSubject}
-            $bars: new CellBars {
-              value: barsValueSubject, isInteractive: true
-              includeNoSignal: true
-            }
-          }
+      carriers: carriersWithExtras
     }
 
   reset: =>
-    _map @disposables, (disposable) -> disposable?.unsubscribe?()
-    @disposables = []
     @carrierCache = []
-    @carrierCount.next 1
-
-  onCellChange: =>
-    setTimeout =>
-      {carriers} = @state.getValue()
-      unless carriers
-        return
-      carrierCount = @carrierCount.getValue()
-      newCellSignal = _reduce _range(carrierCount), (obj, value, i) ->
-        {carrierValueSubject, barsValueSubject, lteValueSubject} = carriers[i]
-
-        carrier = carrierValueSubject.getValue()
-        signal = barsValueSubject.getValue()
-        isLte = lteValueSubject.getValue()
-        key = if isLte then "#{carrier}_lte" else carrier
-        if signal? and carrier isnt 'placeholder'
-          obj[key] = signal
-        obj
-      , {}
-      @fields.cellSignal.valueStreams.next RxObservable.of newCellSignal
-    , 0
 
   isCompleted: =>
     {me, fieldsValues} = @state.getValue()
@@ -133,43 +145,6 @@ module.exports = class PlaceNewReviewExtras
 
         z '.field',
           z @$rigInfo
-        z '.field.cell',
-          z '.name', @model.l.get 'newReviewExtras.cellSignal'
-          z '.carriers',
-            [
-              _map carriers, (carrier) =>
-                {carrier, $bars, $carrierDropdown, $lteCheckbox} = carrier
-                z '.carrier',
-                  z '.dropdown',
-                    z $carrierDropdown,
-                      options: [
-                        {
-                          value: 'placeholder'
-                          text: @model.l.get 'carriers.selectCarrier'
-                        }
-                        {
-                          value: 'verizon'
-                          text: @model.l.get 'carriers.verizon'
-                        }
-                        {value: 'att', text: @model.l.get 'carriers.att'}
-                        {
-                          value: 'tmobile'
-                          text: @model.l.get 'carriers.tmobile'
-                        }
-                        {value: 'sprint', text: @model.l.get 'carriers.sprint'}
-                      ]
-                  z '.bars',
-                    z $bars, {widthPx: 200}
-                  z 'label.lte',
-                    z '.checkbox',
-                      z $lteCheckbox
-                    @model.l.get 'newReviewExtras.hasLte'
-              z '.add-carrier',
-                z @$addCarrierButton,
-                  text: @model.l.get 'newReviewExtras.addCarrier'
-                  onclick: =>
-                    @carrierCount.next @carrierCount.getValue() + 1
-            ]
 
         if @fields.pricePaid
           z '.field.price',
@@ -179,6 +154,29 @@ module.exports = class PlaceNewReviewExtras
                 hintText: @model.l.get 'newReviewExtras.pricePaid'
                 type: 'number'
               }
+
+        z '.field.cell',
+          z '.name', @model.l.get 'newReviewExtras.cellSignal'
+          z '.dropdown',
+            z @$carrierDropdown
+          z '.carriers',
+              _map carriers, (carrier) =>
+                {carrier, $bars, $lteCheckbox} = carrier
+
+                z '.carrier',
+                  z '.bars',
+                    z $bars, {widthPx: 100}
+                  z '.name',
+                    carrier.text
+                  z 'label.lte',
+                    z '.checkbox',
+                      z $lteCheckbox, {
+                        colors:
+                          checked: colors.$secondary500
+                          checkedBorder: colors.$secondary900
+                      }
+                    z '.text',
+                      @model.l.get 'newReviewExtras.hasLte'
 
         z '.field.when',
           z '.name', @model.l.get 'newReviewExtras.whenVisit'

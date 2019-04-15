@@ -3,6 +3,7 @@ _defaults = require 'lodash/defaults'
 
 colors = require '../../colors'
 Ripple = require '../ripple'
+Icon = require '../icon'
 
 if window?
   require './index.styl'
@@ -10,6 +11,7 @@ if window?
 module.exports = class Button
   constructor: ->
     @$ripple = new Ripple()
+    @$icon = new Icon()
 
     @state = z.state
       backgroundColor: null
@@ -40,7 +42,7 @@ module.exports = class Button
 
   render: (options) =>
     {text, isDisabled, allowDisabledClick, listeners, isRaised, isFullWidth,
-      isShort, isDark, isFlat, colors, onclick, type, $content,
+      isShort, isDark, isFlat, isOutline, colors, onclick, type, $content, icon,
       heightPx, hasRipple} = options
     {backgroundColor, isHovered, isActive} = @state.getValue()
 
@@ -101,11 +103,23 @@ module.exports = class Button
         onmousedown: z.ev (e, $$el) =>
           @state.set isActive: true
         style:
-          backgroundColor: if isDisabled then null else backgroundColor
-          color: if isDisabled then null else colors.cText
+          backgroundColor: if isDisabled or isOutline \
+                           then null
+                           else backgroundColor
+          border: if isOutline then "1px solid #{backgroundColor}"
+          color: if isOutline then backgroundColor \
+                 else if isDisabled
+                 then null
+                 else colors.cText
           lineHeight: "#{heightPx}px"
           minHeight: "#{heightPx}px"
       },
+        if icon
+          z '.icon',
+            z @$icon,
+            icon: icon
+            isTouchTarget: false
+            color: if isOutline then backgroundColor else colors.cText
         $content
         if hasRipple and not isDisabled
           @$ripple

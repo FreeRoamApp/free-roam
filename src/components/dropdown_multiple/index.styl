@@ -1,0 +1,89 @@
+@require '../../vars'
+
+.z-dropdown-multiple
+  font-input()
+  min-height: 48px
+  display: block
+  outline: none
+  text-align: inherit
+  position: relative
+  max-width: 360px
+  cursor: pointer
+
+  &.is-open
+    > .wrapper
+      display: block
+    > .current
+      border-bottom: 1px solid getColor('$primary500')
+
+      > .arrow
+        border-top: none
+        border-bottom: 5px solid getColor('$primary500')
+
+    > .options
+       display: block
+
+
+  > .wrapper
+    display: none
+    position: fixed
+    z-index: 2
+    left: 0
+    top: 0
+    width: 100%
+    height: 100%
+
+  > .current
+    color: getColor('$bgText')
+    border-bottom: 1px solid getColor('$bgText')
+    padding: 8px 0
+
+    > .arrow
+      position: absolute
+      bottom: (48 / 2)px
+      right: 4px
+      width: 0
+      height: 0
+      border-left: 5px solid transparent
+      border-right: 5px solid transparent
+      border-top: 5px solid getColor('$primary500')
+
+  > .options
+    shadow-1()
+    position: absolute
+    z-index: 2
+    background: getColor('$tertiary100')
+    width: 100%
+    box-sizing: border-box
+    cursor: pointer
+    display: none
+
+    > .option
+      padding: 16px
+      display: flex
+      align-items: center
+      color: getColor('$bgText')
+
+      > .checkbox
+        margin-left: auto
+
+  > .error
+    font-caption()
+    color: getColor('$red500')
+    margin-top: 8px
+    position: absolute
+    pointer-events: none
+    background: transparent
+
+  &.is-focused
+    > .underline
+      height: 2px
+
+  &.is-error
+    > .underline
+      background: getColor('$red500')
+
+  &.is-disabled
+    > .underline
+      background: none
+      border-bottom: 1px dashed getColor('$grey600')

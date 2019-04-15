@@ -39,6 +39,10 @@ shadow-1()
   transition: box-shadow 0.25s
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.12)
 
+shadow-upper-1()
+  transition: box-shadow 0.25s
+  box-shadow: 0 -1px 4px 0 rgba(0, 0, 0, 0.12)
+
 shadow-2()
   transition: box-shadow 0.25s
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.3)
@@ -138,7 +142,7 @@ font-button(scale = yes)
   color: getColor('$bgText87')
   line-height: 16px
   font-size: 14px
-  text-transform: uppercase
+  // text-transform: uppercase
   if scale is yes
     @media (min-width: $breakPointLarge)
       font-size: 16px
@@ -185,6 +189,12 @@ font-caption2(scale = yes)
 font-caption3(scale = yes)
   font-caption1(scale)
   color: getColor('$bgText54')
+
+font-label(scale = yes)
+  font-family: Maven Pro
+  color: getColor('$primary500')
+  font-weight: 400
+  font-size: 12px
 
 font-tiny(scale = yes)
   font-family: Maven Pro
