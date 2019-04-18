@@ -3,12 +3,15 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
+require 'rxjs/add/observable/fromPromise'
+require 'rxjs/add/operator/toPromise'
 _map = require 'lodash/map'
-_mapValues = require 'lodash/mapValues'
-_range = require 'lodash/range'
+_pick = require 'lodash/pick'
+_isEmpty = require 'lodash/isEmpty'
 _reduce = require 'lodash/reduce'
 _every = require 'lodash/every'
 _defaults = require 'lodash/defaults'
+_startCase = require 'lodash/startCase'
 
 CellBars = require '../cell_bars'
 Checkbox = require '../checkbox'
@@ -36,10 +39,10 @@ module.exports = class PlaceNewReviewExtras
       }
 
     @seasons =  [
-      {key: 'spring', text: @model.l.get 'seasons.spring'}
-      {key: 'summer', text: @model.l.get 'seasons.summer'}
-      {key: 'fall', text: @model.l.get 'seasons.fall'}
-      {key: 'winter', text: @model.l.get 'seasons.winter'}
+      {key: 'spring', text: _startCase @model.l.get 'seasons.spring'}
+      {key: 'summer', text: _startCase @model.l.get 'seasons.summer'}
+      {key: 'fall', text: _startCase @model.l.get 'seasons.fall'}
+      {key: 'winter', text: _startCase @model.l.get 'seasons.winter'}
     ]
 
     @sliders = _map @allowedFields, (field) =>
@@ -54,6 +57,26 @@ module.exports = class PlaceNewReviewExtras
     @carrierCache = []
 
     carriersValueStreams = new RxReplaySubject 1
+    carriersValueStreams.next try
+      JSON.parse localStorage['cellCarriers']
+    catch err
+      []
+
+    # HACK: infinite loop with other approaches
+    # (using cellSignal.valueStreams directly)
+    initialValue = new RxBehaviorSubject null
+    @fields.cellSignal.valueStreams.switch().take(1).subscribe (cellSignal) ->
+      initialValue.next cellSignal
+
+    verizonStreams = new RxReplaySubject 1
+    verizonStreams.next initialValue.map (value) -> Boolean value?.verizon_lte
+    attStreams = new RxReplaySubject 1
+    attStreams.next initialValue.map (value) -> Boolean value?.att_lte
+    tmobileStreams = new RxReplaySubject 1
+    tmobileStreams.next initialValue.map (value) -> Boolean value?.tmobile_lte
+    sprintStreams = new RxReplaySubject 1
+    sprintStreams.next initialValue.map (value) -> Boolean value?.sprint_lte
+
     @$carrierDropdown = new DropdownMultiple {
       @model
       valueStreams: carriersValueStreams
@@ -61,24 +84,47 @@ module.exports = class PlaceNewReviewExtras
         {
           value: 'verizon'
           text: @model.l.get 'carriers.verizon'
+          isCheckedStreams: verizonStreams
         }
-        {value: 'att', text: @model.l.get 'carriers.att'}
+        {
+          value: 'att'
+          text: @model.l.get 'carriers.att'
+          isCheckedStreams: attStreams
+        }
         {
           value: 'tmobile'
           text: @model.l.get 'carriers.tmobile'
+          isCheckedStreams: tmobileStreams
         }
-        {value: 'sprint', text: @model.l.get 'carriers.sprint'}
+        {
+          value: 'sprint'
+          text: @model.l.get 'carriers.sprint'
+          isCheckedStreams: sprintStreams
+        }
       ]
     }
 
-    carriersWithExtras = carriersValueStreams.switch().map (carriers) =>
+    carriersAndInitialValue = RxObservable.combineLatest(
+      carriersValueStreams.switch()
+      initialValue
+      (vals...) -> vals
+    )
+
+    carriersWithExtras = carriersAndInitialValue.map ([carriers, initial]) =>
+      localStorage['cellCarriers'] = JSON.stringify _map carriers, (carrier) ->
+        _pick carrier, ['value', 'text']
       _map carriers, (carrier) =>
         if @carrierCache[carrier.value]
           return @carrierCache[carrier.value]
 
-        # TODO: use cellSignal valueStreams when editing review
-        barsValueSubject = new RxBehaviorSubject null
-        lteValueSubject = new RxBehaviorSubject true
+        barsValueSubject = new RxBehaviorSubject(
+          initial["#{carrier.value}_lte"] or null
+        )
+        lteValueSubject = new RxBehaviorSubject(
+          Boolean (
+            initial["#{carrier.value}"] and not initial["#{carrier.value}_lte"]
+          ) or not initial["#{carrier.value}"]
+        )
 
         @carrierCache[carrier.value] = {
           carrier
@@ -93,6 +139,9 @@ module.exports = class PlaceNewReviewExtras
 
     @fields.cellSignal.valueStreams.next(
       carriersWithExtras.switchMap (carriersWithExtras) ->
+        if _isEmpty carriersWithExtras
+          return RxObservable.of {}
+
         barsChangesFeed = RxObservable.combineLatest(
           _map carriersWithExtras, 'barsValueSubject'
           (vals...) -> vals
@@ -158,7 +207,11 @@ module.exports = class PlaceNewReviewExtras
         z '.field.cell',
           z '.name', @model.l.get 'newReviewExtras.cellSignal'
           z '.dropdown',
-            z @$carrierDropdown
+            z @$carrierDropdown, {
+              currentText: if _isEmpty carriers \
+                     then @model.l.get 'carriers.selectCarrier'
+                     else _map(carriers, ({carrier}) -> carrier.text).join ', '
+            }
           z '.carriers',
               _map carriers, (carrier) =>
                 {carrier, $bars, $lteCheckbox} = carrier
@@ -183,7 +236,10 @@ module.exports = class PlaceNewReviewExtras
           z '.seasons',
             _map @seasons, ({key, text}) =>
               z '.season', {
-                className: z.classKebab {isSelected: key is season}
+                className: z.classKebab {
+                  isSelected: key is season
+                  "#{key}": true
+                }
                 onclick: =>
                   @season.next key
               }, text

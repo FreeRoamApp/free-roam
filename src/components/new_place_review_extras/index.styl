@@ -45,16 +45,41 @@
     > .when
       > .seasons
         display: flex
-        background: getColor('$tertiary100')
-        border: 1px solid getColor('$tertiary500')
-        border-radius: 4px
 
         > .season
-          cursor: pointer
           flex1()
+          font-title()
+          color: getColor('$white')
+          cursor: pointer
           text-align: center
-          padding: 4px 0
+          padding: 16px
+          border-radius: 8px
+          background: #aaa
+          border: 6px solid getColor('$tertiary100')
+
+          &.spring
+            background: url($cdnUrl + '/patterns/green.png')
+
+          &.summer
+            background: url($cdnUrl + '/patterns/yellow.png')
+
+          &.fall
+            background: url($cdnUrl + '/patterns/orange.png')
+
+          &.winter
+            background: url($cdnUrl + '/patterns/blue.png')
 
           &.is-selected
-            background: getColor('$tertiary500')
-            font-title()
+            border: 6px solid getColor('$bgText26')
+            position: relative
+
+            &:before
+              content: ''
+              position: absolute
+              z-index: 1
+              top: -4px
+              left: -4px
+              right: -4px
+              bottom: -4px
+              border: 4px solid getColor('$tertiary100')
+              border-radius: 6px

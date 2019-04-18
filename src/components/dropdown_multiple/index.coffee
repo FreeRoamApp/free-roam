@@ -19,13 +19,16 @@ module.exports = class DropdownMultiple
     @error ?= new RxBehaviorSubject null
 
     options = _map options, (option) ->
+      if option.isCheckedStreams
+        isCheckedStreams = option.isCheckedStreams
+      else
         isCheckedStreams = new RxReplaySubject 1
         isCheckedStreams.next RxObservable.of false
-        {
-          option
-          isCheckedStreams: option.isCheckedStreams or isCheckedStreams
-          $checkbox: new Checkbox {valueStreams: isCheckedStreams}
-        }
+      {
+        option
+        isCheckedStreams: isCheckedStreams
+        $checkbox: new Checkbox {valueStreams: isCheckedStreams}
+      }
 
     value = RxObservable.combineLatest(
         _map options, ({isCheckedStreams}) ->
@@ -53,7 +56,7 @@ module.exports = class DropdownMultiple
     {isOpen} = @state.getValue()
     @state.set isOpen: not isOpen
 
-  render: ({isDisabled}) =>
+  render: ({isDisabled, currentText}) =>
     {value, isOpen, options, error} = @state.getValue()
 
     isDisabled ?= false
@@ -76,7 +79,7 @@ module.exports = class DropdownMultiple
       z '.current', {
         onclick: @toggle
       },
-        @model.l.get 'carriers.selectCarrier'
+        currentText
         z '.arrow'
       z '.options',
         _map options, ({option, $checkbox}) =>

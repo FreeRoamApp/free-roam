@@ -20,4 +20,4 @@ module.exports = class Time
   dispose: =>
     clearInterval @timeInterval
 
-  getCurrentSeason: -> 'fall' # TODO
+  getCurrentSeason: -> 'spring' # TODO

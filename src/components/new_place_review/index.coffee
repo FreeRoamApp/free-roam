@@ -14,7 +14,10 @@ _first = require 'lodash/first'
 _mapValues = require 'lodash/mapValues'
 _forEach = require 'lodash/forEach'
 _map = require 'lodash/map'
+_isEmpty = require 'lodash/isEmpty'
 _keys = require 'lodash/keys'
+_merge = require 'lodash/merge'
+_reduce = require 'lodash/reduce'
 _values = require 'lodash/values'
 _zipObject = require 'lodash/zipObject'
 
@@ -26,24 +29,32 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-# editing can probably be its own component. Editing just needs name, text fields, # of sites, and location
-# auto-generated: cell, all sliders
-# new campground is trying to source a lot more
+STEPS =
+  review: 0
+  reviewExtra: 1
 
-# step 1 is add new campsite, then just go through review steps, but all are mandatory
-
+AUTOSAVE_FREQ_MS = 3000 # every 3 seconds
+LOCAL_STORAGE_AUTOSAVE = 'newReview:autosave'
 
 module.exports = class NewPlaceReview
-  constructor: ({@model, @router, @review, parent}) ->
+  constructor: ({@model, @router, @review, @parent}) ->
     me = @model.user.getMe()
 
     @season = new RxBehaviorSubject @model.time.getCurrentSeason()
 
     @reviewFields =
-      titleValueStreams: new RxReplaySubject 1
-      bodyValueStreams: new RxReplaySubject 1
-      ratingValueStreams: new RxReplaySubject 1
-      attachmentsValueStreams: new RxReplaySubject 1
+      title:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      body:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      rating:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      attachments:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
 
     reviewExtraFieldsValues = RxObservable.combineLatest(
       _map @reviewExtraFields, ({valueStreams}) ->
@@ -77,44 +88,90 @@ module.exports = class NewPlaceReview
     @state = z.state {
       @step
       me: @model.user.getMe()
-      titleValue: @reviewFields.titleValueStreams.switch()
-      bodyValue: @reviewFields.bodyValueStreams.switch()
-      attachmentsValue: @reviewFields.attachmentsValueStreams.switch()
-      ratingValue: @reviewFields.ratingValueStreams.switch()
+      titleValue: @reviewFields.title.valueStreams.switch()
+      bodyValue: @reviewFields.body.valueStreams.switch()
+      attachmentsValue: @reviewFields.attachments.valueStreams.switch()
+      ratingValue: @reviewFields.rating.valueStreams.switch()
       reviewExtraFieldsValues
       review: @review
-      parent: parent
+      parent: @parent
       isLoading: false
     }
+
+  afterMount: =>
+    changesStream = @getAllChangesStream()
+    changesStreamAndParent = RxObservable.combineLatest(
+      changesStream, @parent, (vals...) -> vals
+    )
+    @disposable = changesStreamAndParent.auditTime(AUTOSAVE_FREQ_MS)
+    .subscribe ([fields, parent]) ->
+      key = LOCAL_STORAGE_AUTOSAVE + ':' + parent.id
+      localStorage[key] = JSON.stringify fields
 
   beforeUnmount: =>
     @step.next 0
     @resetValueStreams()
+    @disposable.unsubscribe()
 
   resetValueStreams: =>
-    if @review
-      @reviewFields.titleValueStreams.next @review.map (review) ->
-        review?.title or ''
-      @reviewFields.bodyValueStreams.next @review.map (review) ->
-        review?.body or ''
-      @reviewFields.ratingValueStreams.next @review.map (review) ->
-        review?.rating
-      @reviewFields.attachmentsValueStreams.next @review.map (review) ->
-        review?.attachments
-      _forEach @reviewExtraFields, (field, key) =>
-        {isSeasonal, isDayNight} = field
-        field.valueStreams.next @review.map (review) ->
-          value = review?.extras?[key]
-          if isSeasonal or isDayNight
-            value = _first _values(value)
-          value
-    else
-      @reviewFields.titleValueStreams.next new RxBehaviorSubject ''
-      @reviewFields.bodyValueStreams.next new RxBehaviorSubject ''
-      @reviewFields.ratingValueStreams.next new RxBehaviorSubject null
-      @reviewFields.attachmentsValueStreams.next new RxBehaviorSubject []
-      _forEach @reviewExtraFields, (field) ->
-        field.valueStreams.next new RxBehaviorSubject null
+    saved = RxObservable.combineLatest(
+      @parent.map (parent) ->
+        autosave = try
+          key = LOCAL_STORAGE_AUTOSAVE + ':' + parent.id
+          JSON.parse localStorage[key]
+        catch
+          {}
+
+      @review or RxObservable.of null
+    )
+
+    # if @review
+    @reviewFields.title.valueStreams.next saved.map ([autosave, review]) ->
+      autosave['review.title'] or review?.title or ''
+    @reviewFields.body.valueStreams.next saved.map ([autosave, review]) ->
+      autosave['review.body'] or review?.body or ''
+    @reviewFields.rating.valueStreams.next saved.map ([autosave, review]) ->
+      autosave['review.rating'] or review?.rating
+    @reviewFields.attachments.valueStreams.next saved.map ([autosave, review]) ->
+      autosave['review.attachments'] or review?.attachments
+
+    # TODO!
+    _forEach @reviewExtraFields, (field, key) =>
+      {isSeasonal, isDayNight} = field
+      field.valueStreams.next saved.map ([autosave, review]) ->
+        value = review?.extras?[key]
+        if isSeasonal or isDayNight
+          value = _first _values(value)
+        value
+    # else
+    #   @reviewFields.title.valueStreams.next new RxBehaviorSubject ''
+    #   @reviewFields.body.valueStreams.next new RxBehaviorSubject ''
+    #   @reviewFields.rating.valueStreams.next new RxBehaviorSubject null
+    #   @reviewFields.attachments.valueStreams.next new RxBehaviorSubject []
+    #   _forEach @reviewExtraFields, (field) ->
+    #     field.valueStreams.next new RxBehaviorSubject null
+
+  getAllChangesStream: =>
+    initialInfo = @getChangesStream @initialInfoFields, 'initialInfo'
+    review = @getChangesStream @reviewFields, 'review'
+    reviewExtra = @getChangesStream @reviewExtraFields, 'reviewExtra'
+    allChanges = _merge initialInfo, review, reviewExtra
+    keys = _keys allChanges
+
+    RxObservable.combineLatest(
+      _values allChanges
+      (vals...) ->
+        _zipObject keys, vals
+    )
+
+  getChangesStream: (fields, typeKey) =>
+    observables = _reduce fields, (obj, field, key) ->
+      if field.valueStreams
+        obj["#{typeKey}.#{key}"] = field.valueStreams.switch()
+      else
+        obj["#{typeKey}.#{key}"] = field.valueSubject
+      obj
+    , {}
 
   upsert: (e) =>
     {me, reviewExtraFieldsValues, titleValue, bodyValue, ratingValue,
@@ -150,6 +207,7 @@ module.exports = class NewPlaceReview
         }
         .then (newReview) =>
           @state.set isLoading: false
+          delete localStorage[LOCAL_STORAGE_AUTOSAVE + ':' + parent?.id]
           @resetValueStreams()
           # FIXME FIXME: rm HACK. for some reason thread is empty initially?
           # still unsure why
@@ -158,9 +216,21 @@ module.exports = class NewPlaceReview
               slug: parent?.slug, tab: 'reviews'
             }, {reset: true}
           , 200
-    .catch (err) =>
-      console.log 'upload err', err
-      @state.set isLoading: false
+        .catch (err) =>
+          console.log 'err', err
+          err = try
+            JSON.parse err.message
+          catch
+            {}
+          @step.next STEPS[err.info.step] or 0
+          errorSubject = switch err.info.field
+            when 'body' then @reviewFields.body.errorSubject
+            else @reviewFields.body.errorSubject
+          errorSubject.next @model.l.get err.info.langKey
+
+          @state.set isLoading: false
+      else
+        @state.set isLoading: false
 
 
   render: =>

@@ -20,25 +20,25 @@ module.exports = class NewReviewCompose
     {@model, @router, fields, uploadFn} = options
     me = @model.user.getMe()
 
-    {@titleValueStreams, @bodyValueStreams, @attachmentsValueStreams,
-      @ratingValueStreams} = fields
+    {@title, @body, @attachments, @rating} = fields
 
     @$rating = new Rating {
-      valueStreams: @ratingValueStreams, isInteractive: true
+      valueStreams: @rating.valueStreams, isInteractive: true
     }
 
-    @attachmentsValueStreams ?= new RxReplaySubject 1
-    @$textarea = new Textarea {valueStreams: @bodyValueStreams, @error}
+    @attachments.valueStreams ?= new RxReplaySubject 1
+    @$textarea = new Textarea {valueStreams: @body.valueStreams, @error}
     @$uploadImagesList = new UploadImagesList {
-      @model, @router, @attachmentsValueStreams, uploadFn
+      @model, @router, uploadFn
+      attachmentsValueStreams: @attachments.valueStreams
     }
 
     @state = z.state
       me: me
       isLoading: false
-      title: @titleValueStreams.switch()
-      body: @bodyValueStreams.switch()
-      rating: @ratingValueStreams.switch()
+      title: @title.valueStreams.switch()
+      body: @body.valueStreams.switch()
+      rating: @rating.valueStreams.switch()
 
   isCompleted: =>
     {title, body, rating, me} = @state.getValue()
@@ -48,10 +48,10 @@ module.exports = class NewReviewCompose
     @model.l.get 'newReviewPage.title'
 
   setTitle: (e) =>
-    @titleValueStreams.next RxObservable.of e.target.value
+    @title.valueStreams.next RxObservable.of e.target.value
 
   setBody: (e) =>
-    @bodyValueStreams.next RxObservable.of e.target.value
+    @body.valueStreams.next RxObservable.of e.target.value
 
   render: ({onDone}) =>
     {me, isLoading, title} = @state.getValue()

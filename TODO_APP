@@ -1,5 +1,19 @@
 TODOS:
 
+x Review revamp
+  x season colors
+  x fix image uploads glitching out?
+  x error messages
+    x new place
+    x new review
+  x save carriers localstorage
+  x autosave
+    n message when saved?
+    x new place
+    x new review
+  x clear autosave when submitted
+
+- Ability to save offline data to SD card?
 x BLM overlay sometimes disappears. Probably has to do with ordering of showing them on load
 - Username in sidebar when logged in
 - Filters for state parks, national park, etc...

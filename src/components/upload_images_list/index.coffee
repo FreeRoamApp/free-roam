@@ -67,10 +67,14 @@ module.exports = class UploadImagesList
 
     z '.z-upload-images-list',
         z '.add-image',
-          z @$addImageIcon,
-            icon: 'photo-add'
-            isTouchTarget: false
-            size: '32px'
+          z '.icon',
+            z @$addImageIcon,
+              icon: 'photo-add'
+              isTouchTarget: false
+              size: '32px'
+              color: colors.$primary500Text
+          z '.text',
+            @model.l.get 'general.add'
 
           z '.upload-overlay',
             z @$uploadOverlay, {
@@ -92,13 +96,23 @@ module.exports = class UploadImagesList
                   @model.overlay.open @$uploadImagesPreview
             }
         _map attachments, ({dataUrl, prefix, isUploading, progress}) =>
+          console.log progress, isUploading
           src = @model.image.getSrcByPrefix prefix, {size: 'small'}
           z '.attachment', {
             className: z.classKebab {isUploading}
-            style:
-              backgroundImage: "url(#{dataUrl or src})"
           },
-            z '.progress', {
+            z '.image',
               style:
-                width: "#{100 * (progress or 0)}%"
-            }
+                backgroundImage: "url(#{dataUrl or src})"
+            z '.progress',
+              z '.bar', {
+                style:
+                  width: "#{100 * (progress or 0)}%"
+              }
+              z '.text',
+                if progress is 1 and isUploading
+                  @model.l.get 'general.processing'
+                else if isUploading
+                  "#{Math.round(100 * (progress or 0))}%"
+                else
+                  @model.l.get 'general.ready'
