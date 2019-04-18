@@ -367,7 +367,7 @@ module.exports = class ProfileDialog
               icon: if isExpanded \
                     then 'chevron-up'
                     else 'chevron-down'
-              color: colors.$tertiary500Text70
+              color: colors.$tertiary200Text70
               isTouchTarget: false
       if isExpanded
         z 'ul.menu',

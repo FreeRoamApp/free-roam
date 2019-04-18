@@ -58,7 +58,7 @@ module.exports = class PlaceNewReviewExtras
 
     carriersValueStreams = new RxReplaySubject 1
     carriersValueStreams.next try
-      JSON.parse localStorage['cellCarriers']
+      JSON.parse localStorage?['cellCarriers']
     catch err
       []
 
@@ -111,7 +111,9 @@ module.exports = class PlaceNewReviewExtras
     )
 
     carriersWithExtras = carriersAndInitialValue.map ([carriers, initial]) =>
-      localStorage['cellCarriers'] = JSON.stringify _map carriers, (carrier) ->
+      initial ?= {}
+
+      localStorage?['cellCarriers'] = JSON.stringify _map carriers, (carrier) ->
         _pick carrier, ['value', 'text']
       _map carriers, (carrier) =>
         if @carrierCache[carrier.value]

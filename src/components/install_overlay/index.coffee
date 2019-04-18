@@ -39,11 +39,11 @@ module.exports = class InstallOverlay
               text: @model.l.get 'installOverlay.closeButtonText'
               isFullWidth: false
               colors:
-                cText: colors.$tertiary700Text
-                c200: colors.$tertiary400
-                c500: colors.$tertiary500
-                c600: colors.$tertiary600
-                c700: colors.$tertiary700
+                cText: colors.$tertiary0Text
+                c200: colors.$tertiary200
+                c500: colors.$tertiary200
+                c600: colors.$tertiary300
+                c700: colors.$tertiary0
               onclick: =>
                 @model.overlay.close()
           }

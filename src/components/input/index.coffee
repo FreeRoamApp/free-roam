@@ -30,7 +30,7 @@ module.exports = class Input
     {value, error, isFocused} = @state.getValue()
 
     colors = _defaults colors, {
-      c500: allColors.$tertiary900
+      c500: allColors.$tertiary0
       background: allColors.$bgText12
       underline: allColors.$primary500
     }

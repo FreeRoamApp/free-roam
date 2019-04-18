@@ -33,7 +33,7 @@ module.exports = class Checkbox
       checked: allColors.$primary500
       checkedBorder: allColors.$primary900
       border: allColors.$bgText26
-      background: allColors.$tertiary100
+      background: allColors.$tertiary0
     }
 
     z '.z-checkbox',

@@ -63,15 +63,28 @@ colors = _defaults {
     # '--tertiary-900': '#FFFFFF'
 
     # '--tertiary-50': '#FAF1E0 '
-    '--tertiary-100': '#ffffff'
-    '--tertiary-200': '#FBF5E8'
-    '--tertiary-300': '#f8f8f8'
-    '--tertiary-400': '#FCF7ED'
-    '--tertiary-500': '#d8d8d8'
-    '--tertiary-600': '#f3f0ea'
-    '--tertiary-700': '#FEFBF6'
-    # '--tertiary-800': '#FEFDFA'
-    '--tertiary-900': '#f0f0f0'
+    # FIXME: tertiary is a mess
+    # '--tertiary-100': '#ffffff'
+    # '--tertiary-200': '#FAFAFA'
+    # '--tertiary-300': '#f8f8f8'
+    # '--tertiary-400': '#f0f0f0'
+    # '--tertiary-500': '#eaeaea'
+    # '--tertiary-600': '#f8f8f8'
+    # '--tertiary-700': '#ffffff'
+    # # '--tertiary-800': '#FEFDFA'
+    # '--tertiary-900': '#f0f0f0'
+
+    '--tertiary-0': '#FFFFFF',
+    '--tertiary-50': '#FAFAFA',
+    '--tertiary-100': '#F5F5F5',
+    '--tertiary-200': '#EEEEEE',
+    '--tertiary-300': '#E0E0E0',
+    '--tertiary-400': '#BDBDBD',
+    '--tertiary-500': '#9E9E9E',
+    '--tertiary-600': '#757575',
+    '--tertiary-700': '#616161',
+    '--tertiary-800': '#424242',
+    '--tertiary-900': '#212121',
 
 
     '--tertiary-100-text': materialColors.$black
@@ -159,6 +172,7 @@ colors = _defaults {
   '$secondary800Text': 'var(--secondary-800-text)'
   '$secondary900Text': 'var(--secondary-900-text)'
 
+  '$tertiary0': 'var(--tertiary-0)'
   '$tertiary50': 'var(--tertiary-50)'
   '$tertiary100': 'var(--tertiary-100)'
   '$tertiary200': 'var(--tertiary-200)'

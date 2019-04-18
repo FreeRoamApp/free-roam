@@ -31,9 +31,9 @@ module.exports = class SecondaryInput extends Input
         colors:
           c200: colors.$tertiary200Text
           c500: colors.$bgText
-          c600: colors.$tertiary600Text
-          c700: colors.$tertiary500Text
-          ink: colors.$tertiary500Text
+          c600: colors.$tertiary300Text
+          c700: colors.$tertiary200Text
+          ink: colors.$tertiary200Text
       }
       if optType is 'password'
         z '.make-visible', {

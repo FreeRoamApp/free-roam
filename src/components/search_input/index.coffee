@@ -49,7 +49,7 @@ module.exports = class SearchInput
       @router.back()
     clearOnBack ?= true
     height ?= '36px'
-    bgColor ?= colors.$tertiary100
+    bgColor ?= colors.$tertiary0
     placeholder ?= @model.l.get 'searchInput.placeholder'
 
     z '.z-search-input', {

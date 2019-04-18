@@ -93,6 +93,11 @@ module.exports = class Cache
       _find matches, (match) -> Boolean match
 
   onFetch: (event) =>
+    # xhr upload progress listener doesn't work w/o this
+    # https://github.com/w3c/ServiceWorker/issues/1141
+    if event.request.method is 'POST' and event.request.url.match /\/upload$/i
+      return
+
     request = event.request
     # console.log 'fetch'
     # console.log event.request.url

@@ -13,10 +13,10 @@ module.exports = class PrimaryTextarea extends Textarea
         isFloating: true
         isDark: true
         colors:
-          background: colors.$tertiary100
+          background: colors.$tertiary0
           c200: colors.$tertiary200Text
           c500: colors.$primary500
-          c600: colors.$tertiary600Text
-          c700: colors.$tertiary500Text
-          ink: colors.$tertiary500Text
+          c600: colors.$tertiary300Text
+          c700: colors.$tertiary200Text
+          ink: colors.$tertiary200Text
       }

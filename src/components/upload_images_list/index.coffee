@@ -44,6 +44,8 @@ module.exports = class UploadImagesList
       onProgress: (response, {clientId}) =>
         {attachments} = @state.getValue()
 
+        console.log 'progress', response
+
         attachmentIndex = _findIndex attachments, {clientId}
         attachments[attachmentIndex].progress = response.loaded / response.total
         @attachmentsValueStreams.next RxObservable.of attachments
@@ -96,7 +98,6 @@ module.exports = class UploadImagesList
                   @model.overlay.open @$uploadImagesPreview
             }
         _map attachments, ({dataUrl, prefix, isUploading, progress}) =>
-          console.log progress, isUploading
           src = @model.image.getSrcByPrefix prefix, {size: 'small'}
           z '.attachment', {
             className: z.classKebab {isUploading}

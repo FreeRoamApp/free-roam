@@ -353,7 +353,7 @@ module.exports = class NavDrawer
                 icon: if isExpanded \
                       then 'chevron-up'
                       else 'chevron-down'
-                color: colors.$tertiary500Text70
+                color: colors.$tertiary200Text70
                 isAlignedRight: true
                 onclick: expand
         if hasChildren and isExpanded
@@ -440,7 +440,7 @@ module.exports = class NavDrawer
                               icon: if isExpanded \
                                     then 'chevron-up'
                                     else 'chevron-down'
-                              color: colors.$tertiary500Text70
+                              color: colors.$tertiary200Text70
                               isAlignedRight: true
                               touchHeight: '28px'
                               onclick: expand

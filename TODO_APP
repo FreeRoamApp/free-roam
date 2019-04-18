@@ -1,6 +1,10 @@
 TODOS:
 
-x Review revamp
+- Review revamp
+  x location null
+  x carrier broken
+  - thank you
+  - onprogress not working on prod
   x season colors
   x fix image uploads glitching out?
   x error messages

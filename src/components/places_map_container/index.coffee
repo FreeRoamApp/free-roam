@@ -406,7 +406,7 @@ module.exports = class PlacesMapContainer
             z '.layers-fab',
               z @$fab,
                 colors:
-                  c500: colors.$tertiary100
+                  c500: colors.$tertiary0
                   ripple: colors.$bgText70
                 $icon: z @$layersIcon, {
                   icon: 'layers'

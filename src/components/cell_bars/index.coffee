@@ -52,7 +52,7 @@ module.exports = class CellBars
             onclick: if @isInteractive then (=> @setCellBars 0)
             color: if cellBars is 0 \
                    then colors.$secondary500
-                   else colors.$tertiary500
+                   else colors.$tertiary200
       _map _range(MAX_BARS), (i) =>
         z ".bar.bar-#{i + 1}", {
           onclick: if @isInteractive then (=> @setCellBars i + 1) else null

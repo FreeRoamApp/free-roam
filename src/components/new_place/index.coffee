@@ -206,7 +206,7 @@ module.exports = class NewPlace
     )
 
     @initialInfoFields.location.valueStreams.next @location.map (location) ->
-      location or autosave['initialInfo.location']
+      location or autosave['initialInfo.location'] or ''
 
     @reviewFields.title.valueStreams.next(
       RxObservable.of autosave['review.title'] or ''

@@ -214,7 +214,7 @@ module.exports = class NewPlaceReview
           setTimeout =>
             @router.go @placeWithTabPath, {
               slug: parent?.slug, tab: 'reviews'
-            }, {reset: true}
+            }, {reset: true, qs: {newReview: true}}
           , 200
         .catch (err) =>
           console.log 'err', err
