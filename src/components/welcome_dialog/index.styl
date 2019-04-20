@@ -7,3 +7,42 @@
     a
       color: getColor('$primary500')
       font-weight: bold
+
+.z-welcome-dialog_dialog
+  background: getColor('$tertiary0')
+  border-radius: 4px
+
+.z-welcome-dialog_step
+  flex1()
+  display: flex
+  flex-direction: column
+  padding: 24px
+
+  > .image
+    width: 100%
+    display: block
+    margin: 0 auto
+    background-size: 100% auto
+
+    &.welcome
+      background-image: url($cdnUrl + '/onboard/welcome.svg?2')
+      padding-bottom: 79.46% // proper aspect ratio
+    &.roam
+      background-image: url($cdnUrl + '/onboard/roam.svg?3')
+      padding-bottom: 89.74% // proper aspect ratio
+    &.help
+      background-image: url($cdnUrl + '/onboard/help.svg?2')
+      padding-bottom: 85.28% // proper aspect ratio
+
+  > .title
+    font-h2()
+    color: getColor('$primary500')
+    text-align: center
+    margin: 16px 0
+
+  > .content
+    font-body1()
+    padding: 0 8px
+
+  > .action
+    margin-top: 8px

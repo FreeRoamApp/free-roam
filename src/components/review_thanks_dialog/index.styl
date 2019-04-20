@@ -1,5 +1,16 @@
 @require '../../vars'
 
 .z-review-thanks-dialog_dialog
-  > .block
-    margin: 8px 0
+  background: getColor('$tertiary0')
+  padding: 16px
+  border-radius: 4px
+
+  > .title
+    font-title()
+    color: getColor('$primary500')
+    text-align: center
+    margin-bottom: 12px
+
+  > .button
+    display: flex
+    margin-top: 24px

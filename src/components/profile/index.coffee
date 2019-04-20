@@ -161,7 +161,7 @@ module.exports = class Profile
                 ]
 
           z '.boxes',
-            if isMe and not hasSeenProfileCard and @model.experiment.get('profileVideo') is 'visible'
+            if isMe and not hasSeenProfileCard
               z '.info-card',
                 z @$infoCard, {
                   $title: @model.l.get 'profile.infoCardTitle'

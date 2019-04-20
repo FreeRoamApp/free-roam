@@ -29,7 +29,7 @@ others can find it
 getLocalDateFromStr = (str) ->
   if str
     arr = str.split '-'
-    new Date arr[0], arr[1], arr[2]
+    new Date arr[0], arr[1] - 1, arr[2]
   else
     null
 

@@ -1,6 +1,7 @@
 z = require 'zorium'
 
 Dialog = require '../dialog'
+PrimaryButton = require '../primary_button'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -10,6 +11,7 @@ if window?
 
 module.exports = class ReviewThanksDialog
   constructor: ({@model}) ->
+    @$closeButton = new PrimaryButton()
     @$dialog = new Dialog {
       onLeave: =>
         @model.overlay.close()
@@ -19,13 +21,14 @@ module.exports = class ReviewThanksDialog
     z '.z-review-thanks-dialog',
       z @$dialog,
         isWide: true
-        isVanilla: true
-        $title: @model.l.get 'overnightWarningDialog.title'
+        isVanilla: false
         $content:
-          z '.z-overnight-warning-dialog_dialog',
-            z '.block', @model.l.get 'overnightWarningDialog.text1'
-            z '.block', @model.l.get 'overnightWarningDialog.text2'
-        cancelButton:
-          text: @model.l.get 'installOverlay.closeButtonText'
-          onclick: =>
-            @model.overlay.close()
+          z '.z-review-thanks-dialog_dialog',
+            z '.title', @model.l.get 'reviewThanksDialog.title'
+            z '.description', @model.l.get 'reviewThanksDialog.description'
+            z '.button',
+              z @$closeButton,
+                text: @model.l.get 'general.close'
+                isFullWidth: false
+                onclick: =>
+                  @model.overlay.close()

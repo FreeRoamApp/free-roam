@@ -352,6 +352,8 @@
   "profileReviews.empty": "{name} hasn't left any reviews yet.",
   "reviews.searchPlaceholder": "Search reviews",
   "reviews.empty": "No reviews found",
+  "reviewThanksDialog.title": "You're amazing!",
+  "reviewThanksDialog.description": "Thank you for your review! Your review helps other users find cool spots and build a stronger community.",
   "rigInfo.placeholder": "No rig set",
   "rigInfo.yourRig": "Your rig",
   "signInDialog.join": "Get started!",
@@ -591,6 +593,8 @@
   "mapLegend.water": "Fresh water",
   "mapLegend.npwater": "Non-potable water",
   "mapLegend.propane": "Propane",
+  "mapLegend.laundry": "Laundry",
+  "mapLegend.shower": "Shower",
   "mapLegend.low_clearance": "Low clearance",
 
   "months.0": "January",

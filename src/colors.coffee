@@ -87,8 +87,10 @@ colors = _defaults {
     '--tertiary-900': '#212121',
 
 
+    '--tertiary-0-text': materialColors.$black
     '--tertiary-100-text': materialColors.$black
     '--tertiary-200-text': materialColors.$black
+    '--tertiary-200-text-70': materialColors.$black70
     '--tertiary-300-text': materialColors.$black
     '--tertiary-400-text': materialColors.$black
     '--tertiary-500-text': materialColors.$black
@@ -185,8 +187,10 @@ colors = _defaults {
   '$tertiary900': 'var(--tertiary-900)'
   '$tertiary90012': 'var(--tertiary-90012)'
   '$tertiary90054': 'var(--tertiary-90054)'
+  '$tertiary0Text': 'var(--tertiary-0-text)'
   '$tertiary100Text': 'var(--tertiary-100-text)'
   '$tertiary200Text': 'var(--tertiary-200-text)'
+  '$tertiary200Text70': 'var(--tertiary-200-text-70)'
   '$tertiary300Text': 'var(--tertiary-300-text)'
   '$tertiary400Text': 'var(--tertiary-400-text)'
   '$tertiary500Text': 'var(--tertiary-500-text)'

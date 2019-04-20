@@ -21,7 +21,6 @@ NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
 WelcomeDialog = require './components/welcome_dialog'
-WelcomeDialogV2 = require './components/welcome_dialog_v2'
 StatusBar = require './components/status_bar'
 SnackBar = require './components/snack_bar'
 Nps = require './components/nps'
@@ -184,10 +183,7 @@ module.exports = class App
 
     if (window? and not @model.cookie.get 'hasSeenWelcome')
       @model.cookie.set 'hasSeenWelcome', 1
-      if @model.experiment.get('newOnboard') is 'visible'
-        @model.overlay.open new WelcomeDialogV2 {@model, @router}
-      else
-        @model.overlay.open new WelcomeDialog {@model, @router}
+      @model.overlay.open new WelcomeDialog {@model, @router}
 
     # used if state / requests fails to work
     $backupPage = if @serverData?

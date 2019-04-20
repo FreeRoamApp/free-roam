@@ -3,6 +3,7 @@ z = require 'zorium'
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 BasePage = require '../base'
+ReviewThanksDialog = require '../../components/review_thanks_dialog'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -22,12 +23,17 @@ module.exports = class PlacePage extends BasePage
     tab = requests.map ({route}) ->
       route.params.tab
 
+    isNewReview = requests.map ({req}) ->
+      req.query.newReview
+
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
     @$place = new @Place {@model, @router, @place, tab}
+    @$reviewThanksDialog = new ReviewThanksDialog {@model}
 
     @state = z.state
       place: @place
+      isNewReview: isNewReview
 
   getMeta: =>
     @place.map (place) =>
@@ -46,7 +52,9 @@ module.exports = class PlacePage extends BasePage
       }
 
   render: =>
-    {place} = @state.getValue()
+    {place, isNewReview} = @state.getValue()
+
+    console.log isNewReview
 
     z '.p-place',
       z @$appBar, {
@@ -58,3 +66,5 @@ module.exports = class PlacePage extends BasePage
         }
       }
       @$place
+      # if isNewReview
+      #   z @$reviewThanksDialog
