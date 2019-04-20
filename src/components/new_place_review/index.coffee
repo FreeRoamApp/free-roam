@@ -21,6 +21,7 @@ _reduce = require 'lodash/reduce'
 _values = require 'lodash/values'
 _zipObject = require 'lodash/zipObject'
 
+ReviewThanksDialog = require '../review_thanks_dialog'
 NewReviewCompose = require '../new_review_compose'
 StepBar = require '../step_bar'
 colors = require '../../colors'
@@ -67,6 +68,8 @@ module.exports = class NewPlaceReview
 
     @step = new RxBehaviorSubject 0
     @$stepBar = new StepBar {@model, @step}
+
+    @$reviewThanksDialog = new ReviewThanksDialog {@model}
 
     @$steps = _filter [
       new NewReviewCompose {
@@ -206,6 +209,7 @@ module.exports = class NewPlaceReview
           extras: extras
         }
         .then (newReview) =>
+          @model.overlay.open @$reviewThanksDialog
           @state.set isLoading: false
           delete localStorage[LOCAL_STORAGE_AUTOSAVE + ':' + parent?.id]
           @resetValueStreams()
@@ -214,7 +218,7 @@ module.exports = class NewPlaceReview
           setTimeout =>
             @router.go @placeWithTabPath, {
               slug: parent?.slug, tab: 'reviews'
-            }, {reset: true, qs: {newReview: true}}
+            }, {reset: true}
           , 200
         .catch (err) =>
           console.log 'err', err

@@ -24,6 +24,7 @@ module.exports = class ReviewThanksDialog
         isVanilla: false
         $content:
           z '.z-review-thanks-dialog_dialog',
+            z '.image'
             z '.title', @model.l.get 'reviewThanksDialog.title'
             z '.description', @model.l.get 'reviewThanksDialog.description'
             z '.button',
