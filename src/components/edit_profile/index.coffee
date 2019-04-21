@@ -76,10 +76,18 @@ module.exports = class EditProfile
       value: @currentPasswordValue
       error: @currentPasswordError
 
+    @avatarImage = new RxBehaviorSubject null
+    rotationValueSubject = new RxBehaviorSubject null
 
     @state = z.state
       me: me
-      avatarImage: null
+      avatarImage: @avatarImage.map (file) =>
+        if file
+          @model.image.parseExif(
+            file, null, rotationValueSubject
+          )
+        file
+      avatarRotation: rotationValueSubject
       avatarDataUrl: null
       avatarUploadError: null
       group: group
@@ -95,6 +103,7 @@ module.exports = class EditProfile
   save: =>
     {avatarImage, username, instagram, web, bio, newPassword, currentPassword,
       me, isSaving, group} = @state.getValue()
+
     if isSaving
       return
 
@@ -123,8 +132,8 @@ module.exports = class EditProfile
 
       @model.user.upsert userDiff, {file: avatarImage}
       .then =>
+        @avatarImage.next null
         @state.set
-          avatarImage: null
           avatarDataUrl: null
           isSaving: false
           isSaved: true
@@ -153,7 +162,7 @@ module.exports = class EditProfile
           )
 
   render: =>
-    {me, avatarUploadError, avatarDataUrl, group, newPassword
+    {me, avatarUploadError, avatarDataUrl, avatarRotation, group, newPassword
       players, isSaving, isSaved} = @state.getValue()
 
     z '.z-edit-profile',
@@ -207,7 +216,10 @@ module.exports = class EditProfile
             avatarUploadError
           z '.flex',
             z '.avatar',
-              z @$avatar, {src: avatarDataUrl, user: me, size: '64px'}
+              z @$avatar, {
+                src: avatarDataUrl, user: me, size: '64px'
+                rotation: avatarRotation
+              }
             z '.button',
               z @$avatarButton,
                 text: @model.l.get 'editProfile.avatarButtonText'
@@ -216,7 +228,8 @@ module.exports = class EditProfile
               z '.upload-overlay',
                 z @$uploadOverlay,
                   onSelect: ({file, dataUrl}) =>
-                    @state.set avatarImage: file, avatarDataUrl: dataUrl
+                    @avatarImage.next file
+                    @state.set avatarDataUrl: dataUrl
 
         z '.actions',
           z '.button',

@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Icon = require '../icon'
 Fab = require '../fab'
@@ -15,13 +16,21 @@ module.exports = class UploadImagePreview
     @$uploadImageFab = new Fab()
     @$uploadIcon = new Icon()
 
+    rotationValueSubject = new RxBehaviorSubject null
+
     @state = z.state
-      imageData: @imageData
+      imageData: @imageData.map (imageData) =>
+        if imageData
+          @model.image.parseExif(
+            imageData?.file, null, rotationValueSubject
+          )
+        imageData
       isUploading: false
+      rotation: rotationValueSubject
       windowSize: @model.window.getSize()
 
   render: ({iconName} = {}) =>
-    {imageData, isUploading, windowSize} = @state.getValue()
+    {imageData, rotation, isUploading, windowSize} = @state.getValue()
 
     imageData ?= {}
 
@@ -44,7 +53,7 @@ module.exports = class UploadImagePreview
       previewWidth = undefined
 
     z '.z-upload-image-preview',
-      z 'img',
+      z "img.#{rotation or 'no-rotation'}",
         src: imageData.dataUrl
         width: previewWidth
         height: previewHeight

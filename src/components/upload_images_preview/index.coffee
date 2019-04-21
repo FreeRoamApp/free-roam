@@ -48,7 +48,9 @@ module.exports = class UploadImagesPreview
         hasLocationValueSubject = new RxBehaviorSubject true
         locationValueSubject = new RxBehaviorSubject null
         rotationValueSubject = new RxBehaviorSubject null
-        @parseExif imageData.file, locationValueSubject, rotationValueSubject
+        @model.image.parseExif(
+          imageData.file, locationValueSubject, rotationValueSubject
+        )
         {
           imageData
           captionValueSubject
