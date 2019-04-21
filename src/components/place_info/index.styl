@@ -85,13 +85,38 @@
       > .title
         font-title()
 
+    > .buttons
+      display: flex
+      margin-bottom: 8px
+
+      > .button
+        flex: 1
+
     > .masonry
       margin: -4px -16px // account for padding in .section
+
 
     // TODO: move each section into own component, so we don't have to
     // do a broad selector like this (ie without >)
     .section
       padding: 4px 16px
+
+      > .seasons
+        display: flex
+        background: getColor('$tertiary0')
+        border: 1px solid getColor('$tertiary200')
+        border-radius: 4px
+
+        > .season
+          cursor: pointer
+          flex1()
+          text-align: center
+          padding: 4px 0
+
+          &.is-selected
+            background: getColor('$tertiary200')
+            font-title()
+
 
       > .title
         font-title()
@@ -110,8 +135,9 @@
           text-align: center
           margin-right: 16px
 
-          > .bars
-            padding: 5px 10px
+          &:last-child
+            margin-right: 0
 
-          > .type
+          > .name
             font-caption3()
+            margin-top: 4px

@@ -17,6 +17,7 @@ if window?
 module.exports = class PlaceInfoActionBox
   constructor: ({@model, @router, @place}) ->
     @$directionsIcon = new Icon()
+    @$shareIcon = new Icon()
     @$checkInIcon = new Icon()
     @$saveIcon = new Icon()
     # @$saveTooltip = new TooltipPositioner {
@@ -108,38 +109,62 @@ module.exports = class PlaceInfoActionBox
             z @$directionsIcon,
               icon: 'directions'
               isTouchTarget: false
-              color: colors.$bgText54
+              color: colors.$primary500
           z '.text', @model.l.get 'general.directions'
+
+        z '.action', {
+          onclick: =>
+            ga? 'send', 'event', 'placeInfo', 'share'
+            path = @model[place.type].getPath place, @router
+            @model.portal.call 'share.any', {
+              text: place.name
+              path: path
+              url: "https://#{config.HOST}#{path}"
+            }
+        },
+          z '.icon',
+            z @$shareIcon,
+              icon: 'share'
+              isTouchTarget: false
+              color: colors.$primary500
+          z '.text', @model.l.get 'general.share'
+
         if place?.type isnt 'amenity'
           [
-            z '.divider'
             z '.action', {
               onclick: =>
                 @checkIn 'visited'
             },
-              z '.icon',
+              z '.icon', {
+                className: z.classKebab {
+                  isFilled: visitedCheckIn
+                }
+              },
                 z @$checkInIcon,
                   icon: 'location'
                   isTouchTarget: false
                   color: if visitedCheckIn \
-                         then colors.$primary500
-                         else colors.$bgText54
+                         then colors.$primary500Text
+                         else colors.$primary500
               z '.text',
                 if visitedSaving then @model.l.get 'general.saving'
                 else if visitedCheckIn then @model.l.get 'placeInfo.checkedIn'
                 else @model.l.get 'placeInfo.checkIn'
           ]
-        z '.divider'
         z '.action', {
           onclick: => @checkIn 'planned'
         },
-          z '.icon',
+          z '.icon', {
+            className: z.classKebab {
+              isFilled: plannedCheckIn
+            }
+          },
             z @$saveIcon,
               icon: 'star'
               isTouchTarget: false
               color: if plannedCheckIn \
-                     then colors.$primary500
-                     else colors.$bgText54
+                     then colors.$primary500Text
+                     else colors.$primary500
           z '.text',
             if plannedSaving then @model.l.get 'general.saving'
             else if plannedCheckIn then @model.l.get 'general.saved'

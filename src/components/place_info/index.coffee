@@ -8,11 +8,11 @@ ActionBox = require '../place_info_action_box'
 CellBars = require '../cell_bars'
 Contact = require '../place_info_contact'
 Icon = require '../icon'
-InfoLevelTabs = require '../info_level_tabs'
 InfoLevel = require '../info_level'
 EmbeddedVideo = require '../embedded_video'
-FormattedText = require '../formatted_text'
 MasonryGrid = require '../masonry_grid'
+PlaceInfoDetailsOverlay = require '../place_info_details_overlay'
+PrimaryButton = require '../primary_button'
 Rating = require '../rating'
 Spinner = require '../spinner'
 UiCard = require '../ui_card'
@@ -26,25 +26,24 @@ if window?
 
 module.exports = class PlaceInfo extends Base
   constructor: ({@model, @router, @place}) ->
-    seasons =  [
+    @seasons =  [
       {key: 'spring', text: @model.l.get 'seasons.spring'}
       {key: 'summer', text: @model.l.get 'seasons.summer'}
       {key: 'fall', text: @model.l.get 'seasons.fall'}
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
-    currentSeason = @model.time.getCurrentSeason()
     @$actionBox = new ActionBox {@model, @router, @place}
     @$contact = new Contact {@model, @router, @place}
+    @$detailsButton = new PrimaryButton()
+    @$drivingInstructionsButton = new PrimaryButton()
     @$masonryGrid = new MasonryGrid {@model}
-    @$crowdsInfoLevelTabs = new InfoLevelTabs {
-      @model, @router, tabs: seasons
-      selectedTab: currentSeason, key: 'crowds'
+    @$crowdsInfoLevel = new InfoLevel {
+      @model, @router, key: 'crowds'
     }
-    @$fullnessInfoLevelTabs = new InfoLevelTabs {
-      @model, @router, tabs: seasons
-      selectedTab: currentSeason, key: 'fullness'
+    @$fullnessInfoLevel = new InfoLevel {
+      @model, @router, key: 'fullness'
     }
-    @$noiseInfoLevelTabs = new InfoLevelTabs {
+    @$noiseInfoLevel = new InfoLevel {
       @model, @router,
       tabs: [
         {key: 'day', text: @model.l.get 'general.day'}
@@ -66,20 +65,9 @@ module.exports = class PlaceInfo extends Base
     @$respectCard = new UiCard()
     @$walmartInfoCard = new WalmartInfoCard {@model, @place}
 
-    @$details = new FormattedText {
-      text: @place.map (place) ->
-        place?.details
-      imageWidth: 'auto'
-      isFullWidth: true
-      embedVideos: false
-      @model
-      @router
-      truncate:
-        maxLength: 250
-        height: 200
-    }
-
     @state = z.state
+      season: @model.time.getCurrentSeason()
+      windowSize: @model.window.getSize()
       amenities: @place.map (place) ->
         _map place?.amenities, (amenity) ->
           {
@@ -119,9 +107,15 @@ module.exports = class PlaceInfo extends Base
     )
 
   render: =>
-    {place, amenities, hasSeenRespectCard} = @state.getValue()
+    {place, amenities, hasSeenRespectCard,
+      season, windowSize} = @state.getValue()
 
     {place, $videos, cellCarriers} = place or {}
+
+    cellBarsWidthPx = Math.min(
+      (windowSize.width - 32 - 48) / 4
+      100
+    )
 
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
@@ -223,15 +217,32 @@ module.exports = class PlaceInfo extends Base
 
               z '.name', @model.l.get "amenities.#{amenity}"
 
-        if place?.drivingInstructions
-          z '.driving-instructions',
-            z '.title', @model.l.get 'campground.drivingInstructions'
-            place?.drivingInstructions
+        if place?.details or place?.drivingInstructions
+          z '.buttons',
+            if place?.details
+              z '.button',
+                z @$detailsButton,
+                  text: @model.l.get 'place.details'
+                  onclick: =>
+                    $detailsOverlay = new PlaceInfoDetailsOverlay {
+                      @model, @router
+                      title: @model.l.get 'place.details'
+                      text: @place.map (place) -> place?.details
+                    }
+                    @model.overlay.open $detailsOverlay
 
-        if place?.details
-          z '.details',
-            z '.title', @model.l.get 'place.details'
-            @$details
+            if place?.drivingInstructions
+              z '.button',
+                z @$drivingInstructionsButton,
+                  isOutline: true
+                  text: @model.l.get 'campground.drivingInstructions'
+                  onclick: =>
+                    $detailsOverlay = new PlaceInfoDetailsOverlay {
+                      @model, @router
+                      title: @model.l.get 'campground.drivingInstructions'
+                      text: @place.map (place) -> place?.drivingInstructions
+                    }
+                    @model.overlay.open $detailsOverlay
 
         z '.masonry',
           z @$masonryGrid,
@@ -244,36 +255,45 @@ module.exports = class PlaceInfo extends Base
                 z '.section',
                   z '.title', @model.l.get 'campground.cellSignal'
                   z '.carriers',
-                    _map cellCarriers, ({$bars, carrier, type}) =>
+                    _map cellCarriers, ({$bars, carrier}) =>
                       z '.carrier',
-                        z '.name', @model.l.get "carriers.#{carrier}"
                         z '.bars',
-                          z $bars, widthPx: 40
-                        z '.type', type
+                          z $bars, widthPx: cellBarsWidthPx
+                        z '.name', @model.l.get "carriers.#{carrier}"
 
 
               # z '.section',
 
                 # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
                 # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
-
+              if place?.crowds or place?.fullness
+                z '.section',
+                  z '.seasons',
+                     _map @seasons, ({key, text}) =>
+                       isSelected = season is key
+                       z '.season', {
+                         className: z.classKebab {isSelected}
+                         onclick: =>
+                           @state.set {season: key}
+                       },
+                         text
 
               if place?.crowds
                 z '.section',
                   z '.title', @model.l.get 'campground.crowds'
-                  z @$crowdsInfoLevelTabs, {
-                    value: place?.crowds
+                  z @$crowdsInfoLevel, {
+                    value: place?.crowds[season]
                   }
               if place?.fullness
                 z '.section',
                   z '.title', @model.l.get 'campground.fullness'
-                  z @$fullnessInfoLevelTabs, {
-                    value: place?.fullness
+                  z @$fullnessInfoLevel, {
+                    value: place?.fullness[season]
                   }
               if place?.noise
                 z '.section',
                   z '.title', @model.l.get 'campground.noise'
-                  z @$noiseInfoLevelTabs, {
+                  z @$noiseInfoLevel, {
                     value: place?.noise
                   }
               if place?.shade

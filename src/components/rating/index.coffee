@@ -50,5 +50,5 @@ module.exports = class Rating
           icon: icon
           size: size
           isTouchTarget: false
-          color: colors.$primary500
+          color: colors.$amber500
           onclick: if @isInteractive then (=> @setRating i + 1) else null

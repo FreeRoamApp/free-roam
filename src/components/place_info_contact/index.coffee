@@ -1,10 +1,18 @@
 z = require 'zorium'
 
+Icon = require '../icon'
+
+colors = require '../../colors'
+
 if window?
   require './index.styl'
 
 module.exports = class PlaceInfoContact
   constructor: ({@model, @router, place}) ->
+    @$locationIcon = new Icon()
+    @$websiteIcon = new Icon()
+    @$phoneIcon = new Icon()
+
     @state = z.state
       place: place
 
@@ -12,9 +20,15 @@ module.exports = class PlaceInfoContact
     {place} = @state.getValue()
 
     z '.z-place-info-contact',
-      z '.coordinates',
-        z 'span.title', "#{@model.l.get 'general.coordinates'}: "
-        "#{place?.location?.lat}, #{place?.location?.lon}"
+      z '.block.location',
+        z '.icon',
+          z @$locationIcon,
+            icon: 'location'
+            isTouchTarget: false
+            color: colors.$primary500
+
+        z '.text',
+          "#{place?.location?.lat}, #{place?.location?.lon}"
 
       if place?.contact?.phone
         matches = place.contact?.phone?.number.match(
@@ -22,18 +36,27 @@ module.exports = class PlaceInfoContact
         )
         phone = if matches
           "(#{matches[1]}) #{matches[2]}-#{matches[3]}"
-        z '.phone',
-          z 'span.title', @model.l.get 'place.phone'
-          phone
+        z '.block.phone',
+          z '.icon',
+            z @$phoneIcon,
+              icon: 'phone'
+              isTouchTarget: false
+              color: colors.$primary500
+          z '.text', phone
       if place?.contact?.website
-        z '.website',
-          z 'span.title', @model.l.get 'place.website'
-          z 'a', {
-            href: place.contact?.website
-            onclick: (e) =>
-              e?.preventDefault()
-              @model.portal.call 'browser.openWindow', {
-                url: place.contact?.website
-                target: '_system'
-              }
-          }, place.contact?.website
+        z '.block.website',
+          z '.icon',
+            z @$websiteIcon,
+              icon: 'web'
+              isTouchTarget: false
+              color: colors.$primary500
+          z '.text',
+            z 'a', {
+              href: place.contact?.website
+              onclick: (e) =>
+                e?.preventDefault()
+                @model.portal.call 'browser.openWindow', {
+                  url: place.contact?.website
+                  target: '_system'
+                }
+            }, place.contact?.website

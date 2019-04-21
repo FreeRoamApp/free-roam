@@ -23,7 +23,6 @@ module.exports = class InfoLevel
     # TODO: just 1 flavor text. can either have in lang, or returned from db with embed...
 
     z '.z-info-level',
-      z '.flavor-text', @model.l.get "levelText.#{key}#{Math.round value}"
       z '.bar',
         z ".fill.has-#{value}",
           className: z.classKebab {isReversed}
@@ -34,3 +33,4 @@ module.exports = class InfoLevel
           "#{min}"
         z '.max',
           "#{max}"
+      z '.flavor-text', @model.l.get "levelText.#{key}#{Math.round value}"

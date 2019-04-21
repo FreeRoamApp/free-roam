@@ -76,7 +76,7 @@ colors = _defaults {
 
     '--tertiary-0': '#FFFFFF',
     '--tertiary-50': '#FAFAFA',
-    '--tertiary-100': '#F5F5F5',
+    '--tertiary-100': '#F8F8F8', # changed from f5f5f5
     '--tertiary-200': '#EEEEEE',
     '--tertiary-300': '#E0E0E0',
     '--tertiary-400': '#BDBDBD',
@@ -246,7 +246,7 @@ colors = _defaults {
 
   '$black': '#0c0c0c'
 
-  '$green500': '#aec2ab'
+  '$green500': '#68B086'
   '$yellow500': '#e9d982'
   '$red500': '#e98383'
 

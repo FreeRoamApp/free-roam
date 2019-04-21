@@ -17,6 +17,7 @@ TODOS:
     x new review
   x clear autosave when submitted
 
+- Back button should close overlay
 - Search by address in main search and when adding check-in to trip
 - iOS add campground in drawer text doesn't show
 - Ability to save offline data to SD card?

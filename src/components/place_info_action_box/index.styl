@@ -1,19 +1,10 @@
 @require '../../vars'
 
 .z-place-info-action-box
-  padding: 8px
-  border: 1px solid getColor('$bgText12')
-  border-radius: 4px
-  margin-bottom: 16px
+  margin-bottom: 20px
 
   > .actions
     display: flex
-    height: 46px
-
-    > .divider
-      width: 1px
-      height: 100%
-      background: getColor('$bgText26')
 
     > .action
       flex1()
@@ -25,6 +16,12 @@
 
       > .icon
         margin-bottom: 2px
+        border: 1px solid getColor('$primary500')
+        border-radius: 50%
+        padding: 8px
+
+        &.is-filled
+          background: getColor('$primary500')
 
       > .text
-        font-title()
+        margin-top: 4px

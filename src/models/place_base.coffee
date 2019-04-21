@@ -1,6 +1,9 @@
 module.exports = class PlaceBase
   constructor: ({@auth}) -> null
 
+  getPath: (place, router) ->
+    router.get place.type, {slug: place.slug}
+
   getBySlug: (slug) =>
     @auth.stream "#{@namespace}.getBySlug", {slug}
 

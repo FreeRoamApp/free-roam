@@ -52,6 +52,13 @@ module.exports = class PlacesList
             z '.info',
               z '.name',
                 place.name
+              if place.distance
+                z '.caption',
+                  @model.l.get 'placesList.distance', {
+                    replacements:
+                      distance: place.distance.distance
+                      time: place.distance.time
+                  }
               if place.address?.administrativeArea
                 z '.location',
                   if place.address?.locality
@@ -66,13 +73,18 @@ module.exports = class PlacesList
                   z $rating
               z '.amenities',
                 _map amenities, ({amenity, $icon}) ->
-                  z '.amenity',
+                  color = colors["$amenity#{amenity}"] or colors.$black
+                  z '.amenity', {
+                    style:
+                      border: "1px solid #{color}"
+                      color: color
+                  },
                     z '.icon',
                       z $icon,
                         icon: amenity
                         isTouchTarget: false
                         size: '16px'
-                        color: colors["$amenity#{amenity}"]
+                        color: color
 
                     z '.name', amenity
 
@@ -80,12 +92,18 @@ module.exports = class PlacesList
               if place?.sourceType isnt 'coordinate'
                 z '.action',
                   z $detailsButton,
+                    icon: 'info'
                     text: @model.l.get 'general.info'
+                    colors:
+                      cText: colors.$primary500
                     onclick: =>
                       @router.goPlace place
               z '.action',
                 z $directionsButton,
                   text: @model.l.get 'general.directions'
+                  icon: 'directions'
+                  colors:
+                    cText: colors.$primary500
                   onclick: =>
                     MapService.getDirections place, {@model}
               # z '.action',

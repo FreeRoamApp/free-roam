@@ -107,16 +107,17 @@ module.exports = class PlaceNearby
       places: placeAndNearestAmenitiesAndPlacesStream
       .map ([place, nearestAmenities, placesWithCounts]) ->
         places = placesWithCounts?.places
-        knownTimes = _reduce place?.distanceTo, (obj, {id, time}) ->
-          obj[id] = time
+        knownDistances = _reduce place?.distanceTo, (obj, distanceTo) ->
+          {id, time, distance} = distanceTo
+          obj[id] = {time, distance}
           obj
         , {}
 
         places = _uniqBy (nearestAmenities or []).concat(places or []), 'id'
         places = _map places, (nearbyPlace) ->
-          if knownTime = knownTimes[nearbyPlace.id]
+          if knownDistance = knownDistances[nearbyPlace.id]
             _defaults {
-              name: "#{nearbyPlace.name} (#{knownTime} min away)"
+              distance: knownDistance
             }, nearbyPlace
           else
             nearbyPlace
