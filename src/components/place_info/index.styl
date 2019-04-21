@@ -87,7 +87,7 @@
 
     > .buttons
       display: flex
-      margin-bottom: 8px
+      margin-bottom: 16px
 
       > .button
         flex: 1
@@ -141,3 +141,13 @@
           > .name
             font-caption3()
             margin-top: 4px
+
+
+  @media (min-width: $breakPointMedium)
+    > .g-grid
+      > .actions
+        display: flex
+        flex-direction: row-reverse
+
+        > .action
+          flex: 1

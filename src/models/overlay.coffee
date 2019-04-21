@@ -22,13 +22,26 @@ module.exports = class Overlay
     @overlays.next _filter (@overlays.getValue() or []).concat(
       {$, onComplete, onCancel}
     )
+
+    window.location.hash = '#overlay' # for back button to work
+    window.addEventListener 'popstate', @closeFromBackButton
+
     @setData data # TODO: per-overlay data
 
     # prevent body scrolling while viewing menu
     document?.body.style.overflow = 'hidden'
 
-  close: (action, response) =>
+  closeFromBackButton: (e) =>
+    e.stopPropagation()
+    @close {isFromBackButton: true}
+
+  close: ({action, response, isFromBackButton} = {}) =>
     overlays = @overlays.getValue()
+
+    window.removeEventListener 'popstate', @closeFromBackButton
+    unless isFromBackButton
+      window.history.back()
+
     {onComplete, onCancel} = overlays.pop()
     if _isEmpty overlays
       overlays = null

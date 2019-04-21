@@ -44,5 +44,6 @@ module.exports = class PlaceInfoDetailsOverlay
         }
       }
 
-      z '.content',
-        @$details
+      z '.g-grid',
+        z '.content',
+          @$details

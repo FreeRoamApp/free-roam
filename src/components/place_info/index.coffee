@@ -159,9 +159,11 @@ module.exports = class PlaceInfo extends Base
                 else
                   "$ #{@model.l.get 'general.unknown'}"
 
-        z @$actionBox
-
-        z @$contact
+        z '.actions',
+          z '.action',
+            z @$actionBox
+          z '.action',
+            z @$contact
 
         if place?.type is 'campground' and not hasSeenRespectCard
           z '.card',

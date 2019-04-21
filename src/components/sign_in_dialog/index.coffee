@@ -60,7 +60,7 @@ module.exports = class SignInDialog
       # give time for invalidate to work
       setTimeout =>
         @model.user.getMe().take(1).subscribe =>
-          @model.overlay.close 'complete'
+          @model.overlay.close {action: 'complete'}
       , 0
     .catch (err) =>
       err = try
@@ -89,7 +89,7 @@ module.exports = class SignInDialog
       # give time for invalidate to work
       setTimeout =>
         @model.user.getMe().take(1).subscribe =>
-          @model.overlay.close 'complete'
+          @model.overlay.close {action: 'complete'}
       , 0
     .catch (err) =>
       err = try
