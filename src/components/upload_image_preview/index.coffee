@@ -16,18 +16,21 @@ module.exports = class UploadImagePreview
     @$uploadImageFab = new Fab()
     @$uploadIcon = new Icon()
 
-    rotationValueSubject = new RxBehaviorSubject null
+    @rotationValueSubject = new RxBehaviorSubject null
 
     @state = z.state
       imageData: @imageData.map (imageData) =>
         if imageData
           @model.image.parseExif(
-            imageData?.file, null, rotationValueSubject
+            imageData?.file, null, @rotationValueSubject
           )
         imageData
       isUploading: false
-      rotation: rotationValueSubject
+      rotation: @rotationValueSubject
       windowSize: @model.window.getSize()
+
+  beforeUnmount: =>
+    @rotationValueSubject.next null
 
   render: ({iconName} = {}) =>
     {imageData, rotation, isUploading, windowSize} = @state.getValue()
@@ -36,6 +39,9 @@ module.exports = class UploadImagePreview
 
     iconName ?= 'upload'
 
+    isRotated = rotation in ['rotate-90', 'rotate-270']
+    maxWidth = Math.min windowSize.width, 600
+
     if imageData.width
       imageAspectRatio = imageData.aspectRatio or (
         imageData.width / imageData.height
@@ -43,7 +49,7 @@ module.exports = class UploadImagePreview
       windowAspectRatio = windowSize.width / windowSize.height
       # 3:1, 1:1
       if imageAspectRatio > windowAspectRatio
-        previewWidth = Math.min windowSize.width, imageData.width
+        previewWidth = Math.min maxWidth, imageData.width
         previewHeight = previewWidth / imageAspectRatio
       else
         previewHeight = Math.min windowSize.height, imageData.height
@@ -53,10 +59,26 @@ module.exports = class UploadImagePreview
       previewWidth = undefined
 
     z '.z-upload-image-preview',
-      z "img.#{rotation or 'no-rotation'}",
-        src: imageData.dataUrl
-        width: previewWidth
-        height: previewHeight
+      z ".image-wrapper.#{rotation or 'no-rotation'}", {
+        style:
+          height: if isRotated \
+                  then "#{previewWidth + 50}px"
+                  else "#{previewHeight + 50}px"
+          # width: if isRotated \
+          #         then "#{previewHeight}px"
+          #         else "#{previewWidth}px"
+      },
+        z "img",
+          src: imageData.dataUrl
+          width: previewWidth
+          height: previewHeight
+          style:
+            marginTop: if isRotated \
+                       then "#{50 + (previewWidth - previewHeight) / 2}px"
+                       else '50px'
+            marginLeft: if isRotated \
+                       then "#{(previewHeight - previewWidth) / 2}px"
+                       else 0
       z '.close',
         z @$closeImagePreviewIcon,
           icon: 'close'

@@ -40,8 +40,8 @@ module.exports = class ImageModel
         result = parser.parse()
         rotation = switch result.tags.Orientation
                         when 3 then 'rotate-180'
-                        when 8 then 'rotate-90'
-                        when 6 then 'rotate-270'
+                        when 8 then 'rotate-270'
+                        when 6 then 'rotate-90'
                         else ''
         location = if result.tags.GPSLatitude \
                    then {lat: result.tags.GPSLatitude, lon: result.tags.GPSLongitude}

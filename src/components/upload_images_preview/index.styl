@@ -41,20 +41,24 @@
           font-caption1()
           margin: 0 4px
 
-    > img
-      margin-top: 16px
-      width: 100%
-      height: auto
-      max-width: 600px
-
+    > .image-wrapper
       &.rotate-180
-        transform: rotate(180deg)
+        > img
+          transform: rotate(180deg)
 
       &.rotate-90
-        transform: rotate(90deg)
+        > img
+          transform: rotate(90deg)
 
       &.rotate-270
-        transform: rotate(270deg)
+        > img
+          transform: rotate(270deg)
+
+      > img
+        margin-top: 16px
+        max-width: 100%
+        height: auto
+        // max-width: 600px
 
     > .location
       width: 100%

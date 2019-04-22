@@ -25,18 +25,24 @@ $zIndexImagePreviewClose = 2
     background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), getColor('$black'))
     z-index: $zIndexImagePreviewOverlay
 
-  > img
-    margin: auto
-    max-width: 100%
-
+  > .image-wrapper
     &.rotate-180
-      transform: rotate(180deg)
+      > img
+        transform: rotate(180deg)
 
     &.rotate-90
-      transform: rotate(90deg)
+      > img
+        transform: rotate(90deg)
 
     &.rotate-270
-      transform: rotate(270deg)
+      > img
+        transform: rotate(270deg)
+
+    > img
+      margin-top: 16px
+      max-width: 100%
+      height: auto
+      // max-width: 600px
 
   > .fab
     position: absolute

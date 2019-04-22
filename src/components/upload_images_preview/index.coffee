@@ -139,12 +139,14 @@ module.exports = class UploadImagesPreview
       tagValueSubject, tagsValueSubject} = multiImageData?[imageIndex] or {}
     imageData ?= {}
 
+    maxWidth = Math.min windowSize.width, 600
+
     if imageData.width
       imageAspectRatio = imageData.width / imageData.height
-      windowAspectRatio = windowSize.width / windowSize.height
+      windowAspectRatio = maxWidth / windowSize.height
       # 3:1, 1:1
       if imageAspectRatio > windowAspectRatio
-        previewWidth = Math.min windowSize.width, imageData.width
+        previewWidth = Math.min maxWidth, imageData.width
         previewHeight = previewWidth / imageAspectRatio
       else
         previewHeight = Math.min windowSize.height, imageData.height
@@ -153,6 +155,8 @@ module.exports = class UploadImagesPreview
       previewHeight = undefined
       previewWidth = undefined
 
+    isRotated = rotation in ['rotate-90', 'rotate-270']
+
     z '.z-upload-images-preview',
       z @$appBar,
         title: @model.l.get 'uploadImagesOverlay.title'
@@ -160,10 +164,26 @@ module.exports = class UploadImagesPreview
         z '.caption', {key: "upload-images-caption-#{imageIndex}"},
           z $captionInput,
             hintText: @model.l.get 'uploadImagesOverlay.captionHintText'
-        z "img.#{rotation or 'no-rotation'}",
-          src: imageData.dataUrl
-          width: previewWidth
-          height: previewHeight
+        z ".image-wrapper.#{rotation or 'no-rotation'}", {
+          style:
+            height: if isRotated \
+                    then "#{previewWidth + 50}px"
+                    else "#{previewHeight + 50}px"
+            # width: if isRotated \
+            #         then "#{previewHeight}px"
+            #         else "#{previewWidth}px"
+        },
+          z "img",
+            src: imageData.dataUrl
+            width: previewWidth
+            height: previewHeight
+            style:
+              marginTop: if isRotated \
+                         then "#{50 + (previewWidth - previewHeight) / 2}px"
+                         else '50px'
+              marginLeft: if isRotated \
+                         then "#{(previewHeight - previewWidth) / 2}px"
+                         else 0
         if @requestTags
           z '.tags', {key: "upload-images-tags-#{imageIndex}"},
             z '.input',
