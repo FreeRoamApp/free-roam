@@ -99,6 +99,11 @@ class RouterService
 
   back: ({fromNative, fallbackPath} = {}) =>
     @removeOverlay()
+
+    overlays = @model.overlay.get()
+    unless _isEmpty overlays
+      return @model.overlay.close()
+
     if @onBackFn
       fn = @onBackFn()
       @onBack null

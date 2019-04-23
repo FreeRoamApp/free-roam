@@ -125,6 +125,7 @@ module.exports = class NewPlace
       if isReady
         @placeModel.upsert {
           name: @initialInfoFields.name.valueSubject.getValue()
+          details: @initialInfoFields.details?.valueSubject.getValue()
           location: locationValue
           subType: @initialInfoFields.subType?.valueSubject.getValue()
         }

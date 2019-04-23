@@ -12,7 +12,7 @@
   > .bar
     background: getColor('$tertiary0')
     width: 100%
-    min-height: 40px
+    min-height: 39px
     border-bottom: 1px solid getColor('$black12')
     box-sizing: border-box
     display: flex
@@ -49,36 +49,24 @@
       overflow-y: hidden
       -webkit-overflow-scrolling: touch
 
-      &.amenity
-        > .filter
-          border: 1px solid getColor('$green50026')
-
-          &.has-value
-            background: getColor('$green50026')
-            border: 1px solid getColor('$green500')
-
-      &.overnight
-        > .filter
-          border: 1px solid getColor('$blue50026')
-
-          &.has-value
-            background: getColor('$blue50026')
-            border: 1px solid getColor('$blue500')
-
       > .filter
         font-caption2(false)
         cursor: pointer
         display: inline-block
         background: getColor('$tertiary0')
-        border: 1px solid getColor('$primary100')
-        padding: 0 8px
-        border-radius: 10px
-        margin: 8px 4px
+        border: 1px solid getColor('$tertiary300')
+        padding: 4px 12px
+        border-radius: 16px
+        margin: 0 4px 8px 4px
         position: relative
 
         &.has-value
-          background: getColor('$primary50')
+          color: getColor('$primary500')
           border: 1px solid getColor('$primary500')
+
+          &.has-more
+            &:after
+              border-top: 4px solid getColor('$primary500')
 
         &.has-more
           padding-right: 24px
@@ -88,12 +76,12 @@
             position: absolute
             top: 50%
             margin-top: -2px
-            right: 8px
+            right: 10px
             width: 0
             height: 0
             border-left: 4px solid transparent
             border-right: 4px solid transparent
-            border-top: 4px solid getColor('$primary500')
+            border-top: 4px solid getColor('$tertiary800')
 
   > .filter-type-selector
     position: absolute

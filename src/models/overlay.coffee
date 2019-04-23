@@ -15,16 +15,19 @@ module.exports = class Overlay
   setData: (data) =>
     @_data.next data
 
+  get: =>
+    @overlays.getValue()
+
   get$: =>
     @overlays.map (overlays) -> _map overlays, '$'
 
   open: ($, {data, onComplete, onCancel} = {}) =>
-    @overlays.next _filter (@overlays.getValue() or []).concat(
+    newOverlays = _filter (@overlays.getValue() or []).concat(
       {$, onComplete, onCancel}
     )
+    @overlays.next newOverlays
 
-    window.location.hash = '#overlay' # for back button to work
-    window.addEventListener 'popstate', @closeFromBackButton
+    window.addEventListener 'backbutton', @closeFromBackButton
 
     @setData data # TODO: per-overlay data
 
@@ -38,9 +41,7 @@ module.exports = class Overlay
   close: ({action, response, isFromBackButton} = {}) =>
     overlays = @overlays.getValue()
 
-    window.removeEventListener 'popstate', @closeFromBackButton
-    unless isFromBackButton
-      window.history.back()
+    window.removeEventListener 'backbutton', @closeFromBackButton
 
     {onComplete, onCancel} = overlays.pop()
     if _isEmpty overlays

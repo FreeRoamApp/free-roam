@@ -13,13 +13,6 @@ module.exports = class InstallOverlay
     @$overflowIcon = new Icon()
     @$closeButton = new PrimaryButton()
 
-  # afterMount: =>
-  #   @router.onBack =>
-  #     @model.overlay.close()
-  #
-  # beforeUnmount: =>
-  #   @router.onBack null
-
   render: =>
     z '.z-install-overlay',
       z '.container',

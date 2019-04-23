@@ -36,11 +36,12 @@ $zIndexForm = 1
     z-index: $zIndexForm
 
     > .input
-      shadow-1()
+      // shadow-1()
       flex1()
+      font-h3()
       padding-left: 48px
-      border-radius: 16px
-      border: 1px solid getColor('$grey300')
+      border-radius: 8px
+      border: 2px solid getColor('$tertiary300')
       box-sizing: border-box
       transition: margin 0.1s
       -webkit-tap-highlight-color: transparent
@@ -49,8 +50,8 @@ $zIndexForm = 1
       outline: none
 
       &::placeholder
-        font-body1()
-        color: getColor('$bgText54')
+        font-h3()
+        color: getColor('$bgText87')
 
       &::-moz-placeholder
         line-height: 48px // should center in ff

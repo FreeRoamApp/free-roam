@@ -100,7 +100,7 @@ module.exports = class PlacesSearch
               z '.g-cols',
               _map dataTypes, (type) =>
                 {dataType, onclick, $checkbox, layer} = type
-                z '.g-col.g-xs-6.g-md-3',
+                z '.g-col.g-xs-12.g-md-3',
                   z 'label.type', {
                     onclick: ->
                       ga? 'send', 'event', 'mapSearch', 'dataType', dataType
@@ -108,20 +108,20 @@ module.exports = class PlacesSearch
                       "#{dataType}": true
                     }
                   },
-                    z '.checkbox',
-                      z $checkbox
                     z '.info',
                       z '.name', @model.l.get "placeTypes.#{dataType}"
                       z '.description',
                         @model.l.get "placeTypes.#{dataType}Description"
+                    z '.checkbox', z $checkbox
 
-          if _isEmpty locations
-            z '.done',
-              z @$doneButton,
-                text: @model.l.get 'general.done'
-                onclick: =>
-                  @isOpen.next false
-          else
+            if _isEmpty locations
+              z '.done',
+                z @$doneButton,
+                  text: @model.l.get 'general.done'
+                  onclick: =>
+                    @isOpen.next false
+
+          if not _isEmpty locations
             z '.locations',
               z '.title', @model.l.get 'placesSearch.locationsTitle'
               _map locations, (location) =>

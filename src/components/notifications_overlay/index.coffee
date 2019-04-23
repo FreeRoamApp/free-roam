@@ -19,13 +19,6 @@ module.exports = class NotificationsOverlay
       notifications: group.switchMap (group) =>
         @model.notification.getAll {groupId: group.id}
 
-  afterMount: =>
-    @router.onBack =>
-      @model.overlay.close()
-
-  beforeUnmount: =>
-    @router.onBack null
-
   render: =>
     {notifications} = @state.getValue()
 

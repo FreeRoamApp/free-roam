@@ -125,7 +125,8 @@ module.exports = class NewAmenity
           z '.name', @model.l.get 'newPlaceInitialInfo.where'
           z @$locationInput,
             hintText: @model.l.get 'newPlaceInitialInfo.coordinates', {
-              prettyType: 'Amenity'
+              replacements:
+                prettyType: 'Amenity'
             }
 
         z 'or', @model.l.get 'general.or'

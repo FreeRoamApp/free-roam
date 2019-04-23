@@ -38,9 +38,6 @@
       padding: 8px
       padding-top: 56px
 
-      > .done
-        margin-top: 16px
-
       > .locations, > .data-types
         shadow-1()
         background: getColor('$tertiary0')
@@ -49,28 +46,30 @@
         margin-top: 8px
 
         > .title
-          font-caption2()
+          font-title()
+          color: getColor('$primary500')
           padding: 0 8px
           margin-bottom: 8px
 
       > .data-types > .g-grid > .g-cols > .g-col
         > .type
           display: flex
-          align-items: flex-start
+          align-items: center
           padding: 0 8px
           cursor: pointer
 
           > .info
-            margin-left: 8px
-
             > .name
-              font-body1()
+              font-title()
 
             > .description
               font-caption2()
               white-space: nowrap
               overflow: hidden
               text-overflow: ellipsis
+
+          > .checkbox
+            margin-left: auto
 
       > .locations
         > .location
@@ -85,6 +84,10 @@
             margin-left: 8px
             color: getColor('$bgText54')
 
-  @media (min-width: $contentMaxWidth)
+  @media (min-width: $breakPointMedium)
+    > .overlay > .overlay-inner > .data-types > .g-grid > .g-cols > .g-col > .type
+      > .checkbox
+        margin-left: 8px
+
     > .overlay
       padding-bottom: 0 // get rid of bottom bar padding

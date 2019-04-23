@@ -50,6 +50,8 @@ module.exports = class PlaceReview
   render: =>
     {review, user} = @state.getValue()
 
+    console.log review
+
     {user, time} = review
 
     # thumbnailSize = if windowSize.width > 840 \

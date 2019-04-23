@@ -86,13 +86,6 @@ module.exports = class ProfileDialog
       blockedUserIds: [] # TODO: @model.userBlock.getAllIds()
       windowSize: @model.window.getSize()
 
-  afterMount: =>
-    @router.onBack =>
-      @selectedProfileDialogUser.next null
-
-  beforeUnmount: =>
-    @router.onBack null
-
   isLoadingByText: (text) =>
     {loadingItems} = @state.getValue()
     loadingItems.indexOf(text) isnt -1

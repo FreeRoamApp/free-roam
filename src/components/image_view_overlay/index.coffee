@@ -78,11 +78,7 @@ module.exports = class ImageViewOverlay
         , 0
     ).subscribe()
 
-    @router.onBack =>
-      @model.overlay.close()
-
   beforeUnmount: =>
-    @router.onBack null
     @mountDisposable?.unsubscribe()
 
   getDimensions: (aspectRatio) =>

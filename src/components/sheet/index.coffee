@@ -15,13 +15,6 @@ module.exports = class Sheet
     @$closeButton = new FlatButton()
     @$submitButton = new FlatButton()
 
-  afterMount: =>
-    @router.onBack =>
-      @model.overlay.close()
-
-  # beforeUnmount: =>
-  #   @model.overlay.close()
-
   render: ({icon, message, submitButton, $content}) =>
     z '.z-sheet',
       z '.overlay',

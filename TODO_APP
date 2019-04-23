@@ -1,26 +1,19 @@
 TODOS:
 
-- Review revamp
-  x location null
-  x carrier broken
-  - thank you
-  x onprogress not working on prod
-  x season colors
-  x fix image uploads glitching out?
-  x error messages
-    x new place
-    x new review
-  x save carriers localstorage
-  x autosave
-    n message when saved?
-    x new place
-    x new review
-  x clear autosave when submitted
+- Social
+  - Friend system
+  - User current locations table, elasticsearch
+    - Go stale after 14 days
+    - Check-in updates it
+  - Nearby page, section with location and button to set to current location
 
+
+- Go through existing reviews and mark overnight reviews_by_userId as such (currently a mixture of campground and null)
+- Delete overnight_reviews_by_userId, campground_reviews_by_userId???, amenity...
 x Image is uploaded sideways
 x Back button should close overlay
 - Search by address in main search and when adding check-in to trip
-- iOS add campground in drawer text doesn't show
+x iOS add campground in drawer text doesn't show
 - Ability to save offline data to SD card?
 x BLM overlay sometimes disappears. Probably has to do with ordering of showing them on load
 - Username in sidebar when logged in
@@ -222,6 +215,23 @@ n usfs roads?
 - Add gyms
 x Don't load nearby map until tab is active
 x only 6% go to nearby tab from main tab
+
+x Review revamp
+  x location null
+  x carrier broken
+  x thank you
+  x onprogress not working on prod
+  x season colors
+  x fix image uploads glitching out?
+  x error messages
+    x new place
+    x new review
+  x save carriers localstorage
+  x autosave
+    n message when saved?
+    x new place
+    x new review
+  x clear autosave when submitted
 
 x Places nearby: show closest & show all toggle (so it's not a bunch of walmarts)
   x went with fading out non-closest
