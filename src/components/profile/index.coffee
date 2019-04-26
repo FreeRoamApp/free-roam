@@ -32,6 +32,9 @@ module.exports = class Profile
     @$editButton = new FlatButton()
     @$shareButton = new FlatButton()
 
+    @$messageButton = new PrimaryButton()
+    @$friendButton = new PrimaryButton()
+
     @$editUsernameIcon = new Icon()
 
     pastTrip = user.switchMap (user) =>
@@ -56,6 +59,8 @@ module.exports = class Profile
     @state = z.state {
       user
       me: @model.user.getMe()
+      isMessageLoading: false
+      isFriendLoading: false
       hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
       pastTrip: pastTrip
       futureTrip: user.switchMap (user) =>
@@ -73,7 +78,7 @@ module.exports = class Profile
     }
 
   render: =>
-    {user, me, pastTrip, futureTrip,
+    {user, me, pastTrip, futureTrip, isMessageLoading, isFriendLoading,
       hasSeenProfileCard, $links} = @state.getValue()
 
     cacheBust = new Date(pastTrip?.lastUpdateTime).getTime()
@@ -140,6 +145,35 @@ module.exports = class Profile
                   onclick: =>
                     @router.go 'editProfile'
           z '.bio', user?.bio
+
+          unless isMe
+            z '.actions',
+              z '.action',
+                z @$messageButton,
+                  text: if isMessageLoading \
+                        then @model.l.get 'general.loading'
+                        else @model.l.get 'general.messageVerb'
+                  onclick: =>
+                    @state.set isMessageLoading: true
+                    @model.conversation.create {
+                      userIds: [user.id]
+                    }
+                    .then (conversation) =>
+                      @state.set isMessageLoading: false
+                      @router.go 'conversation', {id: conversation.id}
+              z '.action',
+                z @$friendButton,
+                  isOutline: true
+                  text: if isFriendLoading \
+                        then @model.l.get 'general.loading'
+                        else @model.l.get 'profile.sendFriendRequest'
+                  onclick: =>
+                    @state.set isFriendLoading: true
+                    @model.connectionRequest.upsertByUserIdAndType {
+                      userId: user.id, type: 'friendRequest'
+                    }
+                    .then =>
+                      @state.set isFriendLoading: false
 
           unless _isEmpty $links
             z '.links',

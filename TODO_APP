@@ -2,12 +2,24 @@ TODOS:
 
 - Social
   - Friend system
+    - Normal friends, but be able to eventually support "Follow"
+      - user_followers, user_following, type=friend???
+      - following + followed = friend?
+
+
   - User current locations table, elasticsearch
-    - Go stale after 14 days
+    - Only fetch where time < 14 days old
     - Check-in updates it
+    - Don't pass back actual locations, just mileage away in brackets:
+      - < 5 mi, rounded to nearest 5
   - Nearby page, section with location and button to set to current location
+  - when opening coordinate picker, show current user_location
+  - Roamers empty state
+  - Onboard / enable feature
 
-
+- Remove "Trail" campgrounds
+- Editing review, carrier info doesn't load in properly
+x Rachel edited review, star rating doesn't show, noise is wrong 2
 - Go through existing reviews and mark overnight reviews_by_userId as such (currently a mixture of campground and null)
 - Delete overnight_reviews_by_userId, campground_reviews_by_userId???, amenity...
 x Image is uploaded sideways

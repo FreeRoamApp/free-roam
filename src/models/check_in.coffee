@@ -21,10 +21,6 @@ module.exports = class CheckIn
     }
     .then (response) =>
       invalidateTripMap = (trip) =>
-        console.log trip
-        console.log 'inv', {
-          userId: trip.userId, type: 'past'
-        }
         @auth.exoid.invalidate 'trips.getByUserIdAndType', {
           userId: trip.userId, type: 'past'
         }

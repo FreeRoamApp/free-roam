@@ -74,6 +74,7 @@
   "profileReviewsById": "/user/id/:id/reviews",
 
   "settings": "/settings",
+  "social": "/social",
   "shell": "/shell",
   "termsOfService": "/tos",
   "trip": "/trip/:id",

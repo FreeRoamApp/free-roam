@@ -1,0 +1,25 @@
+@require '../../vars'
+
+.z-friends
+  flex1()
+  width: 100%
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 10px 0 0 16px
+
+  > .no-friends
+    font-body1()
+    color: getColor('$tertiary900Text')
+    line-height: 20px
+    padding-top: 76px
+    text-align: center
+
+  > .g-grid
+    > .title
+      font-subhead()
+      color: getColor('$primary500')
+      margin: 0
+      padding: 16px 0
+
+    > .users
+      padding: 10px 0 0 16px

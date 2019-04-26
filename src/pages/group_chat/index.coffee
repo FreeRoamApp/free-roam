@@ -8,7 +8,7 @@ require 'rxjs/add/observable/combineLatest'
 
 GroupChat = require '../../components/group_chat'
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 ChannelDrawer = require '../../components/channel_drawer'
 ProfileDialog = require '../../components/profile_dialog'
 GroupUserSettingsDialog = require '../../components/group_user_settings_dialog'
@@ -23,11 +23,10 @@ BOTTOM_BAR_HIDE_DELAY_MS = 500
 
 module.exports = class GroupChatPage
   isGroup: true
-  @hasBottomBar: true
 
   constructor: (options) ->
     {@model, requests, @router, serverData,
-      @group, @$bottomBar} = options
+      @group} = options
 
     conversationId = requests.map ({route}) ->
       route.params.conversationId
@@ -79,11 +78,11 @@ module.exports = class GroupChatPage
     # i think this breaks switching groups (leaves getMessagesStream as prev val)
     .publishReplay(1).refCount()
 
-    @hasBottomBarObs = @model.window.getBreakpoint().map (breakpoint) ->
-      breakpoint in ['mobile', 'tablet']
+    # @hasBottomBarObs = @model.window.getBreakpoint().map (breakpoint) ->
+    #   breakpoint in ['mobile', 'tablet']
 
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$settingsIcon = new Icon()
     @$linkIcon = new Icon()
     @$channelsIcon = new Icon()
@@ -97,9 +96,9 @@ module.exports = class GroupChatPage
       isLoading: isLoading
       conversation: conversation
       minId: minId
-      onScrollUp: @showBottomBar
-      onScrollDown: @hideBottomBar
-      hasBottomBar: @hasBottomBarObs
+      # onScrollUp: @showBottomBar
+      # onScrollDown: @hideBottomBar
+      # hasBottomBar: @hasBottomBarObs
     }
 
     @$profileDialog = new ProfileDialog {
@@ -125,7 +124,7 @@ module.exports = class GroupChatPage
       isOpen: @isChannelDrawerOpen
     }
 
-    @isBottomBarVisible = false
+    # @isBottomBarVisible = false
 
     @state = z.state
       breakpoint: @model.window.getBreakpoint()
@@ -134,40 +133,40 @@ module.exports = class GroupChatPage
       selectedProfileDialogUser: selectedProfileDialogUser
       isChannelDrawerOpen: @isChannelDrawerOpen
       conversation: conversation
-      shouldShowBottomBar: @hasBottomBarObs
+      # shouldShowBottomBar: @hasBottomBarObs
 
   afterMount: (@$$el) =>
-    @isMounted = true
-    @$$content = @$$el?.querySelector '.content'
-    @isBottomBarVisible = true
-
-    @hideTimeout = setTimeout @hideBottomBar, BOTTOM_BAR_HIDE_DELAY_MS
-    @mountDisposable = @hasBottomBarObs.subscribe (hasBottomBar) =>
-      if not hasBottomBar and @isBottomBarVisible
-        @hideBottomBar()
-      else if hasBottomBar and not @isBottomBarVisible
-        @showBottomBar()
-
-  showBottomBar: =>
-    {shouldShowBottomBar} = @state.getValue()
-    if shouldShowBottomBar and not @isBottomBarVisible and @isMounted
-      @isBottomBarVisible = true
-      @$bottomBar.show()
-      @$$content.style.transform = 'translateY(0)'
-
-  hideBottomBar: =>
-    return # TODO: re-enable when chat is more active / has scrolling
-    {shouldShowBottomBar} = @state.getValue()
-    if shouldShowBottomBar and @isBottomBarVisible and @isMounted
-      @isBottomBarVisible = false
-      @$bottomBar.hide()
-      @$$content.style.transform = 'translateY(64px)'
+    # @isMounted = true
+    # @$$content = @$$el?.querySelector '.content'
+  #   @isBottomBarVisible = true
+  #
+  #   @hideTimeout = setTimeout @hideBottomBar, BOTTOM_BAR_HIDE_DELAY_MS
+  #   @mountDisposable = @hasBottomBarObs.subscribe (hasBottomBar) =>
+  #     if not hasBottomBar and @isBottomBarVisible
+  #       @hideBottomBar()
+  #     else if hasBottomBar and not @isBottomBarVisible
+  #       @showBottomBar()
+  #
+  # showBottomBar: =>
+  #   {shouldShowBottomBar} = @state.getValue()
+  #   if shouldShowBottomBar and not @isBottomBarVisible and @isMounted
+  #     @isBottomBarVisible = true
+  #     @$bottomBar.show()
+  #     @$$content.style.transform = 'translateY(0)'
+  #
+  # hideBottomBar: =>
+  #   return # TODO: re-enable when chat is more active / has scrolling
+  #   {shouldShowBottomBar} = @state.getValue()
+  #   if shouldShowBottomBar and @isBottomBarVisible and @isMounted
+  #     @isBottomBarVisible = false
+  #     @$bottomBar.hide()
+  #     @$$content.style.transform = 'translateY(64px)'
 
   beforeUnmount: =>
-    @showBottomBar()
-    clearTimeout @hideTimeout
-    @isMounted = false
-    @mountDisposable?.unsubscribe()
+    # @showBottomBar()
+    # clearTimeout @hideTimeout
+    # @isMounted = false
+    # @mountDisposable?.unsubscribe()
 
   getMeta: =>
     {
@@ -183,7 +182,7 @@ module.exports = class GroupChatPage
     shouldShowBottomBar ?= @model.window.getBreakpointVal() in ['tablet', 'mobile']
 
     z '.p-group-chat', {
-      className: z.classKebab {shouldShowBottomBar}
+      # className: z.classKebab {shouldShowBottomBar}
     },
       z @$appBar, {
         isFullWidth: true
@@ -195,7 +194,7 @@ module.exports = class GroupChatPage
           z '.channel',
             z 'span.hashtag', '#'
             conversation?.data?.name
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         $topRightButton:
           z '.p-group-chat_top-right',
             z '.icon',
@@ -217,7 +216,7 @@ module.exports = class GroupChatPage
         z @$groupChat
         if breakpoint in ['desktop']
           z @$channelDrawer
-      @$bottomBar
+      # @$bottomBar
 
       if selectedProfileDialogUser
         z @$profileDialog

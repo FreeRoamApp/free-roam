@@ -67,6 +67,17 @@
           > .text
             display: none
 
+        > .notification
+          &.is-visible
+            display: block
+
+          width: 6px
+          height: 6px
+          display: none
+          border-radius: 50%
+          background: getColor('$primary500')
+          margin-left: 8px
+
 
   @media (min-width: $breakPointMedium)
     height: 64px

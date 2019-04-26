@@ -1,5 +1,5 @@
 module.exports = class PlaceBase
-  constructor: ({@auth}) -> null
+  constructor: ({@auth, @l}) -> null
 
   getPath: (place, router) ->
     router.get place.type, {slug: place.slug}
@@ -20,3 +20,13 @@ module.exports = class PlaceBase
 
   getNearestAmenitiesById: (id) =>
     @auth.stream "#{@namespace}.getNearestAmenitiesById", {id}
+
+  getName: (place) ->
+    if place?.name
+      place?.name
+    else if place?.address
+      "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+    else if place
+      @l.get 'general.unknown'
+    else
+      '...'

@@ -2,6 +2,7 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Icon = require '../icon'
+FlatButton = require '../flat_button'
 MapTooltip = require '../map_tooltip'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -12,7 +13,7 @@ if window?
 module.exports = class EditTripTooltip extends MapTooltip
   constructor: ({@model, @router, @place, @position, @mapSize, @onSave}) ->
     @$closeIcon = new Icon()
-    @$saveIcon = new Icon()
+    @$actionButton = new FlatButton()
     @size = new RxBehaviorSubject {width: 0, height: 0}
 
     @state = z.state {
@@ -56,20 +57,16 @@ module.exports = class EditTripTooltip extends MapTooltip
         z '.title', place?.name
         if place?.description
           z '.description', place?.description
-        z '.actions',
-          z '.action', {
+      z '.actions',
+        z '.action',
+          z @$actionButton, {
             onclick: =>
               @state.set isSaving: true
               @onSave place
               .then =>
                 @state.set isSaved: true, isSaving: false
-          },
-            z '.icon',
-              z @$saveIcon,
-                icon: 'add'
-                isTouchTarget: false
-                color: colors.$bgText54
-            z '.text',
+            text:
               if isSaving then @model.l.get 'general.saving'
               else if isSaved then @model.l.get 'general.saved'
               else @model.l.get 'editTripTooltip.addToTrip'
+          }

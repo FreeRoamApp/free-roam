@@ -15,13 +15,25 @@
     display: flex
     position: relative
 
+    > .search
+      position: absolute
+      left: 0
+      top: 0
+      width: 100%
+      height: 100%
+
     > .toggle-satellite
       font-caption1()
       cursor: pointer
       position: absolute
-      top: 8px
+      bottom: 80px
       left: 8px
       z-index: 100
       background: getColor('$tertiary0')
       padding: 0 4px
       border-radius: 2px
+
+    > .my-location-fab
+      position: absolute
+      bottom: 8px
+      left: 8px

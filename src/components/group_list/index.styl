@@ -1,0 +1,43 @@
+@require '../../vars'
+
+.z-group-list
+  > .g-grid
+    > .title
+      font-title()
+      color: getColor('$primary500')
+
+  > .no-groups
+    > .g-grid
+      box-sizing: border-box
+      padding: 16px
+      text-align: center
+
+  > .groups
+    > .g-grid
+      > .g-cols
+        > .g-col
+          > .group
+            shadow-1()
+            background: getColor('$tertiary0')
+            border-radius: 2px
+            display: flex
+            align-items: center
+            height: 80px
+
+            > .image
+              width: 137px
+              height: 80px
+              background: url($cdnUrl + '/freeroam_group.png')
+              background-size: 100%
+
+            > .content
+              padding: 8px 24px
+              white-space: nowrap
+              overflow: hidden
+
+              > .name
+                font-title()
+
+              > .count
+                font-caption2()
+                margin-top: 2px

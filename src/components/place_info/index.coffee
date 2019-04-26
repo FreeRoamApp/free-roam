@@ -110,6 +110,8 @@ module.exports = class PlaceInfo extends Base
     {place, amenities, hasSeenRespectCard,
       season, windowSize} = @state.getValue()
 
+    console.log 'place', place
+
     {place, $videos, cellCarriers} = place or {}
 
     cellBarsWidthPx = Math.min(
@@ -296,7 +298,7 @@ module.exports = class PlaceInfo extends Base
                 z '.section',
                   z '.title', @model.l.get 'campground.noise'
                   z @$noiseInfoLevel, {
-                    value: place?.noise
+                    value: place?.noise['day']
                   }
               if place?.shade
                 z '.section',

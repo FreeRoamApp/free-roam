@@ -37,14 +37,6 @@ module.exports = class NavDrawer
       onClose: @model.drawer.close
     }
 
-    # don't need to slow down server-side rendering for this
-    hasUnreadMessages = if window?
-      @model.conversation.getAll().map (conversations) ->
-        hasWelcomeMessage = _isEmpty conversations
-        hasWelcomeMessage or _some conversations, {isRead: false}
-    else
-      RxObservable.of null
-
     me = @model.user.getMe()
     # settle as soon as one is ready, otherwise the nav menu might flash blank
     # while the others load
@@ -52,7 +44,6 @@ module.exports = class NavDrawer
       me
       group.startWith(null)
       @model.l.getLanguage().startWith(null)
-      hasUnreadMessages.startWith(null)
     )
 
     myGroups = me.switchMap (me) =>
@@ -90,7 +81,7 @@ module.exports = class NavDrawer
       drawerWidth: @model.window.getDrawerWidth()
       breakpoint: @model.window.getBreakpoint()
 
-      menuItems: menuItemsInfo.map ([me, group, language, hasUnreadMessages]) =>
+      menuItems: menuItemsInfo.map ([me, group, language]) =>
         meGroupUser = group?.meGroupUser
 
         userAgent = @model.window.getUserAgent()
@@ -111,19 +102,11 @@ module.exports = class NavDrawer
             isDefault: true
           }
           {
-            path: @model.group.getPath group, 'groupChat', {@router}
-            title: @model.l.get 'general.chat'
+            path: @router.get 'social'
+            title: @model.l.get 'general.social'
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'chat'
-          }
-          {
-            path: @router.get 'conversations'
-            title: @model.l.get 'drawer.privateMessages'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'chat-bubble'
-            hasNotification: hasUnreadMessages
           }
           # {
           #   path: @model.group.getPath group, 'groupForum', {@router}

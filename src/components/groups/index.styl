@@ -1,0 +1,26 @@
+@require '../../vars'
+
+.z-groups
+  flex1()
+  width: 100%
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 16px
+  box-sizing: border-box
+
+  > .unread-invites
+    display: flex
+    align-items: center
+    padding: 16px 0
+
+    > .icon
+      margin-right: 32px
+
+    > .chevron
+      margin-left: auto
+
+  > .group-list
+    > .g-grid
+      > .title
+        font-title()
+        color: getColor('$primary500')

@@ -2,6 +2,8 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _find = require 'lodash/find'
+_isEmpty = require 'lodash/isEmpty'
+_some = require 'lodash/some'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 
@@ -15,8 +17,17 @@ if window?
 
 module.exports = class BottomBar
   constructor: ({@model, @router, requests, group, @serverData}) ->
+    # don't need to slow down server-side rendering for this
+    hasUnreadMessages = if window?
+      @model.conversation.getAll().map (conversations) ->
+        hasWelcomeMessage = _isEmpty conversations
+        hasWelcomeMessage or _some conversations, {isRead: false}
+    else
+      RxObservable.of null
+
     @state = z.state
       me: @model.user.getMe()
+      hasUnreadMessages: hasUnreadMessages
       requests: requests
       group: group
       currentPath: requests.map ({req}) ->
@@ -32,7 +43,8 @@ module.exports = class BottomBar
     @$$el?.classList.remove 'is-hidden'
 
   render: ({isAbsolute} = {}) =>
-    {me, requests, group, currentPath, serverData} = @state.getValue()
+    {me, hasUnreadMessages, requests, group,
+      currentPath, serverData} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
     isLoaded = true # Boolean group
@@ -69,9 +81,10 @@ module.exports = class BottomBar
       }
       {
         $icon: new Icon()
-        icon: 'chat'
-        route: @model.group.getPath group, 'groupChat', {@router}
-        text: @model.l.get 'general.chat'
+        icon: 'chat-bubble'
+        route: @router.get 'social'
+        text: @model.l.get 'general.social'
+        hasNotification: hasUnreadMessages
       }
     ]
 

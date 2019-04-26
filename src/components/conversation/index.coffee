@@ -529,11 +529,7 @@ module.exports = class Conversation extends Base
     .then =>
       unless @model.cookie.get 'isPushTokenStored'
         @model.overlay.open new PushNotificationsSheet {@model, @router}
-      Promise.all _filter [
-        @model.group.joinById group.id
-        if group.star
-          @model.userFollower.followByUserId group.star?.user?.id
-      ]
+      @model.group.joinById group.id
       .then =>
         # just in case...
         setTimeout =>

@@ -2,19 +2,25 @@
 
 .z-edit-trip-tooltip
   tooltip()
+  display: flex
+  align-items: center
+  padding-right: 24px
 
   > .content
+    > .title
+      padding-right: 0
+      margin-bottom: 0
 
-    > .actions
-      display: flex
+  > .actions
+    display: flex
 
-      > .action
-        margin: 0 8px
-        text-align: center
-        cursor: pointer
+    > .action
+      margin: 0 8px
+      text-align: center
+      cursor: pointer
 
-        > .icon
-          margin-bottom: 2px
+      > .icon
+        margin-bottom: 2px
 
-        > .text
-          font-caption2()
+      > .text
+        font-caption2()

@@ -1,0 +1,24 @@
+
+
+@require '../../vars'
+
+.z-user-list
+  width: 100%
+
+  > .user
+    display: flex
+    align-items: center
+    padding: 10px 0
+    cursor: pointer
+
+    > .avatar
+      margin-right: 16px
+
+    > .right
+      padding: 0 16px 0 0
+      // flex1()
+      border-bottom: 1px solid getColor('$black12')
+
+      > .name
+        font-title()
+        color: getColor('$tertiary900Text')

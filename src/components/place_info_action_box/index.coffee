@@ -78,6 +78,7 @@ module.exports = class PlaceInfoActionBox
         sourceType: place.type
         sourceId: place.id
         status: status
+        setUserLocation: true
       }
       .then (checkIn) =>
         @state.set "#{status}Saving": false

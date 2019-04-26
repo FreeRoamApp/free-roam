@@ -22,7 +22,7 @@ module.exports = class Map
       @place, @placePosition, @mapSize, @initialZoom, @zoom, @initialCenter,
       @initialBounds, @route, @fill, @initialLayers, @center, @defaultOpacity,
       @onclick, @preserveDrawingBuffer, @onContentReady, @hideLabels,
-      @usePlaceNumbers} = options
+      @hideControls, @usePlaceNumbers} = options
 
     @place ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
@@ -275,7 +275,7 @@ module.exports = class Map
       @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapLocation
 
-      unless @hideLabels
+      if not @hideLabels and not @hideControls
         @map.addControl new mapboxgl.GeolocateControl({
           positionOptions:
             enableHighAccuracy: true

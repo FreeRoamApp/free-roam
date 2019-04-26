@@ -60,6 +60,7 @@ module.exports = class TabsBar
             _map items, (item, i) =>
               hasIcon = Boolean item.$menuIcon
               hasText = Boolean item.$menuText
+              hasNotification = item.hasNotification
               isSelected = i is selectedIndex
 
               z '.tab',
@@ -84,3 +85,9 @@ module.exports = class TabsBar
                       color: if isSelected then color else inactiveColor
                   },
                    item.$menuText
+
+                 z '.notification', {
+                   className: z.classKebab {
+                     isVisible: hasNotification
+                   }
+                 }

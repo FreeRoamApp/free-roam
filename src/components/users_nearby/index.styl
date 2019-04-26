@@ -1,0 +1,43 @@
+@require '../../vars'
+
+.z-users-nearby
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 16px 0
+
+  > .title
+    font-title()
+    padding: 0 16px
+
+  > .my-location
+    display: flex
+    align-items: center
+    padding: 0 16px
+    margin-bottom: 8px
+
+    > .location
+      color: getColor('$secondary500')
+      margin-left: 16px
+
+    > .change
+      margin-left: auto
+
+  > .users
+    > .user
+      display: flex
+      align-items: center
+      padding: 16px
+
+      > .info
+        margin-left: 16px
+
+        > .name
+          font-title()
+
+        > .location
+          font-caption3()
+
+      > .distance
+        color: getColor('$primary500')
+        margin-left: auto

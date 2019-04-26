@@ -9,11 +9,11 @@ module.exports = class Group
     }, {invalidateAll: true}
 
   getAll: ({filter, language, embed} = {}) =>
-    embed ?= ['conversations', 'star', 'userCount']
+    embed ?= ['channels', 'userCount']
     @auth.stream "#{@namespace}.getAll", {filter, language, embed}
 
   getAllByUserId: (userId, {embed} = {}) =>
-    embed ?= ['meGroupUser', 'conversations', 'star', 'userCount']
+    embed ?= ['meGroupUser', 'channels', 'userCount']
     @auth.stream "#{@namespace}.getAllByUserId", {userId, embed}
 
   getById: (id, {autoJoin} = {}) =>
