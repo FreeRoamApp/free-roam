@@ -63,6 +63,20 @@ module.exports = class Profile
       isFriendLoading: false
       hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
       pastTrip: pastTrip
+      isFriends: user.switchMap (user) =>
+        if user
+          @model.connection.isConnectedByUserIdAndType(
+            user.id, 'friend'
+          )
+        else
+          RxObservable.of false
+      isFriendRequested: user.switchMap (user) =>
+        if user
+          @model.connection.isConnectedByUserIdAndType(
+            user.id, 'friendRequestSent'
+          )
+        else
+          RxObservable.of false
       futureTrip: user.switchMap (user) =>
         if user
           @model.trip.getByUserIdAndType user.id, 'future'
@@ -79,6 +93,7 @@ module.exports = class Profile
 
   render: =>
     {user, me, pastTrip, futureTrip, isMessageLoading, isFriendLoading,
+      isFriends, isFriendRequested,
       hasSeenProfileCard, $links} = @state.getValue()
 
     cacheBust = new Date(pastTrip?.lastUpdateTime).getTime()
@@ -161,19 +176,23 @@ module.exports = class Profile
                     .then (conversation) =>
                       @state.set isMessageLoading: false
                       @router.go 'conversation', {id: conversation.id}
-              z '.action',
-                z @$friendButton,
-                  isOutline: true
-                  text: if isFriendLoading \
-                        then @model.l.get 'general.loading'
-                        else @model.l.get 'profile.sendFriendRequest'
-                  onclick: =>
-                    @state.set isFriendLoading: true
-                    @model.connectionRequest.upsertByUserIdAndType {
-                      userId: user.id, type: 'friendRequest'
-                    }
-                    .then =>
-                      @state.set isFriendLoading: false
+              unless isFriends
+                z '.action',
+                  z @$friendButton,
+                    isOutline: true
+                    text: if isFriendRequested \
+                          then @model.l.get 'profile.sentFriendRequest'
+                          else if isFriendLoading
+                          then @model.l.get 'general.loading'
+                          else @model.l.get 'profile.sendFriendRequest'
+                    onclick: =>
+                      unless isFriendRequested
+                        @state.set isFriendLoading: true
+                        @model.connection.upsertByUserIdAndType(
+                          user.id, 'friendRequestSent'
+                        )
+                        .then =>
+                          @state.set isFriendLoading: false
 
           unless _isEmpty $links
             z '.links',

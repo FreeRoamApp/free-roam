@@ -13,7 +13,7 @@ Base = require '../base'
 AttachmentsList = require '../attachments_list'
 FlatButton = require '../flat_button'
 TravelMap = require '../travel_map'
-EditTripTooltip = require '../edit_trip_tooltip'
+CheckInTooltip = require '../check_in_tooltip'
 LocationSearch = require '../location_search'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
@@ -52,7 +52,7 @@ module.exports = class EditTrip extends Base
     @place = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
-    @$editTripTooltip = new EditTripTooltip {
+    @$checkInTooltip = new CheckInTooltip {
       @model, @router, @place, position: @placePosition, @mapSize
       onSave: (place) =>
         @addCheckIn _defaults {
@@ -163,7 +163,8 @@ module.exports = class EditTrip extends Base
     z '.z-edit-trip',
       z '.map',
         z @$travelMap
-        z @$editTripTooltip
+        z @$checkInTooltip,
+          buttonText: @model.l.get 'editTripTooltip.addToTrip'
 
         if checkIns?.length > 1
           z '.places-along-route', {
@@ -179,7 +180,6 @@ module.exports = class EditTrip extends Base
           z @$locationSearch, {
             placeholder: @model.l.get 'editTrip.searchPlaceholder'
             locationsTitle: @model.l.get 'editTrip.locationsTitle'
-            isAppBar: false
           }
 
         z '.g-grid',

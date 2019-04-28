@@ -63,9 +63,8 @@ module.exports = class About
         z 'p', @model.l.get 'about.documents1'
         z 'ul',
           z 'li',
-            z 'a', {
+            @router.link z 'a', {
               href: 'https://fdn.uno/d/documents/irs-determination.pdf'
-              target: '_system'
             }, @model.l.get 'about.irsDetermination'
 
         z '.divider.clear'

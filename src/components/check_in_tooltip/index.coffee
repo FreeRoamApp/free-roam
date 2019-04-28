@@ -10,7 +10,7 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-module.exports = class EditTripTooltip extends MapTooltip
+module.exports = class CheckInTooltip extends MapTooltip
   constructor: ({@model, @router, @place, @position, @mapSize, @onSave}) ->
     @$closeIcon = new Icon()
     @$actionButton = new FlatButton()
@@ -29,7 +29,7 @@ module.exports = class EditTripTooltip extends MapTooltip
   getThumbnailUrl: (place) ->
     null
 
-  render: ({isVisible} = {}) =>
+  render: ({isVisible, buttonText} = {}) =>
     {place, mapSize, size, isSaving, isSaved} = @state.getValue()
 
     isVisible ?= Boolean place and Boolean size.width
@@ -37,7 +37,7 @@ module.exports = class EditTripTooltip extends MapTooltip
     anchor = @getAnchor place?.position, mapSize, size
     transform = @getTransform place?.position, anchor
 
-    z ".z-edit-trip-tooltip.anchor-#{anchor}", {
+    z ".z-check-in-tooltip.anchor-#{anchor}", {
       className: z.classKebab {isVisible, @isImageLoaded}
       style:
         transform: transform
@@ -65,8 +65,11 @@ module.exports = class EditTripTooltip extends MapTooltip
               @onSave place
               .then =>
                 @state.set isSaved: true, isSaving: false
+                setTimeout =>
+                  @state.set isSaved: false
+                , 1000
             text:
               if isSaving then @model.l.get 'general.saving'
               else if isSaved then @model.l.get 'general.saved'
-              else @model.l.get 'editTripTooltip.addToTrip'
+              else buttonText
           }

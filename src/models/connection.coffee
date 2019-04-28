@@ -9,8 +9,16 @@ module.exports = class Connection
   getAllByType: (type) =>
     @auth.stream "#{@namespace}.getAllByType", {type}
 
+  getAllGrouped: (type) =>
+    @auth.stream "#{@namespace}.getAllGrouped", {type}
+
   upsertByUserIdAndType: (userId, type) =>
     @auth.call "#{@namespace}.upsertByUserIdAndType", {userId, type}, {
+      invalidateAll: true
+    }
+
+  acceptRequestByUserIdAndType: (userId, type) =>
+    @auth.call "#{@namespace}.acceptRequestByUserIdAndType", {userId, type}, {
       invalidateAll: true
     }
 
@@ -18,3 +26,8 @@ module.exports = class Connection
     @auth.call "#{@namespace}.deleteByUserIdAndType", {userId, type}, {
       invalidateAll: true
     }
+
+  isConnectedByUserIdAndType: (userId, type) =>
+    @getAllGrouped()
+    .map (groupedIds) ->
+      groupedIds?[type] and groupedIds[type].indexOf(userId) isnt -1

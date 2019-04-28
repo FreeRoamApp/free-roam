@@ -10,7 +10,7 @@ Fab = require '../fab'
 Icon = require '../icon'
 Map = require '../map'
 LocationSearch = require '../location_search'
-EditTripTooltip = require '../edit_trip_tooltip'
+CheckInTooltip = require '../check_in_tooltip'
 MapService = require '../../services/map'
 colors = require '../../colors'
 
@@ -19,7 +19,7 @@ if window?
 
 module.exports = class CoordinatePicker
   constructor: (options) ->
-    {@model, @router, @coordinates, @coordinatesSteams, @onPick
+    {@model, @router, @coordinates, @coordinatesSteams, @onPick, @pickButtonText
       center, initialZoom} = options
 
     @$appBar = new AppBar {@model}
@@ -31,10 +31,14 @@ module.exports = class CoordinatePicker
 
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
-    @$editTripTooltip = new EditTripTooltip {
+    @$checkInTooltip = new CheckInTooltip {
       @model, @router, position: @placePosition, @mapSize
       place: @places.map (places) -> places?[0]
-      onSave: @onPick
+      onSave: =>
+        @onPick arguments...
+        .then =>
+          @model.overlay.close()
+
     }
     @$locationSearch = new LocationSearch {
       @model, @router
@@ -103,7 +107,8 @@ module.exports = class CoordinatePicker
       z '.map',
         z '.search',
           z @$locationSearch
-        z @$editTripTooltip
+        z @$checkInTooltip,
+          buttonText: @pickButtonText or @model.l.get 'general.select'
         z '.toggle-satellite', {
           onclick: @toggleSatellite
         },

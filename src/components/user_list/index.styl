@@ -1,24 +1,30 @@
-
-
 @require '../../vars'
 
 .z-user-list
   width: 100%
 
   > .user
+    background: getColor('$tertiary0')
     display: flex
     align-items: center
-    padding: 10px 0
+    padding: 16px
     cursor: pointer
 
     > .avatar
       margin-right: 16px
 
-    > .right
-      padding: 0 16px 0 0
+    > .info
       // flex1()
-      border-bottom: 1px solid getColor('$black12')
 
       > .name
         font-title()
         color: getColor('$tertiary900Text')
+
+    > .right
+      font-caption3()
+      margin-left: auto
+      display: flex
+      align-items: center
+
+      > .icon
+        margin-right: 8px

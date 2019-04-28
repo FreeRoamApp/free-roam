@@ -66,6 +66,7 @@ User = require './user'
 UserBlock = require './user_block'
 UserLocation = require './user_location'
 UserRig = require './user_rig'
+UserSettings = require './user_settings'
 Drawer = require './drawer'
 EarnAlert = require './earn_alert'
 Overlay = require './overlay'
@@ -196,6 +197,7 @@ module.exports = class Model
     @userBlock = new UserBlock {@auth}
     @userLocation = new UserLocation {@auth}
     @userRig = new UserRig {@auth}
+    @userSettings = new UserSettings {@auth}
 
     @drawer = new Drawer()
     @earnAlert = new EarnAlert()

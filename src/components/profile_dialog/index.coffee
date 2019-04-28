@@ -80,6 +80,20 @@ module.exports = class ProfileDialog
           @model.ban.getByGroupIdAndUserId group.id, user.id
         else
           RxObservable.of null
+      isFriends: @selectedProfileDialogUser.switchMap (user) =>
+        if user
+          @model.connection.isConnectedByUserIdAndType(
+            user.id, 'friend'
+          )
+        else
+          RxObservable.of false
+      isFriendRequested: @selectedProfileDialogUser.switchMap (user) =>
+        if user
+          @model.connection.isConnectedByUserIdAndType(
+            user.id, 'friendRequestSent'
+          )
+        else
+          RxObservable.of false
       group: group
       loadingItems: []
       expandedItems: []
@@ -260,7 +274,8 @@ module.exports = class ProfileDialog
     ]
 
   getUserOptions: =>
-    {me, user, blockedUserIds, isFlagged, group} = @state.getValue()
+    {me, user, blockedUserIds, isFlagged,
+      isFriends, isFriendRequested, group} = @state.getValue()
 
     isBlocked = @model.userBlock.isBlocked blockedUserIds, user?.id
 
@@ -273,7 +288,10 @@ module.exports = class ProfileDialog
         text: @model.l.get 'general.profile'
         # isVisible: not isMe
         onclick: =>
-          @router.go 'profile', {username: user?.username}
+          if user?.username
+            @router.go 'profile', {username: user?.username}
+          else
+            @router.go 'profileById', {id: user?.id}
           @selectedProfileDialogUser.next null
       }
       {
@@ -295,6 +313,28 @@ module.exports = class ProfileDialog
               @router.go 'conversation', {id: conversation.id}
               @selectedProfileDialogUser.next null
       }
+      unless isFriends
+        {
+          icon: 'add-friend'
+          $icon: @$friendIcon
+          text:
+            if isFriendRequested
+            then @model.l.get 'profile.sentFriendRequest'
+            else if @isLoadingByText @model.l.get 'profile.addFriend'
+            then @model.l.get 'general.loading'
+            else @model.l.get 'profile.addFriend'
+          isVisible: not isMe
+          onclick: =>
+            isLoading = @isLoadingByText @model.l.get 'profile.addFriend'
+            unless isLoading or isFriendRequested
+              @setLoadingByText @model.l.get 'profile.addFriend'
+              @model.connection.upsertByUserIdAndType(
+                user.id, 'friendRequestSent'
+              )
+              .then =>
+                @unsetLoadingByText @model.l.get 'profile.addFriend'
+                # @selectedProfileDialogUser.next null
+        }
       unless user?.flags?.isModerator
         {
           icon: 'block'
@@ -390,8 +430,8 @@ module.exports = class ProfileDialog
                 if not _isEmpty user?.groupUser?.roleNames
                   z '.roles', user?.groupUser?.roleNames.join ', '
                 z '.links',
-                  _map $links, ({$icon, link, type}) ->
-                    z 'a.link', {
+                  _map $links, ({$icon, link, type}) =>
+                    @router.link z 'a.link', {
                       href: link
                       target: '_system'
                       rel: 'nofollow'

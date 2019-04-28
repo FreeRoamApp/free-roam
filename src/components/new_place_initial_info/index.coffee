@@ -92,6 +92,13 @@ module.exports = class NewPlaceInitialInfo
                 onclick: =>
                   @model.overlay.open new CoordinatePicker {
                     @model, @router
+                    onPick: (place) =>
+                      lat = Math.round(10000 * place.location.lat) / 10000
+                      lon = Math.round(10000 * place.location.lon) / 10000
+                      @fields.location.valueStreams.next RxObservable.of(
+                        "#{lat}, #{lon}"
+                      )
+                      Promise.resolve null
                     coordinatesSteams: @fields.location.valueStreams
                   }
 

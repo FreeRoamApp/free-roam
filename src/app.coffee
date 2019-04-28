@@ -290,7 +290,7 @@ module.exports = class App
     route 'preservation', 'PreservationPage'
     route 'product', 'ProductPage'
     route 'productGuides', 'ProductGuidesPage'
-    route ['profile', 'profileMe'], 'ProfilePage'
+    route ['profile', 'profileMe', 'profileById'], 'ProfilePage'
     route ['profileAttachments', 'profileAttachmentsById'], 'ProfileAttachmentsPage'
     route ['profileReviews', 'profileReviewsById'], 'ProfileReviewsPage'
     route 'policies', 'PoliciesPage'

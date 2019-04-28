@@ -87,10 +87,10 @@ module.exports = class Map
     @$$mapEl = $$el.querySelector('.map')
 
     @model.additionalScript.add(
-      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.css"
+      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.54.0.css"
     )
     @model.additionalScript.add(
-      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.js"
+      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.54.0.js"
     )
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'

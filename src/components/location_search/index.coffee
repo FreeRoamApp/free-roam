@@ -49,13 +49,12 @@ module.exports = class LocationSearch
 
   render: (props = {}) =>
     {showDoneIfEmpty, $afterSearch, $beforeResults, $afterResults,
-      placeholder, locationsTitle, isAppBar} = props
+      placeholder, locationsTitle} = props
 
     {locations, isOpen} = @state.getValue()
 
     placeholder ?= @model.l.get 'placesSearch.placeholder'
     locationsTitle ?= @model.l.get 'placesSearch.locationsTitle'
-    isAppBar ?= true
 
     # if isOpen
     #   console.log @boundingRect
@@ -74,7 +73,6 @@ module.exports = class LocationSearch
             z @$searchInput, {
               clearOnBack: false
               height: '48px'
-              isAppBar: isAppBar
               alwaysShowBack: isOpen
               placeholder: if isOpen \
                            then @model.l.get 'placesSearch.openPlaceholder'

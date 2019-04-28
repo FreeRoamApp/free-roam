@@ -40,6 +40,8 @@ module.exports = class Overlay
 
   close: ({action, response, isFromBackButton} = {}) =>
     overlays = @overlays.getValue()
+    if _isEmpty overlays
+      return
 
     window.removeEventListener 'backbutton', @closeFromBackButton
 

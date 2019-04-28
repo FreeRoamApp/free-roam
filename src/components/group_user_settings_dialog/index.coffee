@@ -69,19 +69,30 @@ module.exports = class GroupUserSettingsDialog
         [group, conversation, me] = vals
 
         @model.subscription.getAllByGroupId group.id
-        .map (subscriptions) ->
+        .map (subscriptions) =>
           {
-            group: _map notificationTypes.group, (type) ->
+            group: _map notificationTypes.group, (type) =>
               isSubscribed = new RxBehaviorSubject(
                 _find(subscriptions, {
                   sourceType: type.sourceType
                 })?.isEnabled
               )
               _defaults {
-                $toggle: new Toggle {isSelected: isSubscribed}
+                $toggle: new Toggle {
+                  isSelected: isSubscribed
+                  onToggle: (isSelected) =>
+                    method = if isSelected \
+                             then @model.subscription.subscribe
+                             else @model.subscription.unsubscribe
+                    method {
+                      groupId: group.id
+                      isTopic: type.isTopic
+                      sourceType: type.sourceType
+                    }
+                }
                 isSelected: isSubscribed
               }, type
-            channel: _map notificationTypes.channel, (type) ->
+            channel: _map notificationTypes.channel, (type) =>
               isSubscribed = new RxBehaviorSubject(
                 (
                   _find(subscriptions, {sourceType: type.sourceType, sourceId: conversation.id})?.isEnabled or
@@ -89,7 +100,19 @@ module.exports = class GroupUserSettingsDialog
                 )
               )
               _defaults {
-                $toggle: new Toggle {isSelected: isSubscribed}
+                $toggle: new Toggle {
+                  isSelected: isSubscribed
+                  onToggle: (isSelected) =>
+                    method = if isSelected \
+                             then @model.subscription.subscribe
+                             else @model.subscription.unsubscribe
+                    method {
+                      groupId: group.id
+                      isTopic: type.isTopic
+                      sourceType: type.sourceType
+                      sourceId: conversation.id
+                    }
+                }
                 isSelected: isSubscribed
               }, type
           }
@@ -150,17 +173,7 @@ module.exports = class GroupUserSettingsDialog
                     z 'li.item',
                       z '.text', name
                       z '.toggle',
-                        z $toggle, {
-                          onToggle: (isSelected) =>
-                            method = if isSelected \
-                                     then @model.subscription.subscribe
-                                     else @model.subscription.unsubscribe
-                            method {
-                              groupId: group.id
-                              isTopic: isTopic
-                              sourceType: sourceType
-                            }
-                        }
+                        z $toggle
                 z '.title', @model.l.get 'groupSettings.channelNotifications'
                 z 'ul.list',
                   _map notificationTypes?.channel, (notificationType) =>
@@ -168,18 +181,7 @@ module.exports = class GroupUserSettingsDialog
                     z 'li.item',
                       z '.text', name
                       z '.toggle',
-                        z $toggle, {
-                          onToggle: (isSelected) =>
-                            method = if isSelected \
-                                     then @model.subscription.subscribe
-                                     else @model.subscription.unsubscribe
-                            method {
-                              groupId: group.id
-                              isTopic: isTopic
-                              sourceType: sourceType
-                              sourceId: conversation.id
-                            }
-                        }
+                        z $toggle
               ]
 
         cancelButton:

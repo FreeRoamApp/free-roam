@@ -23,6 +23,7 @@ BOTTOM_BAR_HIDE_DELAY_MS = 500
 
 module.exports = class GroupChatPage
   isGroup: true
+  hideDrawer: true
 
   constructor: (options) ->
     {@model, requests, @router, serverData,

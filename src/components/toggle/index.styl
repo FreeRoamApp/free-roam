@@ -39,7 +39,7 @@ $wideTrackWidth = 48px
       > .track
         padding-left: 3px
         text-align: left
-        color: getColor('$primary500Text')
+        color: getColor('$secondary500Text')
 
       > .knob
         transform: translate($wideTrackWidth - $knobRadius, 0)
@@ -47,9 +47,9 @@ $wideTrackWidth = 48px
 
   &.is-selected
     > .track
-      background: getColor('$primary200')
+      background: getColor('$secondary200')
 
     > .knob
-      background: getColor('$primary500')
+      background: getColor('$secondary500')
       transform: translate($trackWidth - $knobRadius, 0)
       transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)

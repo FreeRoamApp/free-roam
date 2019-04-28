@@ -5,3 +5,6 @@ module.exports = class UserLocation extends PlaceBase
 
   getByMe: =>
     @auth.stream "#{@namespace}.getByMe", {}
+
+  deleteByMe: =>
+    @auth.call "#{@namespace}.deleteByMe", {}

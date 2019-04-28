@@ -21,6 +21,9 @@ module.exports = class User
   getByUsername: (username) =>
     @auth.stream "#{@namespace}.getByUsername", {username}
 
+  search: ({query, limit}) =>
+    @auth.stream "#{@namespace}.search", {query, limit}
+
   getPartner: =>
     @auth.stream "#{@namespace}.getPartner", {}
 

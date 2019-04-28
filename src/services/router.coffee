@@ -45,6 +45,7 @@ class RouterService
       @router.go path
 
   go: (routeKey, replacements, options = {}) =>
+    @model.overlay.close() # if any are open...
     path = @get routeKey, replacements
     if options.qs
       @goPath "#{path}?#{qs.stringify options.qs}", options

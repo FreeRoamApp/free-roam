@@ -1,6 +1,7 @@
 z = require 'zorium'
 colors = require '../../colors'
 _isEmpty = require 'lodash/isEmpty'
+_map = require 'lodash/map'
 _filter = require 'lodash/filter'
 
 Icon = require '../icon'
@@ -16,7 +17,11 @@ module.exports = class Friends
     @$friendsIcon = new Icon()
 
     friends = @model.connection.getAllByType 'friend'
-    requests = @model.connection.getAllByType 'friendRequest'
+    .map (connections) ->
+      _map connections, (connection) -> connection?.other
+    requests = @model.connection.getAllByType 'friendRequestReceived'
+    .map (connections) ->
+      _map connections, (connection) -> connection?.other
 
     # onlineUsers = friends.map (friends) ->
     #   _filter friends, 'isOnline'
@@ -44,19 +49,23 @@ module.exports = class Friends
   render: =>
     {friends, requests, onlineUsersCount, friendsCount} = @state.getValue()
 
-    console.log 'friends', friends, requests
-
     z '.z-friends',
       if not _isEmpty requests
         z '.g-grid',
-        @$requestsList
+          z '.title', @model.l.get 'friends.requests'
+          z @$requestsList,
+            actionButton:
+              text: @model.l.get 'friends.accept'
+              onclick: (user) =>
+                console.log 'user', user
+                @model.connection.acceptRequestByUserIdAndType(
+                  user.id, 'friend'
+                )
       if friends and _isEmpty friends
-        z '.no-friends',
-          z @$friendsIcon,
-            icon: 'friends'
-            size: '100px'
-            color: colors.$black12
-          @model.l.get 'friends.emptyState'
+        z '.empty',
+          z '.image'
+          z '.title', @model.l.get 'friends.emptyTitle'
+          z '.description', @model.l.get 'friends.emptyDescription'
       else if friends
         z '.g-grid',
           # z 'h2.title',
@@ -65,8 +74,8 @@ module.exports = class Friends
           #   onlineUsersCount
           # @$onlineUsersList
 
-          # z 'h2.title',
-          #   @model.l.get 'friends.friendsAll'
+          z '.title',
+            @model.l.get 'friends.myFriends'
           #   z 'span', innerHTML: ' &middot; '
           #   friendsCount
           @$friendsList

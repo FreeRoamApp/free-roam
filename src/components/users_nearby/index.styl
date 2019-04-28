@@ -6,38 +6,98 @@
   -webkit-overflow-scrolling: touch
   padding: 16px 0
 
-  > .title
-    font-title()
-    padding: 0 16px
+  > .g-grid
 
-  > .my-location
-    display: flex
-    align-items: center
-    padding: 0 16px
-    margin-bottom: 8px
-
-    > .location
-      color: getColor('$secondary500')
-      margin-left: 16px
-
-    > .change
-      margin-left: auto
-
-  > .users
-    > .user
+    > .title
+      font-title()
+      padding: 0 16px
       display: flex
       align-items: center
-      padding: 16px
 
-      > .info
+      > .toggle
+        margin-left: auto
+        position: relative
+
+        > .helper-arrow
+          position: absolute
+          top: 36px
+          left: 12px
+          width: 18px
+          height: 47px
+          background: url($cdnUrl + '/enable_location_arrow.svg')
+          background-size: 100%
+
+    > .my-location
+      display: flex
+      align-items: center
+      padding: 0 16px
+      margin-bottom: 8px
+
+      > .location
+        color: getColor('$secondary500')
         margin-left: 16px
 
-        > .name
-          font-title()
-
-        > .location
-          font-caption3()
-
-      > .distance
-        color: getColor('$primary500')
+      > .change
         margin-left: auto
+
+    > .empty
+      text-align: center
+      max-width: 270px
+      margin: 24px auto 0 auto
+
+      > .image
+        width: 238px
+        height: 160px
+        margin: 0 auto
+        background: url($cdnUrl + '/empty_state/nearby.svg')
+        background-size: 100%
+
+      > .title
+        font-title()
+        color: getColor('$primary500')
+        margin-top: 16px
+        margin-bottom: 8px
+
+      > .description
+        font-body2()
+
+    > .users
+      > .empty
+        text-align: center
+        max-width: 320px
+        margin: 24px auto 0 auto
+
+        > .image
+          width: 191px
+          height: 100px
+          margin: 0 auto
+          background: url($cdnUrl + '/empty_state/roamers.svg')
+          background-size: 100%
+
+        > .title
+          font-title()
+          color: getColor('$primary500')
+          margin-top: 16px
+          margin-bottom: 8px
+
+        > .description
+          font-body2()
+
+      > .user
+        display: flex
+        align-items: center
+        padding: 16px
+        cursor: pointer
+
+        > .info
+          margin-left: 16px
+
+          > .name
+            font-title()
+
+          > .location
+            font-caption3()
+
+        > .distance
+          color: getColor('$primary500')
+          margin-left: auto

@@ -67,6 +67,7 @@
   "productGuides": "/product-guides",
   "product": "/product/:slug",
   "profile": "/user/:username",
+  "profileById": "/user/id/:id",
   "profileMe": "/profile",
   "profileAttachments": "/user/:username/media",
   "profileAttachmentsById": "/user/id/:id/media",

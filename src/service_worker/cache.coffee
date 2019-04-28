@@ -37,8 +37,8 @@ module.exports = class Cache
       mapbox: {
         version: 2 # bump when changing
         files: [
-          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.css"
-          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.51.0.js"
+          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.54.0.css"
+          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.54.0.js"
         ]
       }
 

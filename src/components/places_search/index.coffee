@@ -8,6 +8,7 @@ require 'rxjs/add/operator/debounceTime'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 
+Icon = require '../icon'
 SearchInput = require '../search_input'
 FlatButton = require '../flat_button'
 TooltipPositioner = require '../tooltip_positioner'
@@ -32,6 +33,13 @@ module.exports = class PlacesSearch
         @model.geocoder.autocomplete {query}
       else
         RxObservable.of []
+    .map (locations) ->
+      _map locations, (location) ->
+        $icon = if location.type is 'campground' then new Icon() else null
+        {
+          location
+          $icon
+        }
 
     @isOpen = new RxBehaviorSubject false
     @$searchInput = new SearchInput {
@@ -124,7 +132,7 @@ module.exports = class PlacesSearch
           if not _isEmpty locations
             z '.locations',
               z '.title', @model.l.get 'placesSearch.locationsTitle'
-              _map locations, (location) =>
+              _map locations, ({location, $icon}) =>
                 z '.location', {
                   onclick: =>
                     @model.geocoder.getBoundingFromLocation {
@@ -157,3 +165,14 @@ module.exports = class PlacesSearch
                       ]
                     else
                       location.administrativeArea
+                  z '.open',
+                    z $icon,
+                      icon: 'open'
+                      color: colors.$bgText54
+                      isTouchTarget: false
+                      size: '20px'
+                      onclick: =>
+                        console.log location
+                        @router.go 'campground', {
+                          slug: location.slug
+                        }

@@ -6,9 +6,9 @@ materialColors = require './material_colors'
 colors = _defaults {
   default:
     '--header-500': '#ffffff' # t100
-    '--header-500-text': '#C74800' # p500 materialColors.$black
+    '--header-500-text': materialColors.$black87
     '--header-500-text-54': materialColors.$black54
-    '--header-500-icon': materialColors.$black
+    '--header-500-icon': '#D25A00' # primary500
 
     '--primary-50': '#FAEBE0'
     '--primary-100': '#F2CEB3'

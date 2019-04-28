@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 _isEmpty = require 'lodash/isEmpty'
 _some = require 'lodash/some'
@@ -6,9 +7,12 @@ _some = require 'lodash/some'
 AppBar = require '../../components/app_bar'
 ButtonMenu = require '../../components/button_menu'
 Conversations = require '../../components/conversations'
+Fab = require '../../components/fab'
+FindFriends = require '../../components/find_friends'
 Friends = require '../../components/friends'
 Groups = require '../../components/groups'
 UsersNearby = require '../../components/users_nearby'
+ProfileDialog = require '../../components/profile_dialog'
 Icon = require '../../components/icon'
 Tabs = require '../../components/tabs'
 colors = require '../../colors'
@@ -21,18 +25,29 @@ module.exports = class SocialPage
   @hasBottomBar: true
 
   constructor: ({@model, @router, @$bottomBar}) ->
+    selectedIndex = new RxBehaviorSubject 0
+
     @$appBar = new AppBar {@model}
-    @$tabs = new Tabs {@model}
+    @$tabs = new Tabs {@model, selectedIndex}
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$chatIcon = new Icon()
     @$usersNearbyIcon = new Icon()
     @$pmsIcon = new Icon()
     @$friendsIcon = new Icon()
+    @$fabIcon = new Icon()
+    @$fab = new Fab()
+
+    @selectedProfileDialogUser = new RxBehaviorSubject null
 
     @$conversations = new Conversations {@model, @router}
-    @$friends = new Friends {@model, @router}
+    @$friends = new Friends {@model, @router, @selectedProfileDialogUser}
     @$groups = new Groups {@model, @router}
-    @$usersNearby = new UsersNearby {@model, @router}
+    @$usersNearby = new UsersNearby {
+      @model, @router, @selectedProfileDialogUser
+    }
+    @$profileDialog = new ProfileDialog {
+      @model, @router, @selectedProfileDialogUser
+    }
 
     # don't need to slow down server-side rendering for this
     hasUnreadMessages = if window?
@@ -44,6 +59,8 @@ module.exports = class SocialPage
 
     @state = z.state {
       hasUnreadMessages
+      @selectedProfileDialogUser
+      selectedIndex
     }
 
 
@@ -53,7 +70,8 @@ module.exports = class SocialPage
     }
 
   render: =>
-    {hasUnreadMessages} = @state.getValue()
+    {hasUnreadMessages, selectedProfileDialogUser,
+      selectedIndex} = @state.getValue()
 
     z '.p-social',
       z @$appBar, {
@@ -91,3 +109,22 @@ module.exports = class SocialPage
           }
         ]
       @$bottomBar
+
+      if selectedProfileDialogUser
+        z @$profileDialog, {user: selectedProfileDialogUser}
+
+      if selectedIndex is 3
+        z '.fab',
+          z @$fab,
+            colors:
+              c500: colors.$primary500
+            $icon: z @$fabIcon, {
+              icon: 'search'
+              isTouchTarget: false
+              color: colors.$primary500Text
+            }
+            onclick: =>
+              @model.overlay.open new FindFriends {
+                @model, @portal
+                @selectedProfileDialogUser
+              }

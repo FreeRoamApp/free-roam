@@ -1,23 +1,50 @@
 TODOS:
 
+- Fix "update available" in native app
 - Social
-  - Friend system
-    - Normal friends, but be able to eventually support "Follow"
-      - user_followers, user_following, type=friend???
-      - following + followed = friend?
+  - Urls for each social tab
+  - No users nearby state
+  - Friend notification circle on bottom bar, etc...
+  - Find friends fab on desktop
+  - Show avatars when searching for users
+  - larger avatars
+  - unfriend
+  - friends page tap friend should just go to profile (no dialog)
+  x when opening coordinate picker, show current user_location
+  x Only fetch where time < 14 days old
+  x Karma icon
+  x Turning off location deletes userLocation
+  x Don't show self in list
+  x Notification when friend request is accepted
+  x Friend system
+    x Normal friends, but be able to eventually support "Follow"
+      x user_followers, user_following, type=friend???
+      x following + followed = friend?
+  x Friend on profile dialog
+  x Don't update location w/ check-in if sharing is off
+  x User current locations table, elasticsearch
+    x Check-in updates it
+    x Don't pass back actual locations, just mileage away in brackets:
+      x < 5 mi, rounded to nearest 5
+  x Nearby page, section with location and button to set to current location
+  x Roamers empty state
+  x Onboard / enable feature
+  x arrow pointing to user location toggle
+  x find friends / search
+  x migrate users to elasticsearch
+    x do again after deploy
+  x sharing privacy
+    n user_privacy table?
+    x user_settings table?
+      x privacy: location: {everyone: true} # later could do friends, followers, group members
+  x show pending friend req on profile button
 
-
-  - User current locations table, elasticsearch
-    - Only fetch where time < 14 days old
-    - Check-in updates it
-    - Don't pass back actual locations, just mileage away in brackets:
-      - < 5 mi, rounded to nearest 5
-  - Nearby page, section with location and button to set to current location
-  - when opening coordinate picker, show current user_location
-  - Roamers empty state
-  - Onboard / enable feature
-
-- Remove "Trail" campgrounds
+x Base.upsertByRow when changing a primary key, delete old value before upserting
+  x Without this, previously used usernames are unusable by others, and we're getting dupe data
+- New PM option where someone can type in recipient username
+x When searching campground name, space causes it to not show
+x When searching campground, have button to go directly to page
+x Remove "Trail" campgrounds
 - Editing review, carrier info doesn't load in properly
 x Rachel edited review, star rating doesn't show, noise is wrong 2
 - Go through existing reviews and mark overnight reviews_by_userId as such (currently a mixture of campground and null)

@@ -5,21 +5,33 @@
   width: 100%
   overflow: auto
   -webkit-overflow-scrolling: touch
-  padding: 10px 0 0 16px
 
-  > .no-friends
-    font-body1()
-    color: getColor('$tertiary900Text')
-    line-height: 20px
-    padding-top: 76px
+  > .empty
     text-align: center
+    max-width: 300px
+    margin: 24px auto 0 auto
+
+    > .image
+      width: 226px
+      height: 150px
+      margin: 0 auto
+      background: url($cdnUrl + '/empty_state/friends.svg')
+      background-size: 100%
+
+    > .title
+      font-title()
+      color: getColor('$primary500')
+      margin-top: 16px
+      margin-bottom: 8px
+
+    > .description
+      font-body2()
 
   > .g-grid
     > .title
-      font-subhead()
-      color: getColor('$primary500')
+      font-title()
       margin: 0
-      padding: 16px 0
+      padding: 16px 16px 8px 16px
 
-    > .users
-      padding: 10px 0 0 16px
+    // > .users
+    //   padding: 10px 0 0 16px

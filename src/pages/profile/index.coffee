@@ -19,6 +19,8 @@ module.exports = class ProfilePage
     user = requests.switchMap ({route}) =>
       if route.params.username
         @model.user.getByUsername route.params.username
+      else if route.params.id
+        @model.user.getById route.params.id
       else
         @model.user.getMe()
 
