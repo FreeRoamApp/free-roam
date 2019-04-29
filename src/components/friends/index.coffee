@@ -33,6 +33,22 @@ module.exports = class Friends
     @$requestsList = new UserList {
       @model, selectedProfileDialogUser
       users: requests
+      actionButtons: [
+        {
+          text: @model.l.get 'friends.accept'
+          onclick: (user) =>
+            @model.connection.acceptRequestByUserIdAndType(
+              user.id, 'friend'
+            )
+        }
+        {
+          text: @model.l.get 'friends.decline'
+          onclick: (user) =>
+            @model.connection.deleteByUserIdAndType(
+              user.id, 'friendRequestReceived'
+            )
+        }
+      ]
     }
 
     @$friendsList = new UserList {
@@ -53,14 +69,7 @@ module.exports = class Friends
       if not _isEmpty requests
         z '.g-grid',
           z '.title', @model.l.get 'friends.requests'
-          z @$requestsList,
-            actionButton:
-              text: @model.l.get 'friends.accept'
-              onclick: (user) =>
-                console.log 'user', user
-                @model.connection.acceptRequestByUserIdAndType(
-                  user.id, 'friend'
-                )
+          z @$requestsList
       if friends and _isEmpty friends
         z '.empty',
           z '.image'

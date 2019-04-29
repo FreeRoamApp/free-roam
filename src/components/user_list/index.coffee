@@ -1,4 +1,5 @@
 z = require 'zorium'
+_isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 
 Avatar = require '../avatar'
@@ -10,19 +11,25 @@ if window?
   require './index.styl'
 
 module.exports = class UserList
-  constructor: ({@model, users, @selectedProfileDialogUser}) ->
+  constructor: ({@model, users, @selectedProfileDialogUser, actionButtons}) ->
     @state = z.state
       users: users.map (users) ->
         _map users, (user) ->
           {
             $avatar: new Avatar()
             $karmaIcon: new Icon()
-            $actionButton: new SecondaryButton()
+            actionButtons: _map actionButtons, (actionButton) ->
+              {
+                $button: new SecondaryButton()
+                actionButton
+              }
             userInfo: user
           }
 
-  render: ({onclick, actionButton} = {}) =>
+  render: ({onclick} = {}) =>
     {users} = @state.getValue()
+
+    console.log users
 
     z '.z-user-list',
       _map users, (user) =>
@@ -39,18 +46,20 @@ module.exports = class UserList
               bgColor: colors.$grey200
               size: '52px'
           z '.info',
-            z '.name', @model.user.getDisplayName user.userInfo
-          z '.right',
-            if actionButton
-              z user.$actionButton,
-                isOutline: true
-                heightPx: 28
-                text: actionButton.text
-                onclick: (e) ->
-                  e.stopPropagation()
-                  actionButton.onclick user.userInfo
-            else
-              [
+            z '.username', @model.user.getDisplayName user.userInfo
+            if not _isEmpty user.actionButtons
+              z '.actions',
+                _map user.actionButtons, ({actionButton, $button}) ->
+                  z '.action',
+                    z $button,
+                      isOutline: true
+                      heightPx: 28
+                      text: actionButton.text
+                      onclick: (e) ->
+                        e.stopPropagation()
+                        actionButton.onclick user.userInfo
+          if _isEmpty user.actionButtons
+            z '.right',
                 z '.icon',
                   z user.$karmaIcon,
                     icon: 'karma'
@@ -58,4 +67,3 @@ module.exports = class UserList
                     isTouchTarget: false
                     color: colors.$secondary500
                 user.userInfo.karma
-              ]

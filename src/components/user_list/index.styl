@@ -6,7 +6,6 @@
   > .user
     background: getColor('$tertiary0')
     display: flex
-    align-items: center
     padding: 16px
     cursor: pointer
 
@@ -15,10 +14,18 @@
 
     > .info
       // flex1()
+      margin: auto 0
 
-      > .name
+      > .username
         font-title()
         color: getColor('$tertiary900Text')
+
+      > .actions
+        display: flex
+        margin-top: 8px
+
+        > .action
+          margin-right: 8px
 
     > .right
       font-caption3()

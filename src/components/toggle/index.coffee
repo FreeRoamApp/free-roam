@@ -16,8 +16,10 @@ module.exports = class Toggle
     @state = z.state
       isSelected: @isSelectedStreams.switch()
 
-  render: ({withText} = {}) =>
+  render: ({onToggle, withText} = {}) =>
     {isSelected} = @state.getValue()
+
+    onToggle ?= @onToggle
 
     z '.z-toggle', {
       className: z.classKebab {isSelected, withText}
@@ -26,7 +28,7 @@ module.exports = class Toggle
           @isSelected.next not isSelected
         else
           @isSelectedStreams.next RxObservable.of not isSelected
-        @onToggle? not isSelected
+        onToggle? not isSelected
     },
       z '.track',
         if withText and isSelected

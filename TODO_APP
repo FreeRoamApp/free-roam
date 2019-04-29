@@ -2,14 +2,16 @@ TODOS:
 
 - Fix "update available" in native app
 - Social
-  - Urls for each social tab
-  - No users nearby state
-  - Friend notification circle on bottom bar, etc...
-  - Find friends fab on desktop
-  - Show avatars when searching for users
-  - larger avatars
   - unfriend
-  - friends page tap friend should just go to profile (no dialog)
+  - Urls for each social tab
+    - Would that screw with the back button? Need to have those not go into history, but still update url
+  - Friend notification circle on bottom bar, etc...
+  - friends page tap friend should just go to profile? (no dialog)
+  x Show avatars when searching for users
+  x Find friends fab on desktop
+  x No users nearby state
+  x Must login to befriend and enable location
+  x larger avatars
   x when opening coordinate picker, show current user_location
   x Only fetch where time < 14 days old
   x Karma icon
@@ -39,6 +41,7 @@ TODOS:
       x privacy: location: {everyone: true} # later could do friends, followers, group members
   x show pending friend req on profile button
 
+- Add military campgrounds
 x Base.upsertByRow when changing a primary key, delete old value before upserting
   x Without this, previously used usernames are unusable by others, and we're getting dupe data
 - New PM option where someone can type in recipient username

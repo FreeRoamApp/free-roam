@@ -28,16 +28,6 @@ module.exports = class UsersNearby
     @$changeButton = new FlatButton()
     @$toggle = new Toggle {
       @model, isSelectedStreams: @isLocationEnabledStreams
-      onToggle: (isSelected) =>
-        if isSelected
-          @openCoordinatePicker()
-        else
-          @model.userLocation.deleteByMe()
-        @model.userSettings.upsert {
-          privacy:
-            location:
-              everyone: Boolean isSelected
-        }
     }
 
     meAndUserLocations = RxObservable.combineLatest(
@@ -90,7 +80,20 @@ module.exports = class UsersNearby
         z '.title',
           z '.text', @model.l.get 'general.myLocation'
           z '.toggle',
-            z @$toggle
+            z @$toggle, {
+              onToggle: (isSelected) =>
+                @model.user.requestLoginIfGuest me
+                .then =>
+                  if isSelected
+                    @openCoordinatePicker()
+                  else
+                    @model.userLocation.deleteByMe()
+                  @model.userSettings.upsert {
+                    privacy:
+                      location:
+                        everyone: Boolean isSelected
+                  }
+            }
             unless isLocationEnabled
               z '.helper-arrow'
         if isLocationEnabled
@@ -134,7 +137,10 @@ module.exports = class UsersNearby
                     @selectedProfileDialogUser.next userLocation.user
                 },
                   z '.avatar',
-                    z $avatar, {user: userLocation.user}
+                    z $avatar, {
+                      user: userLocation.user
+                      size: '52px'
+                    }
                   z '.info',
                     z '.name',
                       @model.user.getDisplayName userLocation.user

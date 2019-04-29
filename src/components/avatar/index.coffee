@@ -46,7 +46,7 @@ module.exports = class Avatar
         z '.image',
           className: if rotation then z.classKebab {"#{rotation}": true}
           style:
-            backgroundImage: "url(#{src})"
+            backgroundImage: if user then "url(#{src})"
       # if level
       #   z '.level',  {
       #     style:

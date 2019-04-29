@@ -313,28 +313,41 @@ module.exports = class ProfileDialog
               @router.go 'conversation', {id: conversation.id}
               @selectedProfileDialogUser.next null
       }
-      unless isFriends
-        {
-          icon: 'add-friend'
-          $icon: @$friendIcon
-          text:
-            if isFriendRequested
-            then @model.l.get 'profile.sentFriendRequest'
-            else if @isLoadingByText @model.l.get 'profile.addFriend'
-            then @model.l.get 'general.loading'
-            else @model.l.get 'profile.addFriend'
-          isVisible: not isMe
-          onclick: =>
-            isLoading = @isLoadingByText @model.l.get 'profile.addFriend'
-            unless isLoading or isFriendRequested
-              @setLoadingByText @model.l.get 'profile.addFriend'
-              @model.connection.upsertByUserIdAndType(
-                user.id, 'friendRequestSent'
-              )
-              .then =>
-                @unsetLoadingByText @model.l.get 'profile.addFriend'
-                # @selectedProfileDialogUser.next null
-        }
+      {
+        icon: 'add-friend'
+        $icon: @$friendIcon
+        text:
+          if isFriends
+          then @model.l.get 'profile.unfriend'
+          else if isFriendRequested
+          then @model.l.get 'profile.sentFriendRequest'
+          else if @isLoadingByText @model.l.get 'profile.addFriend'
+          then @model.l.get 'general.loading'
+          else @model.l.get 'profile.addFriend'
+        isVisible: not isMe
+        onclick: =>
+          isLoading = @isLoadingByText @model.l.get 'profile.addFriend'
+          if not isLoading
+            @model.user.requestLoginIfGuest me
+            .then =>
+              if isFriends
+                isConfirmed = confirm @model.l.get 'profile.confirmUnfriend'
+                fn = =>
+                  @model.connection.deleteByUserIdAndType(
+                    user.id, 'friend'
+                  )
+              else
+                isConfirmed = true
+                fn = =>
+                  @model.connection.upsertByUserIdAndType(
+                    user.id, 'friendRequestSent'
+                  )
+              if isConfirmed and not isFriendRequested
+                @setLoadingByText @model.l.get 'profile.addFriend'
+                fn()
+                .then =>
+                  @unsetLoadingByText @model.l.get 'profile.addFriend'
+      }
       unless user?.flags?.isModerator
         {
           icon: 'block'

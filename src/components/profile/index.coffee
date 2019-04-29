@@ -5,6 +5,7 @@ _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 
 Avatar = require '../avatar'
+Base = require '../base'
 ButtonMenu = require '../button_menu'
 ButtonBack = require '../button_back'
 FlatButton = require '../flat_button'
@@ -22,7 +23,7 @@ if window?
 TODO: option to not share past/future trips (maybe mode on the trip itself?)
 ###
 
-module.exports = class Profile
+module.exports = class Profile extends Base
   constructor: ({@model, @router, user}) ->
     @$avatar = new Avatar()
 
@@ -37,14 +38,14 @@ module.exports = class Profile
 
     @$editUsernameIcon = new Icon()
 
-    pastTrip = user.switchMap (user) =>
+    @pastTrip = user.switchMap (user) =>
       if user
         @model.trip.getByUserIdAndType user.id, 'past'
       else
         RxObservable.of null
 
     @$shareMapDialog = new ShareMapDialog {
-      @model, trip: pastTrip
+      @model, trip: @pastTrip
       shareInfo: user.map (user) =>
         {
           text: @model.l.get 'editTrip.shareText'
@@ -62,7 +63,7 @@ module.exports = class Profile
       isMessageLoading: false
       isFriendLoading: false
       hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
-      pastTrip: pastTrip
+      pastTrip: @pastTrip.map (pastTrip) -> pastTrip or false
       isFriends: user.switchMap (user) =>
         if user
           @model.connection.isConnectedByUserIdAndType(
@@ -91,29 +92,48 @@ module.exports = class Profile
           }
     }
 
-  render: =>
-    {user, me, pastTrip, futureTrip, isMessageLoading, isFriendLoading,
-      isFriends, isFriendRequested,
-      hasSeenProfileCard, $links} = @state.getValue()
-
+  getCoverUrl: (pastTrip) ->
     cacheBust = new Date(pastTrip?.lastUpdateTime).getTime()
     prefix = pastTrip?.imagePrefix or 'trips/default'
     tripImage = @model.image.getSrcByPrefix(
       prefix, {size: 'large', cacheBust}
     )
 
+  afterMount: =>
+    super
+    # FIXME: figure out why i can't use take(1) here...
+    # returns null for some. probably has to do with the unloading we do in
+    # pages/base
+    @disposable = @pastTrip.subscribe (pastTrip) =>
+      @fadeInWhenLoaded @getCoverUrl(pastTrip)
+
+  beforeUnmount: =>
+    super
+    @disposable?.unsubscribe()
+
+  render: =>
+    {user, me, pastTrip, futureTrip, isMessageLoading, isFriendLoading,
+      isFriends, isFriendRequested,
+      hasSeenProfileCard, $links} = @state.getValue()
+
+    tripImage = @getCoverUrl pastTrip
+
     isMe = user and user?.id is me?.id
     pastTripPath = if isMe \
           then @router.get 'editTripByType', {type: 'past'}
           else @router.get 'trip', {id: pastTrip?.id}
 
-    z '.z-profile',
-      z '.header', {
-        style:
-          backgroundImage: "url(#{tripImage})"
-        onclick: =>
-          @router.goPath pastTripPath
-      },
+    z '.z-profile', {
+      className: z.classKebab {@isImageLoaded}
+    },
+      z '.header',
+        z '.cover', {
+          style:
+            backgroundImage:
+              if pastTrip? then "url(#{tripImage})"
+          onclick: =>
+            @router.goPath pastTripPath
+        }
         z '.menu', {
           onclick: (e) -> e?.stopPropagation()
         },
@@ -176,21 +196,34 @@ module.exports = class Profile
                     .then (conversation) =>
                       @state.set isMessageLoading: false
                       @router.go 'conversation', {id: conversation.id}
-              unless isFriends
-                z '.action',
-                  z @$friendButton,
-                    isOutline: true
-                    text: if isFriendRequested \
-                          then @model.l.get 'profile.sentFriendRequest'
-                          else if isFriendLoading
-                          then @model.l.get 'general.loading'
-                          else @model.l.get 'profile.sendFriendRequest'
-                    onclick: =>
-                      unless isFriendRequested
+              z '.action',
+                z @$friendButton,
+                  isOutline: true
+                  text: if isFriends \
+                        then @model.l.get 'profile.unfriend'
+                        else if isFriendRequested
+                        then @model.l.get 'profile.sentFriendRequest'
+                        else if isFriendLoading
+                        then @model.l.get 'general.loading'
+                        else @model.l.get 'profile.sendFriendRequest'
+                  onclick: =>
+                    @model.user.requestLoginIfGuest me
+                    .then =>
+                      if isFriends
+                        isConfirmed = confirm @model.l.get 'profile.confirmUnfriend'
+                        fn = =>
+                          @model.connection.deleteByUserIdAndType(
+                            user.id, 'friend'
+                          )
+                      else
+                        isConfirmed = true
+                        fn = =>
+                          @model.connection.upsertByUserIdAndType(
+                            user.id, 'friendRequestSent'
+                          )
+                      if isConfirmed and not isFriendRequested
                         @state.set isFriendLoading: true
-                        @model.connection.upsertByUserIdAndType(
-                          user.id, 'friendRequestSent'
-                        )
+                        fn()
                         .then =>
                           @state.set isFriendLoading: false
 

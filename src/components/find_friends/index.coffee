@@ -1,5 +1,7 @@
 z = require 'zorium'
-Rx = require 'rxjs'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _isEmpty = require 'lodash/isEmpty'
 
 UserList = require '../user_list'
@@ -14,7 +16,7 @@ SEARCH_DEBOUNCE = 300
 module.exports = class FindFriends
   constructor: ({@model, portal, selectedProfileDialogUser}) ->
 
-    @value = new Rx.BehaviorSubject ''
+    @value = new RxBehaviorSubject ''
 
     # TODO: add infinite scroll
     # tried comblineLatest w/ debounce stream and onscrollbottom stream,
@@ -26,7 +28,7 @@ module.exports = class FindFriends
             match_phrase_prefix:
               username: query
       else
-        Rx.Observable.of []
+        RxObservable.of []
 
     @$icon = new Icon()
     @$clear = new Icon()
