@@ -3,12 +3,12 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
+_filter = require 'lodash/filter'
 
 Avatar = require '../avatar'
 Base = require '../base'
 ButtonMenu = require '../button_menu'
 ButtonBack = require '../button_back'
-FlatButton = require '../flat_button'
 PrimaryButton = require '../primary_button'
 ShareMapDialog = require '../share_map_dialog'
 UiCard = require '../ui_card'
@@ -20,7 +20,7 @@ if window?
   require './index.styl'
 
 ###
-TODO: option to not share past/future trips (maybe mode on the trip itself?)
+TODO: separate out into profileInfo, profilePhotos and profileFriends
 ###
 
 module.exports = class Profile extends Base
@@ -30,13 +30,16 @@ module.exports = class Profile extends Base
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$buttonBack = new ButtonBack {@model, @router}
 
-    @$editButton = new FlatButton()
-    @$shareButton = new FlatButton()
-
     @$messageButton = new PrimaryButton()
     @$friendButton = new PrimaryButton()
 
+    @$editIcon = new Icon()
+    @$shareIcon = new Icon()
+    @$karmaIcon = new Icon()
     @$editUsernameIcon = new Icon()
+    @$reviewsChevronIcon = new Icon()
+    @$checkInsChevronIcon = new Icon()
+    @$plannedChevronIcon = new Icon()
 
     @pastTrip = user.switchMap (user) =>
       if user
@@ -64,6 +67,8 @@ module.exports = class Profile extends Base
       isFriendLoading: false
       hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
       pastTrip: @pastTrip.map (pastTrip) -> pastTrip or false
+      reviewCount: user.switchMap (user) =>
+        @model.placeReview.getCountByUserId user.id
       isFriends: user.switchMap (user) =>
         if user
           @model.connection.isConnectedByUserIdAndType(
@@ -84,12 +89,13 @@ module.exports = class Profile extends Base
         else
           RxObservable.of null
       $links: user.map (user) ->
-        _map user?.links, (link, type) ->
-          {
-            $icon: new Icon()
-            type: type
-            link: link
-          }
+        _filter _map user?.links, (link, type) ->
+          if link
+            {
+              $icon: new Icon()
+              type: type
+              link: link
+            }
     }
 
   getCoverUrl: (pastTrip) ->
@@ -113,7 +119,7 @@ module.exports = class Profile extends Base
 
   render: =>
     {user, me, pastTrip, futureTrip, isMessageLoading, isFriendLoading,
-      isFriends, isFriendRequested,
+      isFriends, isFriendRequested, reviewCount,
       hasSeenProfileCard, $links} = @state.getValue()
 
     tripImage = @getCoverUrl pastTrip
@@ -138,25 +144,23 @@ module.exports = class Profile extends Base
           onclick: (e) -> e?.stopPropagation()
         },
           if isMe
-            z @$buttonMenu, {color: colors.$header500Icon}
+            z @$buttonMenu, {color: colors.$bgText87}
           else
-            z @$buttonBack, {color: colors.$header500Icon}
+            z @$buttonBack, {color: colors.$bgText87}
         if isMe
           z '.buttons', {
             onclick: (e) -> e?.stopPropagation()
           },
             z '.edit',
-              z @$editButton,
-                text: @model.l.get 'general.edit'
-                colors:
-                  cText: colors.$bgText87
+              z @$editIcon,
+                icon: 'edit'
+                color: colors.$bgText87
                 onclick: =>
                   @router.go 'editProfile'
             z '.share',
-              z @$shareButton,
-                text: @model.l.get 'general.share'
-                colors:
-                  cText: colors.$bgText87
+              z @$shareIcon,
+                icon: 'share'
+                color: colors.$bgText87
                 onclick: =>
                   ga? 'send', 'event', 'profile', 'share', 'click'
                   @model.overlay.open @$shareMapDialog
@@ -166,10 +170,17 @@ module.exports = class Profile extends Base
             if isMe
               @router.go 'editProfile'
         },
-          z @$avatar, {user, size: '80px'}
+          z @$avatar, {user, size: '80px', hasBorder: false}
       z '.info',
         z '.g-grid',
-          z '.karma', "#{@model.l.get 'general.karma'}: #{user?.karma or 0}"
+          z '.karma',
+            z '.icon',
+              z @$karmaIcon,
+                icon: 'karma'
+                isTouchTarget: false
+                color: colors.$secondary500
+                size: '18px'
+            user?.karma or 0
           z '.name',
             @model.user.getDisplayName user
             if isMe and not user.username
@@ -268,38 +279,58 @@ module.exports = class Profile extends Base
                       @model.cookie.set 'hasSeenProfileCard', '1'
                 }
 
-            z '.g-cols',
-              z '.g-col.g-xs-12.md-12',
-                @router.link z 'a.box.reviews', {
-                  href: if user?.username \
-                      then @router.get 'profileReviews', {username: user?.username}
-                      else @router.get 'profileReviewsById', {id: user?.id}
-                },
-                  z '.title', @model.l.get 'general.reviews'
-              z '.g-col.g-xs-12.md-12',
-                z '.g-grid',
-                  z '.g-cols',
-                    z '.g-col.g-xs-6.md-6',
-                      @router.link z 'a.box.check-ins', {
-                        href: pastTripPath
-                      },
-                        z '.title',
-                          @model.l.get 'general.checkIns'
-                          " (#{pastTrip?.checkInIds?.length or 0})"
-                    z '.g-col.g-xs-6.md-6',
-                      @router.link z 'a.box.planned', {
-                        href: if isMe \
-                              then @router.get 'editTripByType', {type: 'future'}
-                              else @router.get 'trip', {id: futureTrip?.id}
-                      },
-                        z '.title',
-                          @model.l.get 'general.planned'
-                          " (#{futureTrip?.checkInIds?.length or 0})"
+            z '.g-grid',
+              z '.g-cols',
+                z '.g-col.g-xs-12.md-12',
+                  @router.link z 'a.box.reviews', {
+                    href: if user?.username \
+                        then @router.get 'profileReviews', {username: user?.username}
+                        else @router.get 'profileReviewsById', {id: user?.id}
+                  },
+                    z '.info',
+                      z '.count', reviewCount or 0
+                      z '.title', @model.l.get 'general.reviews'
+                    z '.chevron',
+                      z @$reviewsChevronIcon,
+                        icon: 'chevron-right'
+                        isTouchTarget: false
+                        color: colors.$white
+                z '.g-col.g-xs-12.md-12',
+                  z '.g-grid',
+                    z '.g-cols',
+                      z '.g-col.g-xs-6.md-6',
+                        @router.link z 'a.box.check-ins', {
+                          href: pastTripPath
+                        },
+                          z '.info',
+                            z '.count', pastTrip?.checkInIds?.length or 0
+                            z '.title',
+                              @model.l.get 'general.checkIns'
+                          z '.chevron',
+                            z @$checkInsChevronIcon,
+                              icon: 'chevron-right'
+                              isTouchTarget: false
+                              color: colors.$white
+                      z '.g-col.g-xs-6.md-6',
+                        @router.link z 'a.box.planned', {
+                          href: if isMe \
+                                then @router.get 'editTripByType', {type: 'future'}
+                                else @router.get 'trip', {id: futureTrip?.id}
+                        },
+                          z '.info',
+                            z '.count', futureTrip?.checkInIds?.length or 0
+                            z '.title',
+                              @model.l.get 'general.planned'
+                          z '.chevron',
+                            z @$plannedChevronIcon,
+                              icon: 'chevron-right'
+                              isTouchTarget: false
+                              color: colors.$white
 
-              z '.g-col.g-xs-12.md-12',
-                @router.link z 'a.box.photos', {
-                  href: if user?.username \
-                      then @router.get 'profileAttachments', {username: user?.username}
-                      else @router.get 'profileAttachmentsById', {id: user?.id}
-                },
-                  z '.title', @model.l.get 'general.photos'
+                z '.g-col.g-xs-12.md-12',
+                  @router.link z 'a.box.photos', {
+                    href: if user?.username \
+                        then @router.get 'profileAttachments', {username: user?.username}
+                        else @router.get 'profileAttachmentsById', {id: user?.id}
+                  },
+                    z '.title', @model.l.get 'general.photos'

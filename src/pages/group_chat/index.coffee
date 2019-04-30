@@ -211,7 +211,7 @@ module.exports = class GroupChatPage
                 onclick: =>
                   @isChannelDrawerOpen.next true
       }
-      z '.content', {
+      z '.content.g-grid', {
         key: 'group-chat-content' # since we change css (transform) manually
       },
         z @$groupChat

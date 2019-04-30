@@ -3,5 +3,14 @@ module.exports = class Notification
 
   constructor: ({@auth}) -> null
 
-  getAll: ({groupId}) =>
-    @auth.stream "#{@namespace}.getAll", {groupId}
+  ICON_MAP:
+    social: 'friends'
+    privateMessage: 'chat'
+    channelMessage: 'chat'
+    channelMention: 'chat'
+
+  getAll: =>
+    @auth.stream "#{@namespace}.getAll", {}
+
+  getUnreadCount: =>
+    @auth.stream "#{@namespace}.getUnreadCount", {}

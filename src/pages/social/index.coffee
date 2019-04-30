@@ -30,6 +30,7 @@ module.exports = class SocialPage
     @$appBar = new AppBar {@model}
     @$tabs = new Tabs {@model, selectedIndex}
     @$buttonMenu = new ButtonMenu {@model, @router}
+    @$notificationsIcon = new Icon()
     @$chatIcon = new Icon()
     @$usersNearbyIcon = new Icon()
     @$pmsIcon = new Icon()
@@ -61,6 +62,7 @@ module.exports = class SocialPage
       hasUnreadMessages
       @selectedProfileDialogUser
       selectedIndex
+      unreadNotifications: @model.notification.getUnreadCount()
     }
 
 
@@ -71,13 +73,20 @@ module.exports = class SocialPage
 
   render: =>
     {hasUnreadMessages, selectedProfileDialogUser,
-      selectedIndex} = @state.getValue()
-
+      selectedIndex, unreadNotifications} = @state.getValue()
     z '.p-social',
       z @$appBar, {
         title: @model.l.get 'socialPage.title'
         isFlat: true
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topRightButton:
+          z @$notificationsIcon,
+            icon: 'notifications'
+            color: if unreadNotifications \
+                   then colors.$primary500
+                   else colors.$bgText54
+            onclick: =>
+              @router.go 'notifications'
       }
       z @$tabs,
         isBarFixed: false

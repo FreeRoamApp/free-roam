@@ -63,12 +63,13 @@ module.exports = class ProfileDialog
     @state = z.state
       me: me
       $links: @selectedProfileDialogUser.map (user) ->
-        _map user?.links, (link, type) ->
-          {
-            $icon: new Icon()
-            type: type
-            link: link
-          }
+        _filter _map user?.links, (link, type) ->
+          if link
+            {
+              $icon: new Icon()
+              type: type
+              link: link
+            }
       meGroupUser: groupAndMe.switchMap ([group, me]) =>
         if group and me
           @model.groupUser.getByGroupIdAndUserId group.id, me.id

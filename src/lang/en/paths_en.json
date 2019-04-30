@@ -49,6 +49,7 @@
   "newOvernight": "/new-overnight",
   "newOvernightReview": "/overnight/:slug/new-review",
   "newTrip": "/new-trip",
+  "notifications": "/notifications",
 
   "overnight": "/overnight/:slug",
   "overnightAttachments": "/overnight/:slug/attachments",

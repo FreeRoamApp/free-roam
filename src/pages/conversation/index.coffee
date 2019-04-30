@@ -53,7 +53,8 @@ module.exports = class ConversationPage
         $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         isFullWidth: true
       }
-      @$conversation
+      z '.g-grid',
+        @$conversation
 
       if selectedProfileDialogUser
         z @$profileDialog, {user: selectedProfileDialogUser}

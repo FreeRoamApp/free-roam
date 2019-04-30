@@ -29,8 +29,9 @@ class PushService
         @firebaseMessaging = firebase.messaging()
 
   setFirebaseServiceWorker: (registration) =>
-    @isFirebaseImported.then =>
-      @resolveReady?()
+    if @isFirebaseImported
+      @isFirebaseImported.then =>
+        @resolveReady?()
 
   init: ({model}) ->
     onReply = (reply) ->

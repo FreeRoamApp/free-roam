@@ -30,7 +30,7 @@ module.exports = class AppBar
             gGrid: not isFullWidth
           }
         },
-          z '.top',
+          z '.top.g-grid',
             if $topLeftButton
               z '.top-left-button', {
                 style:
