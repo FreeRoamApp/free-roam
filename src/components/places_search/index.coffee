@@ -21,8 +21,11 @@ Icon = require '../icon'
 
 SEARCH_DEBOUNCE = 300
 
-module.exports = class PlacesSearch
-  constructor: ({@model, @router, @onclick, searchQuery}) ->
+module.exports = class LocationSearch
+  constructor: (options) ->
+    {@model, @router, @onclick, searchQuery, @persistValue,
+      @hasDirectPlaceLinks, @isAppBar} = options
+
     @searchValueStreams = new RxReplaySubject 1
     @searchValueStreams.next searchQuery or (new RxBehaviorSubject '')
 
@@ -59,8 +62,13 @@ module.exports = class PlacesSearch
       @isOpen
     }
 
-  render: ({dataTypes}) =>
+  render: (props = {}) =>
     {locations, isOpen} = @state.getValue()
+
+    {dataTypes, placeholder, locationsTitle} = props
+
+    placeholder ?= @model.l.get 'placesSearch.placeholder'
+    locationsTitle ?= @model.l.get 'placesSearch.locationsTitle'
 
     z '.z-places-search', {
       className: z.classKebab {isOpen}
@@ -70,7 +78,7 @@ module.exports = class PlacesSearch
           z @$searchInput, {
             clearOnBack: false
             height: '48px'
-            isAppBar: true
+            isAppBar: @isAppBar
             alwaysShowBack: isOpen
             placeholder: if isOpen \
                          then @model.l.get 'placesSearch.openPlaceholder'
@@ -101,33 +109,34 @@ module.exports = class PlacesSearch
         key: 'places-search-overlay'
       },
         z '.overlay-inner',
-          z '.data-types',
-            z '.title', @model.l.get 'placesSearch.dataTypesTitle'
+          if dataTypes
+            z '.data-types',
+              z '.title', @model.l.get 'placesSearch.dataTypesTitle'
 
-            z '.g-grid',
-              z '.g-cols',
-              _map dataTypes, (type) =>
-                {dataType, onclick, $checkbox, layer} = type
-                z '.g-col.g-xs-12.g-md-3',
-                  z 'label.type', {
-                    onclick: ->
-                      ga? 'send', 'event', 'mapSearch', 'dataType', dataType
-                    className: z.classKebab {
-                      "#{dataType}": true
-                    }
-                  },
-                    z '.info',
-                      z '.name', @model.l.get "placeTypes.#{dataType}"
-                      z '.description',
-                        @model.l.get "placeTypes.#{dataType}Description"
-                    z '.checkbox', z $checkbox
+              z '.g-grid',
+                z '.g-cols',
+                _map dataTypes, (type) =>
+                  {dataType, onclick, $checkbox, layer} = type
+                  z '.g-col.g-xs-12.g-md-3',
+                    z 'label.type', {
+                      onclick: ->
+                        ga? 'send', 'event', 'mapSearch', 'dataType', dataType
+                      className: z.classKebab {
+                        "#{dataType}": true
+                      }
+                    },
+                      z '.info',
+                        z '.name', @model.l.get "placeTypes.#{dataType}"
+                        z '.description',
+                          @model.l.get "placeTypes.#{dataType}Description"
+                      z '.checkbox', z $checkbox
 
-            if _isEmpty locations
-              z '.done',
-                z @$doneButton,
-                  text: @model.l.get 'general.done'
-                  onclick: =>
-                    @isOpen.next false
+              if _isEmpty locations
+                z '.done',
+                  z @$doneButton,
+                    text: @model.l.get 'general.done'
+                    onclick: =>
+                      @isOpen.next false
 
           if not _isEmpty locations
             z '.locations',
@@ -149,6 +158,9 @@ module.exports = class PlacesSearch
                         }
                       @onclick {
                         bbox: bboxWithPlaces, location: location.location
+                        text: location.name or location.text
+                        sourceType: location.type
+                        sourceId: location.id
                       }
                     @searchValueStreams.next RxObservable.of location.text
                     @isOpen.next false
@@ -165,14 +177,14 @@ module.exports = class PlacesSearch
                       ]
                     else
                       location.administrativeArea
-                  z '.open',
-                    z $icon,
-                      icon: 'open'
-                      color: colors.$bgText54
-                      isTouchTarget: false
-                      size: '20px'
-                      onclick: =>
-                        console.log location
-                        @router.go 'campground', {
-                          slug: location.slug
-                        }
+                  if location.type and @hasDirectPlaceLinks
+                    z '.open',
+                      z $icon,
+                        icon: 'open'
+                        color: colors.$bgText54
+                        isTouchTarget: false
+                        size: '20px'
+                        onclick: =>
+                          @router.go 'campground', {
+                            slug: location.slug
+                          }

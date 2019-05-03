@@ -69,14 +69,14 @@
     color: getColor('$white')
 
   &.is-floating
-    min-height: 56px
+    min-height: 52px
 
     > .hint
-      transform: translate(16px, 20px)
-      font-size: 16px
+      font-input()
+      transform: translate(0, 20px)
 
     > .textarea
-      padding: 24px 16px 0 16px
+      padding: 24px 0 0 0
       height: 72px
       box-sizing: border-box
 
@@ -86,7 +86,7 @@
   &.is-floating&.is-focused, &.is-floating&.has-value
     > .hint
       font-size: 12px
-      transform: translate(16px, 6px)
+      transform: translate(0, 6px)
       display: block
 
   &:not(.is-floating)&.has-value

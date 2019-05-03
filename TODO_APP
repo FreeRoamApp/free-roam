@@ -1,18 +1,21 @@
 TODOS:
 
-- Logging into Rachel's account on Kindle didn't login until refreshing (close/open app)
+- Great National Forest areas here in NW Florida..Apalachicola National Forest has lots of boondocking opportunities, terrik
+x Products search is broken
+x Logging into Rachel's account on Kindle didn't login until refreshing (close/open app)
+  x think this is fixed now
 - Profile janky load w/ buttons then they hide
 - If push notification errors, try next token? Or just send to all tokens in general
   - Current system switches to next token after 10 consec errors
 - Android reply to push notification not sending until app is opened
 x Web icon link shows when it shouldn't
 - Social
-  - Campgrounds don't show in search when updating location
-  - "Show satellite" is on top of placesSearch when updating location
+  x Campgrounds don't show in search when updating location
   - Urls for each social tab
     - Would that screw with the back button? Need to have those not go into history, but still update url
   - Friend notification circle on bottom bar, etc...
   - friends page tap friend should just go to profile? (no dialog)
+  x "Show satellite" is on top of placesSearch when updating location
   x Fix "update available" in native app. Service worker seems to install correctly, but doesn't fire the updatefound event
     x Appears to be issue with the SW registering, it throws an error that is caught in promise (~L17 in service_worker.coffee)
     x Issue was firebase registration throwing JS error

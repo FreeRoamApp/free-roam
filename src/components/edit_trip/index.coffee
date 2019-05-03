@@ -14,7 +14,7 @@ AttachmentsList = require '../attachments_list'
 FlatButton = require '../flat_button'
 TravelMap = require '../travel_map'
 CheckInTooltip = require '../check_in_tooltip'
-LocationSearch = require '../location_search'
+PlacesSearch = require '../places_search'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
 config = require '../../config'
@@ -28,9 +28,9 @@ if window?
 
 module.exports = class EditTrip extends Base
   constructor: ({@model, @router, @trip}) ->
-    @$locationSearch = new LocationSearch {
+    @$placesSearch = new PlacesSearch {
       @model, @router
-      onclick: (location) =>
+      onclick: ({location}) =>
         @addCheckIn {
           name: location.text
           location: location.location
@@ -177,7 +177,7 @@ module.exports = class EditTrip extends Base
             @model.l.get 'editTrip.findAlongRoute'
       z '.info',
         z '.overlay',
-          z @$locationSearch, {
+          z @$placesSearch, {
             placeholder: @model.l.get 'editTrip.searchPlaceholder'
             locationsTitle: @model.l.get 'editTrip.locationsTitle'
           }

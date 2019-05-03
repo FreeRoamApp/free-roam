@@ -1,4 +1,5 @@
 {
+  "general.about": "About",
   "general.accept": "Accept",
   "general.add": "Add",
   "general.amenity": "Facility",
@@ -89,6 +90,7 @@
   "general.search": "Search",
   "general.select": "Select",
   "general.season": "season",
+  "general.settings": "Settings",
   "general.share": "Share",
   "general.shop": "Shop",
   "general.signIn": "Sign in",
@@ -178,6 +180,7 @@
   "editProfile.avatarButtonText": "Upload photo",
   "editProfile.changeAvatar": "Change avatar",
   "editProfile.logoutButtonText": "Logout",
+  "editProfile.logoutConfirm": "Are you sure you want to logout?",
   "editProfile.newPassword": "New password...",
   "editProfile.currentPassword": "Current password...",
   "editRigDialog.title": "Rig info",

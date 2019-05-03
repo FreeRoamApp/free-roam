@@ -130,8 +130,8 @@ module.exports = class PlacesMapContainer
       @model, @router, @place, position: @placePosition, @mapSize
     }
     @$placesSearch = new PlacesSearch {
-      @model, @router, searchQuery
-      onclick: ({location, bbox, name}) =>
+      @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
+      onclick: ({location, bbox}) =>
         @addPlacesStreams.next RxObservable.of [{
           location: location
           name: @model.l.get 'placesMapContainer.yourSearchQuery'

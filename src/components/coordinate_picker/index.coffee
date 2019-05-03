@@ -9,7 +9,7 @@ ButtonBack = require '../button_back'
 Fab = require '../fab'
 Icon = require '../icon'
 Map = require '../map'
-LocationSearch = require '../location_search'
+PlacesSearch = require '../places_search'
 CheckInTooltip = require '../check_in_tooltip'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -40,7 +40,7 @@ module.exports = class CoordinatePicker
           @model.overlay.close()
 
     }
-    @$locationSearch = new LocationSearch {
+    @$placesSearch = new PlacesSearch {
       @model, @router
       onclick: (location) =>
         @placePosition.next @$map.map.project location.location
@@ -106,7 +106,7 @@ module.exports = class CoordinatePicker
       }
       z '.map',
         z '.search',
-          z @$locationSearch
+          z @$placesSearch
         z @$checkInTooltip,
           buttonText: @pickButtonText or @model.l.get 'general.select'
         z '.toggle-satellite', {

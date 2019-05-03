@@ -12,11 +12,11 @@ module.exports = class AppBar
     @model.window.getAppBarHeight()
 
   render: (options) ->
-    {$topLeftButton, $topRightButton, title, bgColor, color, isFlat,
-      style, isFullWidth} = options
+    {$topLeftButton, $topRightButton, title, bgColor, color, isFlat, isPrimary
+      isFullWidth} = options
 
-    color ?= colors.$header500Text
-    bgColor ?= colors.$header500
+    color ?= if isPrimary then colors.$primary500Text else colors.$header500Text
+    bgColor ?= if isPrimary then colors.$primary500 else colors.$header500
 
     z 'header.z-app-bar', {
       className: z.classKebab {isFlat}

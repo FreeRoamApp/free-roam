@@ -30,22 +30,23 @@ module.exports = class ImageModel
 
 
   parseExif: (file, locationValueSubject, rotationValueSubject) =>
-    @additionalScript.add(
-      'js', 'https://fdn.uno/d/scripts/exif-parser.min.js'
-    ).then ->
-      reader = new FileReader()
-      reader.onload = (e) ->
-        parser = window.ExifParser.create(e.target.result)
-        parser.enableSimpleValues true
-        result = parser.parse()
-        rotation = switch result.tags.Orientation
-                        when 3 then 'rotate-180'
-                        when 8 then 'rotate-270'
-                        when 6 then 'rotate-90'
-                        else ''
-        location = if result.tags.GPSLatitude \
-                   then {lat: result.tags.GPSLatitude, lon: result.tags.GPSLongitude}
-                   else null
-        rotationValueSubject?.next rotation
-        locationValueSubject?.next location
-      reader.readAsArrayBuffer file
+    if file.type.indexOf('jpeg') isnt -1
+      @additionalScript.add(
+        'js', 'https://fdn.uno/d/scripts/exif-parser.min.js'
+      ).then ->
+        reader = new FileReader()
+        reader.onload = (e) ->
+          parser = window.ExifParser.create(e.target.result)
+          parser.enableSimpleValues true
+          result = parser.parse()
+          rotation = switch result.tags.Orientation
+                          when 3 then 'rotate-180'
+                          when 8 then 'rotate-270'
+                          when 6 then 'rotate-90'
+                          else ''
+          location = if result.tags.GPSLatitude \
+                     then {lat: result.tags.GPSLatitude, lon: result.tags.GPSLongitude}
+                     else null
+          rotationValueSubject?.next rotation
+          locationValueSubject?.next location
+        reader.readAsArrayBuffer file

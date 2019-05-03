@@ -24,6 +24,7 @@ module.exports = class Items extends Base
           @model.item.search {
             query:
               multi_match:
+                type: 'phrase_prefix'
                 query: filter.value
                 fields: ['name', 'what', 'why']
           }

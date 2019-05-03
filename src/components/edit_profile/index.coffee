@@ -1,21 +1,13 @@
 z = require 'zorium'
-Environment = require '../../services/environment'
-RxReplaySubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
-require 'rxjs/add/operator/map'
-require 'rxjs/add/operator/switchMap'
-_map = require 'lodash/map'
-_startCase = require 'lodash/startCase'
-_find = require 'lodash/find'
 
 Avatar = require '../avatar'
 Icon = require '../icon'
+EditProfileGeneral = require '../edit_profile_general'
 UploadOverlay = require '../upload_overlay'
-PrimaryButton = require '../primary_button'
-FlatButton = require '../flat_button'
-PrimaryInput = require '../primary_input'
-PrimaryTextarea = require '../primary_textarea'
-RigInfo = require '../rig_info'
+Tabs = require '../tabs'
+Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -26,61 +18,48 @@ B_IN_MB = 1024 * 1024
 
 module.exports = class EditProfile
   constructor: ({@model, @router, group}) ->
-    me = @model.user.getMe()
+    @me = @model.user.getMe()
 
     @$avatar = new Avatar()
-    @$avatarButton = new PrimaryButton()
     @$uploadOverlay = new UploadOverlay {@model}
-
-    @$saveButton = new PrimaryButton()
-    @$cacheSizeButton = new FlatButton()
-    @$clearCacheButton = new FlatButton()
-
-    @$rigInfo = new RigInfo {@model, @router}
-
-    @usernameValueStreams = new RxReplaySubject 1
-    @usernameValueStreams.next me.map (me) ->
-      me.username or ''
-    @usernameError = new RxBehaviorSubject null
-    @$usernameInput = new PrimaryInput
-      valueStreams: @usernameValueStreams
-      error: @usernameError
-
-    @instagramValueStreams = new RxReplaySubject 1
-    @instagramValueStreams.next me.map (me) ->
-      me.links?.instagram or ''
-    @$instagramInput = new PrimaryInput
-      valueStreams: @instagramValueStreams
-
-    @webValueStreams = new RxReplaySubject 1
-    @webValueStreams.next me.map (me) ->
-      me.links?.web or ''
-    @$webInput = new PrimaryInput
-      valueStreams: @webValueStreams
-
-    @bioValueStreams = new RxReplaySubject 1
-    @bioValueStreams.next me.map (me) ->
-      me.bio or ''
-    @$bioTextarea = new PrimaryTextarea
-      valueStreams: @bioValueStreams
-
-    @newPasswordValue = new RxBehaviorSubject ''
-    @newPasswordError = new RxBehaviorSubject null
-    @$newPasswordInput = new PrimaryInput
-      value: @newPasswordValue
-      error: @newPasswordError
-
-    @currentPasswordValue = new RxBehaviorSubject ''
-    @currentPasswordError = new RxBehaviorSubject null
-    @$currentPasswordInput = new PrimaryInput
-      value: @currentPasswordValue
-      error: @currentPasswordError
-
     @avatarImage = new RxBehaviorSubject null
     rotationValueSubject = new RxBehaviorSubject null
 
+    @fields =
+      username:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      name:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      instagram:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      web:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      bio:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      newPassword:
+        valueSubject: new RxBehaviorSubject ''
+        errorSubject: new RxBehaviorSubject null
+      currentPassword:
+        valueSubject: new RxBehaviorSubject ''
+        errorSubject: new RxBehaviorSubject null
+
+    @resetValueStreams()
+
+    @$editProfileGeneral = new EditProfileGeneral {
+      @model, @router, @fields
+    }
+
+    @$editIcon = new Icon()
+
+    @$tabs = new Tabs {@model}
+
     @state = z.state
-      me: me
+      me: @me
       avatarImage: @avatarImage.map (file) =>
         if file
           @model.image.parseExif(
@@ -90,19 +69,35 @@ module.exports = class EditProfile
       avatarRotation: rotationValueSubject
       avatarDataUrl: null
       avatarUploadError: null
-      group: group
-      username: @usernameValueStreams.switch()
-      instagram: @instagramValueStreams.switch()
-      web: @webValueStreams.switch()
-      bio: @bioValueStreams.switch()
-      newPassword: @newPasswordValue
-      currentPassword: @currentPasswordValue
       isSaving: false
       isSaved: false
+      username: @fields.username.valueStreams.switch()
+      name: @fields.name.valueStreams.switch()
+      instagram: @fields.instagram.valueStreams.switch()
+      web: @fields.web.valueStreams.switch()
+      bio: @fields.bio.valueStreams.switch()
+      newPassword: @fields.newPassword.valueSubject
+      currentPassword: @fields.currentPassword.valueSubject
+
+  resetValueStreams: =>
+    @fields.username.valueStreams.next @me.map (me) ->
+      me.username or ''
+
+    @fields.name.valueStreams.next @me.map (me) ->
+      me.name or ''
+
+    @fields.instagram.valueStreams.next @me.map (me) ->
+      me.links?.instagram or ''
+
+    @fields.web.valueStreams.next @me.map (me) ->
+      me.links?.web or ''
+
+    @fields.bio.valueStreams.next @me.map (me) ->
+      me.bio or ''
 
   save: =>
-    {avatarImage, username, instagram, web, bio, newPassword, currentPassword,
-      me, isSaving, group} = @state.getValue()
+    {avatarImage, username, name, instagram, web, bio, newPassword,
+      currentPassword, me, isSaving, group} = @state.getValue()
 
     if isSaving
       return
@@ -110,9 +105,9 @@ module.exports = class EditProfile
     @model.user.requestLoginIfGuest me
     .then =>
       @state.set isSaving: true, avatarUploadError: null
-      @usernameError.next null
-      @newPasswordError.next null
-      @currentPasswordError.next null
+      @fields.username.errorSubject.next null
+      @fields.newPassword.errorSubject.next null
+      @fields.currentPassword.errorSubject.next null
 
       if instagram or web
         links = {instagram, web}
@@ -125,6 +120,9 @@ module.exports = class EditProfile
 
       if username and username isnt me?.username
         userDiff.username = username
+
+      if name and name isnt me?.name
+        userDiff.name = name
 
       if newPassword
         userDiff.password = newPassword
@@ -166,77 +164,39 @@ module.exports = class EditProfile
       players, isSaving, isSaved} = @state.getValue()
 
     z '.z-edit-profile',
-      z '.g-grid',
+      z '.top',
+        if avatarUploadError
+          avatarUploadError
+        z '.avatar',
+          z @$avatar, {
+            src: avatarDataUrl, user: me, size: '90px'
+            rotation: avatarRotation
+          }
+          z '.edit',
+            z @$editIcon,
+              icon: 'edit'
+              isTouchTarget: false
+              color: colors.$secondary500
+              size: '18px'
+          z '.upload-overlay',
+            z @$uploadOverlay,
+              onSelect: ({file, dataUrl}) =>
+                @avatarImage.next file
+                @state.set avatarDataUrl: dataUrl
 
-        z '.section',
-          z '.input',
-            z @$usernameInput,
-              hintText: @model.l.get 'general.username'
-              isFullWidth: false
-
-        z '.section',
-          z '.input',
-            z @$newPasswordInput,
-              hintText: @model.l.get 'editProfile.newPassword'
-              isFullWidth: false
-              type: 'password'
-              disableAutoComplete: true
-
-        z @$rigInfo
-
-        if newPassword
-          z '.section',
-            z '.input',
-              z @$currentPasswordInput,
-                hintText: @model.l.get 'editProfile.currentPassword'
-                isFullWidth: false
-                type: 'password'
-
-        z '.section',
-          z '.input',
-            z @$instagramInput,
-              hintText: @model.l.get 'general.instagram'
-              isFullWidth: false
-
-        z '.section',
-          z '.input',
-            z @$webInput,
-              hintText: @model.l.get 'general.web'
-              isFullWidth: false
-
-        z '.section',
-          z '.input',
-            z @$bioTextarea,
-              hintText: @model.l.get 'general.bio'
-              isFullWidth: false
-
-        z '.section',
-          z '.title', @model.l.get 'editProfile.changeAvatar'
-          if avatarUploadError
-            avatarUploadError
-          z '.flex',
-            z '.avatar',
-              z @$avatar, {
-                src: avatarDataUrl, user: me, size: '64px'
-                rotation: avatarRotation
-              }
-            z '.button',
-              z @$avatarButton,
-                text: @model.l.get 'editProfile.avatarButtonText'
-                isFullWidth: false
-                onclick: null
-              z '.upload-overlay',
-                z @$uploadOverlay,
-                  onSelect: ({file, dataUrl}) =>
-                    @avatarImage.next file
-                    @state.set avatarDataUrl: dataUrl
-
-        z '.actions',
-          z '.button',
-            z @$saveButton,
-              onclick: @save
-              text: if isSaving \
-                    then @model.l.get 'general.loading'
-                    else if isSaved
-                    then @model.l.get 'general.saved'
-                    else @model.l.get 'general.save'
+      z @$tabs,
+        isBarFixed: false
+        tabs: [
+          {
+            $menuText: @model.l.get 'general.general'
+            $el: @$editProfileGeneral
+          }
+          # {
+          #   $menuText: @model.l.get 'general.about'
+          #   $el: z @$usersNearby
+          # }
+          # {
+          #   $menuText: @model.l.get 'general.settings'
+          #   $el: z @$usersNearby
+          # }
+        ]
