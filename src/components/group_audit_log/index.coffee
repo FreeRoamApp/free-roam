@@ -29,12 +29,13 @@ module.exports = class GroupAuditLog
     {me, group, logs} = @state.getValue()
 
     z '.z-group-audit-log',
-      z '.logs',
-        _map logs, ({log, $avatar}) =>
-          z '.log',
-            z '.avatar',
-              z $avatar, {user: log.user}
-            z '.text',
-              "#{@model.user.getDisplayName log.user} #{log.actionText}"
-              z '.time',
-                DateService.fromNow log.time
+      z '.g-grid',
+        z '.logs',
+          _map logs, ({log, $avatar}) =>
+            z '.log',
+              z '.avatar',
+                z $avatar, {user: log.user}
+              z '.text',
+                "#{@model.user.getDisplayName log.user} #{log.actionText}"
+                z '.time',
+                  DateService.fromNow log.time

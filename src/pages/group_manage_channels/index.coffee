@@ -3,7 +3,7 @@ isUuid = require 'isuuid'
 
 GroupManageChannels = require '../../components/group_manage_channels'
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 colors = require '../../colors'
 
 if window?
@@ -11,13 +11,14 @@ if window?
 
 module.exports = class GroupManageChannelsPage
   isGroup: true
+  hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, group}) ->
     user = requests.switchMap ({route}) =>
       @model.user.getById route.params.userId
 
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$groupManageChannels = new GroupManageChannels {
       @model, @router, serverData, group, user
     }
@@ -33,6 +34,6 @@ module.exports = class GroupManageChannelsPage
       z @$appBar, {
         title: @model.l.get 'groupManageChannelsPage.title'
         style: 'primary'
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
       }
       @$groupManageChannels

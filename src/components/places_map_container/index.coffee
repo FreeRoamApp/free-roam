@@ -82,6 +82,7 @@ module.exports = class PlacesMapContainer
     placesWithCounts = RxObservable.combineLatest(
       @addPlacesStreams.switch(), placesStream, (vals...) -> vals
     ).map ([addPlaces, {places, visible, total}]) ->
+      console.log places
       if places
         places = places.concat addPlaces # addPlaces should "under" places on map
       else

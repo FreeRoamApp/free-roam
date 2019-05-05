@@ -6,7 +6,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 require 'rxjs/add/operator/map'
 
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 Tabs = require '../../components/tabs'
 GroupBannedUsers = require '../../components/group_banned_users'
 ProfileDialog = require '../../components/profile_dialog'
@@ -18,10 +18,11 @@ if window?
 
 module.exports = class GroupBannedUsersPage
   isGroup: true
+  hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, group}) ->
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
 
     @selectedProfileDialogUser = new RxBehaviorSubject null
     @$profileDialog = new ProfileDialog {
@@ -60,7 +61,7 @@ module.exports = class GroupBannedUsersPage
         title: @model.l.get 'groupBannedUsersPage.title'
         style: 'primary'
         isFlat: true
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
       }
       z @$tabs,
         isBarFixed: false

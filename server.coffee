@@ -146,6 +146,14 @@ app.use (req, res, next) ->
   }
   requests = new RxBehaviorSubject(req)
 
+  # FIXME: hardcoded redirect from mvg.freeroam.app (midwest vanlife gathering)
+  if router.getSubdomain() is 'mvg'
+    res.statusCode = 301
+    res.setHeader 'Location', decodeURIComponent(
+      'https://freeroam.app/g/mvg/chat'
+    )
+    return res.end()
+
   # for client to access
   model.cookie.set(
     'ip'

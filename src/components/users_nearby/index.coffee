@@ -62,7 +62,7 @@ module.exports = class UsersNearby
             location: place.location
           }, {invalidateAll: false}
         else
-          Promise.resolve null)
+          Promise.resolve place)
         .then ({id}) =>
           @model.checkIn.upsert {
             name: place.name

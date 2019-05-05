@@ -11,6 +11,7 @@ if window?
 
 module.exports = class GroupAddChannelPage
   isGroup: true
+  hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, group}) ->
     @$appBar = new AppBar {@model}

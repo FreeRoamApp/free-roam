@@ -136,6 +136,8 @@ module.exports = class EditProfile
           isSaving: false
           isSaved: true
 
+        @router.go 'profileMe'
+
       .catch (err) =>
         error = try
           JSON.parse err.message

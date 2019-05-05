@@ -31,14 +31,15 @@ module.exports = class GroupManageChannels
     {me, group} = @state.getValue()
 
     z '.z-group-manage-channels',
-      z @$channelList, {
-        onclick: (e, {id}) =>
-          @model.group.goPath group, 'groupAdminEditChannel', {
-            @router
-            replacements:
-              conversationId: id
-          }
-      }
+      z '.g-grid',
+        z @$channelList, {
+          onclick: (e, {id}) =>
+            @model.group.goPath group, 'groupAdminEditChannel', {
+              @router
+              replacements:
+                conversationId: id
+            }
+        }
 
       z '.fab',
         z @$fab,

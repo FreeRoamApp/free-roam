@@ -1,12 +1,15 @@
 @require '../../vars'
 
 .z-group-user-settings-dialog_dialog
-  > .title
+  > .title, > .links > .title
     font-title()
     color: getColor('$primary500')
     margin-bottom: 8px
 
-  > .list
+  > .links
+    margin-bottom: 16px
+
+  > .list, > .links > .list
     margin: 0
     padding: 0
     list-style-type: none
@@ -16,6 +19,9 @@
       align-items: center
       padding: 16px 0
       cursor: pointer
+
+      &.link
+        padding: 8px 0
 
       > .icon
         margin-right: 30px

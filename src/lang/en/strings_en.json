@@ -242,6 +242,7 @@
   "groupSettings.channelNotifications": "Channel notifications",
   "groupSettings.chatMessage": "New chat messages",
   "groupSettings.chatMessageMention": "Mention",
+  "groupSettings.modLinks": "Mod links",
   "groups.myGroupList": "My groups",
   "installOverlay.title": "Add FreeRoam to homescreen",
   "installOverlay.text": "Tap",

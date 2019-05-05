@@ -30,12 +30,16 @@ module.exports = class GroupEditChannelPermissions
   save: (roleId, permissions) =>
     {group, conversation} = @state.getValue()
 
+    console.log 'save', conversation
+
     @model.groupRole.updatePermissions(
       {roleId, channelId: conversation.id, groupId: group.id, permissions}
     )
 
   render: =>
     {me} = @state.getValue()
+
+    console.log 'edit perm'
 
     z '.z-group-edit-channel-permissions',
       @$groupRolePermissions

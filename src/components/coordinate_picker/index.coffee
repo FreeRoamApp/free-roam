@@ -47,7 +47,8 @@ module.exports = class CoordinatePicker
         @places.next [{
           name: location.text
           slug: ''
-          type: ''
+          id: location.sourceId
+          type: location.sourceType
           location: location.location
         }]
     }

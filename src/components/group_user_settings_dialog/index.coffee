@@ -2,6 +2,8 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
 _find = require 'lodash/find'
+_filter = require 'lodash/filter'
+_isEmpty = require 'lodash/isEmpty'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/operator/combineLatest'
@@ -133,6 +135,52 @@ module.exports = class GroupUserSettingsDialog
       isSaving} = @state.getValue()
 
     items = []
+    meGroupUser = group?.meGroupUser
+
+    if @model.groupUser.hasPermission {
+      meGroupUser, me, permissions: ['manageRole']
+    }
+      items = items.concat _filter [
+        {
+          text: @model.l.get 'groupManageChannelsPage.title'
+          onclick: =>
+            path = @model.group.getPath(
+              group, 'groupAdminManageChannels', {@router}
+            )
+            @router.goPath path
+            @model.overlay.close()
+        }
+        {
+          text: @model.l.get 'groupManageRolesPage.title'
+          onclick: =>
+            path = @model.group.getPath(
+              group, 'groupAdminManageRoles', {@router}
+            )
+            @router.goPath path
+            @model.overlay.close()
+        }
+        if @model.groupUser.hasPermission {
+          meGroupUser, me, permissions: ['readAuditLog']
+        }
+          {
+            text: @model.l.get 'groupAuditLogPage.title'
+            onclick: =>
+              path = @model.group.getPath(
+                group, 'groupAdminAuditLog', {@router}
+              )
+              @router.goPath path
+              @model.overlay.close()
+          }
+        {
+          text: @model.l.get 'groupBannedUsersPage.title'
+          onclick: =>
+            path = @model.group.getPath(
+              group, 'groupAdminBannedUsers', {@router}
+            )
+            @router.goPath path
+            @model.overlay.close()
+        }
+      ]
 
     # hasAdminPermission = false # TODO
     # unless hasAdminPermission
@@ -153,15 +201,20 @@ module.exports = class GroupUserSettingsDialog
         # $title: @model.l.get 'general.filter'
         $content:
           z '.z-group-user-settings-dialog_dialog',
-            z 'ul.list',
-              _map items, ({$icon, icon, text, onclick}) ->
-                z 'li.item', {onclick},
-                  z '.icon',
-                    z $icon,
-                      icon: icon
-                      isTouchTarget: false
-                      color: colors.$primary500
-                  z '.text', text
+            unless _isEmpty items
+              z '.links',
+                z '.title', @model.l.get 'groupSettings.modLinks'
+                z 'ul.list',
+                  _map items, ({$icon, icon, text, onclick}) ->
+                    z 'li.item.link', {onclick},
+                      if $icon
+                        z '.icon',
+                          z $icon,
+                            icon: icon
+                            isTouchTarget: false
+                            color: colors.$primary500
+                      z '.text', text
+
             z '.title', @model.l.get 'groupSettings.groupNotifications'
             if not notificationTypes
               @$spinner

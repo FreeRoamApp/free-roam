@@ -34,13 +34,20 @@ module.exports = class GroupList
           z '.g-grid',
             z '.g-cols',
               _map groups, ({group}) =>
+                # FIXME: rm hardcode (midwest vanlife gathering)
+                # automate the images
+                key = if group?.slug is 'mvg' then 'mvg' else 'freeroam'
+
                 group.type ?= 'general'
                 route = @model.group.getPath group, 'groupChat', {@router}
                 z '.g-col.g-xs-12.g-md-6',
                   @router.link z 'a.group', {
                     href: route
                   },
-                    z '.image'
+                    z '.image',
+                      style:
+                        backgroundImage:
+                          "url(#{config.CDN_URL}/groups/#{key}.png)"
                     z '.content',
                       z '.name', group.name or @model.l.get 'general.anonymous'
                       z '.count',

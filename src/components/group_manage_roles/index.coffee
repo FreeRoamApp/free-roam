@@ -30,7 +30,7 @@ module.exports = class GroupManageRoles
         'manageInfo'
         'readAuditLog'
         'manageChannel'
-        'managePage'
+        # 'managePage'
         'manageRole'
         'permaBanUser'
         'tempBanUser'
@@ -40,9 +40,9 @@ module.exports = class GroupManageRoles
         'sendLink'
         'sendImage'
         'mentionEveryone'
-        'deleteForumThread'
-        'pinForumThread'
-        'deleteForumComment'
+        # 'deleteForumThread'
+        # 'pinForumThread'
+        # 'deleteForumComment'
       ]
       if @model.groupUser.hasPermission {
         meGroupUser: group.meGroupUser, me, permissions: ['admin']

@@ -3,7 +3,7 @@ isUuid = require 'isuuid'
 
 GroupAuditLog = require '../../components/group_audit_log'
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -12,10 +12,11 @@ if window?
 
 module.exports = class GroupAuditLogPage
   isGroup: true
+  hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, group}) ->
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model, @router}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$groupAuditLog = new GroupAuditLog {
       @model, @router, serverData, group
     }
@@ -30,6 +31,6 @@ module.exports = class GroupAuditLogPage
       z @$appBar, {
         title: @model.l.get 'groupAuditLogPage.title'
         style: 'primary'
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
       }
       @$groupAuditLog
