@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 Icon = require '../icon'
 Rating = require '../rating'
@@ -25,6 +27,12 @@ module.exports = class PlaceTooltip extends MapTooltip
       @place
       @mapSize
       @size
+      elevation: @place.switchMap (place) =>
+        if place?.type is 'coordinate'
+          @model.geocoder.getElevationFromLocation place.location
+        else
+          RxObservable.of false
+
       isSaving: false
       isSaved: false
     }
@@ -53,7 +61,7 @@ module.exports = class PlaceTooltip extends MapTooltip
       @state.set isSaving: false, isSaved: true
 
   render: ({isVisible} = {}) =>
-    {place, mapSize, size, isSaving, isSaved} = @state.getValue()
+    {place, mapSize, size, isSaving, isSaved, elevation} = @state.getValue()
 
     isVisible ?= Boolean place and Boolean size.width
 
@@ -63,6 +71,9 @@ module.exports = class PlaceTooltip extends MapTooltip
     isDisabled = not place or not (place.type in [
       'campground', 'overnight', 'amenity'
     ])
+
+    if not elevation? or elevation is false
+      elevation = '...'
 
     z "a.z-place-tooltip.anchor-#{anchor}", {
       href: if not isDisabled and place
@@ -100,6 +111,9 @@ module.exports = class PlaceTooltip extends MapTooltip
             backgroundImage: "url(#{src})"
       z '.content',
         z '.title', place?.name
+        if place?.type is 'coordinate'
+          z '.elevation',
+            @model.l.get 'placeTooltip.elevation', {replacements: {elevation}}
         if place?.description
           z '.description', place?.description
         if place?.type is 'coordinate'

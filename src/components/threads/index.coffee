@@ -1,6 +1,5 @@
 z = require 'zorium'
 _map = require 'lodash/map'
-_chunk = require 'lodash/chunk'
 _filter = require 'lodash/filter'
 _range = require 'lodash/range'
 _find = require 'lodash/find'

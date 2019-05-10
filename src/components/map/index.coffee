@@ -306,6 +306,7 @@ module.exports = class Map
           latRounded = Math.round(e.lngLat.lat * 10000) / 10000
           lonRounded = Math.round(e.lngLat.lng * 10000) / 10000
 
+          @place.next null # reset the tooltip for things like elevation
           @place.next {
             name: "#{latRounded}, #{lonRounded}"
             type: 'coordinate'

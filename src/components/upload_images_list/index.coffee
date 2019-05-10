@@ -97,10 +97,14 @@ module.exports = class UploadImagesList
                   @multiImageData.next multiImageData
                   @model.overlay.open @$uploadImagesPreview
             }
-        _map attachments, ({dataUrl, prefix, isUploading, progress}) =>
+        _map attachments, ({dataUrl, prefix, isUploading, progress}, i) =>
           src = @model.image.getSrcByPrefix prefix, {size: 'small'}
           z '.attachment', {
             className: z.classKebab {isUploading}
+            oncontextmenu: (e) =>
+              e.preventDefault()
+              attachments = attachments.splice i, 1
+              @attachmentsValueStreams.next RxObservable.of attachments
           },
             z '.image',
               style:

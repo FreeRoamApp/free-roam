@@ -17,6 +17,7 @@ Rating = require '../rating'
 Spinner = require '../spinner'
 UiCard = require '../ui_card'
 WalmartInfoCard = require '../walmart_info_card'
+Weather = require '../place_info_weather'
 Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
@@ -34,6 +35,7 @@ module.exports = class PlaceInfo extends Base
     ]
     @$actionBox = new ActionBox {@model, @router, @place}
     @$contact = new Contact {@model, @router, @place}
+    @$placeInfoWeather = new Weather {@model, @router, @place}
     @$detailsButton = new PrimaryButton()
     @$drivingInstructionsButton = new PrimaryButton()
     @$masonryGrid = new MasonryGrid {@model}
@@ -327,13 +329,9 @@ module.exports = class PlaceInfo extends Base
                     value: place?.roadDifficulty
                   }
 
-              if place?.weather
+              if place?.weather or config.ENV is config.ENVS.DEV # FIXME
                 z '.section',
-                  z '.title', @model.l.get 'placeInfo.averageWeather'
-                  z 'img.graph', {
-                    src:
-                      "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?2"
-                  }
+                  z @$placeInfoWeather
 
               unless _isEmpty $videos
                 z '.section',

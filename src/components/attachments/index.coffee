@@ -47,7 +47,6 @@ module.exports = class Attachments
                       images: images
                       imageIndex: i
                     }
-                  # FIXME: rm after 10/31/2018, or just enable for austin
                   oncontextmenu: (e) =>
                     if (attachment.userId is me.id or me.username is 'austin') and confirm 'Delete?'
                       e?.preventDefault()

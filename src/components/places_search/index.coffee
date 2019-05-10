@@ -144,9 +144,7 @@ module.exports = class LocationSearch
               _map locations, ({location, $icon}) =>
                 z '.location', {
                   onclick: =>
-                    @model.geocoder.getBoundingFromLocation {
-                      location: location.location
-                    }
+                    @model.geocoder.getBoundingFromLocation location.location
                     .then (bboxWithPlaces) =>
                       # combine, since bboxWithPlaces is too small for states
                       if location.bbox

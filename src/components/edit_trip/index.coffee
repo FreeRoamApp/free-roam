@@ -30,7 +30,7 @@ module.exports = class EditTrip extends Base
   constructor: ({@model, @router, @trip}) ->
     @$placesSearch = new PlacesSearch {
       @model, @router
-      onclick: ({location}) =>
+      onclick: (location) =>
         @addCheckIn {
           name: location.text
           location: location.location

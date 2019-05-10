@@ -53,9 +53,9 @@ module.exports = class GroupList
                       z '.count',
                         # @model.l.get "groupList.type#{_startCase(group.type)}"
                         @model.l.get 'general.chat'
-                        [
-                          z 'span.middot',
-                            innerHTML: ' &middot; '
-                          "#{FormatService.number group.userCount} "
-                          @model.l.get 'general.members'
-                        ]
+                        # [
+                        #   z 'span.middot',
+                        #     innerHTML: ' &middot; '
+                        #   "#{FormatService.number group.userCount} "
+                        #   @model.l.get 'general.members'
+                        # ]

@@ -1,0 +1,82 @@
+@require '../../vars'
+
+.z-place-info-weather
+  > .title
+    font-title()
+    margin-bottom: 8px
+
+  > .tabs
+    display: flex
+    background: getColor('$tertiary0')
+    border: 1px solid getColor('$tertiary200')
+    border-radius: 4px
+    margin-bottom: 8px
+
+    > .tab
+      cursor: pointer
+      flex1()
+      text-align: center
+      padding: 4px 0
+
+      &.is-selected
+        background: getColor('$tertiary200')
+        font-title()
+
+  > .forecast
+    > .row
+      display: flex
+
+      > .day
+        flex1()
+        text-align: center
+        margin-right: 8px
+        margin-bottom: 16px
+
+        &:last-child
+          margin-right: 0
+
+        > .day-of-week
+          font-title()
+          text-transform: uppercase
+
+        > .date
+          font-caption3()
+          // margin-bottom: 8px
+
+        > .icon
+          width: 72px
+          height: 72px
+          margin-top: -8px
+          margin-bottom: -12px
+
+        > .high-low, > .rain, > .wind
+          display: flex
+          // justify-content: center
+
+          > .icon
+            margin-right: 4px
+
+          > .divider
+            margin: 0 4px
+
+        > .high-low
+          > .high
+            font-title()
+            color: getColor('$red500')
+
+          > .low
+            font-title()
+            color: getColor('$blue500')
+
+        > .rain
+          color: getColor('$blue500')
+
+        > .wind
+          align-items: flex-start
+          > .info
+            > .speed, > .gust
+              > .caption, > .type
+                font-tiny()
+
+    > .attribution
+      font-caption3()
