@@ -1,6 +1,8 @@
 @require '../../vars'
 
 .z-place-info-weather
+  min-height: 300px
+
   > .title
     font-title()
     margin-bottom: 8px
@@ -22,15 +24,19 @@
         background: getColor('$tertiary200')
         font-title()
 
+  > .graph
+    width: 100%
+
   > .forecast
-    > .row
+    > .days
       display: flex
+      overflow: auto
+      -webkit-overflow-scrolling: touch
 
       > .day
         flex1()
         text-align: center
-        margin-right: 8px
-        margin-bottom: 16px
+        min-width: 116px
 
         &:last-child
           margin-right: 0
@@ -51,7 +57,8 @@
 
         > .high-low, > .rain, > .wind
           display: flex
-          // justify-content: center
+          justify-content: center
+          margin-bottom: 4p
 
           > .icon
             margin-right: 4px
@@ -80,3 +87,5 @@
 
     > .attribution
       font-caption3()
+      display: block
+      margin-top: 16px

@@ -1,5 +1,6 @@
 z = require 'zorium'
 _map = require 'lodash/map'
+_filter = require 'lodash/filter'
 _chunk = require 'lodash/chunk'
 _defaults = require 'lodash/defaults'
 
@@ -17,11 +18,17 @@ module.exports = class PlaceInfoWeather
       place: place
       forecastDaily: place.map (place) ->
         days = place?.forecast?.daily
-        _map days, (day) ->
+        today = new Date()
+        todayFullDateStr =
+          "#{today.getYear()}/#{today.getMonth() + 1}/#{today.getDate()}"
+        _filter _map days, (day) ->
           date = new Date(day.time * 1000)
+          dateStr = "#{date.getMonth() + 1}/#{date.getDate()}"
+          if "#{date.getYear()}/#{dateStr}" < todayFullDateStr
+            return
           _defaults {
             dow: date.getDay()
-            date: "#{date.getMonth() + 1}/#{date.getDate()}"
+            date: dateStr
             $rainIcon: new Icon()
             $windIcon: new Icon()
             $temperatureIcon: new Icon()
@@ -32,8 +39,6 @@ module.exports = class PlaceInfoWeather
     {place, forecastDaily, currentTab} = @state.getValue()
 
     tabs = ['avg', 'forecast']
-
-    forecastDayChunks = _chunk forecastDaily, 4
 
     z '.z-place-info-weather',
       z '.title', @model.l.get 'placeInfo.weather'
@@ -52,62 +57,64 @@ module.exports = class PlaceInfoWeather
             "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?2"
         }
       else
-        z '.forecast', [
-          _map forecastDayChunks, (days, chunkI) =>
-            z '.row',
-              _map days, (day, i) =>
-                z '.day',
-                  z '.day-of-week',
-                    if chunkI is 0 and i is 0
-                      @model.l.get 'general.today'
-                    else if chunkI is 0 and i is 1
-                      @model.l.get 'general.tomorrow'
-                    else
-                      @model.l.get "daysAbbr.#{day.dow}"
-                  z '.date', day.date
-                  z 'img.icon',
-                    src: "#{config.CDN_URL}/weather/#{day.icon}.svg"
-                  z '.high-low',
-                    z '.icon',
-                      z day.$temperatureIcon,
-                        icon: 'thermometer'
-                        size: '16px'
-                        isTouchTarget: false
-                    z '.high', Math.round(day.temperatureHigh) + '°'
-                    z '.divider', '|'
-                    z '.low', Math.round(day.temperatureLow) + '°F'
-                  z '.rain',
-                    z '.icon',
-                      z day.$rainIcon,
-                        icon: 'water'
-                        size: '16px'
-                        isTouchTarget: false
-                    z '.percent', FormatService.percentage day.precipProbability
-                    z '.divider', '|'
-                    z '.amount', "#{day.precipTotal}\""
-                  z '.wind',
-                    z '.icon',
-                      z day.$windIcon,
-                        icon: 'wind'
-                        size: '16px'
-                        isTouchTarget: false
-                    z '.info',
-                      z '.speed',
-                        z 'span.type',
-                          @model.l.get 'placeInfoWeather.windSpeed'
-                          ': '
-                        Math.round day.windSpeed
-                        z 'span.caption', 'MPH'
-                      z '.gust',
-                        z 'span.type',
-                          @model.l.get 'placeInfoWeather.windGust'
-                          ': '
-                        Math.round day.windGust
-                        z 'span.caption', 'MPH'
+        z '.forecast',
+          z '.days', {
+            ontouchstart: (e) ->
+              e.stopPropagation()
+          },
+            _map forecastDaily, (day, i) =>
+              icon = day.icon.replace 'night', 'day'
+              z '.day',
+                z '.day-of-week',
+                  if i is 0
+                    @model.l.get 'general.today'
+                  else if i is 1
+                    @model.l.get 'general.tomorrow'
+                  else
+                    @model.l.get "daysAbbr.#{day.dow}"
+                z '.date', day.date
+                z 'img.icon',
+                  src: "#{config.CDN_URL}/weather/#{icon}.svg"
+                z '.high-low',
+                  z '.icon',
+                    z day.$temperatureIcon,
+                      icon: 'thermometer'
+                      size: '16px'
+                      isTouchTarget: false
+                  z '.high', Math.round(day.temperatureHigh) + '°'
+                  z '.divider', '|'
+                  z '.low', Math.round(day.temperatureLow) + '°F'
+                z '.rain',
+                  z '.icon',
+                    z day.$rainIcon,
+                      icon: 'water'
+                      size: '16px'
+                      isTouchTarget: false
+                  z '.percent', FormatService.percentage day.precipProbability
+                  z '.divider', '|'
+                  z '.amount', "#{day.precipTotal}\""
+                z '.wind',
+                  z '.icon',
+                    z day.$windIcon,
+                      icon: 'wind'
+                      size: '16px'
+                      isTouchTarget: false
+                  z '.info',
+                    z '.speed',
+                      z 'span.type',
+                        @model.l.get 'placeInfoWeather.windSpeed'
+                        ': '
+                      Math.round day.windSpeed
+                      z 'span.caption', 'MPH'
+                    z '.gust',
+                      z 'span.type',
+                        @model.l.get 'placeInfoWeather.windGust'
+                        ': '
+                      Math.round day.windGust
+                      z 'span.caption', 'MPH'
 
           @router.link z 'a.attribution', {
             href: 'https://darksky.net'
             target: '_system'
           },
             @model.l.get 'placeInfoWeather.attribution'
-        ]
