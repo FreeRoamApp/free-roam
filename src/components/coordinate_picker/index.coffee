@@ -19,7 +19,7 @@ if window?
 
 module.exports = class CoordinatePicker
   constructor: (options) ->
-    {@model, @router, @coordinates, @coordinatesSteams, @onPick, @pickButtonText
+    {@model, @router, @onPick, @pickButtonText
       center, initialZoom} = options
 
     @$appBar = new AppBar {@model}

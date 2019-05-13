@@ -42,9 +42,10 @@ module.exports = class NewAmenity
       {amenity: 'npwater', hasPrice: true}
       {amenity: 'groceries'}
       {amenity: 'propane'}
+      {amenity: 'trash'}
+      {amenity: 'recycling'}
       {amenity: 'shower'}
       {amenity: 'gas'}
-      {amenity: 'trash'}
       {amenity: 'laundry'}
     ]
 
@@ -137,7 +138,12 @@ module.exports = class NewAmenity
             onclick: =>
               @model.overlay.open new CoordinatePicker {
                 @model, @router, center
-                coordinates: @locationValue
+                onPick: (location) =>
+                  @locationValue.next(
+                    "#{Math.round(location.location.lat * 10000) / 10000}, " +
+                    "#{Math.round(location.location.lon * 10000) / 10000}"
+                  )
+                  Promise.resolve null
                 initialZoom: 9
               }
 

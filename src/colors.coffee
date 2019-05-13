@@ -259,6 +259,8 @@ colors = _defaults {
   '$amenitydump': '#864319'
   '$amenitywater': '#3b7ac1'
   '$amenitypropane': '#cc4040'
+  '$amenitytrash': '#000000'
+  '$amenityrecycling': '#0000ff'
   '$amenityshower': '#00bcff'
   '$amenitygas': '#dbad49'
 

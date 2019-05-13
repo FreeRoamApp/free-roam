@@ -6,6 +6,7 @@ require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _range = require 'lodash/range'
 _startCase = require 'lodash/startCase'
+_zipObject = require 'lodash/zipObject'
 
 Dialog = require '../dialog'
 Dropdown = require '../dropdown'
@@ -97,35 +98,22 @@ module.exports = class FilterDialog
           (vals...) -> vals
         ).map ([carrier, signal, isLte]) ->
           {carrier, signal, isLte}
-      when 'hookups'
-        @hasFreshWaterValue = new RxBehaviorSubject(
-          @filter.value?.hasFreshWater
-        )
-        @$hasFreshWaterCheckbox = new Checkbox {value: @hasFreshWaterValue}
+      when 'list', 'booleanArraySubTypes'
+        list = @filter.items
 
-        @hasSewageValue = new RxBehaviorSubject(
-          @filter.value?.hasSewage
-        )
-        @$hasSewageCheckbox = new Checkbox {value: @hasSewageValue}
-
-        @has30AmpValue = new RxBehaviorSubject(
-          @filter.value?.has30Amp
-        )
-        @$has30AmpCheckbox = new Checkbox {value: @has30AmpValue}
-
-        @has50AmpValue = new RxBehaviorSubject(
-          @filter.value?.has50Amp
-        )
-        @$has50AmpCheckbox = new Checkbox {value: @has50AmpValue}
+        @checkboxes = _map list, ({key, label}) =>
+          valueSubject = new RxBehaviorSubject(
+            @filter.value?[key]
+          )
+          $checkbox = new Checkbox {value: valueSubject}
+          {valueSubject, $checkbox, label}
 
         filterValue = RxObservable.combineLatest(
-          @hasFreshWaterValue
-          @hasSewageValue
-          @has30AmpValue
-          @has50AmpValue
+          _map @checkboxes, (item) -> item.valueSubject
           (vals...) -> vals
-        ).map ([hasFreshWater, hasSewage, has30Amp, has50Amp]) ->
-          {hasFreshWater, hasSewage, has30Amp, has50Amp}
+        ).map (vals) ->
+          _zipObject _map(list, 'key'), vals
+
       when 'weather'
         @monthDropdownValue = new RxBehaviorSubject(
           if @filter.value?.month?
@@ -219,26 +207,15 @@ module.exports = class FilterDialog
                 hintText:
                   @model.l.get 'filterDialog.inches'
               }
-      when 'hookups'
-        $title = @model.l.get 'general.hookups'
+      when 'list', 'booleanArraySubTypes'
+        $title = @filter?.name
         $content =
           z '.content',
-            z 'label.checkbox-label',
-              z '.checkbox',
-                z @$hasFreshWaterCheckbox
-              z '.text', @model.l.get 'filterDialog.hasFreshWater'
-            z 'label.checkbox-label',
-              z '.checkbox',
-                z @$hasSewageCheckbox
-              z '.text', @model.l.get 'filterDialog.hasSewage'
-            z 'label.checkbox-label',
-              z '.checkbox',
-                z @$has30AmpCheckbox
-              z '.text', @model.l.get 'filterDialog.has30Amp'
-            z 'label.checkbox-label',
-              z '.checkbox',
-                z @$has50AmpCheckbox
-              z '.text', @model.l.get 'filterDialog.has50Amp'
+            _map @checkboxes, ({$checkbox, label}) ->
+              z 'label.checkbox-label',
+                z '.checkbox',
+                  z $checkbox
+                z '.text', label or 'fixme'
       when 'cellSignal'
         $content =
           z '.content',

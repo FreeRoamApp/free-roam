@@ -63,6 +63,23 @@ class MapService
         field: 'amenities'
         type: 'booleanArray'
         isBoolean: true
+        arrayValue: 'trash'
+        name: model.l.get 'amenities.trash'
+      }
+      {
+        field: 'amenities'
+        type: 'booleanArray'
+        isBoolean: true
+        arrayValue: 'recycling'
+        name: model.l.get 'amenities.recycling'
+      }
+      {
+        field: 'amenities'
+        type: 'booleanArraySubTypes'
+        items: [
+          {key: 'anytime', label: model.l.get 'gyms.anytime'}
+          {key: 'planet', label: model.l.get 'gyms.planet'}
+        ]
         arrayValue: 'shower'
         name: model.l.get 'amenities.shower'
       }
@@ -79,13 +96,6 @@ class MapService
         isBoolean: true
         arrayValue: 'water'
         name: model.l.get 'amenities.npwater'
-      }
-      {
-        field: 'amenities'
-        type: 'booleanArray'
-        isBoolean: true
-        arrayValue: 'trash'
-        name: model.l.get 'amenities.trash'
       }
     ]
 
@@ -119,7 +129,13 @@ class MapService
       }
       {
         field: 'hookups'
-        type: 'hookups'
+        type: 'list'
+        items: [
+          {key: 'hasFreshWater', label: model.l.get 'filterDialog.hasFreshWater'}
+          {key: 'hasSewage', label: model.l.get 'filterDialog.hasSewage'}
+          {key: 'has30Amp', label: model.l.get 'filterDialog.has30Amp'}
+          {key: 'has50Amp', label: model.l.get 'filterDialog.has50Amp'}
+        ]
         name: model.l.get 'general.hookups'
       }
       {
@@ -402,8 +418,7 @@ class MapService
               "#{field}":
                 gt: 0
           }
-        # TODO: this could be a generic 'checkboxes' type
-        when 'hookups'
+        when 'list'
           {
             bool:
               must: _filter _map filter.value, (value, key) ->
@@ -447,18 +462,25 @@ class MapService
                 lte: parseInt(filter.value.time)
           }
         when 'booleanArray'
-          arrayValues = _map _filter(fieldFilters, 'value'), 'arrayValue'
-          ###
-          alternative is:
-          {terms: {"#{field}": arrayValues}, but terms
-          is case-insensitive and 'contains', not 'equals'.
-          breaks with camelcase restArea since it searches restarea
-          ###
+          withValues = _filter(fieldFilters, 'value')
+
           {
+            # there's potentially a cleaner way to do this?
             bool:
-              should: _map arrayValues, (value) ->
-                match:
-                  "#{field}": value
+              should: _map withValues, ({value, arrayValue}) ->
+                # if subtypes are specified
+                if typeof value is 'object'
+                  bool:
+                    must: [
+                      {match: "#{field}": arrayValue}
+                      bool:
+                        should: _filter _map value, (subTypeValue, subTypeKey) ->
+                          if subTypeValue
+                            {match: subType: subTypeKey}
+                    ]
+                else
+                  {match: "#{field}": arrayValue}
+
             }
 
     filter.push {

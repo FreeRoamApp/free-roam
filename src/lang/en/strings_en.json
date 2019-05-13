@@ -554,6 +554,10 @@
   "amenities.gas": "Gas",
   "amenities.laundry": "Laundry",
   "amenities.trash": "Trash",
+  "amenities.recycling": "Recycling",
+
+  "gyms.anytime": "Anytime Fitness",
+  "gyms.planet": "Planet Fitness",
 
   "lowClearance.maxClearance": "Max Clearance",
 
@@ -638,6 +642,8 @@
   "mapLegend.propane": "Propane",
   "mapLegend.laundry": "Laundry",
   "mapLegend.shower": "Shower",
+  "mapLegend.trash": "Trash",
+  "mapLegend.recycling": "Recycling",
   "mapLegend.low_clearance": "Low clearance",
 
   "months.0": "January",

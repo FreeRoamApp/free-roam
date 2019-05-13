@@ -99,7 +99,6 @@ module.exports = class NewPlaceInitialInfo
                         "#{lat}, #{lon}"
                       )
                       Promise.resolve null
-                    coordinatesSteams: @fields.location.valueStreams
                   }
 
             if navigator?.geolocation
