@@ -70,8 +70,8 @@ class MapService
         field: 'amenities'
         type: 'booleanArray'
         isBoolean: true
-        arrayValue: 'recycling'
-        name: model.l.get 'amenities.recycling'
+        arrayValue: 'recycle'
+        name: model.l.get 'amenities.recycle'
       }
       {
         field: 'amenities'
@@ -449,12 +449,19 @@ class MapService
                 }
               ]
         when 'weather'
-          month = MONTHS[filter.value.month]
-          {
-            range:
-              "#{field}.months.#{month}.#{filter.value.metric}":
-                "#{filter.value.operator}": parseFloat(filter.value.number)
-          }
+          if filter.value.month is 'forecast'
+            {
+              range:
+                "forecast.#{filter.value.metric}":
+                  "#{filter.value.operator}": parseFloat(filter.value.number)
+            }
+          else
+            month = MONTHS[filter.value.month]
+            {
+              range:
+                "#{field}.months.#{month}.#{filter.value.metric}":
+                  "#{filter.value.operator}": parseFloat(filter.value.number)
+            }
         when 'distanceTo'
           {
             range:

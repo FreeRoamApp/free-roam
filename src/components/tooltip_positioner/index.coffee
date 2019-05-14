@@ -23,6 +23,8 @@ module.exports = class TooltipPositioner extends Base
       prereqs: ['placeSearch']
     placeTooltip:
       prereqs: null
+    usersNearby:
+      prereqs: null
 
   constructor: (options) ->
     unless window? # could also return right away if cookie exists for perf

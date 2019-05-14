@@ -82,6 +82,7 @@ module.exports = class UsersNearby
           z '.toggle',
             z @$toggle, {
               onToggle: (isSelected) =>
+                ga? 'send', 'event', 'social', 'enable_location', me?.username
                 @model.user.requestLoginIfGuest me
                 .then =>
                   if isSelected

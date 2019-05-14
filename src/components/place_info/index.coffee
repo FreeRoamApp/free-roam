@@ -329,7 +329,7 @@ module.exports = class PlaceInfo extends Base
                     value: place?.roadDifficulty
                   }
 
-              if place?.weather or config.ENV is config.ENVS.DEV # FIXME
+              if place?.weather
                 z '.section',
                   z @$placeInfoWeather
 

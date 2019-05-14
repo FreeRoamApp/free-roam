@@ -13,6 +13,7 @@ Friends = require '../../components/friends'
 Groups = require '../../components/groups'
 UsersNearby = require '../../components/users_nearby'
 ProfileDialog = require '../../components/profile_dialog'
+TooltipPositioner = require '../../components/tooltip_positioner'
 Icon = require '../../components/icon'
 Tabs = require '../../components/tabs'
 colors = require '../../colors'
@@ -25,10 +26,10 @@ module.exports = class SocialPage
   @hasBottomBar: true
 
   constructor: ({@model, @router, @$bottomBar}) ->
-    selectedIndex = new RxBehaviorSubject 0
+    @selectedIndex = new RxBehaviorSubject 0
 
     @$appBar = new AppBar {@model}
-    @$tabs = new Tabs {@model, selectedIndex}
+    @$tabs = new Tabs {@model, @selectedIndex}
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$notificationsIcon = new Icon()
     @$chatIcon = new Icon()
@@ -49,6 +50,11 @@ module.exports = class SocialPage
     @$profileDialog = new ProfileDialog {
       @model, @router, @selectedProfileDialogUser
     }
+    @$tooltip = new TooltipPositioner {
+      @model
+      key: 'usersNearby'
+      anchor: 'top-center'
+    }
 
     # don't need to slow down server-side rendering for this
     hasUnreadMessages = if window?
@@ -61,10 +67,18 @@ module.exports = class SocialPage
     @state = z.state {
       hasUnreadMessages
       @selectedProfileDialogUser
-      selectedIndex
+      @selectedIndex
       unreadNotifications: @model.notification.getUnreadCount()
     }
 
+  afterMount: =>
+    @disposable = @selectedIndex.subscribe (index) =>
+      ga? 'send', 'event', 'social', 'tab', index
+      if index is 1
+        @$tooltip.close()
+
+  beforeUnmount: =>
+    @disposable?.unsubscribe()
 
   getMeta: =>
     {
@@ -99,6 +113,10 @@ module.exports = class SocialPage
           }
           {
             $menuIcon: @$usersNearbyIcon
+            $after:
+              if @model.experiment.get('nearbyTooltip') is 'visible'
+                z '.p-social_tab-users-nearby-icon',
+                  z @$tooltip
             menuIconName: 'users-nearby'
             $menuText: @model.l.get 'social.peopleNearby'
             $el: z @$usersNearby

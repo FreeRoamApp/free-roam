@@ -79,6 +79,7 @@ module.exports = class TabsBar
                       isTouchTarget: false
                       color: if isSelected then color else inactiveColor
                       icon: item.menuIconName
+                item.$after
                 if hasText
                   z '.text', {
                     style:

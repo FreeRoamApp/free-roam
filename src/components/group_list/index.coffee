@@ -34,9 +34,9 @@ module.exports = class GroupList
           z '.g-grid',
             z '.g-cols',
               _map groups, ({group}) =>
-                # FIXME: rm hardcode (midwest vanlife gathering)
-                # automate the images
-                key = if group?.slug is 'mvg' then 'mvg' else 'freeroam'
+                key = if group?.slug is 'boondocking' \
+                      then 'freeroam'
+                      else group?.slug
 
                 group.type ?= 'general'
                 route = @model.group.getPath group, 'groupChat', {@router}

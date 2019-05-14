@@ -4,6 +4,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
+_filter = require 'lodash/filter'
 _range = require 'lodash/range'
 _startCase = require 'lodash/startCase'
 _zipObject = require 'lodash/zipObject'
@@ -115,17 +116,34 @@ module.exports = class FilterDialog
           _zipObject _map(list, 'key'), vals
 
       when 'weather'
+        forecastMetrics = [
+          'maxHigh', 'minHigh', 'maxLow', 'minLow', 'rainyDays'
+        ]
         @monthDropdownValue = new RxBehaviorSubject(
           if @filter.value?.month?
           then @filter.value?.month
           else new Date().getMonth()
-        )
+        ).do (month) =>
+          if month is 'forecast' and not (
+            @filter.value?.metric in forecastMetrics
+          )
+            @metricDropdownValue.next 'maxHigh'
+          # if using forecast metrics, switch back to avg metrics
+          else if month isnt 'forecast' and
+              @filter.value?.metric in forecastMetrics
+            @metricDropdownValue.next 'tmin'
+
         @$monthDropdown = new Dropdown {value: @monthDropdownValue}
 
         @metricDropdownValue = new RxBehaviorSubject(
           @filter.value?.metric or 'tmin'
         ).do (metric) =>
           switch metric
+            when 'maxHigh' then @operatorDropdownValue.next 'lt'
+            when 'minHigh' then @operatorDropdownValue.next 'gt'
+            when 'maxLow' then @operatorDropdownValue.next 'lt'
+            when 'minLow' then @operatorDropdownValue.next 'gt'
+            when 'rainyDays' then @operatorDropdownValue.next 'lt'
             when 'tmin' then @operatorDropdownValue.next 'gt'
             when 'tmax' then @operatorDropdownValue.next 'lt'
             when 'precip' then @operatorDropdownValue.next 'lt'
@@ -241,24 +259,53 @@ module.exports = class FilterDialog
             z '.label', @model.l.get 'general.weather'
             z '.month',
               z @$monthDropdown,
-                options: _map _range(12), (i) =>
+                options: [
+                  {
+                    value: 'forecast'
+                    text: @model.l.get 'filterDialog.weatherForecast'
+                  }
+                ].concat _map _range(12), (i) =>
                   {value: "#{i}", text: @model.l.get "months.#{i}"}
             z '.metric',
               z @$metricDropdown,
-                options: [
-                  {
-                    value: 'tmin'
-                    text: @model.l.get 'filterDialog.weatherTmin'
-                  }
-                  {
-                    value: 'tmax'
-                    text: @model.l.get 'filterDialog.weatherTmax'
-                  }
-                  {
-                    value: 'precip'
-                    text: @model.l.get 'filterDialog.weatherPrecip'
-                  }
-                ]
+                options: if filterValue?.month is 'forecast'
+                  [
+                    {
+                      value: 'maxHigh'
+                      text: @model.l.get 'filterDialog.weatherMaxHigh'
+                    }
+                    {
+                      value: 'minHigh'
+                      text: @model.l.get 'filterDialog.weatherMinHigh'
+                    }
+                    {
+                      value: 'maxLow'
+                      text: @model.l.get 'filterDialog.weatherMaxLow'
+                    }
+                    {
+                      value: 'minLow'
+                      text: @model.l.get 'filterDialog.weatherMinLow'
+                    }
+                    {
+                      value: 'rainyDays'
+                      text: @model.l.get 'filterDialog.weatherRainyDays'
+                    }
+                  ]
+                else
+                  [
+                    {
+                      value: 'tmin'
+                      text: @model.l.get 'filterDialog.weatherTmin'
+                    }
+                    {
+                      value: 'tmax'
+                      text: @model.l.get 'filterDialog.weatherTmax'
+                    }
+                    {
+                      value: 'precip'
+                      text: @model.l.get 'filterDialog.weatherPrecip'
+                    }
+                  ]
             z '.operator',
               z @$operatorDropdown,
                 options: [
@@ -274,8 +321,9 @@ module.exports = class FilterDialog
             z '.number',
               z @$numberInput, {
                 type: 'number'
-                hintText:
-                  @model.l.get "filterDialog.weather#{_startCase(metric)}"
+                hintText: @model.l.get(
+                  "filterDialog.weather#{_startCase(metric).replace(/ /g, '')}"
+                )
               }
       when 'distanceTo'
         $content =

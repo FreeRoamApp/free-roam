@@ -43,7 +43,7 @@ module.exports = class NewAmenity
       {amenity: 'groceries'}
       {amenity: 'propane'}
       {amenity: 'trash'}
-      {amenity: 'recycling'}
+      {amenity: 'recycle'}
       {amenity: 'shower'}
       {amenity: 'gas'}
       {amenity: 'laundry'}

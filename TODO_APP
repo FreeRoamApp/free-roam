@@ -1,7 +1,12 @@
 TODOS:
 
+- Forecast filter
+- Recent reviews (maybe on about page?)
+x Social tutorial tips
+- Script to combine duplicate campground / reviews
+  - craggy wash, sedona
 - Find more free campsites in northern utah
-- Recycling
+x Recycling
 - Warning message when difference between weather station and campground is high (far away, or big elevation difference)
 - Colorblind friendly
 - Midwest vanlife gathering
@@ -9,9 +14,8 @@ TODOS:
   - Give permission for @everyone
   - Some way to find group from the app
 - User-inputted info for low clearances
-- Show elevation when long-tapping on coordinate
+x Show elevation when long-tapping on coordinate
 x Fix: At i12 and i55, theres a 9' and a 6'. These are running vertically along Lake Pontchartrain in La. The 9' is just past Hammond Both on the interstate.
-- Combine all 3 craggy washes
 - Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
 - Great National Forest areas here in NW Florida..Apalachicola National Forest has lots of boondocking opportunities, terrik
 x Products search is broken

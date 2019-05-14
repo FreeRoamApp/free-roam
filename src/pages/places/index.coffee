@@ -3,6 +3,7 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _startCase = require 'lodash/startCase'
+_camelCase = require 'lodash/camelCase'
 
 Places = require '../../components/places'
 colors = require '../../colors'
@@ -19,9 +20,9 @@ module.exports = class PlacesPage
     isShell = requests.map ({route}) ->
       route.params.type is 'shell'
     type = requests.map ({route}) ->
-      route.params.type
+      _camelCase route.params.type
     subType = requests.map ({route}) ->
-      route.params.subType
+      _camelCase route.params.subType
     trip = requests.switchMap ({req}) =>
       if req.query.tripId
         @model.trip.getById req.query.tripId
