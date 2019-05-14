@@ -79,6 +79,7 @@ module.exports = class EditRigDialog
                   {value: 'truckCamper', text: @model.l.get 'rigs.truckCamper'}
                   {value: 'tent', text: @model.l.get 'rigs.tent'}
                   {value: 'car', text: @model.l.get 'rigs.car'}
+                  {value: 'motorcycle', text: @model.l.get 'rigs.motorcycle'}
                 ]
             z '.block',
               # z 'label.label', @model.l.get 'editRigDialog.length'

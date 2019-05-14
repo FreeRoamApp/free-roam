@@ -683,6 +683,7 @@
   "rigs.truckCamper": "Truck camper",
   "rigs.tent": "Tent",
   "rigs.car": "Car",
+  "rigs.motorcycle": "Motorcycle",
 
   "tooltips.mapLayersTitle": "Show map layers",
   "tooltips.mapLayersContent": "Tap above to show satellite, public land, and cell coverage overlays",
