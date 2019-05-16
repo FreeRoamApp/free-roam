@@ -1,0 +1,56 @@
+@require '../../vars'
+
+.z-dashboard
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 16px 0 0 0
+
+  > .g-grid
+
+    > .current-location
+      margin-bottom: 16px
+
+      > .rating
+        display: flex
+        flex-direction: column
+        align-items: center
+
+        > .text
+          font-body3()
+          margin-top: 8px
+
+    > .card
+      shadow-1()
+      background: getColor('$tertiary0')
+      padding: 16px
+      width: 100%
+      box-sizing: border-box
+      margin-bottom: 8px
+
+      > .title
+        font-title()
+        margin-bottom: 16px
+
+      > .weather
+        border-radius: 8px
+        padding: 16px 24px
+        display: flex
+
+        &.is-clear
+          background-image: linear-gradient(282deg, #ffdea4, #ffc563)
+
+        > .icon
+          width: 72px
+          height: 72px
+          margin-right: 32px
+
+        > .info
+          > .date
+            font-h1()
+            color: getColor('$white')
+            margin-bottom: 8px
+
+          > .text
+            font-huge()
+            color: getColor('$white')

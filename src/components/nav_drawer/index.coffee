@@ -222,6 +222,10 @@ module.exports = class NavDrawer
                 path: @router.get 'newOvernight'
                 title: @model.l.get 'drawer.newOvernight'
               }
+              {
+                path: @router.get 'newAmenity'
+                title: @model.l.get 'drawer.newFacility'
+              }
             ]
           }
 

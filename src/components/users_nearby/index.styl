@@ -13,6 +13,7 @@
       padding: 0 16px
       display: flex
       align-items: center
+      margin-bottom: 8px
 
       > .toggle
         margin-left: auto
@@ -26,19 +27,6 @@
           height: 47px
           background: url($cdnUrl + '/enable_location_arrow.svg')
           background-size: 100%
-
-    > .my-location
-      display: flex
-      align-items: center
-      padding: 0 16px
-      margin-bottom: 8px
-
-      > .location
-        color: getColor('$secondary500')
-        margin-left: 16px
-
-      > .change
-        margin-left: auto
 
     > .empty
       text-align: center
@@ -62,6 +50,8 @@
         font-body2()
 
     > .users
+      margin-top: 8px
+
       > .empty
         text-align: center
         max-width: 320px

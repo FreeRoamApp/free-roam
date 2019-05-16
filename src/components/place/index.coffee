@@ -90,6 +90,7 @@ module.exports = class Place
               color: colors.$primary500Text
             }
             onclick: =>
+              console.log 'click', @newReviewPath
               @router.go @newReviewPath, {
                 slug: place.slug
               }, {ignoreHistory: true}

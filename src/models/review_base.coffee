@@ -27,6 +27,7 @@ module.exports = class Review
     requestPromise = @proxy config.API_URL + '/upload', {
       method: 'post'
       beforeSend: (xhr) ->
+        # if this isn't working, it might be serviceworker's fault
         xhr.upload.addEventListener 'progress', onProgress, false
       query:
         path: "#{@namespace}.uploadImage"

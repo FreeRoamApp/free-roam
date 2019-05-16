@@ -6,7 +6,7 @@ _filter = require 'lodash/filter'
 _map = require 'lodash/map'
 
 Avatar = require '../avatar'
-CoordinatePicker = require '../coordinate_picker'
+CurrentLocation = require '../current_location'
 Icon = require '../icon'
 FlatButton = require '../flat_button'
 Toggle = require '../toggle'
@@ -24,8 +24,7 @@ module.exports = class UsersNearby
         settings?.privacy?.location?.everyone
     )
 
-    @$locationIcon = new Icon()
-    @$changeButton = new FlatButton()
+    @$currentLocation = new CurrentLocation {@model, @router}
     @$toggle = new Toggle {
       @model, isSelectedStreams: @isLocationEnabledStreams
     }
@@ -37,7 +36,6 @@ module.exports = class UsersNearby
 
     @state = z.state {
       isLocationEnabled: @isLocationEnabledStreams.switch()
-      myLocation: @model.userLocation.getByMe()
       userLocations: meAndUserLocations
       .map ([me, userLocations]) ->
         places = _filter _map userLocations?.places, (userLocation) ->
@@ -51,29 +49,9 @@ module.exports = class UsersNearby
       me: @model.user.getMe()
     }
 
-  openCoordinatePicker: =>
-    @model.overlay.open new CoordinatePicker {
-      @model, @router
-      pickButtonText: @model.l.get 'placeInfo.checkIn'
-      onPick: (place) =>
-        (if not place.id
-          @model.coordinate.upsert {
-            name: name
-            location: place.location
-          }, {invalidateAll: false}
-        else
-          Promise.resolve place)
-        .then ({id}) =>
-          @model.checkIn.upsert {
-            name: place.name
-            sourceType: place.type or 'coordinate'
-            sourceId: place.id or id
-            setUserLocation: true
-          }
-    }
 
   render: =>
-    {me, isLocationEnabled, myLocation, userLocations} = @state.getValue()
+    {me, isLocationEnabled, userLocations} = @state.getValue()
 
     z '.z-users-nearby',
       z '.g-grid',
@@ -86,9 +64,7 @@ module.exports = class UsersNearby
                 @model.user.requestLoginIfGuest me
                 .then =>
                   if isSelected
-                    @openCoordinatePicker()
-                  else
-                    @model.userLocation.deleteByMe()
+                    @$currentLocation.openCoordinatePicker()
                   @model.userSettings.upsert {
                     privacy:
                       location:
@@ -99,21 +75,7 @@ module.exports = class UsersNearby
               z '.helper-arrow'
         if isLocationEnabled
           [
-            z '.my-location',
-              z '.icon',
-                z @$locationIcon,
-                  icon: 'location'
-                  color: colors.$secondary500
-                  isTouchTarget: false
-              z '.location',
-                if myLocation
-                  @model.placeBase.getName myLocation.place
-                else
-                  @model.l.get 'usersNearby.emptyLocation'
-              z '.change',
-                z @$changeButton,
-                  text: @model.l.get 'general.change'
-                  onclick: @openCoordinatePicker
+            z @$currentLocation
 
             z '.title',
               @model.l.get 'usersNearby.roamersNearby'

@@ -20,6 +20,7 @@ module.exports = class CheckInTooltip extends MapTooltip
       @place
       @mapSize
       @size
+      @position
       isSaving: false
       isSaved: false
     }
@@ -30,12 +31,12 @@ module.exports = class CheckInTooltip extends MapTooltip
     null
 
   render: ({isVisible, buttonText} = {}) =>
-    {place, mapSize, size, isSaving, isSaved} = @state.getValue()
+    {place, position, mapSize, size, isSaving, isSaved} = @state.getValue()
 
     isVisible ?= Boolean place and Boolean size.width
 
-    anchor = @getAnchor place?.position, mapSize, size
-    transform = @getTransform place?.position, anchor
+    anchor = @getAnchor position, mapSize, size
+    transform = @getTransform position, anchor
 
     z ".z-check-in-tooltip.anchor-#{anchor}", {
       className: z.classKebab {isVisible, @isImageLoaded}

@@ -77,7 +77,6 @@ module.exports = class EditTrip extends Base
         @place.next {
           name: "#{latRounded}, #{lonRounded}"
           type: 'tripCheckIn'
-          position: e.point
           location: [e.lngLat.lng, e.lngLat.lat]
         }
     }
@@ -147,6 +146,7 @@ module.exports = class EditTrip extends Base
         name: checkIn.name
         sourceType: 'coordinate'
         sourceId: id
+        setUserLocation: trip.type is 'past'
       }
 
   onReorder: (ids) =>

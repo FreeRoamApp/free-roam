@@ -159,6 +159,7 @@ module.exports = class LocationSearch
                         text: location.name or location.text
                         sourceType: location.type
                         sourceId: location.id
+                        slug: location.slug
                       }
                     @searchValueStreams.next RxObservable.of location.text
                     @isOpen.next false

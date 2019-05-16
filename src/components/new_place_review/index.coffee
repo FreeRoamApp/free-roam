@@ -136,7 +136,7 @@ module.exports = class NewPlaceReview
     @reviewFields.rating.valueStreams.next saved.map ([autosave, review]) ->
       autosave['review.rating'] or review?.rating
     @reviewFields.attachments.valueStreams.next saved.map ([autosave, review]) ->
-      autosave['review.attachments'] or review?.attachments
+      autosave['review.attachments'] or review?.attachments or []
 
     # TODO!
     _forEach @reviewExtraFields, (field, key) =>
@@ -209,7 +209,6 @@ module.exports = class NewPlaceReview
           extras: extras
         }
         .then (newReview) =>
-          @model.overlay.open @$reviewThanksDialog
           @state.set isLoading: false
           delete localStorage[LOCAL_STORAGE_AUTOSAVE + ':' + parent?.id]
           @resetValueStreams()
@@ -219,6 +218,7 @@ module.exports = class NewPlaceReview
             @router.go @placeWithTabPath, {
               slug: parent?.slug, tab: 'reviews'
             }, {reset: true}
+            @model.overlay.open @$reviewThanksDialog
           , 200
         .catch (err) =>
           console.log 'err', err
@@ -238,7 +238,7 @@ module.exports = class NewPlaceReview
 
 
   render: =>
-    {step, isLoading, review} = @state.getValue()
+    {step, isLoading, review, attachmentsValue} = @state.getValue()
 
     z '.z-new-place-review',
       z @$steps[step]

@@ -95,7 +95,9 @@ module.exports = class Cache
   onFetch: (event) =>
     # xhr upload progress listener doesn't work w/o this
     # https://github.com/w3c/ServiceWorker/issues/1141
-    if event.request.method is 'POST' and event.request.url.match /\/upload$/i
+    if event.request.method is 'POST' and event.request.url.match(
+        /\/upload[^a-zA-Z]/i
+    )
       return
 
     request = event.request

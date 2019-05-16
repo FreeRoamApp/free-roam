@@ -22,6 +22,8 @@ module.exports = class UploadOverlay
         type: 'file'
         # this doesn't work in native app. causes file picker to not show at all
         # accept: '.jpg, .jpeg, .png'
+
+        # doesn't work on android currently. https://github.com/apache/cordova-android/issues/621
         multiple: if isMulti then true else undefined
         onchange: (e) =>
           e?.preventDefault()

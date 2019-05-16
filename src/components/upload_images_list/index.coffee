@@ -5,6 +5,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _findIndex = require 'lodash/findIndex'
+_clone = require 'lodash/clone'
 
 Icon = require '../icon'
 UploadOverlay = require '../upload_overlay'
@@ -43,8 +44,6 @@ module.exports = class UploadImagesList
         ])
       onProgress: (response, {clientId}) =>
         {attachments} = @state.getValue()
-
-        console.log 'progress', response
 
         attachmentIndex = _findIndex attachments, {clientId}
         attachments[attachmentIndex].progress = response.loaded / response.total
@@ -103,8 +102,9 @@ module.exports = class UploadImagesList
             className: z.classKebab {isUploading}
             oncontextmenu: (e) =>
               e.preventDefault()
-              attachments = attachments.splice i, 1
-              @attachmentsValueStreams.next RxObservable.of attachments
+              newAttachments = _clone attachments
+              newAttachments.splice i, 1
+              @attachmentsValueStreams.next RxObservable.of newAttachments
           },
             z '.image',
               style:

@@ -46,7 +46,7 @@ module.exports = class CoordinatePicker
         @placePosition.next @$map.map.project location.location
         @places.next [{
           name: location.text
-          slug: ''
+          slug: location.slug or ''
           id: location.sourceId
           type: location.sourceType
           location: location.location
@@ -57,7 +57,7 @@ module.exports = class CoordinatePicker
     @$locationIcon = new Icon()
 
     @$map = new Map {
-      @model, @router, @places, center: @mapCenter, initialZoom
+      @model, @router, @places, @mapSize, center: @mapCenter, initialZoom
       hideControls: true
       onclick: (e) =>
         lat = Math.round(10000 * e.lngLat.lat) / 10000

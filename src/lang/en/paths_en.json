@@ -28,12 +28,15 @@
   "campgroundAttachments": "/campground/:slug/attachments",
   "campgroundWithTab": "/campground/:slug/:tab",
 
+  "dashboard": "/dashboard",
+
   "conversation": "/conversation/:id",
   "conversations": "/conversations",
   "editCheckIn": "/edit-check-in/:id",
   "editTrip": "/edit-trip/:id",
   "editTripByType": "/edit-trip/type/:type",
   "editProfile": "/edit-profile",
+  "editAmenityReview": "/amenity/:slug/review/:reviewId/edit",
   "editCampgroundReview": "/campground/:slug/review/:reviewId/edit",
   "editOvernightReview": "/overnight/:slug/review/:reviewId/edit",
   "guide": "/guide/:slug",
