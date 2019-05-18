@@ -54,7 +54,7 @@ module.exports = class CurrentLocation
         if myLocation
           [
             z '.name', @model.placeBase.getName myLocation.place
-            z '.date', 'test'
+            # z '.date', 'test'
           ]
         else
           z '.name', @model.l.get 'usersNearby.emptyLocation'

@@ -1,0 +1,44 @@
+@require '../../vars'
+
+.z-places-list-amenity
+  > .info
+    flex1()
+    min-width: 0
+
+    > .name
+      font-title()
+
+    > .caption
+      font-caption2()
+
+    > .amenities
+      display: flex
+      overflow-x: auto
+      -webkit-overflow-scrolling: touch
+      margin-top: 8px
+
+      > .amenity
+        font-caption3()
+        // display: inline-block
+        display: flex
+        align-items: center
+        margin-right: 4px
+        padding: 2px 12px
+        box-sizing: border-box
+        border-radius: 2px
+
+        > .icon
+          margin-right: 8px
+          // display: inline-block
+
+        // > .name
+        //   display: inline-block
+
+  > .actions
+    display: flex
+    margin-left: auto
+    justify-content: flex-end
+    margin-top: 20px
+
+    > .action
+      margin-left: 8px

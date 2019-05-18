@@ -2,6 +2,7 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _chunk = require 'lodash/chunk'
+_startCase = require 'lodash/startCase'
 _defaults = require 'lodash/defaults'
 
 Icon = require '../icon'
@@ -29,6 +30,7 @@ module.exports = class PlaceInfoWeather
           _defaults {
             dow: date.getDay()
             date: dateStr
+            $weatherIcon: new Icon()
             $rainIcon: new Icon()
             $windIcon: new Icon()
             $temperatureIcon: new Icon()
@@ -39,6 +41,7 @@ module.exports = class PlaceInfoWeather
     {place, forecastDaily, currentTab} = @state.getValue()
 
     tabs = ['avg', 'forecast']
+
 
     z '.z-place-info-weather',
       z '.title', @model.l.get 'placeInfo.weather'
@@ -64,6 +67,7 @@ module.exports = class PlaceInfoWeather
           },
             _map forecastDaily, (day, i) =>
               icon = day.icon.replace 'night', 'day'
+              iconColor = "$weather#{_startCase(icon).replace(/ /g, '')}"
               z '.day',
                 z '.day-of-week',
                   if i is 0
@@ -73,8 +77,13 @@ module.exports = class PlaceInfoWeather
                   else
                     @model.l.get "daysAbbr.#{day.dow}"
                 z '.date', day.date
-                z 'img.icon',
-                  src: "#{config.CDN_URL}/weather/#{icon}.svg"
+                z '.icon',
+                  z day.$weatherIcon,
+                    icon: "weather-#{icon}"
+                    color: colors[iconColor] or
+                            colors.$bgText87
+                    isTouchTarget: false
+                    size: '48px'
                 z '.high-low',
                   z '.icon',
                     z day.$temperatureIcon,
@@ -96,7 +105,7 @@ module.exports = class PlaceInfoWeather
                 z '.wind',
                   z '.icon',
                     z day.$windIcon,
-                      icon: 'wind'
+                      icon: 'weather-wind'
                       size: '16px'
                       isTouchTarget: false
                   z '.info',

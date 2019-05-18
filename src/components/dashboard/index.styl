@@ -1,12 +1,46 @@
+
 @require '../../vars'
 
 .z-dashboard
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
-  padding: 16px 0 0 0
+  padding: 16px 0 16px 0
 
   > .g-grid
+    > .empty
+      > .info-card
+        background: getColor('$primary500')
+        color: getColor('$primary500Text')
+        padding: 16px
+        border-radius: 4px
+        margin: 0 16px 16px 16px
+
+        > .title
+          font-title()
+          color: getColor('$primary500Text')
+          margin-bottom: 4px
+
+        > .description
+          color: getColor('$primary500Text')
+
+        > .actions
+          display: flex
+          justify-content: flex-end
+          margin-bottom: -8px
+
+      > .nearby
+        shadow-1()
+        background: getColor('$tertiary0')
+        margin-bottom: 16px
+
+        > .title
+          font-title()
+          padding: 16px
+          border-bottom: 1px solid getColor('$bgText12')
+
+      > .add
+        padding: 0 16px
 
     > .current-location
       margin-bottom: 16px
@@ -26,7 +60,7 @@
       padding: 16px
       width: 100%
       box-sizing: border-box
-      margin-bottom: 8px
+      margin-bottom: 16px
 
       > .title
         font-title()
@@ -38,19 +72,85 @@
         display: flex
 
         &.is-clear
-          background-image: linear-gradient(282deg, #ffdea4, #ffc563)
+         background-image: linear-gradient(282deg, #ffdea4, #ffc563)
+
+        &.is-wind
+          background-image: linear-gradient(119deg, #acb6e5, #86fde8)
+
+        &.is-snow
+          background-image: linear-gradient(119deg, #98c9e5, #b6fbff)
+
+        &.is-sleet
+          background-image: linear-gradient(119deg, #be94c5, #7bc6cc)
+
+        &.is-tornado
+          background-image: linear-gradient(119deg, #403a3e, #be5869)
+
+        &.is-rain
+          background-image: linear-gradient(119deg, #4ca1af, #c3e0e4)
+
+        &.is-partly-cloudy-day
+          background-image: linear-gradient(282deg, #ffdea4, #ffc563), linear-gradient(119deg, #70e1f5, #ffd194)
+
+        &.is-fog
+          background-image: linear-gradient(282deg, #ffdea4, #ffc563), linear-gradient(119deg, #767f9a, #d6dde8)
+
+        &.is-hail
+          background-image: linear-gradient(119deg, #1a2980, #25d0cd)
+
+        &.is-cloudy
+          background-image: linear-gradient(282deg, #ffdea4, #ffc563), linear-gradient(119deg, #536976, #bbd1c4)
+
+        &.is-thunderstorm
+          background-image: linear-gradient(119deg, #3c1553, #ad5389)
 
         > .icon
-          width: 72px
-          height: 72px
-          margin-right: 32px
+          width: 100px
+          height: 100px
+          margin-left: -12px
+          margin-right: 8px
+          // margin-right: 32px
 
         > .info
+          color: getColor('$white')
+
           > .date
             font-h1()
-            color: getColor('$white')
+            color: inherit
             margin-bottom: 8px
 
           > .text
             font-huge()
-            color: getColor('$white')
+            color: inherit
+            margin-bottom: 8px
+
+          > .high-low, > .rain, > .wind
+            font-title()
+            color: inherit
+            display: flex
+            margin-bottom: 4px
+
+            > .icon
+              margin-right: 4px
+
+            > .divider
+              margin: 0 4px
+
+          > .high-low
+            > .high
+              font-title()
+              color: inherit
+
+            > .low
+              font-title()
+              color: inherit
+
+          > .rain
+            color: inherit
+
+          > .wind
+            align-items: flex-start
+            > .info
+              > .speed, > .gust
+                > .caption, > .type
+                  color: inherit

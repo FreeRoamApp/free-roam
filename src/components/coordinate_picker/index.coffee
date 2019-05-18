@@ -129,9 +129,8 @@ module.exports = class CoordinatePicker
               }
               isImmediate: true
               onclick: =>
-                navigator.geolocation.getCurrentPosition (pos) =>
-                  lat = Math.round(10000 * pos.coords.latitude) / 10000
-                  lon = Math.round(10000 * pos.coords.longitude) / 10000
+                MapService.getLocation()
+                .then ({lat, lon}) ->
                   coordinates = "#{lat}, #{lon}"
                   @mapCenter.next [lon, lat]
                   @placePosition.next @$map.map.project {lon, lat}

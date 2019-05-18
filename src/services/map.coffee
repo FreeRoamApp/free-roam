@@ -11,6 +11,20 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
           'oct', 'nov', 'dec']
 
 class MapService
+  hasLocationPermission: ->
+    unless navigator?.permissions
+      return Promise.resolve false
+    navigator.permissions.query {name: 'geolocation'}
+    .then (permissionStatus) ->
+      return permissionStatus.state is 'granted'
+
+  getLocation: ->
+    new Promise (resolve, reject) ->
+      navigator?.geolocation.getCurrentPosition (pos) ->
+        lat = Math.round(10000 * pos.coords.latitude) / 10000
+        lon = Math.round(10000 * pos.coords.longitude) / 10000
+        resolve {lat, lon}
+
   getDirections: (place, {model}) ->
     target = '_system'
     baseUrl = 'https://google.com/maps/dir/?api=1'

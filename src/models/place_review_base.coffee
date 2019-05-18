@@ -8,3 +8,7 @@ module.exports = class PlaceReviewBase extends ReviewBase
 
   getCountByUserId: (userId) =>
     @auth.stream "#{@namespace}.getCountByUserId", {userId}
+
+  upsertRatingOnly: (options, {invalidateAll} = {}) =>
+    invalidateAll ?= true
+    @auth.call "#{@namespace}.upsertRatingOnly", options, {invalidateAll}

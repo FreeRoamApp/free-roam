@@ -11,6 +11,10 @@ module.exports = class PlaceBase
   search: ({query, tripId, sort, limit}) =>
     @auth.stream "#{@namespace}.search", {query, tripId, sort, limit}
 
+  # socket.io compresses responses, so a 50kb response is more like 10kb
+  searchNearby: ({location, limit}) =>
+    @auth.stream "#{@namespace}.searchNearby", {location, limit}
+
   upsert: (options, {invalidateAll} = {}) =>
     invalidateAll ?= true
     @auth.call "#{@namespace}.upsert", options, {invalidateAll}

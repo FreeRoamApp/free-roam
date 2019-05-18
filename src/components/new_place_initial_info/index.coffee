@@ -12,6 +12,7 @@ Dropdown = require '../dropdown'
 Textarea = require '../textarea'
 CoordinatePicker = require '../coordinate_picker'
 Icon = require '../icon'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -108,9 +109,10 @@ module.exports = class NewPlaceInitialInfo
                   isOutline: true
                   text: @model.l.get 'general.currentLocation'
                   onclick: =>
-                    navigator.geolocation.getCurrentPosition (pos) =>
+                    MapService.getLocation()
+                    .then ({lat, lon}) =>
                       @fields.location.valueStreams.next RxObservable.of(
-                        "#{pos.coords.latitude}, #{pos.coords.longitude}"
+                        "#{lat}, #{lon}"
                       )
 
         z 'label.field.details',

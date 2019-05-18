@@ -13,7 +13,7 @@ if window?
 
 module.exports = class Rating
   # set isInteractive to true if tapping on a star should fill up to that star
-  constructor: ({@value, @valueStreams, @isInteractive}) ->
+  constructor: ({@value, @valueStreams, @isInteractive, @onRate}) ->
     @value ?= new RxBehaviorSubject 0
 
     @$icons = [new Icon(), new Icon(), new Icon(), new Icon(), new Icon()]
@@ -38,6 +38,7 @@ module.exports = class Rating
       @valueStreams.next RxObservable.of value
     else
       @value.next value
+    @onRate? value
 
   render: ({size} = {}) =>
     {rating, starIcons} = @state.getValue()
