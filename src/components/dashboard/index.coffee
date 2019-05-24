@@ -3,6 +3,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/fromPromise'
+require 'rxjs/add/observable/of'
 _camelCase = require 'lodash/camelCase'
 _startCase = require 'lodash/startCase'
 _reduce = require 'lodash/reduce'
@@ -10,11 +11,12 @@ _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
 
 CurrentLocation = require '../current_location'
+FlatButton = require '../flat_button'
 Icon = require '../icon'
 PlacesList = require '../places_list'
 Rating = require '../rating'
 SecondaryButton = require '../secondary_button'
-FlatButton = require '../flat_button'
+Spinner = require '../spinner'
 FormatService = require '../../services/format'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -30,8 +32,12 @@ FIXME FIXME: current location can't be updated if location sharing is off. it sh
 module.exports = class Dashboard
   constructor: ({@model, @router}) ->
     me = @model.user.getMe()
+    myLocation = @model.userLocation.getByMe().map (myLocation) ->
+      myLocation or false
 
-    @$currentLocation = new CurrentLocation {@model, @router}
+    @$currentLocation = new CurrentLocation {
+      @model, @router, isPlacesOnly: true
+    }
 
     hasLocationPermissionPromise = MapService.hasLocationPermission()
     @hasLocationPermissionStreams = new RxReplaySubject 1
@@ -55,26 +61,41 @@ module.exports = class Dashboard
     @$addCampgroundButton = new SecondaryButton()
     @$updateLocationButton = new FlatButton()
 
+    reviewValueStreams = new RxReplaySubject 1
+    reviewValueStreams.next myLocation.switchMap (myLocation) =>
+      unless myLocation?.place
+        return RxObservable.of null
+      place = myLocation.place
+      @model.placeReview.getByUserIdAndParentId myLocation.userId, place.id
+
+    ratingValueStreams = new RxReplaySubject 1
+    ratingValueStreams.next reviewValueStreams.switch().map (review) ->
+      review?.rating
+
     @$rating = new Rating {
-      # FIXME: get current review / rating and set this...
+      valueStreams: ratingValueStreams
       isInteractive: true
       onRate: (rating) =>
-        console.log 'rate', rating
-        {myLocation} = @state.getValue()
+        {myLocation, review} = @state.getValue()
         place = myLocation.place
         @model["#{place.type}Review"].upsertRatingOnly {
+          id: review?.id
           parentId: place.id
           rating: rating
         }
     }
 
+    @$addReviewButton = new SecondaryButton()
+
     @$weatherIcon = new Icon()
     @$temperatureIcon = new Icon()
     @$rainIcon = new Icon()
     @$windIcon = new Icon()
+    @$facilitiesAllIcon = new Icon()
+
+    @$spinner = new Spinner()
 
 
-    myLocation = @model.userLocation.getByMe()
     nearestAmenities = myLocation.switchMap (myLocation) =>
       unless myLocation?.place
         return RxObservable.of []
@@ -88,7 +109,6 @@ module.exports = class Dashboard
       @model, @router
       places: myLocationAndNearestAmenities
       .map ([myLocation, nearestAmenities]) =>
-        console.log 'near', nearestAmenities
         knownDistances = _reduce myLocation?.place?.distanceTo, (obj, distanceTo) ->
           {id, time, distance} = distanceTo
           obj[id] = {time, distance}
@@ -108,21 +128,22 @@ module.exports = class Dashboard
 
     @state = z.state {
       myLocation
+      review: reviewValueStreams.switch()
       hasLocationPermission: @hasLocationPermissionStreams.switch()
     }
 
   render: =>
-    {myLocation, hasLocationPermission} = @state.getValue()
+    {myLocation, review, hasLocationPermission} = @state.getValue()
 
     todayForecast = myLocation?.place?.forecast?.daily?[0]
-    icon = todayForecast?.icon
+    icon = todayForecast?.icon?.replace 'night', 'day'
     weatherType = _startCase(icon).replace(/ /g, '')
-
-    console.log hasLocationPermission
 
     z '.z-dashboard',
       z '.g-grid',
-        if not myLocation
+        if not myLocation?
+          z @$spinner
+        else if not myLocation
           z '.empty',
             z '.info-card',
               z '.title', @model.l.get 'dashboard.emptyLocationTitle'
@@ -152,7 +173,7 @@ module.exports = class Dashboard
               [
                 z '.nearby',
                   z '.title', @model.l.get 'dashboard.emptyNearby'
-                  @$nearbyPlaces
+                  z @$nearbyPlaces, {isPlain: true}
                 z '.add',
                   z @$addCampgroundButton,
                     text: @model.l.get 'dashboard.addCampground'
@@ -166,12 +187,30 @@ module.exports = class Dashboard
 
               z '.rating',
                 z @$rating, {size: '32px'}
-                z '.text', @model.l.get 'dashboard.rate'
+
+                if review
+                  [
+                    z '.text',
+                      @model.l.get 'dashboard.leaveReview'
+                    z '.action',
+                      z @$addReviewButton,
+                        text: @model.l.get 'placeInfo.addReview'
+                        onclick: =>
+                          @router.go 'editCampgroundReview', {
+                            slug: myLocation.place.slug
+                            reviewId: review.id
+                          }, {ignoreHistory: true}
+                  ]
+                else
+                  z '.text', @model.l.get 'dashboard.rate'
 
             z '.card',
               z '.title', @model.l.get 'dashboard.weather'
-              z '.weather', {
+              @router.link z 'a.weather', {
                 className: z.classKebab {"is#{weatherType}": true}
+                href: @router.get 'campground', {
+                  slug: myLocation?.place?.slug
+                }
               },
                 z '.icon',
                   z @$weatherIcon,
@@ -226,4 +265,16 @@ module.exports = class Dashboard
             z '.card',
               z '.title', @model.l.get 'dashboard.nearby'
               z @$nearbyFacilities, {isPlain: true}
+              @router.link z 'a.view-more', {
+                href: @router.get 'campgroundWithTab', {
+                  slug: myLocation?.place?.slug
+                  tab: 'nearby'
+                }
+              },
+                z '.text', @model.l.get 'dashboard.viewMore'
+                z '.icon',
+                  z @$facilitiesAllIcon,
+                    icon: 'chevron-right'
+                    color: colors.bgText70
+                    isTouchTarget: false
           ]

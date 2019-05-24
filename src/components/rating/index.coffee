@@ -45,11 +45,15 @@ module.exports = class Rating
 
     size ?= '20px'
 
-    z '.z-rating', _map starIcons, (icon, i) =>
-      z '.star',
-        z @$icons[i],
-          icon: icon
-          size: size
-          isTouchTarget: false
-          color: colors.$amber500
-          onclick: if @isInteractive then (=> @setRating i + 1) else null
+    z '.z-rating', {
+      style:
+        height: size
+    },
+      _map starIcons, (icon, i) =>
+        z '.star',
+          z @$icons[i],
+            icon: icon
+            size: size
+            isTouchTarget: false
+            color: colors.$amber500
+            onclick: if @isInteractive then (=> @setRating i + 1) else null

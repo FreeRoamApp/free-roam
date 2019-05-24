@@ -1,5 +1,13 @@
 TODOS:
 
+- Autosave chat draft
+- Dashboard
+  - Allow search for campground (if on desktop and location isn't super accurate)
+  x Link to weather page
+  x No dupe facilities
+  x A/B. new campground, new/edit review, new rating
+  x Link to more facilities
+  - "See forecast" button
 - Ability to add website for campground
 - Fix crosshair icon when choosing current location?
 x Forecast filter

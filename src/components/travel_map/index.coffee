@@ -43,7 +43,7 @@ module.exports = class TravelMap
       route: route
       fill: filledStates
       usePlaceNumbers: true
-      initialBounds: [[-156.187, 18.440], [-38.766, 55.152]]
+      initialBounds: [[-141.187, 18.440], [-53.766, 55.152]]
       onclick: onclick
     }
     if prepScreenshot

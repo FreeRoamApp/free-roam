@@ -4,6 +4,7 @@ module.exports = class Review
   constructor: ({@auth, @proxy, @exoid}) -> null
 
   upsert: (options) =>
+    ga? 'send', 'event', 'ugc', 'review', options.parentId
     @auth.call "#{@namespace}.upsert", options, {invalidateAll: true}
 
   getAllByParentId: (parentId, options = {}) =>

@@ -143,13 +143,8 @@ module.exports = class SocialPage
       if selectedIndex is 3
         z '.fab',
           z @$fab,
-            colors:
-              c500: colors.$primary500
-            $icon: z @$fabIcon, {
-              icon: 'search'
-              isTouchTarget: false
-              color: colors.$primary500Text
-            }
+            isPrimary: true
+            icon: 'search'
             onclick: =>
               @model.overlay.open new FindFriends {
                 @model, @portal

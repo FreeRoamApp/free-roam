@@ -47,16 +47,20 @@ module.exports = class EditTripPage
           replacements:
             name: trip?.name or ''
         }
-        style: 'primary'
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
+        isPrimary: true
+        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
         $topRightButton:
           z '.p-edit-trip_top-right',
             z @$viewButton,
               text: @model.l.get 'general.view'
+              colors:
+                cText: colors.$primary500Text
               onclick: =>
                 @router.go 'trip', {id: trip.id}
             z @$shareButton,
               text: @model.l.get 'general.share'
+              colors:
+                cText: colors.$primary500Text
               onclick: =>
                 @$editTrip.share()
       }

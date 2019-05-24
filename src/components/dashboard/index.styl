@@ -66,10 +66,24 @@
         font-title()
         margin-bottom: 16px
 
+      > .view-more
+        display: flex
+        align-items: center
+        margin-bottom: -16px
+
+        > .text
+          color: getColor('$bgText70')
+
+        > .icon
+          margin-left: auto
+          padding: 16px
+
+
       > .weather
         border-radius: 8px
         padding: 16px 24px
         display: flex
+        cursor: pointer
 
         &.is-clear
          background-image: linear-gradient(282deg, #ffdea4, #ffc563)

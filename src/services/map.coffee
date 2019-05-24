@@ -12,18 +12,24 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
 
 class MapService
   hasLocationPermission: ->
+    # not available in native apps
+    # https://stackoverflow.com/questions/52784495/is-there-any-alternative-to-navigator-permissions-query-permissions-api
     unless navigator?.permissions
-      return Promise.resolve false
+      return Promise.resolve localStorage?.geolocationEnabled
     navigator.permissions.query {name: 'geolocation'}
     .then (permissionStatus) ->
       return permissionStatus.state is 'granted'
 
   getLocation: ->
     new Promise (resolve, reject) ->
-      navigator?.geolocation.getCurrentPosition (pos) ->
-        lat = Math.round(10000 * pos.coords.latitude) / 10000
-        lon = Math.round(10000 * pos.coords.longitude) / 10000
-        resolve {lat, lon}
+      if navigator?
+        navigator.geolocation.getCurrentPosition (pos) ->
+          localStorage?.geolocationEnabled = '1'
+          lat = Math.round(10000 * pos.coords.latitude) / 10000
+          lon = Math.round(10000 * pos.coords.longitude) / 10000
+          resolve {lat, lon}
+      else
+        resolve null
 
   getDirections: (place, {model}) ->
     target = '_system'

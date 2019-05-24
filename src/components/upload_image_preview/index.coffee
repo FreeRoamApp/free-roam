@@ -89,13 +89,8 @@ module.exports = class UploadImagePreview
             @model.overlay.close()
       z '.fab',
         z @$uploadImageFab,
-          colors:
-            c500: colors.$primary500
-          $icon: z @$uploadIcon, {
-            icon: if isUploading then 'ellipsis' else iconName
-            isTouchTarget: false
-            color: colors.$primary500Text
-          }
+          isPrimary: true
+          icon: if isUploading then 'ellipsis' else iconName
           onclick: =>
             if not isUploading and not @isUploading
               @isUploading = true # instant, w/o we sometimes get 2 uploads

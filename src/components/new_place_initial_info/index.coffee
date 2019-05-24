@@ -10,7 +10,7 @@ PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
 Dropdown = require '../dropdown'
 Textarea = require '../textarea'
-CoordinatePicker = require '../coordinate_picker'
+CoordinatePickerOverlay = require '../coordinate_picker_overlay'
 Icon = require '../icon'
 MapService = require '../../services/map'
 colors = require '../../colors'
@@ -91,7 +91,7 @@ module.exports = class NewPlaceInitialInfo
                 icon: 'map'
                 text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
                 onclick: =>
-                  @model.overlay.open new CoordinatePicker {
+                  @model.overlay.open new CoordinatePickerOverlay {
                     @model, @router
                     onPick: (place) =>
                       lat = Math.round(10000 * place.location.lat) / 10000

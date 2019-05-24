@@ -64,7 +64,7 @@ module.exports = class UsersNearby
                 @model.user.requestLoginIfGuest me
                 .then =>
                   if isSelected
-                    @$currentLocation.openCoordinatePicker()
+                    @$currentLocation.openCoordinatePickerOverlay()
                   @model.userSettings.upsert {
                     privacy:
                       location:

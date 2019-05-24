@@ -132,6 +132,14 @@ module.exports = class NavDrawer
             $ripple: new Ripple()
             iconName: 'profile'
           }
+          if @model.experiment.get('dashboard') is 'visible'
+            {
+              path: @router.get 'dashboard'
+              title: @model.l.get 'general.dashboard'
+              $icon: new Icon()
+              $ripple: new Ripple()
+              iconName: 'home'
+            }
           {
             path: @router.get 'myPlaces'
             title: @model.l.get 'myPlacesPage.title'

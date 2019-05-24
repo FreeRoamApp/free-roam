@@ -8,9 +8,9 @@
   position: relative
 
   > .map
-    flex1()
     display: flex
     position: relative
+    height: 218px
 
     > .places-along-route
       shadow-1()
@@ -29,27 +29,69 @@
     position: relative
 
     > .g-grid
+      > .add
+        margin-top: 16px
+        margin-left: 60px
+        display: flex
+        align-items: center
+        cursor: pointer
+
+        > .text
+          font-title()
+          margin-left: 16px
+          color: getColor('$secondary500')
 
       > .check-ins
-        padding: 0 16px 16px 16px
+        padding: 16px 16px 0 16px
+        position: relative
+
+        > .divider
+          position: absolute
+          top: 0
+          left: 64px + 16px + 7px // time + padding + 1/2 circle
+          height: 100%
+          width: 2px
+          background: getColor('$secondary500')
 
         > .placeholder
           padding-top: 16px
 
         > .check-in
+          display: flex
+          align-items: flex-start
+          margin-bottom: 16px
+
+          > .time
+            width: 64px
+            flex-shrink: 0
+
+            > .date
+              font-caption-bold()
+              color: getColor('$secondary500')
+
+            > .travel-time
+              font-caption3()
+              margin-top: 8px
+
+          > .dot
+            flex-shrink: 0
+            width: 16px
+            height: 16px
+            border-radius: 50%
+            border: 2px solid getColor('$secondary500')
+            outline: 3px solid getColor('$tertiary50')
+            background: getColor('$tertiary50')
+            position: relative
+            z-index: 1
+
           > .info
-            display: flex
-            align-items: center
-            height: 44px
+            margin-left: 16px
 
             > .name
               font-title()
 
-            > .actions
-              margin-left: auto
-
-          > .travel-time
-            font-caption1()
+          > .actions
+            margin-left: auto
 
 
       > .privacy

@@ -33,9 +33,9 @@ module.exports = class PlacesListAmenity
     {me} = @state.getValue()
 
     z '.z-places-list-amenity', {
-      onclick: =>
-        if me?.username is 'austin' and confirm 'Delete?'
-          @model.amenity.deleteByRow place
+      # onclick: =>
+      #   if me?.username is 'austin' and confirm 'Delete?'
+      #     @model.amenity.deleteByRow place
       },
         z '.info',
           z '.name',
@@ -85,7 +85,7 @@ module.exports = class PlacesListAmenity
                 colors:
                   cText: colors.$primary500
                 onclick: =>
-                  @router.goPlace place
+                  @router.goPlace @place
           z '.action',
             z @$directionsButton,
               text: @model.l.get 'general.directions'
@@ -93,7 +93,7 @@ module.exports = class PlacesListAmenity
               colors:
                 cText: colors.$primary500
               onclick: =>
-                MapService.getDirections place, {@model}
+                MapService.getDirections @place, {@model}
           # z '.action',
           #   z $deleteIcon,
           #     icon: 'delete'

@@ -16,20 +16,19 @@ module.exports = class PlacesList
     @state = z.state
       me: @model.user.getMe()
       places: places.map (places) =>
-        console.log 'p', places
         _filter _map places, (place) =>
-          {
-            place
-            $el: if place.type is 'amenity'
-              new PlacesListAmenity {@model, @router, place}
-            else
-              new PlacesListCampground {@model, @router, place}
-          }
+          if place.type isnt 'cellTower'
+            {
+              place
+              $el: if place.type is 'amenity'
+                new PlacesListAmenity {@model, @router, place}
+              else
+                new PlacesListCampground {@model, @router, place}
+            }
 
   render: ({hideRating, isPlain} = {}) =>
     {me, places} = @state.getValue()
 
-    console.log 'places', places
     hasShadow = not isPlain
 
     z '.z-places-list',

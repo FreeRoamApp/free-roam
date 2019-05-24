@@ -405,14 +405,7 @@ module.exports = class PlacesMapContainer
           unless _isEmpty @optionalLayers
             z '.layers-fab',
               z @$fab,
-                colors:
-                  c500: colors.$tertiary0
-                  ripple: colors.$bgText70
-                $icon: z @$layersIcon, {
-                  icon: 'layers'
-                  isTouchTarget: false
-                  color: colors.$bgText54
-                }
+                icon: 'layers'
                 isImmediate: true
                 onclick: =>
                   ga? 'send', 'event', 'map', 'showLayers'

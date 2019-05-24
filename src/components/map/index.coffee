@@ -293,6 +293,12 @@ module.exports = class Map
 
       if @onclick
         @map.on 'click', @onclick
+        @map.on 'click', 'places', (e) =>
+          e.originalEvent.stopPropagation()
+          @onclick e
+        @map.on 'click', 'places-text', (e) =>
+          e.stopPropagation()
+          @onclick e
       else
         @map.on 'click', =>
           @place.next null
@@ -319,6 +325,7 @@ module.exports = class Map
           name = e.features[0].properties.name
           number = e.features[0].properties.number
           description = e.features[0].properties.description
+          id = e.features[0].properties.id
           slug = e.features[0].properties.slug
           type = e.features[0].properties.type
           rating = if e.features[0].properties.rating is 'null' \
@@ -333,6 +340,7 @@ module.exports = class Map
           position = @map.project coordinates
           @placePosition.next position
           @place.next {
+            id: id
             slug: slug
             type: type
             name: name
@@ -449,6 +457,7 @@ module.exports = class Map
             properties:
               name: place.name
               number: "#{i + 1}"
+              id: place.id
               slug: place.slug
               rating: place.rating
               description: place.description

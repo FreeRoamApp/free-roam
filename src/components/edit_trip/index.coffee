@@ -11,12 +11,13 @@ _omit = require 'lodash/omit'
 
 Base = require '../base'
 AttachmentsList = require '../attachments_list'
-FlatButton = require '../flat_button'
+Fab = require '../fab'
+Icon = require '../icon'
 TravelMap = require '../travel_map'
 CheckInTooltip = require '../check_in_tooltip'
-PlacesSearch = require '../places_search'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
+colors = require '../../colors'
 config = require '../../config'
 
 if window?
@@ -28,14 +29,7 @@ if window?
 
 module.exports = class EditTrip extends Base
   constructor: ({@model, @router, @trip}) ->
-    @$placesSearch = new PlacesSearch {
-      @model, @router
-      onclick: (location) =>
-        @addCheckIn {
-          name: location.text
-          location: location.location
-        }
-    }
+    @$addFab = new Fab()
 
     @nameValueStreams = new RxReplaySubject 1
 
@@ -102,7 +96,7 @@ module.exports = class EditTrip extends Base
               @model, @router
               attachments: RxObservable.of checkIn.attachments
             }
-            $addInfoButton: new FlatButton()
+            $moreIcon: new Icon()
           }
     }
 
@@ -176,51 +170,74 @@ module.exports = class EditTrip extends Base
           },
             @model.l.get 'editTrip.findAlongRoute'
       z '.info',
-        z '.overlay',
-          z @$placesSearch, {
-            placeholder: @model.l.get 'editTrip.searchPlaceholder'
-            locationsTitle: @model.l.get 'editTrip.locationsTitle'
-          }
-
         z '.g-grid',
+          z '.add', {
+            onclick: =>
+              @router.go 'newCheckIn', {
+                tripType: trip.type
+                tripId: trip.id
+              }
+          },
+            z @$addFab,
+              isSecondary: true
+              icon: 'add'
+              onclick: =>
+                @router.go 'newCheckIn', {
+                  tripType: trip.type
+                  tripId: trip.id
+                }
+            z '.text',
+              @model.l.get 'editTrip.addLocation'
           z '.check-ins',
-            if _isEmpty checkIns
-              z '.placeholder', @model.l.get 'editTrip.placeHolder'
-            _map checkIns, (checkIn) =>
-              {checkIn, routeInfo,  $addInfoButton, $attachmentsList} = checkIn
-              z '.check-in.draggable', {
-                attributes:
-                  if @onReorder then {draggable: 'true'} else {}
-                dataset:
-                  if @onReorder then {id: checkIn.id} else {}
-                ondragover: if @onReorder then z.ev (e, $$el) => @onDragOver e
-                ondragstart: if @onReorder then z.ev (e, $$el) => @onDragStart e
-                ondragend: if @onReorder then z.ev (e, $$el) => @onDragEnd e
-              },
-                z '.info',
-                  z '.name',
-                    checkIn.name
+            [
+              if _isEmpty checkIns
+                z '.placeholder', @model.l.get 'editTrip.placeHolder'
+              else
+                z '.divider'
+              _map checkIns, (checkIn, i) =>
+                {checkIn, routeInfo,  $moreIcon, $attachmentsList} = checkIn
+                z '.check-in.draggable', {
+                  onclick: =>
+                    ga? 'send', 'event', 'trip', 'editCheckIn'
+                    @router.goOverlay 'editCheckIn', {
+                      id: checkIn.id
+                    }
+                  attributes:
+                    if @onReorder then {draggable: 'true'} else {}
+                  dataset:
+                    if @onReorder then {id: checkIn.id} else {}
+                  ondragover: if @onReorder then z.ev (e, $$el) =>
+                    @onDragOver e
+                  ondragstart: if @onReorder then z.ev (e, $$el) =>
+                    @onDragStart e
+                  ondragend: if @onReorder then z.ev (e, $$el) =>
+                    @onDragEnd e
+                },
+                  z '.time',
+                    z '.date', 'time'
+                    if routeInfo
+                      z '.travel-time',
+                        z 'div',
+                          "#{DateService.formatSeconds routeInfo?.time, 1} /"
+                        z 'div',
+                          "#{FormatService.number routeInfo?.distance}mi"
+
+
+                  z '.dot'
+                  z '.info',
+                    z '.name',
+                      "#{checkIns.length - i}. #{checkIn.name}"
+                    z '.attachments',
+                      $attachmentsList
 
                   z '.actions',
                     if checkIn.id
-                      z $addInfoButton,
-                        text: @model.l.get 'newTrip.addInfo'
-                        hasRipple: false # ripple screws w/ drag drop
-                        onclick: =>
-                          ga? 'send', 'event', 'trip', 'editCheckIn'
-                          @router.goOverlay 'editCheckIn', {
-                            id: checkIn.id
-                          }
-                z '.attachments',
-                  $attachmentsList
+                      z $moreIcon,
+                        icon: 'chevron-right'
+                        isTouchTarget: false
+                        color: colors.$secondary500
 
-                if routeInfo
-                  z '.travel-time',
-                    @model.l.get 'editTrip.travelTime'
-                    ': '
-                    DateService.formatSeconds routeInfo?.time, 1
-                    " (#{FormatService.number routeInfo?.distance}mi)"
-
+            ]
 
           z '.privacy', {
             onclick: =>

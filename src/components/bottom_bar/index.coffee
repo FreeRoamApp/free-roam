@@ -73,12 +73,13 @@ module.exports = class BottomBar
         route: @router.get 'guides'
         text: @model.l.get 'guidesPage.title'
       }
-      {
-        $icon: new Icon()
-        icon: 'home'
-        route: @router.get 'dashboard'
-        text: @model.l.get 'general.dashboard'
-      }
+      if @model.experiment.get('dashboard') is 'visible'
+        {
+          $icon: new Icon()
+          icon: 'home'
+          route: @router.get 'dashboard'
+          text: @model.l.get 'general.dashboard'
+        }
       {
         $icon: new Icon()
         icon: 'profile'

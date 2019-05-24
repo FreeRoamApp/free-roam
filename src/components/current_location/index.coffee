@@ -1,6 +1,6 @@
 z = require 'zorium'
 
-CoordinatePicker = require '../coordinate_picker'
+CoordinatePickerOverlay = require '../coordinate_picker_overlay'
 Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
@@ -9,7 +9,7 @@ if window?
   require './index.styl'
 
 module.exports = class CurrentLocation
-  constructor: ({@model, @router}) ->
+  constructor: ({@model, @router, @isPlacesOnly}) ->
     @$locationIcon = new Icon()
     @$changeIcon = new Icon()
 
@@ -17,9 +17,9 @@ module.exports = class CurrentLocation
       myLocation: @model.userLocation.getByMe()
     }
 
-  openCoordinatePicker: =>
-    @model.overlay.open new CoordinatePicker {
-      @model, @router
+  openCoordinatePickerOverlay: =>
+    @model.overlay.open new CoordinatePickerOverlay {
+      @model, @router, @isPlacesOnly
       pickButtonText: @model.l.get 'placeInfo.checkIn'
       onPick: (place) =>
         console.log 'place', place
@@ -62,4 +62,4 @@ module.exports = class CurrentLocation
         z @$changeIcon,
           icon: 'edit-outline'
           color: colors.$bgText87
-          onclick: @openCoordinatePicker
+          onclick: @openCoordinatePickerOverlay

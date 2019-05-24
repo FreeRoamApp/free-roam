@@ -23,7 +23,8 @@ module.exports = class PlaceInfoWeather
         todayFullDateStr =
           "#{today.getYear()}/#{today.getMonth() + 1}/#{today.getDate()}"
         _filter _map days, (day) ->
-          date = new Date(day.time * 1000)
+          # TODO: use day.day instead
+          date = new Date((day.time + 3600) * 1000)
           dateStr = "#{date.getMonth() + 1}/#{date.getDate()}"
           if "#{date.getYear()}/#{dateStr}" < todayFullDateStr
             return

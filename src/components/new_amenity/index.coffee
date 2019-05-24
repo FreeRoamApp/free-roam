@@ -8,7 +8,7 @@ ActionBar = require '../action_bar'
 PrimaryInput = require '../primary_input'
 PrimaryButton = require '../primary_button'
 Checkbox = require '../checkbox'
-CoordinatePicker = require '../coordinate_picker'
+CoordinatePickerOverlay = require '../coordinate_picker_overlay'
 Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
@@ -136,7 +136,7 @@ module.exports = class NewAmenity
           z @$mapButton,
             text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
             onclick: =>
-              @model.overlay.open new CoordinatePicker {
+              @model.overlay.open new CoordinatePickerOverlay {
                 @model, @router, center
                 onPick: (location) =>
                   @locationValue.next(

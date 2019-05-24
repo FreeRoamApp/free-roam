@@ -51,6 +51,8 @@ module.exports = class Place
     @tab.take(1).subscribe (tab) =>
       if tab is 'reviews'
         @selectedIndex.next 1
+      else if tab is 'nearby'
+        @selectedIndex.next 2
 
   beforeUnmount: =>
     @selectedIndex.next 0
@@ -82,13 +84,8 @@ module.exports = class Place
       if selectedIndex is 1 # reviews
         z '.fab',
           z @$fab,
-            colors:
-              c500: colors.$primary500
-            $icon: z @$addIcon, {
-              icon: 'add'
-              isTouchTarget: false
-              color: colors.$primary500Text
-            }
+            isPrimary: true
+            icon: 'add'
             onclick: =>
               console.log 'click', @newReviewPath
               @router.go @newReviewPath, {
