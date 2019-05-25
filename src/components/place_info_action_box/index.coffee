@@ -90,7 +90,7 @@ module.exports = class PlaceInfoActionBox
           action:
             text: @model.l.get 'placeInfo.viewTrip'
             onclick: =>
-              @router.go 'editTripByType', {
+              @router.go 'tripByType', {
                 type: if status is 'visited' then 'past' else 'future'
               }
               @model.statusBar.close()

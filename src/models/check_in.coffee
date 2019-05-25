@@ -33,6 +33,12 @@ module.exports = class CheckIn
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}
 
+  hasEditPermission: (checkIn, user) ->
+    checkIn?.userId and checkIn?.userId is user?.id
+
+  getName: (checkIn) ->
+    checkIn?.name or checkIn?.place?.name or checkIn?.place?.address?.locality
+
   uploadImage: (blob) =>
     formData = new FormData()
     formData.append 'file', blob

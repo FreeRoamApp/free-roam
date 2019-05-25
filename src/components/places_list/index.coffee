@@ -12,7 +12,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlacesList
-  constructor: ({@model, @router, places}) ->
+  constructor: ({@model, @router, places, action}) ->
     @state = z.state
       me: @model.user.getMe()
       places: places.map (places) =>
@@ -23,7 +23,7 @@ module.exports = class PlacesList
               $el: if place.type is 'amenity'
                 new PlacesListAmenity {@model, @router, place}
               else
-                new PlacesListCampground {@model, @router, place}
+                new PlacesListCampground {@model, @router, place, action}
             }
 
   render: ({hideRating, isPlain} = {}) =>

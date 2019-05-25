@@ -138,12 +138,16 @@ module.exports = class Dashboard
     todayForecast = myLocation?.place?.forecast?.daily?[0]
     icon = todayForecast?.icon?.replace 'night', 'day'
     weatherType = _startCase(icon).replace(/ /g, '')
+    hasInfo = myLocation?.place?.type in ['campground', 'overnight']
 
     z '.z-dashboard',
       z '.g-grid',
+        if myLocation
+          z '.current-location',
+            z @$currentLocation
         if not myLocation?
           z @$spinner
-        else if not myLocation
+        else if not myLocation or not hasInfo
           z '.empty',
             z '.info-card',
               z '.title', @model.l.get 'dashboard.emptyLocationTitle'
@@ -182,9 +186,6 @@ module.exports = class Dashboard
               ]
         else
           [
-            z '.current-location',
-              z @$currentLocation
-
               z '.rating',
                 z @$rating, {size: '32px'}
 

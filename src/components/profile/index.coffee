@@ -51,7 +51,7 @@ module.exports = class Profile extends Base
       @model, trip: @pastTrip
       shareInfo: user.map (user) =>
         {
-          text: @model.l.get 'editTrip.shareText'
+          text: @model.l.get 'trip.shareText'
           url: if user.username \
                then "#{config.HOST}/user/#{user.username}"
                else "#{config.HOST}/user/id/#{user.id}"
@@ -126,7 +126,7 @@ module.exports = class Profile extends Base
 
     isMe = user and user?.id is me?.id
     pastTripPath = if isMe \
-          then @router.get 'editTripByType', {type: 'past'}
+          then @router.get 'tripByType', {type: 'past'}
           else @router.get 'trip', {id: pastTrip?.id}
 
     z '.z-profile', {
@@ -314,7 +314,7 @@ module.exports = class Profile extends Base
                       z '.g-col.g-xs-6.md-6',
                         @router.link z 'a.box.planned', {
                           href: if isMe \
-                                then @router.get 'editTripByType', {type: 'future'}
+                                then @router.get 'tripByType', {type: 'future'}
                                 else @router.get 'trip', {id: futureTrip?.id}
                         },
                           z '.info',

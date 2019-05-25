@@ -13,15 +13,21 @@ class DateService
   setL: (@l) => null
 
   format: (date, format) ->
-    # TODO: only thing that uses this so far uses yyyy-mm-dd format
-    yyyy = date.getFullYear()
-    mm = date.getMonth() + 1
-    if mm < 10
-      mm = "0#{mm}"
-    dd = date.getDate()
-    if dd < 10
-      dd = "0#{dd}"
-    "#{yyyy}-#{mm}-#{dd}"
+    # TODO: only thing that uses this so far uses yyyy-mm-dd format and MMM Do
+    if format is 'MMM D'
+      MMM = @l.get("months.#{date.getMonth()}").substring(0, 3)
+      D = date.getDate()
+      "#{MMM} #{D}"
+
+    else
+      yyyy = date.getFullYear()
+      mm = date.getMonth() + 1
+      if mm < 10
+        mm = "0#{mm}"
+      dd = date.getDate()
+      if dd < 10
+        dd = "0#{dd}"
+      "#{yyyy}-#{mm}-#{dd}"
 
   formatDuration: (duration) ->
     # https://stackoverflow.com/a/30134889
@@ -80,5 +86,11 @@ class DateService
     # else
     #   require("date-fns/locale/#{locale}")
 
+  getLocalDateFromStr: (str) ->
+    if str
+      arr = str.split '-'
+      new Date arr[0], arr[1] - 1, arr[2]
+    else
+      null
 
 module.exports = new DateService()

@@ -19,9 +19,12 @@ if window?
 
 module.exports = class NewCheckInLocation
   constructor: ({@model, @router, @checkIn, @fields, @step}) ->
+    placeStreams = new RxReplaySubject 1
+    placeStreams.next @checkIn.map (checkIn) ->
+      checkIn?.place
     @$coordinatePicker = new CoordinatePicker {
-      @model, @router, onPick: (place) =>
-        (if place.type is 'coordinate'
+      @model, @router, placeStreams, onPick: (place) =>
+        (if place.type is 'coordinate' or not place.type
           @model.coordinate.upsert {
             name: place.name
             location: "#{place.location.lat}, #{place.location.lon}"
@@ -30,12 +33,16 @@ module.exports = class NewCheckInLocation
           Promise.resolve {id: place.id}
         ).then ({id}) =>
           @step.next @step.getValue() + 1
+          {name} = @state.getValue()
+          if place.name and not name
+            @fields.name.valueStreams.next RxObservable.of place.name
           @fields.source.valueStreams.next RxObservable.of {
             sourceType: place.type, sourceId: id
           }
     }
 
     @state = z.state {
+      name: @fields.name.valueStreams.switch()
       source: @fields.source.valueStreams.switch()
     }
 

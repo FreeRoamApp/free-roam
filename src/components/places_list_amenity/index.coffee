@@ -17,20 +17,33 @@ module.exports = class PlacesListAmenity
     @$detailsButton = new FlatButton()
     @$directionsButton = new FlatButton()
     @$deleteIcon = new Icon()
+    placeObs = if @place?.map then @place else RxObservable.of @place?.rating
     @$rating = new Rating {
-      value: RxObservable.of @place?.rating
+      value: placeObs
     }
-    @amenities = _map @place?.amenities, (amenity) ->
-      {
-        amenity
-        $icon: new Icon()
-      }
+
+    if @place?.amenities
+      @amenities = _map @place?.amenities, (amenity) ->
+        {
+          amenity
+          $icon: new Icon()
+        }
 
     @state = z.state
       me: @model.user.getMe()
+      place: @place
+      amenities: placeObs.map (place) ->
+        _map place?.amenities, (amenity) ->
+          {
+            amenity
+            $icon: new Icon()
+          }
 
   render: ({hideRating} = {}) =>
-    {me} = @state.getValue()
+    {me, place, amenities} = @state.getValue()
+
+    place ?= @place
+    amenities ?= @amenities
 
     z '.z-places-list-amenity', {
       # onclick: =>

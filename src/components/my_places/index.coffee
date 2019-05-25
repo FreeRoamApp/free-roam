@@ -12,8 +12,7 @@ module.exports = class MyPlaces
   constructor: ({@model, @router}) ->
     places = @model.checkIn.getAll {includeDetails: true}
     @$placesList = new PlacesList {
-      @model, @router
-      places: places
+      @model, @router, places, action: 'info'
     }
 
     @state = z.state {

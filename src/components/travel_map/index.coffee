@@ -62,7 +62,7 @@ module.exports = class TravelMap
       @model, @trip
       shareInfo: @trip.map (trip) =>
         {
-          text: @model.l.get 'editTrip.shareText'
+          text: @model.l.get 'trip.shareText'
           url: "#{config.HOST}/trip/#{trip.id}"
         }
     }
@@ -89,7 +89,7 @@ module.exports = class TravelMap
       className: z.classKebab {hasStats}
     },
       z @$map
-      z @$editTripTooltip
+      z @$tripTooltip
       z '.stats',
         z '.g-grid',
           z '.time',

@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 Icon = require '../icon'
 FlatButton = require '../flat_button'
@@ -53,7 +55,7 @@ module.exports = class CheckInTooltip extends MapTooltip
           onclick: (e) =>
             e?.stopPropagation()
             e?.preventDefault()
-            @place.next null
+            @place.next RxObservable.of null
       z '.content',
         z '.title', place?.name
         if place?.description

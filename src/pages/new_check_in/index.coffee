@@ -24,8 +24,10 @@ module.exports = class NewCheckInPage
     trip = requests.switchMap ({route}) =>
       if route.params.tripId
         @model.trip.getById route.params.tripId
-      else
+      else if route.params.tripType
         @model.trip.getByType route.params.tripType
+      else
+        RxObservable.of null
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
@@ -48,14 +50,15 @@ module.exports = class NewCheckInPage
         style: 'primary'
         $topLeftButton: z @$buttonBack
         $topRightButton:
-          z @$deleteIcon,
-            icon: 'delete'
-            color: colors.$header500Icon
-            hasRipple: true
-            onclick: =>
-              if confirm @model.l.get 'general.confirm'
-                @model.checkIn.deleteByRow checkIn
-                .then =>
-                  @router.back()
+          if checkIn?.id
+            z @$deleteIcon,
+              icon: 'delete'
+              color: colors.$header500Icon
+              hasRipple: true
+              onclick: =>
+                if confirm @model.l.get 'general.confirm'
+                  @model.checkIn.deleteByRow checkIn
+                  .then =>
+                    @router.back()
       }
       @$newCheckIn

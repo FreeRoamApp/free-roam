@@ -24,7 +24,7 @@ Want to help us help others? Add a little more info about this campground so
 others can find it
 ###
 
-module.exports = class EditCheckIn
+module.exports = class NewCheckInInfo
   constructor: ({@model, @router, @checkIn, @fields}) ->
     me = @model.user.getMe()
 

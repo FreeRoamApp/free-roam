@@ -26,13 +26,13 @@ module.exports = class Trips
         z '.g-cols.lt-md-no-padding',
           z '.g-col.g-xs-12.g-md-6',
             @router.link z 'a.trip', {
-              href: @router.get 'editTripByType', {type: 'past'}
+              href: @router.get 'tripByType', {type: 'past'}
             },
               z '.name', @model.l.get 'trips.pastName'
               z '.description', @model.l.get 'trips.pastDescription'
           z '.g-col.g-xs-12.g-md-6',
             @router.link z 'a.trip', {
-              href: @router.get 'editTripByType', {type: 'future'}
+              href: @router.get 'tripByType', {type: 'future'}
             },
               z '.name', @model.l.get 'trips.futureName'
               z '.description', @model.l.get 'trips.futureDescription'
@@ -41,7 +41,7 @@ module.exports = class Trips
           #   _map trips, (trip, i) =>
           #     z '.g-col.g-xs-12.g-md-6',
           #       @router.link z 'a.trip', {
-          #         href: @router.get 'editTripByType', {type: trip.type}
+          #         href: @router.get 'tripByType', {type: trip.type}
           #       },
           #         z '.name', trip.name
           #         # z '.description', trip.description

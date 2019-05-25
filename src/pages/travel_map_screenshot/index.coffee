@@ -1,4 +1,6 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 TravelMap = require '../../components/travel_map'
 config = require '../../config'
@@ -14,7 +16,10 @@ module.exports = class TripMapScreenshot
 
   constructor: ({@model, @router, requests, serverData, group}) ->
     @trip = requests.switchMap ({route}) =>
-      @model.trip.getById route.params.id
+      if route.params.id
+        @model.trip.getById route.params.id
+      else
+        RxObservable.of null
 
     @$travelMap = new TravelMap {
       @model, @router, @trip, prepScreenshot: true

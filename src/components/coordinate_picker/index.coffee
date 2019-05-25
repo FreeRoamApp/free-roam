@@ -16,16 +16,20 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-module.exports = class CoordinatePickerOverlay
+module.exports = class CoordinatePicker
   constructor: (options) ->
-    {@model, @router, @onPick, @pickButtonText
+    {@model, @router, @onPick, @pickButtonText, @placeStreams
       center, initialZoom, @isPlacesOnly} = options
 
     @currentMapBounds = new RxBehaviorSubject null
-    @place = new RxBehaviorSubject null
+
+    unless @placesStreams
+      @placeStreams = new RxReplaySubject 1
+      @placeStreams.next RxObservable.of null
+
     @places = RxObservable.combineLatest(
       @currentMapBounds
-      @place
+      @placeStreams.switch()
     ).switchMap ([currentMapBounds, place]) =>
       boundsTooSmall = not currentMapBounds or Math.abs(
         currentMapBounds.bounds._ne.lat - currentMapBounds.bounds._sw.lat
@@ -63,8 +67,9 @@ module.exports = class CoordinatePickerOverlay
 
     @$checkInTooltip = new CheckInTooltip {
       @model, @router, position: @placePosition, @mapSize
-      place: @place
+      place: @placeStreams.switch()
       onSave: =>
+        console.log 'save', arguments
         @onPick arguments...
         .then =>
           @model.overlay.close()
@@ -75,11 +80,11 @@ module.exports = class CoordinatePickerOverlay
         mapBoundsStreams.next RxObservable.of place.bbox
         @placePosition.next @$map.map.project place.location
         if place.sourceType in ['overnight', 'campground'] or not @isPlacesOnly
-          @place.next {
+          @placeStreams.next RxObservable.of {
             name: place.text
             slug: place.slug or ''
             id: place.sourceId
-            type: place.sourceType
+            type: place.sourceType or 'coordinate'
             location: place.location
           }
     }
@@ -89,7 +94,7 @@ module.exports = class CoordinatePickerOverlay
 
     @$map = new Map {
       @model, @router, @places, @mapSize, center: @mapCenter, initialZoom, @zoom
-      @place, @placePosition
+      place: @placeStreams.switch(), @placePosition
       @currentMapBounds, mapBoundsStreams
       hideControls: true
       onclick: (e) =>
@@ -98,7 +103,7 @@ module.exports = class CoordinatePickerOverlay
           while Math.abs(e.lngLat.lng - (coordinates[0])) > 180
             coordinates[0] += if e.lngLat.lng > coordinates[0] then 360 else -360
           @placePosition.next @$map.map.project coordinates
-          @place.next {
+          @placeStreams.next RxObservable.of {
             name: e.features[0].properties.name
             slug: e.features[0].properties.slug
             id: e.features[0].properties.id
@@ -112,7 +117,7 @@ module.exports = class CoordinatePickerOverlay
           lon = Math.round(10000 * e.lngLat.lng) / 10000
           coordinatesStr = "#{lat}, #{lon}"
           @placePosition.next e.point
-          @place.next {
+          @placeStreams.next RxObservable.of {
             name: coordinatesStr
             slug: ''
             type: 'coordinate'
@@ -170,7 +175,7 @@ module.exports = class CoordinatePickerOverlay
                   @zoom.next 8
                   unless @isPlacesOnly
                     @placePosition.next @$map.map.project {lon, lat}
-                    @place.next {
+                    @placeStreams.next RxObservable.of {
                       name: coordinates
                       slug: ''
                       type: 'coordinate'

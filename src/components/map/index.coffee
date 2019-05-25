@@ -35,6 +35,7 @@ module.exports = class Map
 
     @state = z.state
       isLoading: true
+      place: @place
       windowSize: @model.window.getSize()
 
   getClosestPixelRatio: ->
@@ -297,7 +298,7 @@ module.exports = class Map
           e.originalEvent.stopPropagation()
           @onclick e
         @map.on 'click', 'places-text', (e) =>
-          e.stopPropagation()
+          e.originalEvent.stopPropagation()
           @onclick e
       else
         @map.on 'click', =>
@@ -476,7 +477,8 @@ module.exports = class Map
 
   # update tooltip pos
   onMapMove: =>
-    if place = @place.getValue()
+    {place} = @state.getValue()
+    if place
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>

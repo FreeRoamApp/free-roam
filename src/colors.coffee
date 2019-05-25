@@ -264,7 +264,7 @@ colors = _defaults {
   '$amenityshower': '#00bcff'
   '$amenitygas': '#dbad49'
 
-  '$weatherClear': '#ffbf4f'
+  '$weatherClearDay': '#ffbf4f'
   '$weatherPartlyCloudyDay': '#ffbf4f'
   '$weatherRain': '#4ca1af'
   '$weatherSnow': '#98c9e5'

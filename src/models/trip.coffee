@@ -26,6 +26,9 @@ module.exports = class Trip
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
 
+  hasEditPermission: (trip, user) ->
+    trip?.userId and trip?.userId is user?.id
+
   upsert: (options) =>
     @auth.call "#{@namespace}.upsert", options, {
       invalidateAll: true

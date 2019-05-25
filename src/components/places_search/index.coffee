@@ -157,7 +157,7 @@ module.exports = class LocationSearch
                       @onclick {
                         bbox: bboxWithPlaces, location: location.location
                         text: location.name or location.text
-                        sourceType: location.type
+                        sourceType: location.type or 'coordinate'
                         sourceId: location.id
                         slug: location.slug
                       }

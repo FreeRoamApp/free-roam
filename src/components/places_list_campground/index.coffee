@@ -13,14 +13,15 @@ if window?
   require './index.styl'
 
 module.exports = class PlacesListCampground
-  constructor: ({@model, @router, @place}) ->
+  constructor: ({@model, @router, @place, @action}) ->
     @$actionButton = new SecondaryButton()
     @$rating = new Rating {
-      value: RxObservable.of @place?.rating
+      value: if @place?.map then @place else RxObservable.of @place?.rating
     }
 
     @state = z.state
       me: @model.user.getMe()
+      place: @place
       isActionLoading: false
 
   getThumbnailUrl: (place) =>
@@ -29,7 +30,6 @@ module.exports = class PlacesListCampground
     ) or "#{config.CDN_URL}/empty_state/empty_campground.svg"
 
   checkIn: (place) =>
-    console.log 'checkin', place
     @model.checkIn.upsert {
       name: place.name
       sourceType: place.type
@@ -39,9 +39,14 @@ module.exports = class PlacesListCampground
     }
 
   render: ({hideRating} = {}) =>
-    {me, isActionLoading} = @state.getValue()
+    {me, isActionLoading, place} = @state.getValue()
 
-    thumbnailSrc = @getThumbnailUrl @place
+    place ?= @place
+
+    thumbnailSrc = @getThumbnailUrl place
+    hasInfoButton = @action is 'info' and place?.type in [
+      'campground', 'amenity'
+    ]
 
     z '.z-places-list-campground',
       z '.thumbnail',
@@ -49,19 +54,19 @@ module.exports = class PlacesListCampground
           backgroundImage: "url(#{thumbnailSrc})"
       z '.info',
         z '.name',
-          @place?.name
-        if @place?.distance
+          place?.name
+        if place?.distance
           z '.caption',
             @model.l.get 'placesList.distance', {
               replacements:
-                distance: @place?.distance.distance
-                time: @place?.distance.time
+                distance: place?.distance.distance
+                time: place?.distance.time
             }
-        if @place?.address?.administrativeArea
+        if place?.address?.administrativeArea
           z '.location',
-            if @place?.address?.locality
-              "#{@place?.address?.locality}, "
-            @place?.address?.administrativeArea
+            if place?.address?.locality
+              "#{place?.address?.locality}, "
+            place?.address?.administrativeArea
         if not hideRating
           z '.rating',
             z @$rating
@@ -70,11 +75,22 @@ module.exports = class PlacesListCampground
           z @$actionButton,
             text: if isActionLoading \
                   then @model.l.get 'general.loading'
+                  else if hasInfoButton
+                  then @model.l.get 'general.info'
+                  else if @action is 'info'
+                  then @model.l.get 'general.directions'
                   else @model.l.get 'placeInfo.checkIn'
             isOutline: true
             heightPx: 28
             onclick: =>
-              @state.set isActionLoading: true
-              @checkIn @place
-              .then =>
-                @state.set isActionLoading: false
+              if hasInfoButton
+                @router.go place?.type, {
+                  slug: place?.slug
+                }
+              else if @action is 'info'
+                MapService.getDirections place, {@model}
+              else
+                @state.set isActionLoading: true
+                @checkIn place
+                .then =>
+                  @state.set isActionLoading: false

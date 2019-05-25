@@ -12,6 +12,7 @@ _filter = require 'lodash/filter'
 NewCheckInLocation = require '../new_check_in_location'
 NewCheckInInfo = require '../new_check_in_info'
 StepBar = require '../step_bar'
+DateService = require '../../services/date'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -21,13 +22,6 @@ if window?
 STEPS =
   checkInLocation: 0
   checkInInfo: 1
-
-getLocalDateFromStr = (str) ->
-  if str
-    arr = str.split '-'
-    new Date arr[0], arr[1] - 1, arr[2]
-  else
-    null
 
 module.exports = class NewCheckIn
   constructor: ({@model, @router, @checkIn, trip}) ->
@@ -53,7 +47,7 @@ module.exports = class NewCheckIn
 
     @$steps = _filter [
       new NewCheckInLocation {
-        @model, @router, @fields, @step
+        @model, @router, @fields, @step, @checkIn
       }
       new NewCheckInInfo {
         @model, @router, fields: @fields
@@ -68,13 +62,13 @@ module.exports = class NewCheckIn
     @state = z.state {
       @step
       me: @model.user.getMe()
-      trip: trip
+      trip
+      @checkIn
       sourceValue: @fields.source.valueStreams.switch()
       attachmentsValue: @fields.attachments.valueStreams.switch()
       nameValue: @fields.name.valueStreams.switch()
       startTimeValue: @fields.startTime.valueStreams.switch()
       endTimeValue: @fields.endTime.valueStreams.switch()
-      checkIn: @checkIn
       isLoading: false
     }
 
@@ -122,15 +116,15 @@ module.exports = class NewCheckIn
     attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
     if isReady
       @model.checkIn.upsert {
-        tripIds: [trip.id]
-        setUserLocation: trip.type is 'past'
+        tripIds: checkIn?.tripIds or [trip.id]
+        setUserLocation: trip?.type is 'past'
         id: checkIn?.id
         attachments: attachments
         sourceId: sourceValue?.sourceId
         sourceType: sourceValue?.sourceType
         name: nameValue
-        startTime: getLocalDateFromStr startTimeValue
-        endTime: getLocalDateFromStr endTimeValue
+        startTime: DateService.getLocalDateFromStr startTimeValue
+        endTime: DateService.getLocalDateFromStr endTimeValue
       }
       .then (newCheckIn) =>
         @state.set isLoading: false
@@ -139,7 +133,7 @@ module.exports = class NewCheckIn
         # w/o, map reloads
         setTimeout =>
           @router.back()
-          # @router.go 'editTripByType', {
+          # @router.go 'tripByType', {
           #   type: trip.type
           # }, {reset: true}
         , 0
@@ -150,7 +144,7 @@ module.exports = class NewCheckIn
   render: =>
     {step, isLoading, checkIn, attachmentsValue, trip} = @state.getValue()
 
-    console.log trip
+    console.log 'c', checkIn
 
     z '.z-new-check-in',
       z @$steps[step]
