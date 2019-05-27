@@ -85,7 +85,7 @@ module.exports = class Message
         z '.body',
           @$body
 
-        if card
+        if card?.url
           z '.card', {
             onclick: (e) =>
               e?.stopPropagation()

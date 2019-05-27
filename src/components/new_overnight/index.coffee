@@ -17,19 +17,16 @@ module.exports = class NewOvernight extends NewPlace
 
     @initialInfoFields =
       name:
-        valueSubject: new RxBehaviorSubject ''
+        valueStreams: new RxReplaySubject ''
         errorSubject: new RxBehaviorSubject null
       details:
-        valueSubject: new RxBehaviorSubject ''
+        valueStreams: new RxReplaySubject ''
         errorSubject: new RxBehaviorSubject null
       location:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       subType:
-        valueSubject: new RxBehaviorSubject 'restArea'
-        errorSubject: new RxBehaviorSubject null
-      videos:
-        valueSubject: new RxBehaviorSubject []
+        valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
 
     @reviewExtraFields =

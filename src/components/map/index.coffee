@@ -88,10 +88,10 @@ module.exports = class Map
     @$$mapEl = $$el.querySelector('.map')
 
     @model.additionalScript.add(
-      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.54.0.css"
+      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.0.0.css"
     )
     @model.additionalScript.add(
-      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-0.54.0.js"
+      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.0.0.js"
     )
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'
@@ -457,7 +457,7 @@ module.exports = class Map
             type: 'Feature'
             properties:
               name: place.name
-              number: "#{i + 1}"
+              number: "#{places.length - i}"
               id: place.id
               slug: place.slug
               rating: place.rating

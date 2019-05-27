@@ -8,6 +8,8 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+PADDING = 4
+
 module.exports = class AttachmentsList
   constructor: ({@model, @router, attachments}) ->
     @state = z.state
@@ -26,12 +28,17 @@ module.exports = class AttachmentsList
     , 0 # give time for re-render...
 
 
-  render: ({countPerRow}) =>
+  render: ({countPerRow, sizePx}) =>
     {attachments, windowSize, contentWidth} = @state.getValue()
 
-    countPerRow ?= 4
-    contentWidth ?= windowSize?.contentWidth
-    widthPx = contentWidth / 4
+    if sizePx
+      widthPx = sizePx + PADDING * 2
+      heightPx = sizePx
+    else
+      countPerRow ?= 4
+      contentWidth ?= windowSize?.contentWidth
+      widthPx = contentWidth / 4
+      heightPx = contentWidth / 4 - PADDING * 2
 
     images = _map attachments, (attachment) =>
       {
@@ -45,9 +52,9 @@ module.exports = class AttachmentsList
         z '.attachment', {
           style:
             width: "#{widthPx}px"
-            height: "#{widthPx}px"
+            height: "#{heightPx}px"
         },
-          z 'img.img',
+          z '.img',
             title: attachment.caption
             onclick: =>
               @model.overlay.open new ImageViewOverlay {

@@ -44,7 +44,7 @@ module.exports = class CheckInPage
 
     z '.p-new-check-in',
       z @$appBar, {
-        title: @model.checkIn.getName checkIn
+        title: @model.checkIn.getLocation checkIn
         isPrimary: true
         $topLeftButton: z @$buttonBack, {
           color: colors.$primary500Text

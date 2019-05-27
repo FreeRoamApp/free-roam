@@ -13,17 +13,10 @@ if window?
 module.exports = class Author
   constructor: ({@model, @router}) ->
     @$statusIcon = new Icon()
-    @$starIcon = new Icon()
-    @$fireIcon = new Icon()
+    @$karmaIcon = new Icon()
 
   render: ({user, groupUser, time, isTimeAlignedLeft, onclick}) =>
-    groupUpgrades = _filter user?.upgrades, {groupId: groupUser?.groupId}
-    hasBadge = _find groupUpgrades, {upgradeType: 'fireBadge'}
-    subBadgeImage = _find(groupUpgrades, {upgradeType: 'twitchSubBadge'})
-                    ?.data?.image
-    nameColor = (_find(groupUpgrades, {upgradeType: 'nameColorPremium'}) or
-      _find(groupUpgrades, {upgradeType: 'nameColorBase'})
-    )?.data?.color
+    console.log 'user', user
 
     isModerator = groupUser?.roleNames and
                   (
@@ -36,35 +29,26 @@ module.exports = class Author
         z '.icon',
           z @$statusIcon,
             icon: 'dev'
-            color: nameColor or colors.$bgText
+            color: colors.$bgText
             isTouchTarget: false
             size: '22px'
       else if user?.flags?.isModerator or isModerator
         z '.icon',
           z @$statusIcon,
             icon: 'mod'
-            color: nameColor or colors.$bgText
+            color: colors.$bgText
             isTouchTarget: false
             size: '22px'
-      z '.name', {
-        style:
-          color: nameColor
-      },
-        @model.user.getDisplayName user
       z '.icons',
-        if hasBadge
-          z '.icon',
-            z @$fireIcon,
-              icon: 'fire'
-              color: colors.$secondary500
-              isTouchTarget: false
-              size: '14px'
-        else if subBadgeImage
-          z '.icon',
-            z 'img.badge',
-              src: subBadgeImage
-              width: 22
-              height: 22
+        z '.icon',
+          z @$karmaIcon,
+            icon: 'karma'
+            color: colors.$secondary500
+            isTouchTarget: false
+            size: '14px'
+        z '.text', user?.karma or 0
+      z '.name',
+        @model.user.getDisplayName user
       z '.time', {
         className: z.classKebab {isAlignedLeft: isTimeAlignedLeft}
       },

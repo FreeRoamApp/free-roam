@@ -102,7 +102,10 @@ module.exports = class NewPlace
       @step
       me: @model.user.getMe()
       isLoading: false
+      nameValue: @initialInfoFields.name.valueStreams.switch()
+      detailsValue: @initialInfoFields.details.valueStreams.switch()
       locationValue: @initialInfoFields.location.valueStreams.switch()
+      subTypeValue: @initialInfoFields.subType?.valueStreams.switch()
       titleValue: @reviewFields.title.valueStreams.switch()
       bodyValue: @reviewFields.body.valueStreams.switch()
       attachmentsValue: @reviewFields.attachments.valueStreams.switch()
@@ -111,7 +114,8 @@ module.exports = class NewPlace
     }
 
   upsert: =>
-    {me, locationValue, attachmentsValue} = @state.getValue()
+    {me, nameValue, detailsValue, locationValue, subTypeValue,
+      attachmentsValue} = @state.getValue()
 
     @state.set isLoading: true
 
@@ -124,10 +128,10 @@ module.exports = class NewPlace
 
       if isReady
         @placeModel.upsert {
-          name: @initialInfoFields.name.valueSubject.getValue()
-          details: @initialInfoFields.details?.valueSubject.getValue()
+          name: nameValue
+          details: detailsValue
           location: locationValue
-          subType: @initialInfoFields.subType?.valueSubject.getValue()
+          subType: subTypeValue
         }
         .then @upsertReview
         .catch (err) =>
@@ -199,11 +203,11 @@ module.exports = class NewPlace
     catch
       {}
 
-    @initialInfoFields.name.valueSubject.next(
-      autosave['initialInfo.name'] or ''
+    @initialInfoFields.name.valueStreams.next(
+      RxObservable.of autosave['initialInfo.name'] or ''
     )
-    @initialInfoFields.details.valueSubject.next(
-      autosave['initialInfo.details'] or ''
+    @initialInfoFields.details.valueStreams.next(
+      RxObservable.of autosave['initialInfo.details'] or ''
     )
 
     @initialInfoFields.location.valueStreams.next @location.map (location) ->

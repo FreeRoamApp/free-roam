@@ -186,24 +186,24 @@ module.exports = class Dashboard
               ]
         else
           [
-              z '.rating',
-                z @$rating, {size: '32px'}
+            z '.rating',
+              z @$rating, {size: '32px'}
 
-                if review
-                  [
-                    z '.text',
-                      @model.l.get 'dashboard.leaveReview'
-                    z '.action',
-                      z @$addReviewButton,
-                        text: @model.l.get 'placeInfo.addReview'
-                        onclick: =>
-                          @router.go 'editCampgroundReview', {
-                            slug: myLocation.place.slug
-                            reviewId: review.id
-                          }, {ignoreHistory: true}
-                  ]
-                else
-                  z '.text', @model.l.get 'dashboard.rate'
+              if review
+                [
+                  z '.text',
+                    @model.l.get 'dashboard.leaveReview'
+                  z '.action',
+                    z @$addReviewButton,
+                      text: @model.l.get 'placeInfo.addReview'
+                      onclick: =>
+                        @router.go 'editCampgroundReview', {
+                          slug: myLocation.place.slug
+                          reviewId: review.id
+                        }, {ignoreHistory: true}
+                ]
+              else
+                z '.text', @model.l.get 'dashboard.rate'
 
             z '.card',
               z '.title', @model.l.get 'dashboard.weather'

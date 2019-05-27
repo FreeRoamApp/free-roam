@@ -1,4 +1,5 @@
 z = require 'zorium'
+_startCase = require 'lodash/startCase'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
@@ -27,6 +28,7 @@ module.exports = class PlacePage extends BasePage
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
     @$place = new @Place {@model, @router, @place, tab}
+    @$editIcon = new Icon()
     @$deleteIcon = new Icon()
 
     @state = z.state
@@ -62,14 +64,23 @@ module.exports = class PlacePage extends BasePage
         }
         $topRightButton:
           if me?.username is 'austin'
-            z @$deleteIcon,
-              icon: 'delete'
-              color: colors.$header500Icon
-              hasRipple: true
-              onclick: =>
-                if confirm 'Confirm?'
-                  @placeModel.deleteByRow place
-                  .then =>
-                    @router.go 'home'
+            z '.p-place_top-right',
+              z @$editIcon,
+                icon: 'edit'
+                color: colors.$header500Icon
+                hasRipple: true
+                onclick: =>
+                  @router.go "edit#{_startCase(place.type)}", {
+                    slug: place.slug
+                  }
+              z @$deleteIcon,
+                icon: 'delete'
+                color: colors.$header500Icon
+                hasRipple: true
+                onclick: =>
+                  if confirm 'Confirm?'
+                    @placeModel.deleteByRow place
+                    .then =>
+                      @router.go 'home'
       }
       @$place

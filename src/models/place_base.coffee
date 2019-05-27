@@ -1,4 +1,6 @@
 module.exports = class PlaceBase
+  namespace: 'places'
+
   constructor: ({@auth, @l}) -> null
 
   getPath: (place, router) ->
@@ -19,6 +21,9 @@ module.exports = class PlaceBase
     invalidateAll ?= true
     ga? 'send', 'event', 'ugc', 'place', @namespace
     @auth.call "#{@namespace}.upsert", options, {invalidateAll}
+
+  dedupe: (options) =>
+    @auth.call "#{@namespace}.dedupe", options, {invalidateAll: true}
 
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}

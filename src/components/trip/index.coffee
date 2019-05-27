@@ -82,21 +82,18 @@ module.exports = class Trip extends Base
       name: @nameValueStreams.switch()
       checkIns: checkInsAndTrip.map ([checkIns, trip]) =>
         _map checkIns, (checkIn, i) =>
-          # doesn't update when new attachments added
-          # $attachmentsList = @getCached$(
-          #   "attachmentsList-#{checkIn.id}", AttachmentsList, {
-          #     @model, @router
-          #     attachments: RxObservable.of checkIn.attachments
-          #   }
-          # )
+          id = _map(checkIn.attachments, 'id').join(',')
+          $attachmentsList = @getCached$(
+            "attachmentsList-#{id}", AttachmentsList, {
+              @model, @router
+              attachments: RxObservable.of checkIn.attachments
+            }
+          )
           {
             checkIn
             routeInfo: if trip.route?.legs?[i]
               _omit trip.route.legs[i], ['shape']
-            $attachmentsList: new AttachmentsList {
-              @model, @router
-              attachments: RxObservable.of checkIn.attachments
-            }
+            $attachmentsList: $attachmentsList
             $moreIcon: new Icon()
           }
     }
@@ -185,6 +182,7 @@ module.exports = class Trip extends Base
               z @$addFab,
                 isSecondary: true
                 icon: 'add'
+                sizePx: 32
                 onclick: =>
                   @router.go 'newCheckIn', {
                     tripType: trip.type
@@ -236,7 +234,7 @@ module.exports = class Trip extends Base
                     z '.name',
                       "#{checkIns.length - i}. #{name}"
                     z '.attachments',
-                      $attachmentsList
+                      z $attachmentsList, {sizePx: 56}
 
                   z '.actions',
                     if checkIn.id

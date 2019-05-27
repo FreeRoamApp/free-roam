@@ -3,6 +3,7 @@ _isEmpty = require 'lodash/isEmpty'
 
 AttachmentsList = require '../attachments_list'
 PlacesListCampground = require '../places_list_campground'
+DateService = require '../../services/date'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -30,6 +31,11 @@ module.exports = class CheckIn
 
     z '.z-check-in',
       z '.g-grid',
+        z '.info',
+          z '.name', @model.checkIn.getName checkIn
+          if checkIn?.startTime
+            z '.date',
+              DateService.format new Date(checkIn.startTime), 'MMM D'
         z '.place',
           z @$placesListCampground
 

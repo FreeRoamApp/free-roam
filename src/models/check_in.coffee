@@ -39,6 +39,10 @@ module.exports = class CheckIn
   getName: (checkIn) ->
     checkIn?.name or checkIn?.place?.name or checkIn?.place?.address?.locality
 
+  getLocation: (checkIn) ->
+    "#{checkIn?.place?.address?.locality}, " +
+    "#{checkIn?.place?.address?.administrativeArea}"
+
   uploadImage: (blob) =>
     formData = new FormData()
     formData.append 'file', blob

@@ -13,7 +13,11 @@ module.exports = class Fab
     @$icon = new Icon()
     @$ripple = new Ripple()
 
-  render: ({icon, colors, isPrimary, isSecondary, onclick, isImmediate}) =>
+  render: (props) =>
+    {icon, colors, isPrimary, isSecondary, onclick, isImmediate, sizePx} = props
+
+    sizePx ?= 56
+
     colors = _defaults colors, {
       c500: if isPrimary then allColors.$primary500 \
             else if isSecondary then allColors.$secondary500
@@ -28,6 +32,8 @@ module.exports = class Fab
       onclick: if isImmediate then onclick
       style:
         backgroundColor: colors.c500
+        width: "#{sizePx}px"
+        height: "#{sizePx}px"
     },
       z '.icon-container',
         z @$icon,

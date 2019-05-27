@@ -77,30 +77,26 @@ module.exports = class NewCheckIn
     @resetValueStreams()
 
   resetValueStreams: =>
-    if @checkIn
-      @fields.name.valueStreams.next @checkIn.map (checkIn) ->
-        checkIn?.name or ''
-      @fields.startTime.valueStreams.next @checkIn.map (checkIn) ->
-        if checkIn?.startTime
-          DateService.format new Date(checkIn?.startTime), 'yyyy-mm-dd'
-        else
-          ''
-      @fields.endTime.valueStreams.next @checkIn.map (checkIn) ->
-        if checkIn?.endTime
-          DateService.format new Date(checkIn?.endTime), 'yyyy-mm-dd'
-        else
-          ''
-      @fields.attachments.valueStreams.next @checkIn.map (checkIn) ->
-        checkIn?.attachments
-      @fields.source.valueStreams.next @checkIn.map (checkIn) ->
-        if checkIn
-          {sourceId: checkIn.sourceId, sourceType: checkIn.sourceType}
-        else
-          {}
-    else
-      @fields.name.valueStreams.next new RxBehaviorSubject ''
-      @fields.source.valueStreams.next new RxBehaviorSubject {}
-      @fields.attachments.valueStreams.next new RxBehaviorSubject []
+    today = DateService.format new Date(), 'yyyy-mm-dd'
+    @fields.name.valueStreams.next @checkIn.map (checkIn) ->
+      checkIn?.name or ''
+    @fields.startTime.valueStreams.next @checkIn.map (checkIn) ->
+      if checkIn?.startTime
+        DateService.format new Date(checkIn?.startTime), 'yyyy-mm-dd'
+      else
+        today
+    @fields.endTime.valueStreams.next @checkIn.map (checkIn) ->
+      if checkIn?.endTime
+        DateService.format new Date(checkIn?.endTime), 'yyyy-mm-dd'
+      else
+        today
+    @fields.attachments.valueStreams.next @checkIn.map (checkIn) ->
+      checkIn?.attachments or []
+    @fields.source.valueStreams.next @checkIn.map (checkIn) ->
+      if checkIn
+        {sourceId: checkIn.sourceId, sourceType: checkIn.sourceType}
+      else
+        {}
 
   upsert: =>
     {checkIn, trip, attachmentsValue, nameValue, sourceValue,
@@ -143,8 +139,6 @@ module.exports = class NewCheckIn
 
   render: =>
     {step, isLoading, checkIn, attachmentsValue, trip} = @state.getValue()
-
-    console.log 'c', checkIn
 
     z '.z-new-check-in',
       z @$steps[step]

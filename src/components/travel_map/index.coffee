@@ -68,6 +68,7 @@ module.exports = class TravelMap
     }
 
     @state = z.state {
+      prepScreenshot
       routeStats: route.map (route) ->
         {time: route?.time, distance: route?.distance}
     }
@@ -81,7 +82,7 @@ module.exports = class TravelMap
 
 
   render: =>
-    {routeStats} = @state.getValue()
+    {routeStats, prepScreenshot} = @state.getValue()
 
     hasStats = Boolean routeStats?.time
 
@@ -90,12 +91,13 @@ module.exports = class TravelMap
     },
       z @$map
       z @$tripTooltip
-      z '.stats',
-        z '.g-grid',
-          z '.time',
-            @model.l.get 'trip.totalTime'
-            ": #{DateService.formatSeconds routeStats?.time, 1}"
-          z '.distance',
-            @model.l.get 'trip.totalDistance'
-            ": #{FormatService.number routeStats?.distance}mi"
+      if prepScreenshot
+          z '.stats',
+            z '.g-grid',
+              z '.time',
+                @model.l.get 'trip.totalTime'
+                ": #{DateService.formatSeconds routeStats?.time, 1}"
+              z '.distance',
+                @model.l.get 'trip.totalDistance'
+                ": #{FormatService.number routeStats?.distance}mi"
       z @$shareMap

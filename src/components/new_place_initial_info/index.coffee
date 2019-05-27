@@ -24,7 +24,7 @@ module.exports = class NewPlaceInitialInfo
     me = @model.user.getMe()
 
     @$nameInput = new PrimaryInput
-      value: @fields.name.valueSubject
+      valueStreams: @fields.name.valueStreams
       error: @fields.name.errorSubject
 
     @$locationInput = new PrimaryInput
@@ -33,22 +33,25 @@ module.exports = class NewPlaceInitialInfo
 
     @$detailsTextarea = new Textarea {
       defaultHeight: 100
-      value: @fields.details.valueSubject
+      valueStreams: @fields.details.valueStreams
     }
 
     if @fields.subType
-      @$subTypeDropdown = new Dropdown {value: @fields.subType.valueSubject}
+      @$subTypeDropdown = new Dropdown {
+        valueStreams: @fields.subType.valueStreams
+      }
 
     @$mapButton = new PrimaryButton()
     @$currentLocationButton = new SecondaryButton()
 
     @state = z.state {
+      nameValue: @fields.name.valueStreams.switch()
       locationValue: @fields.location.valueStreams.switch()
     }
 
   isCompleted: =>
-    {locationValue} = @state.getValue()
-    @fields.name.valueSubject.getValue() and locationValue
+    {nameValue, locationValue} = @state.getValue()
+    nameValue and locationValue
 
   getTitle: =>
     @model.l.get 'newPlacePage.title', {

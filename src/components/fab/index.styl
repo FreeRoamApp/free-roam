@@ -2,8 +2,6 @@
 
 .z-fab
   shadow-1()
-  height: 56px
-  width: 56px
   display: inline-block
   position: relative
   background: transparent
@@ -14,11 +12,12 @@
   overflow: hidden
   -webkit-tap-highlight-color: transparent
   z-index: 1 // req to mask the ripple
+  display: flex
 
   > .icon-container
     width: 24px
     height: 24px
-    margin: 16px auto
+    margin: auto
 
   &:active
     shadow-2()

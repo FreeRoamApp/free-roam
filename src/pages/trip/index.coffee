@@ -2,7 +2,7 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-FlatButton = require '../../components/flat_button'
+Icon = require '../../components/icon'
 Trip = require '../../components/trip'
 config = require '../../config'
 colors = require '../../colors'
@@ -22,8 +22,7 @@ module.exports = class TripPage
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$viewButton = new FlatButton()
-    @$shareButton = new FlatButton()
+    @$shareIcon = new Icon()
     @$trip = new Trip {@model, @router, @trip}
 
     @state = z.state {@trip}
@@ -53,10 +52,9 @@ module.exports = class TripPage
         $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
         $topRightButton:
           z '.p-trip_top-right',
-            z @$shareButton,
-              text: @model.l.get 'general.share'
-              colors:
-                cText: colors.$primary500Text
+            z @$shareIcon,
+              icon: 'share'
+              color: colors.$primary500Text
               onclick: =>
                 @$trip.share()
       }

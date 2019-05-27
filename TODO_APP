@@ -1,5 +1,22 @@
 TODOS:
 
+- Edit campground that mods can do
+  - Can change type from campground to overnight
+  - Mark as duplicate
+    - Can choose what original is, (including if it's overnight) and move reviews to it
+
+
+- Pass required
+
+
+- Improved rest areas
+  - # of parking spots, RV parking, dump
+- Filter gas stations by brand
+- Search every X number of miles on route
+- Chat search
+- Filter campgrounds that aren't open for season
+- Social links not opening
+- Adding review checks into place & includes photos in checkin
 - Autosave chat draft
 - Dashboard
   - Allow search for campground (if on desktop and location isn't super accurate)
@@ -9,7 +26,7 @@ TODOS:
   x Link to more facilities
   - "See forecast" button
 - Ability to add website for campground
-- Fix crosshair icon when choosing current location?
+x Fix crosshair icon when choosing current location?
 x Forecast filter
 - Recent reviews (maybe on about page?)
 x Social tutorial tips
