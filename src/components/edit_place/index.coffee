@@ -62,6 +62,7 @@ module.exports = class EditPlace
         errorSubject.next @model.l.get err.info.langKey
         @state.set isLoading: false
       .then =>
+        @router.back()
         @state.set isLoading: false
 
   beforeUnmount: =>
@@ -82,15 +83,17 @@ module.exports = class EditPlace
     {place, isLoading} = @state.getValue()
 
     z '.z-edit-place',
-      z @$duplicateButton,
-        text: @model.l.get 'editPlace.markAsDupe'
-        onclick: =>
-          @model.overlay.open new DuplicatePlaceDialog {
-            @model, @router, place
-          }
+      # z @$duplicateButton,
+      #   text: @model.l.get 'editPlace.markAsDupe'
+      #   onclick: =>
+      #     @model.overlay.open new DuplicatePlaceDialog {
+      #       @model, @router, place
+      #     }
 
       z @$initialInfo
 
       z @$saveButton,
-        text: @model.l.get 'general.save'
+        text: if isLoading \
+              then @model.l.get 'general.loading'
+              else @model.l.get 'general.save'
         onclick: @upsert

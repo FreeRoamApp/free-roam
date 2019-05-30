@@ -31,56 +31,24 @@ module.exports = class Trip extends Base
   constructor: ({@model, @router, @trip}) ->
     @$addFab = new Fab()
 
-    @nameValueStreams = new RxReplaySubject 1
-
-    serverCheckIns = @trip.map (trip) ->
+    checkIns = @trip.map (trip) ->
+      console.log 'tri', trip
       trip?.checkIns
-    # .publishReplay(1).refCount()
-    @clientCheckIns = new RxBehaviorSubject []
-    @resetValueStreams()
-    checkIns = RxObservable.merge @clientCheckIns, serverCheckIns
     checkInsAndTrip = RxObservable.combineLatest(
       checkIns, @trip, (vals...) -> vals
     )
 
-    @place = new RxBehaviorSubject null
-    @placePosition = new RxBehaviorSubject null
-    @mapSize = new RxBehaviorSubject null
-    @$checkInTooltip = new CheckInTooltip {
-      @model, @router, @place, position: @placePosition, @mapSize
-      onSave: (place) =>
-        @addCheckIn _defaults {
-          location:
-            lat: place.location[1]
-            lon: place.location[0]
-        }, place
-        .then =>
-          @place.next null
-    }
-
 
     @$travelMap = new TravelMap {
       @model, @router, @trip, checkIns
-      onclick: (e) =>
-        ga? 'send', 'event', 'trip', 'clickMap'
-        @placePosition.next e.point
-
-        latRounded = Math.round(e.lngLat.lat * 10000) / 10000
-        lonRounded = Math.round(e.lngLat.lng * 10000) / 10000
-
-        @place.next {
-          name: "#{latRounded}, #{lonRounded}"
-          type: 'tripCheckIn'
-          location: [e.lngLat.lng, e.lngLat.lat]
-        }
     }
 
     @state = z.state {
       me: @model.user.getMe()
       trip: @trip.map (trip) ->
         _omit trip, ['route']
-      name: @nameValueStreams.switch()
       checkIns: checkInsAndTrip.map ([checkIns, trip]) =>
+        console.log 'checkins', checkIns
         _map checkIns, (checkIn, i) =>
           id = _map(checkIn.attachments, 'id').join(',')
           $attachmentsList = @getCached$(
@@ -98,48 +66,9 @@ module.exports = class Trip extends Base
           }
     }
 
-  resetValueStreams: =>
-    @clientCheckIns.next []
-
-    if @trip
-      @nameValueStreams.next @trip.map (trip) ->
-        trip?.name or ''
-    else
-      @nameValueStreams.next new RxBehaviorSubject ''
-
-  save: =>
-    {name, checkIns} = @state.getValue()
-
-    @model.trip.upsert {
-      name
-      checkIns
-    }
-
   share: =>
     ga? 'send', 'event', 'trip', 'share', 'click'
     @$travelMap.share()
-
-  addCheckIn: (checkIn) =>
-    ga? 'send', 'event', 'trip', 'share', 'addCheckIn', checkIn.name
-    {trip, checkIns} = @state.getValue()
-    checkIns = _map checkIns, 'checkIn'
-    newCheckIns = checkIns.concat checkIn
-    # TODO: create CheckIn, show loading while id doesn't exist
-    # @checkInsValueStreams.next RxObservable.of newCheckIns
-    @clientCheckIns.next newCheckIns
-
-    @model.coordinate.upsert {
-      name: checkIn.name
-      location: "#{checkIn.location.lat}, #{checkIn.location.lon}"
-    }, {invalidateAll: false}
-    .then ({id}) =>
-      @model.checkIn.upsert {
-        tripIds: [trip.id]
-        name: checkIn.name
-        sourceType: 'coordinate'
-        sourceId: id
-        setUserLocation: trip.type is 'past'
-      }
 
   onReorder: (ids) =>
     ga? 'send', 'event', 'trip', 'reorder'
@@ -157,9 +86,6 @@ module.exports = class Trip extends Base
     z '.z-trip',
       z '.map',
         z @$travelMap
-        z @$checkInTooltip,
-          buttonText: @model.l.get 'tripTooltip.addToTrip'
-
         if checkIns?.length > 1
           z '.places-along-route', {
             onclick: =>

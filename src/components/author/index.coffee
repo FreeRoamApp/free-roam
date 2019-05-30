@@ -16,8 +16,6 @@ module.exports = class Author
     @$karmaIcon = new Icon()
 
   render: ({user, groupUser, time, isTimeAlignedLeft, onclick}) =>
-    console.log 'user', user
-
     isModerator = groupUser?.roleNames and
                   (
                     groupUser.roleNames.indexOf('mod') isnt -1 or

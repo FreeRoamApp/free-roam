@@ -1,6 +1,9 @@
 z = require 'zorium'
 _startCase = require 'lodash/startCase'
 
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
+
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 BasePage = require '../base'
@@ -20,7 +23,10 @@ module.exports = class PlacePage extends BasePage
       group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
-      @placeModel.getBySlug route.params.slug
+      if route.params.slug is 'shell'
+        RxObservable.of null
+      else
+        @placeModel.getBySlug route.params.slug
 
     tab = requests.map ({route}) ->
       route.params.tab
@@ -63,7 +69,7 @@ module.exports = class PlacePage extends BasePage
           color: colors.$header500Icon
         }
         $topRightButton:
-          if me?.username is 'austin'
+          if me?.username in ['austin', 'big_boxtruck', 'roadpickle']
             z '.p-place_top-right',
               z @$editIcon,
                 icon: 'edit'
@@ -78,7 +84,7 @@ module.exports = class PlacePage extends BasePage
                 color: colors.$header500Icon
                 hasRipple: true
                 onclick: =>
-                  if confirm 'Confirm?'
+                  if confirm 'Are you sure?'
                     @placeModel.deleteByRow place
                     .then =>
                       @router.go 'home'

@@ -32,7 +32,8 @@ module.exports = class NewPlaceInitialInfo
       error: @fields.location.errorSubject
 
     @$detailsTextarea = new Textarea {
-      defaultHeight: 100
+      # need space for the long placeholder. 40000 sq px
+      defaultHeight: Math.floor 40000 / @model.window.getSizeVal()?.width
       valueStreams: @fields.details.valueStreams
     }
 
