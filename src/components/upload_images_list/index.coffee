@@ -36,7 +36,8 @@ module.exports = class UploadImagesList
       onUploading: (dataUrl, {clientId}) =>
         {attachments} = @state.getValue()
 
-        attachments or= []
+        unless attachments?.concat
+          attachments = []
         @attachmentsValueStreams.next RxObservable.of(attachments.concat [
           {
             type: 'image', isUploading: true, dataUrl, clientId

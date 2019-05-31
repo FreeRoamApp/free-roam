@@ -83,12 +83,12 @@ module.exports = class EditPlace
     {place, isLoading} = @state.getValue()
 
     z '.z-edit-place',
-      # z @$duplicateButton,
-      #   text: @model.l.get 'editPlace.markAsDupe'
-      #   onclick: =>
-      #     @model.overlay.open new DuplicatePlaceDialog {
-      #       @model, @router, place
-      #     }
+      z @$duplicateButton,
+        text: @model.l.get 'editPlace.markAsDupe'
+        onclick: =>
+          @model.overlay.open new DuplicatePlaceDialog {
+            @model, @router, place
+          }
 
       z @$initialInfo
 

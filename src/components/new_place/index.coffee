@@ -209,10 +209,13 @@ module.exports = class NewPlace
     @initialInfoFields.details.valueStreams.next(
       RxObservable.of autosave['initialInfo.details'] or ''
     )
-
-    @initialInfoFields.location.valueStreams.next @location.map (location) ->
-      location or autosave['initialInfo.location'] or ''
-
+    if @initialInfoFields.subType
+      @initialInfoFields.subType?.valueStreams.next(
+        RxObservable.of autosave['initialInfo.subType'] or 'restArea'
+      )
+    if @location
+      @initialInfoFields.location.valueStreams.next @location.map (location) ->
+        location or autosave['initialInfo.location'] or ''
     @reviewFields.title.valueStreams.next(
       RxObservable.of autosave['review.title'] or ''
     )
