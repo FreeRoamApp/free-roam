@@ -114,9 +114,8 @@ module.exports = class SocialPage
           {
             $menuIcon: @$usersNearbyIcon
             $after:
-              if @model.experiment.get('nearbyTooltip') is 'visible'
-                z '.p-social_tab-users-nearby-icon',
-                  z @$tooltip
+              z '.p-social_tab-users-nearby-icon',
+                z @$tooltip
             menuIconName: 'users-nearby'
             $menuText: @model.l.get 'social.peopleNearby'
             $el: z @$usersNearby
