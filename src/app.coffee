@@ -89,7 +89,6 @@ Pages =
   TravelMapScreenshotPage: require './pages/travel_map_screenshot'
   TosPage: require './pages/tos'
   TripPage: require './pages/trip'
-  TripsPage: require './pages/trips'
   FourOhFourPage: require './pages/404'
 
 TIME_UNTIL_ADD_TO_HOME_PROMPT_MS = 90000 # 1.5 min
@@ -311,7 +310,6 @@ module.exports = class App
     route 'termsOfService', 'TosPage'
     route 'travelMapScreenshot', 'TravelMapScreenshotPage'
     route ['trip', 'tripByType'], 'TripPage'
-    route 'trips', 'TripsPage'
 
     route '404', 'FourOhFourPage'
     routes

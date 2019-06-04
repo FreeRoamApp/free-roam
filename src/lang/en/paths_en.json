@@ -89,7 +89,6 @@
   "termsOfService": "/tos",
   "trip": "/trip/:id",
   "tripByType": "/trip/type/:type",
-  "trips": "/trips",
   "travelMapScreenshot": "/travel-map-screenshot/:id",
   "home": "/",
   "404": "/*"

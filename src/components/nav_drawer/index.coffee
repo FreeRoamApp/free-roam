@@ -147,13 +147,6 @@ module.exports = class NavDrawer
             iconName: 'star'
           }
           {
-            path: @router.get 'trips'
-            title: @model.l.get 'general.trips'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'marker-multiple'
-          }
-          {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'
             $icon: new Icon()
