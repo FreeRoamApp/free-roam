@@ -29,7 +29,7 @@ if window?
 module.exports = class NavDrawer
   constructor: ({@model, @router, group}) ->
     @$socialIcon = new Icon()
-    @$signInDialog = new SignInDialog {@model}
+    @$signInDialog = new SignInDialog {@model, @router}
     @$drawer = new Drawer {
       @model
       isOpen: @model.drawer.isOpen()

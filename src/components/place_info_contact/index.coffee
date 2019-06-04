@@ -51,12 +51,6 @@ module.exports = class PlaceInfoContact
               isTouchTarget: false
               color: colors.$primary500
           z '.text',
-            z 'a', {
+            @router.link z 'a', {
               href: place.contact?.website
-              onclick: (e) =>
-                e?.preventDefault()
-                @model.portal.call 'browser.openWindow', {
-                  url: place.contact?.website
-                  target: '_system'
-                }
             }, place.contact?.website

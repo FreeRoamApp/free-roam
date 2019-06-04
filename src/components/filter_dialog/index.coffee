@@ -35,17 +35,20 @@ module.exports = class FilterDialog
       when 'maxInt'
         filterValue = new RxBehaviorSubject @filter.value or 5
         @$inputRange = new InputRange {
+          @model
           value: filterValue, minValue: 1, maxValue: 5
         }
       when 'minInt'
         filterValue = new RxBehaviorSubject @filter.value or 1
         @$inputRange = new InputRange {
+          @model
           value: filterValue, minValue: 1, maxValue: 5
         }
       when 'maxIntSeasonal'
         seasonValue = new RxBehaviorSubject @model.time.getCurrentSeason()
         rangeValue = new RxBehaviorSubject @filter.value?.value or 5
         @$inputRange = new InputRange {
+          @model
           value: rangeValue, minValue: 1, maxValue: 5
         }
         filterValue = RxObservable.combineLatest(
@@ -56,6 +59,7 @@ module.exports = class FilterDialog
         dayNight = new RxBehaviorSubject 'day'
         rangeValue = new RxBehaviorSubject @filter.value?.value or 5
         @$inputRange = new InputRange {
+          @model
           value: rangeValue, minValue: 1, maxValue: 5
         }
         filterValue = RxObservable.combineLatest(

@@ -187,7 +187,7 @@ init = ->
   model.portal.call 'networkInformation.onOnline', onOnline
 
   model.portal.call 'statusBar.setBackgroundColor', {
-    color: colors.$primary700
+    color: colors.getRawColor colors.$primary700
   }
   # if model.ad.isVisible() and Environment.isNativeApp 'freeroam'
   #   if Environment.isiOS()

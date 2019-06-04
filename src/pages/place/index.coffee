@@ -8,12 +8,16 @@ AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 BasePage = require '../base'
 Icon = require '../../components/icon'
+Environment = require '../../services/environment'
 ReviewThanksDialog = require '../../components/review_thanks_dialog'
+RequestRating = require '../../components/request_rating'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
+
+MIN_PLACE_PAGE_COUNT_TO_SHOW = 3
 
 module.exports = class PlacePage extends BasePage
   hideDrawer: true
@@ -56,6 +60,14 @@ module.exports = class PlacePage extends BasePage
           ratingValue: place?.rating
           ratingCount: place?.ratingCount
       }
+
+  beforeUnmount: =>
+    placesViewed = localStorage.placesViewed or 0
+    localStorage.placesViewed = parseInt(placesViewed) + 1
+    if not localStorage.hasSeenRequestRating and
+        localStorage.placesViewed >= MIN_PLACE_PAGE_COUNT_TO_SHOW and
+        Environment.isNativeApp 'freeroam'
+      @model.overlay.open new RequestRating {@model}
 
   render: =>
     {me, place} = @state.getValue()

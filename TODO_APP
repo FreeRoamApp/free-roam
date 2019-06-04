@@ -1,17 +1,26 @@
 TODOS:
 
+x Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
+  x Reset tokens for all iOS users (broke after app transfer)
+
+- Push token doesn't get added until second time opening app afer signing in. should move over when signing in
+
 - Edit campground that mods can do
   - Can change type from campground to overnight
   - Mark as duplicate
     - Can choose what original is, (including if it's overnight) and move reviews to it
 
-- Add cracker barrels
-- New prompt for rating app on google play/ios
+x Rate after 3 places viewed
+- National Forest subregions on map w/ MVUM pdfs. What type of place? Facility? New: region (city, state, national forest, etc...)?
+  - "region" model is probably best
+x @router.link doesn't work on native (new window)
+x Add cracker barrels
+x New prompt for rating app on google play/ios
 - Pass required
 
 - Two chat messages back-to-back quickly gives 400 no permission
 - Delete button on my places
-- Trip map glitchy / slow?
+x Trip map glitchy / slow?
 - Changing date on trip should auto-sort
 - Friendliness of staff slider?
 - Nights stayed on review
@@ -21,7 +30,7 @@ TODOS:
 - Search every X number of miles on route
 - Chat search
 - Filter campgrounds that aren't open for season
-- Social links not opening
+x Social links not opening
 - Adding review checks into place & includes photos in checkin
 - Autosave chat draft
 - Dashboard
@@ -43,13 +52,11 @@ x Recycling
 - Warning message when difference between weather station and campground is high (far away, or big elevation difference)
 - Colorblind friendly
 - Midwest vanlife gathering
-  - Look into iOS notifications
   - Give permission for @everyone
   - Some way to find group from the app
 - User-inputted info for low clearances
 x Show elevation when long-tapping on coordinate
 x Fix: At i12 and i55, theres a 9' and a 6'. These are running vertically along Lake Pontchartrain in La. The 9' is just past Hammond Both on the interstate.
-- Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
 - Great National Forest areas here in NW Florida..Apalachicola National Forest has lots of boondocking opportunities, terrik
 x Products search is broken
 x Logging into Rachel's account on Kindle didn't login until refreshing (close/open app)

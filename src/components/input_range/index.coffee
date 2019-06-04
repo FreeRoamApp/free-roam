@@ -8,7 +8,7 @@ if window?
   require './index.styl'
 
 module.exports = class InputRange
-  constructor: ({@value, @valueStreams, @minValue, @maxValue}) ->
+  constructor: ({@model, @value, @valueStreams, @minValue, @maxValue}) ->
     @state = z.state
       value: @valueStreams?.switch() or @value
 
@@ -41,7 +41,7 @@ module.exports = class InputRange
             oninput: (e) =>
               @setValue parseInt(e.currentTarget.value)
         z '.info',
-          z '.unset', 'Drag to set value'
+          z '.unset', @model.l.get 'inputRange.default'
           z '.numbers',
             _map _range(@minValue, @maxValue + 1), (number) =>
               z '.number', {

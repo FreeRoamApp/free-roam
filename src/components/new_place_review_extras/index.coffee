@@ -50,6 +50,7 @@ module.exports = class PlaceNewReviewExtras
         field: field
         valueStreams: @fields[field].valueStreams
         $range: new InputRange {
+          @model
           valueStreams: @fields[field].valueStreams, minValue: 1, maxValue: 5
         }
       }

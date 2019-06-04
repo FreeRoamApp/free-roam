@@ -39,7 +39,7 @@ module.exports = class DuplicatePlaceDialog
       destinationType: @typeValue.getValue()
     }
     .then =>
-      @model.overlay.close()
+      # @model.overlay.close()
       @state.set isSaving: false
 
   render: =>

@@ -23,7 +23,6 @@ AddToHomeScreenSheet = require './components/add_to_home_sheet'
 WelcomeDialog = require './components/welcome_dialog'
 StatusBar = require './components/status_bar'
 SnackBar = require './components/snack_bar'
-Nps = require './components/nps'
 Environment = require './services/environment'
 config = require './config'
 colors = require './colors'
@@ -176,8 +175,6 @@ module.exports = class App
       @group
     })
 
-    @$nps = new Nps {@model}
-
     me = @model.user.getMe()
 
     if window? and not @model.cookie.get 'lastAddToHomePromptTime'
@@ -297,7 +294,8 @@ module.exports = class App
     route 'partners', 'PartnersPage'
     route [
       'places', 'home', 'placesWithType', 'placesWithTypeAndSubType'
-      'placesWithLocation'
+      'placesWithLocation', 'placesWithLocationAndType'
+      'placesWithLocationAndTypeAndSubType'
     ], 'PlacesPage'
     route 'preservation', 'PreservationPage'
     route 'product', 'ProductPage'
@@ -370,11 +368,6 @@ module.exports = class App
                     z @$statusBar
                 z '.page', {key: 'page'},
                   $page
-
-              if @$nps.shouldBeShown()
-                z @$nps,
-                  onRate: =>
-                    @model.portal.call 'app.rate'
 
               if $overlayPage
                 z '.overlay-page', {

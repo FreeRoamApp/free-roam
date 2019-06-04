@@ -15,7 +15,7 @@ module.exports = class Trip
     @auth.stream "#{@namespace}.getByType", {type}
 
   getByUserIdAndType: (userId, type) =>
-    @auth.stream "#{@namespace}.getByUserIdAndType", {userId, type}
+    @auth.stream "#{@namespace}.getByUserIdAndType", {userId, type}, {isErrorable: true}
 
   getRoute: ({checkIns}) =>
     @auth.stream "#{@namespace}.getRoute", {checkIns}, {ignoreCache: true}

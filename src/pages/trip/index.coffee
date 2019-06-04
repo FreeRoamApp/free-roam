@@ -25,7 +25,10 @@ module.exports = class TripPage
     @$shareIcon = new Icon()
     @$trip = new Trip {@model, @router, @trip}
 
-    @state = z.state {@trip}
+    @state = z.state {
+      @trip
+      me: @model.user.getMe()
+    }
 
   getMeta: =>
     @trip.map (trip) =>
@@ -40,14 +43,23 @@ module.exports = class TripPage
       }
 
   render: =>
-    {trip} = @state.getValue()
+    {me, trip} = @state.getValue()
+
+    isMe = me?.id and me?.id is trip?.userId
+    console.log me?.id, trip?.userId
 
     z '.p-trip',
       z @$appBar, {
-        title: @model.l.get 'tripPage.title', {
-          replacements:
-            name: trip?.name or ''
-        }
+        title: if isMe
+          @model.l.get 'tripPage.myTitle', {
+            replacements:
+              name: trip?.name
+          }
+        else
+          @model.l.get 'tripPage.title', {
+            replacements:
+              name: @model.user.getDisplayName trip?.user
+          }
         isPrimary: true
         $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
         $topRightButton:

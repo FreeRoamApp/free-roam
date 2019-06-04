@@ -67,6 +67,8 @@
   "placesWithType": "/places/:type",
   "placesWithTypeAndSubType": "/places/:type/:subType",
   "placesWithLocation": "/places/location/:country/:state/:city",
+  "placesWithLocationAndType": "/places/location/:country/:state/:city/:type",
+  "placesWithLocationAndTypeAndSubType": "/places/location/:country/:state/:city/:type/:subType",
 
   "policies": "/policies",
   "privacy": "/privacy",

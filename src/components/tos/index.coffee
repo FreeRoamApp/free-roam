@@ -73,7 +73,7 @@ module.exports = class Tos
           of others. If you believe that material located on or linked to by FreeRoam violates your copyright, you are encouraged to notify FreeRoam in
           accordance with
           '''
-          z 'a',
+          @router.link z 'a',
             href: 'https://github.com/freeroamapp/legal/blob/master/DMCA/Site%20Pages/DMCA%20Takedown%20Notice.md'
             'FreeRoam\'s Digital Millennium Copyright Act Policy'
           '''

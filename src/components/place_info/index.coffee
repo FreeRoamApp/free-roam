@@ -183,7 +183,7 @@ module.exports = class PlaceInfo extends Base
                   @model.cookie.set 'hasSeenRespectCard', '1'
             }
 
-        if place?.subType is 'walmart'
+        if place?.subType in ['walmart', 'crackerBarrel']
           totalCount = (place.isAllowedCount or 0) +
                           (place.isNotAllowedCount or 0)
           z '.is-overnight-allowed', {
@@ -205,7 +205,7 @@ module.exports = class PlaceInfo extends Base
               @model.l.get 'placeInfo.isOvernightAllowedIDK'
 
 
-        if place?.subType is 'walmart' #and not hasSeenRespectCard
+        if place?.subType in ['walmart', 'crackerBarrel']
           z '.card',
             z @$walmartInfoCard
 

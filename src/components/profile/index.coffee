@@ -1,6 +1,7 @@
 z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
+require 'rxjs/add/operator/catch'
 _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
@@ -44,6 +45,15 @@ module.exports = class Profile extends Base
     @pastTrip = user.switchMap (user) =>
       if user
         @model.trip.getByUserIdAndType user.id, 'past'
+        .catch (err) =>
+          err = try
+            JSON.parse err.message
+          catch
+            {}
+          if err.status is 401
+            RxObservable.of false
+          else
+            throw err
       else
         RxObservable.of null
 
@@ -86,6 +96,15 @@ module.exports = class Profile extends Base
       futureTrip: user.switchMap (user) =>
         if user
           @model.trip.getByUserIdAndType user.id, 'future'
+          .catch (err) =>
+            err = try
+              JSON.parse err.message
+            catch
+              {}
+            if err.status is 401
+              RxObservable.of false
+            else
+              throw err
         else
           RxObservable.of null
       $links: user.map (user) ->
@@ -240,11 +259,11 @@ module.exports = class Profile extends Base
 
           unless _isEmpty $links
             z '.links',
-              _map $links, ({$icon, link, type}, i) ->
+              _map $links, ({$icon, link, type}, i) =>
                 [
                   unless i is 0
                     z '.divider'
-                  z 'a.link', {
+                  @router.link z 'a.link', {
                     href: link
                     target: '_system'
                     rel: 'nofollow'
@@ -299,33 +318,45 @@ module.exports = class Profile extends Base
                   z '.g-grid',
                     z '.g-cols',
                       z '.g-col.g-xs-6.md-6',
-                        @router.link z 'a.box.check-ins', {
-                          href: pastTripPath
-                        },
-                          z '.info',
-                            z '.count', pastTrip?.checkInIds?.length or 0
-                            z '.title',
-                              @model.l.get 'general.checkIns'
-                          z '.chevron',
-                            z @$checkInsChevronIcon,
-                              icon: 'chevron-right'
-                              isTouchTarget: false
-                              color: colors.$white
+                        if pastTrip is false # false = private
+                          z '.box.check-ins',
+                            z '.info',
+                              z '.count', @model.l.get 'general.private'
+                              z '.title', @model.l.get 'general.checkIns'
+                        else
+                          @router.link z 'a.box.check-ins', {
+                            href: pastTripPath
+                          },
+                            z '.info',
+                              z '.count', pastTrip?.checkInIds?.length or 0
+                              z '.title',
+                                @model.l.get 'general.checkIns'
+                            z '.chevron',
+                              z @$checkInsChevronIcon,
+                                icon: 'chevron-right'
+                                isTouchTarget: false
+                                color: colors.$white
                       z '.g-col.g-xs-6.md-6',
-                        @router.link z 'a.box.planned', {
-                          href: if isMe \
-                                then @router.get 'tripByType', {type: 'future'}
-                                else @router.get 'trip', {id: futureTrip?.id}
-                        },
-                          z '.info',
-                            z '.count', futureTrip?.checkInIds?.length or 0
-                            z '.title',
-                              @model.l.get 'general.planned'
-                          z '.chevron',
-                            z @$plannedChevronIcon,
-                              icon: 'chevron-right'
-                              isTouchTarget: false
-                              color: colors.$white
+                        if futureTrip is false # false = private
+                          z '.box.planned',
+                            z '.info',
+                              z '.count', @model.l.get 'general.private'
+                              z '.title', @model.l.get 'general.planned'
+                        else
+                          @router.link z 'a.box.planned', {
+                            href: if isMe \
+                                  then @router.get 'tripByType', {type: 'future'}
+                                  else @router.get 'trip', {id: futureTrip?.id}
+                          },
+                            z '.info',
+                              z '.count', futureTrip?.checkInIds?.length or 0
+                              z '.title',
+                                @model.l.get 'general.planned'
+                            z '.chevron',
+                              z @$plannedChevronIcon,
+                                icon: 'chevron-right'
+                                isTouchTarget: false
+                                color: colors.$white
 
                 z '.g-col.g-xs-12.md-12',
                   @router.link z 'a.box.photos', {

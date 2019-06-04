@@ -527,7 +527,7 @@ module.exports = class Conversation extends Base
 
     @model.user.requestLoginIfGuest me
     .then =>
-      unless @model.cookie.get 'isPushTokenStored'
+      unless @model.cookie.get 'hasPushToken'
         @model.overlay.open new PushNotificationsSheet {@model, @router}
       @model.group.joinById group.id
       .then =>
