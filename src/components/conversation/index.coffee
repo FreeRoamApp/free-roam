@@ -172,7 +172,7 @@ module.exports = class Conversation extends Base
     chromeVersion = if raw then parseInt(raw[2], 10) else false
     isOldChrome = chromeVersion and chromeVersion < 50
     # ios and old chrome don't do well with flex-direction: column-reverse
-    @useIscroll = Environment.isiOS({userAgent}) or isOldChrome
+    @useIscroll = Environment.isIos({userAgent}) or isOldChrome
 
     @state = z.state
       me: me
@@ -556,7 +556,7 @@ module.exports = class Conversation extends Base
     z '.z-conversation', {
       className: z.classKebab {hasBottomBar, @useIscroll}
       onclick: (e) =>
-        if @isTextareaFocused.getValue() and Environment.isiOS() and
+        if @isTextareaFocused.getValue() and Environment.isIos() and
             e?.target isnt @$conversationInput.getTextarea$$()
           document.activeElement.blur()
     },

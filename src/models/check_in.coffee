@@ -4,7 +4,7 @@ config = require '../config'
 module.exports = class CheckIn
   namespace: 'checkIns'
 
-  constructor: ({@auth, @proxy}) -> null
+  constructor: ({@auth, @proxy, @l}) -> null
 
   getById: (id) =>
     @auth.stream "#{@namespace}.getById", {id}
@@ -40,8 +40,13 @@ module.exports = class CheckIn
     checkIn?.name or checkIn?.place?.name or checkIn?.place?.address?.locality
 
   getLocation: (checkIn) ->
-    "#{checkIn?.place?.address?.locality}, " +
-    "#{checkIn?.place?.address?.administrativeArea}"
+    if checkIn?.place?.address
+      "#{checkIn?.place?.address?.locality}, " +
+      "#{checkIn?.place?.address?.administrativeArea}"
+    else if checkIn
+      @l.get 'general.unknown'
+    else
+      '...'
 
   uploadImage: (blob) =>
     formData = new FormData()

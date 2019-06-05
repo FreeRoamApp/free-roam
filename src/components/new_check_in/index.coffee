@@ -24,7 +24,7 @@ STEPS =
   checkInInfo: 1
 
 module.exports = class NewCheckIn
-  constructor: ({@model, @router, @checkIn, trip}) ->
+  constructor: ({@model, @router, @checkIn, trip, @step}) ->
     @fields =
       source:
         valueStreams: new RxReplaySubject 1
@@ -42,7 +42,8 @@ module.exports = class NewCheckIn
 
     @resetValueStreams()
 
-    @step = new RxBehaviorSubject 0
+    @step ?= new RxBehaviorSubject 0
+    @initialStepValue = @step.getValue()
     @$stepBar = new StepBar {@model, @step}
 
     @$steps = _filter [
@@ -73,7 +74,7 @@ module.exports = class NewCheckIn
     }
 
   beforeUnmount: =>
-    @step.next 0
+    @step.next @initialStepValue
     @resetValueStreams()
 
   resetValueStreams: =>

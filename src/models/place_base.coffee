@@ -40,3 +40,11 @@ module.exports = class PlaceBase
       @l.get 'general.unknown'
     else
       '...'
+
+  getLocation: (place) ->
+    if place?.address
+      "#{place?.address?.locality}, #{place?.address?.administrativeArea}"
+    else if place
+      @l.get 'general.unknown'
+    else
+      '...'

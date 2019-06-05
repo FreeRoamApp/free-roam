@@ -34,7 +34,7 @@ module.exports = class TripPage
     @trip.map (trip) =>
       cacheBust = new Date(trip?.lastUpdateTime).getTime()
       {
-        title: @model.l.get 'tripPage.title'
+        title: @getTitle()
         description:  @model.l.get 'tripPage.description'
         openGraph:
           image: @model.image.getSrcByPrefix trip?.imagePrefix, {
@@ -42,24 +42,26 @@ module.exports = class TripPage
           }
       }
 
-  render: =>
+  getTitle: =>
     {me, trip} = @state.getValue()
 
     isMe = me?.id and me?.id is trip?.userId
-    console.log me?.id, trip?.userId
 
+    if isMe
+      @model.l.get 'tripPage.myTitle', {
+        replacements:
+          name: trip?.name
+      }
+    else
+      @model.l.get 'tripPage.title', {
+        replacements:
+          name: @model.user.getDisplayName trip?.user
+      }
+
+  render: =>
     z '.p-trip',
       z @$appBar, {
-        title: if isMe
-          @model.l.get 'tripPage.myTitle', {
-            replacements:
-              name: trip?.name
-          }
-        else
-          @model.l.get 'tripPage.title', {
-            replacements:
-              name: @model.user.getDisplayName trip?.user
-          }
+        title: @getTitle()
         isPrimary: true
         $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
         $topRightButton:

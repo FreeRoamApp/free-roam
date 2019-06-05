@@ -1,5 +1,6 @@
 Fingerprint = require 'fingerprintjs'
 getUuidByString = require 'uuid-by-string'
+_reduce = require 'lodash/reduce'
 
 Environment = require '../services/environment'
 PushService = require '../services/push'
@@ -75,6 +76,9 @@ module.exports = class Portal
     # simulate app
     @portal.on 'deepLink.onRoute', @deepLinkOnRoute
 
+    @portal.on 'permissions.check', @permissionsCheck
+    @portal.on 'permissions.request', @permissionsRequest
+
     @portal.on 'top.onData', -> null
     @portal.on 'top.getData', -> null
     @portal.on 'push.register', @pushRegister
@@ -133,7 +137,7 @@ module.exports = class Portal
     ga? 'send', 'event', 'native', 'rate'
 
     @call 'browser.openWindow',
-      url: if Environment.isiOS() \
+      url: if Environment.isIos() \
            then config.IOS_APP_URL
            else config.GOOGLE_PLAY_APP_URL
       target: '_system'
@@ -162,7 +166,7 @@ module.exports = class Portal
       else
         @installOverlay.open()
 
-    else if Environment.isiOS()
+    else if Environment.isIos()
       @call 'browser.openWindow',
         url: iosAppUrl
         target: '_system'
@@ -174,6 +178,18 @@ module.exports = class Portal
 
     else
       @overlay.open new GetAppDialog {model: {@l, @overlay, portal: this}}
+
+  permissionsCheck: ({permissions}) ->
+    console.log 'webcheck'
+    Promise.resolve _reduce permissions, (obj, permission) ->
+      obj[permission] = true
+      obj
+    , {}
+
+  permissionsRequest: ({permissions}) ->
+    console.log 'webreq'
+    Promise.resolve true
+
 
   twitterShare: ({text}) =>
     @call 'browser.openWindow', {

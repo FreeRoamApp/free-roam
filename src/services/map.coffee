@@ -11,25 +11,63 @@ MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
           'oct', 'nov', 'dec']
 
 class MapService
-  hasLocationPermission: ->
+  hasLocationPermission: ({model} = {}) ->
+    unless navigator?
+      return Promise.resolve false
+
     # not available in native apps
     # https://stackoverflow.com/questions/52784495/is-there-any-alternative-to-navigator-permissions-query-permissions-api
-    unless navigator?.permissions
+    if model and Environment.isNativeApp('freeroam') and Environment.isAndroid()
+      model.portal.call 'permissions.check', {
+        permissions: [
+          'android.permission.ACCESS_FINE_LOCATION'
+          'android.permission.ACCESS_COARSE_LOCATION'
+        ]
+      }
+      .then (results) ->
+        results?['android.permission.ACCESS_FINE_LOCATION']
+    else if navigator.permissions
+      navigator.permissions.query {name: 'geolocation'}
+      .then (permissionStatus) ->
+        return permissionStatus.state is 'granted'
+    else
       return Promise.resolve localStorage?.geolocationEnabled
-    navigator.permissions.query {name: 'geolocation'}
-    .then (permissionStatus) ->
-      return permissionStatus.state is 'granted'
 
-  getLocation: ->
-    new Promise (resolve, reject) ->
-      if navigator?
-        navigator.geolocation.getCurrentPosition (pos) ->
-          localStorage?.geolocationEnabled = '1'
-          lat = Math.round(10000 * pos.coords.latitude) / 10000
-          lon = Math.round(10000 * pos.coords.longitude) / 10000
-          resolve {lat, lon}
-      else
-        resolve null
+  getLocation: ({model} = {}) ->
+    get = =>
+      new Promise (resolve, reject) =>
+        if navigator?
+          navigator.geolocation.getCurrentPosition (pos) ->
+            localStorage?.geolocationEnabled = '1'
+            lat = Math.round(10000 * pos.coords.latitude) / 10000
+            lon = Math.round(10000 * pos.coords.longitude) / 10000
+            resolve {lat, lon}
+          , reject, {enableHighAccuracy: true, timeout: 10000}
+        else
+          resolve null
+
+    isNativeApp = Environment.isNativeApp 'freeroam'
+    isIos = Environment.isIos()
+    isNativeIos = isNativeApp and isIos
+
+    if model?.portal and not isNativeIos
+      @hasLocationPermission {model}
+      .then (hasPermission) ->
+        if hasPermission
+          get()
+        else
+          model.portal.call 'permissions.request', {
+            permissions: [
+              'android.permission.ACCESS_FINE_LOCATION'
+              'android.permission.ACCESS_COARSE_LOCATION'
+            ]
+          }
+          .catch (err) ->
+            console.log 'perm req err', err
+          .then get
+
+    else
+      get()
 
   getDirections: (place, {model}) ->
     target = '_system'
@@ -43,6 +81,7 @@ class MapService
       url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
       model.portal.call 'browser.openWindow', {url, target}
     if Environment.isNativeApp 'freeroam'
+      console.log 'getttt2' # FIXME FIXME: use fn here
       navigator.geolocation.getCurrentPosition onLocation, onError
     else
       console.log 'err'

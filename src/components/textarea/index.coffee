@@ -72,7 +72,7 @@ module.exports = class Textarea
     @$$textarea?.setSelectionRange(
       @selectionStart.getValue(), @selectionEnd.getValue()
     )
-    if Environment.isiOS()
+    if Environment.isIos()
       # ios focuses on setSelectionRange
       @$$textarea?.blur()
 

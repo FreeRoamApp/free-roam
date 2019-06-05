@@ -51,7 +51,7 @@ module.exports = class Profile extends Base
           catch
             {}
           if err.status is 401
-            RxObservable.of false
+            RxObservable.of 'private'
           else
             throw err
       else
@@ -318,7 +318,7 @@ module.exports = class Profile extends Base
                   z '.g-grid',
                     z '.g-cols',
                       z '.g-col.g-xs-6.md-6',
-                        if pastTrip is false # false = private
+                        if pastTrip is 'private' and not isMe # false = private
                           z '.box.check-ins',
                             z '.info',
                               z '.count', @model.l.get 'general.private'
@@ -337,7 +337,7 @@ module.exports = class Profile extends Base
                                 isTouchTarget: false
                                 color: colors.$white
                       z '.g-col.g-xs-6.md-6',
-                        if futureTrip is false # false = private
+                        if futureTrip is 'private' and not isMe # false = private
                           z '.box.planned',
                             z '.info',
                               z '.count', @model.l.get 'general.private'

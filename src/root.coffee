@@ -190,7 +190,7 @@ init = ->
     color: colors.getRawColor colors.$primary700
   }
   # if model.ad.isVisible() and Environment.isNativeApp 'freeroam'
-  #   if Environment.isiOS()
+  #   if Environment.isIos()
   #     adId = '' # TODO
   #   else
   #     adId = '' # TODO
@@ -227,7 +227,7 @@ init = ->
 
     if _isPush and _original?.additionalData?.foreground
       model.exoid.invalidateAll()
-      if Environment.isiOS() and Environment.isNativeApp 'freeroam'
+      if Environment.isIos() and Environment.isNativeApp 'freeroam'
         model.portal.call 'push.setBadgeNumber', {number: 0}
 
       currentNotification.next {
@@ -296,7 +296,7 @@ init = ->
       # console.log 'resume invalidate'
       model.exoid.invalidateAll()
       model.window.resume()
-      if Environment.isiOS() and Environment.isNativeApp 'freeroam'
+      if Environment.isIos() and Environment.isNativeApp 'freeroam'
         model.portal.call 'push.setBadgeNumber', {number: 0}
 
 if document.readyState isnt 'complete' and

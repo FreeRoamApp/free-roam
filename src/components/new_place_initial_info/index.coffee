@@ -113,7 +113,7 @@ module.exports = class NewPlaceInitialInfo
                   isOutline: true
                   text: @model.l.get 'general.currentLocation'
                   onclick: =>
-                    MapService.getLocation()
+                    MapService.getLocation {@model}
                     .then ({lat, lon}) =>
                       @fields.location.valueStreams.next RxObservable.of(
                         "#{lat}, #{lon}"

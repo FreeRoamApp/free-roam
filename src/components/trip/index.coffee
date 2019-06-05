@@ -32,7 +32,6 @@ module.exports = class Trip extends Base
     @$addFab = new Fab()
 
     checkIns = @trip.map (trip) ->
-      console.log 'tri', trip
       trip?.checkIns
     checkInsAndTrip = RxObservable.combineLatest(
       checkIns, @trip, (vals...) -> vals
@@ -48,9 +47,11 @@ module.exports = class Trip extends Base
       trip: @trip.map (trip) ->
         _omit trip, ['route']
       checkIns: checkInsAndTrip.map ([checkIns, trip]) =>
-        console.log 'checkins', checkIns
         _map checkIns, (checkIn, i) =>
-          id = _map(checkIn.attachments, 'id').join(',')
+          if _isEmpty checkIn.attachments
+            id = checkIn.id
+          else
+            id = _map(checkIn.attachments, 'id').join(',')
           $attachmentsList = @getCached$(
             "attachmentsList-#{id}", AttachmentsList, {
               @model, @router
@@ -82,6 +83,8 @@ module.exports = class Trip extends Base
     {me, name, checkIns, trip} = @state.getValue()
 
     hasEditPermission = @model.trip.hasEditPermission trip, me
+
+    console.log checkIns
 
     z '.z-trip',
       z '.map',
@@ -125,7 +128,7 @@ module.exports = class Trip extends Base
               _map checkIns, (checkIn, i) =>
                 {checkIn, routeInfo,  $moreIcon, $attachmentsList} = checkIn
 
-                name = @model.checkIn.getName checkIn
+                location = @model.checkIn.getLocation checkIn
 
                 z '.check-in.draggable', {
                   onclick: =>
@@ -143,22 +146,24 @@ module.exports = class Trip extends Base
                   ondragend: if @onReorder then z.ev (e, $$el) =>
                     @onDragEnd e
                 },
-                  z '.time',
-                    z '.date',
-                      if checkIn.startTime
-                        DateService.format new Date(checkIn.startTime), 'MMM D'
-                    if routeInfo
-                      z '.travel-time',
-                        z 'div',
-                          "#{DateService.formatSeconds routeInfo?.time, 1} /"
-                        z 'div',
-                          "#{FormatService.number routeInfo?.distance}mi"
+                  z '.time-wrapper',
+                    z '.time',
+                      z '.date',
+                        if checkIn.startTime
+                          DateService.format new Date(checkIn.startTime), 'MMM D'
+                      if routeInfo
+                        z '.travel-time',
+                          z 'div',
+                            "#{DateService.formatSeconds routeInfo?.time, 1} /"
+                          z 'div',
+                            "#{FormatService.number routeInfo?.distance}mi"
 
 
                   z '.dot'
                   z '.info',
-                    z '.name',
-                      "#{checkIns.length - i}. #{name}"
+                    z '.location',
+                      "#{checkIns.length - i}. #{location}"
+                    z '.name', @model.checkIn.getName checkIn
                     z '.attachments',
                       z $attachmentsList, {sizePx: 56}
 

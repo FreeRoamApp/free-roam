@@ -168,7 +168,7 @@ module.exports = class CoordinatePicker
               icon: 'crosshair'
               isImmediate: true
               onclick: =>
-                MapService.getLocation()
+                MapService.getLocation {@model}
                 .then ({lat, lon}) =>
                   coordinates = "#{lat}, #{lon}"
                   @mapCenter.next [lon, lat]

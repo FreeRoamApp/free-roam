@@ -30,7 +30,7 @@ module.exports = class ActionBar
 
     z '.z-action-bar', {
       onclick: ->
-        if Environment.isiOS()
+        if Environment.isIos()
           document.activeElement.blur()
     },
       z @$appBar, {

@@ -40,6 +40,7 @@ Pages =
   EditProfilePage: require './pages/edit_profile'
   EditAmenityPage: require './pages/edit_amenity'
   EditCampgroundPage: require './pages/edit_campground'
+  EditCheckInPage: require './pages/edit_check_in'
   EditOvernightPage: require './pages/edit_overnight'
   EditAmenityReviewPage: require './pages/edit_amenity_review'
   EditCampgroundReviewPage: require './pages/edit_campground_review'
@@ -244,7 +245,7 @@ module.exports = class App
           return @$cachedPages[pageKey]
 
     userAgent = @model.window.getUserAgent()
-    isiOSApp = Environment.isiOS({userAgent}) and
+    isIosApp = Environment.isIos({userAgent}) and
                 Environment.isNativeApp('freeroam', {userAgent})
     route 'about', 'AboutPage'
     route ['amenity', 'amenityWithTab'], 'AmenityPage'
@@ -259,9 +260,9 @@ module.exports = class App
     route 'editAmenityReview', 'EditAmenityReviewPage'
     route 'editCampground', 'EditCampgroundPage'
     route 'editCampgroundReview', 'EditCampgroundReviewPage'
+    route 'editCheckIn', 'EditCheckInPage'
     route 'editOvernight', 'EditOvernightPage'
     route 'editOvernightReview', 'EditOvernightReviewPage'
-    route 'editCheckIn', 'NewCheckInPage'
     route 'editProfile', 'EditProfilePage'
     route 'groupAdminBannedUsers', 'GroupBannedUsersPage'
     route 'groupAdminAuditLog', 'GroupAuditLogPage'
@@ -319,7 +320,7 @@ module.exports = class App
       $overlays, $tooltip} = @state.getValue()
 
     userAgent = @model.window.getUserAgent()
-    isIos = Environment.isiOS {userAgent}
+    isIos = Environment.isIos {userAgent}
     isAndroid = Environment.isAndroid {userAgent}
     isNative = Environment.isNativeApp 'freeroam', {userAgent}
     isStatusBarVisible = Boolean statusBarData

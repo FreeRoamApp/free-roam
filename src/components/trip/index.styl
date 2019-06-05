@@ -59,20 +59,29 @@
         > .check-in
           display: flex
           align-items: flex-start
-          margin-bottom: 16px
           cursor: pointer
+          min-height: 72px
+          position: relative
 
-          > .time
+          > .time-wrapper
             width: 64px
             flex-shrink: 0
 
-            > .date
-              font-caption-bold()
-              color: getColor('$secondary500')
+            > .time
+              height: 100%
+              width: 100%
+              position: absolute
 
-            > .travel-time
-              font-caption3()
-              margin-top: 8px
+              > .date
+                font-caption-bold()
+                color: getColor('$secondary500')
+
+              > .travel-time
+                font-caption3()
+                top: 50%
+                position: absolute
+                height: 40px
+                margin-top: -12px // height / 2 minus 8px for dot size
 
           > .dot
             flex-shrink: 0
@@ -89,9 +98,13 @@
           > .info
             flex1()
             margin-left: 16px
+            margin-bottom: 16px
 
             > .name
               font-title()
+
+            > .location
+              font-caption2()
 
             > .attachments
               margin-top: 8px

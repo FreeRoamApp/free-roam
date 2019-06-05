@@ -4,6 +4,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 _filter = require 'lodash/filter'
+_map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
 
 Map = require '../map'
@@ -39,7 +40,7 @@ module.exports = class TravelMap
     @mapSize = new RxBehaviorSubject null
     mapOptions = {
       @model, @router
-      places: checkIns
+      places: checkIns.map (checkIns) -> _map checkIns, 'place'
       route: route
       fill: filledStates
       usePlaceNumbers: true

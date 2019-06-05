@@ -3,7 +3,7 @@ TODOS:
 x Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
   x Reset tokens for all iOS users (broke after app transfer)
 
-- Push token doesn't get added until second time opening app afer signing in. should move over when signing in
+x Push token doesn't get added until second time opening app afer signing in. should move over when signing in
 
 - Edit campground that mods can do
   - Can change type from campground to overnight

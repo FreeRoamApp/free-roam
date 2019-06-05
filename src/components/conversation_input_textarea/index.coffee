@@ -34,7 +34,7 @@ module.exports = class ConversationInputTextarea
     @$$textarea?.setSelectionRange(
       @selectionStart.getValue(), @selectionEnd.getValue()
     )
-    if Environment.isiOS()
+    if Environment.isIos()
       # ios focuses on setSelectionRange
       @$$textarea?.blur()
 
@@ -115,15 +115,15 @@ module.exports = class ConversationInputTextarea
             @resizeTextarea e
             @setMessageFromEvent e
           ontouchstart: (e) =>
-            if Environment.isiOS() and not Environment.isNativeApp 'freeroam'
+            if Environment.isIos() and not Environment.isNativeApp 'freeroam'
               @model.window.pauseResizing()
           ontouchend: (e) ->
             isFocused = e.target is document.activeElement
             # weird bug causes textarea to sometimes not focus
-            if not isFocused and not Environment.isiOS()
+            if not isFocused and not Environment.isIos()
               e?.target.focus()
           onfocus: =>
-            if Environment.isiOS() and not Environment.isNativeApp 'freeroam'
+            if Environment.isIos() and not Environment.isNativeApp 'freeroam'
               @model.window.pauseResizing()
             clearTimeout @blurTimeout
             setTimeout => # FIXME FIXME: breaks ios?
@@ -134,7 +134,7 @@ module.exports = class ConversationInputTextarea
             @blurTimeout = setTimeout =>
               isFocused = e.target is document.activeElement
               unless isFocused
-                if Environment.isiOS() and not Environment.isNativeApp 'freeroam'
+                if Environment.isIos() and not Environment.isNativeApp 'freeroam'
                   @model.window.resumeResizing()
                 setTimeout =>
                   @isTextareaFocused.next false

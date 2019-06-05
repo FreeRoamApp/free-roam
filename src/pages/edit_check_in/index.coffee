@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
@@ -11,7 +12,7 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-module.exports = class NewCheckInPage
+module.exports = class EditCheckInPage
   hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData}) ->
@@ -29,24 +30,26 @@ module.exports = class NewCheckInPage
       else
         RxObservable.of null
 
+    step = new RxBehaviorSubject 1
+
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$newCheckIn = new NewCheckIn {@model, @router, checkIn, trip}
+    @$newCheckIn = new NewCheckIn {@model, @router, checkIn, trip, step}
     @$deleteIcon = new Icon()
 
     @state = z.state {checkIn}
 
   getMeta: =>
     {
-      title: @model.l.get 'editCheckInPage.title'
+      title: @model.l.get 'newCheckInPage.title'
     }
 
   render: =>
     {checkIn} = @state.getValue()
 
-    z '.p-new-check-in',
+    z '.p-edit-check-in',
       z @$appBar, {
-        title: @model.l.get 'newCheckInPage.title'
+        title: @model.l.get 'editCheckInPage.title'
         style: 'primary'
         $topLeftButton: z @$buttonBack
         $topRightButton:

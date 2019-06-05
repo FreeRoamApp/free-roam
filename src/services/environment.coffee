@@ -39,7 +39,7 @@ class Environment
     userAgent ?= navigator?.userAgent
     _includes userAgent, 'Android'
 
-  isiOS: ({userAgent} = {}) ->
+  isIos: ({userAgent} = {}) ->
     userAgent ?= navigator?.userAgent
     Boolean userAgent?.match /iP(hone|od|ad)/g
 
@@ -77,7 +77,7 @@ class Environment
 
     if @isFacebook() then 'facebook'
     else if @isTwitch() then 'twitch'
-    else if isApp and @isiOS(gameKey, {userAgent}) then 'ios'
+    else if isApp and @isIos(gameKey, {userAgent}) then 'ios'
     else if isApp and @isAndroid({userAgent}) then 'android'
     else 'web'
 

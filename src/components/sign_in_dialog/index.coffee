@@ -12,7 +12,8 @@ if window?
   require './index.styl'
 
 module.exports = class SignInDialog
-  constructor: ({@model, @router}) ->
+  # can't use @router here because it's not passed in for requestLoginIfGuest
+  constructor: ({@model}) ->
 
     @usernameValue = new RxBehaviorSubject ''
     @usernameError = new RxBehaviorSubject null
@@ -151,8 +152,14 @@ module.exports = class SignInDialog
                   @model.l.get 'signInDialog.terms', {
                     replacements: {tos: ' '}
                   }
-                  @router.link z 'a', {
+                  z 'a', {
                     href: "https://#{config.HOST}/policies"
+                    target: '_system'
+                    onclick: (e) =>
+                      e.preventDefault()
+                      @model.portal.call 'browser.openWindow', {
+                        url: "https://#{config.HOST}/policies"
+                      }
                   }, 'TOS'
               z '.actions',
                 z '.button',

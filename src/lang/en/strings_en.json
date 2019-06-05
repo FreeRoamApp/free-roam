@@ -474,7 +474,7 @@
 
 
   "404Page.text": "Page not found!",
-  "editCheckInPage.title": "Additional info",
+  "editCheckInPage.title": "Edit check-in",
   "editProfilePage.title": "Edit profile",
   "tripPage.title": "Edit trip: {name}",
   "groupChatPage.title": "Boondocking chat",
@@ -503,6 +503,7 @@
   "itemsPage.guide": "Buyer guide",
   "itemsPage.description": "Browse through helpful {title}. Learn why you might need certain products, and what to look for.",
   "myPlacesPage.title": "My places",
+  "newCheckInPage.title": "New check-in",
   "newPlacePage.title": "New {prettyType}",
   "newReviewPage.title": "Your review",
   "newThreadPage.title": "New thread",
@@ -587,6 +588,7 @@
 
   "placeType.amenity": "Facility",
   "placeType.campground": "Campground",
+  "placeType.coordinate": "Coordinate",
   "placeType.cellTower": "Cell tower",
   "placeType.lowClearance": "Low clearance",
   "placeType.overnight": "Overnight",

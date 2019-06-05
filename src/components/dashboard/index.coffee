@@ -39,16 +39,16 @@ module.exports = class Dashboard
       @model, @router, isPlacesOnly: true
     }
 
-    hasLocationPermissionPromise = MapService.hasLocationPermission()
+    hasLocationPermissionPromise = MapService.hasLocationPermission {@model}
     @hasLocationPermissionStreams = new RxReplaySubject 1
     @hasLocationPermissionStreams.next RxObservable.fromPromise(
       hasLocationPermissionPromise
     )
     @locationStreams = new RxReplaySubject 1
     @locationStreams.next RxObservable.fromPromise(
-      hasLocationPermissionPromise.then (hasPermission) ->
+      hasLocationPermissionPromise.then (hasPermission) =>
         if hasPermission
-          MapService.getLocation()
+          MapService.getLocation {@model}
     )
     location = @locationStreams.switch()
 
@@ -163,14 +163,14 @@ module.exports = class Dashboard
                       colors:
                         cText: colors.$primary500Text
                       onclick: =>
-                        getLocationPromise = MapService.getLocation()
+                        getLocationPromise = MapService.getLocation {@model}
                         @locationStreams.next RxObservable.fromPromise(
                           getLocationPromise
                         )
                         @hasLocationPermissionStreams.next(
                           RxObservable.fromPromise(
-                            getLocationPromise.then (location) ->
-                              MapService.hasLocationPermission()
+                            getLocationPromise.then (location) =>
+                              MapService.hasLocationPermission {@model}
                           )
                         )
             if hasLocationPermission

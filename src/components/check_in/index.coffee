@@ -37,6 +37,7 @@ module.exports = class CheckIn
             z '.date',
               DateService.format new Date(checkIn.startTime), 'MMM D'
         z '.place',
+          z '.title', @model.l.get "placeType.#{checkIn?.place?.type}"
           z @$placesListCampground
 
         unless _isEmpty checkIn?.attachments
