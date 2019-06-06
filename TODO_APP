@@ -65,6 +65,12 @@ x Logging into Rachel's account on Kindle didn't login until refreshing (close/o
 - If push notification errors, try next token? Or just send to all tokens in general
   - Current system switches to next token after 10 consec errors
 - Android reply to push notification not sending until app is opened
+  - Works only if app was recently closed
+  - https://github.com/phonegap/phonegap-plugin-push/issues/1682
+  - https://github.com/katzer/cordova-plugin-background-mode
+    - Apple might reject?
+  - https://www.npmjs.com/package/cordova-plugin-advanced-websocket
+  - https://github.com/transistorsoft/cordova-background-geolocation-lt
 x Web icon link shows when it shouldn't
 - Social
   x Campgrounds don't show in search when updating location

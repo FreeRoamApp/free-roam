@@ -12,7 +12,8 @@ TRANSITION_TIME_MS = 500 # 0.5s
 
 module.exports = class Tabs
   constructor: (options) ->
-    {@model, @selectedIndex, @isPageScrolling, hideTabBar} = options
+    {@model, @selectedIndex, @isPageScrolling, hideTabBar,
+      @disableDeceleration} = options
     @selectedIndex ?= new RxBehaviorSubject 0
     @isPageScrolling ?= new RxBehaviorSubject false
     @mountDisposable = null
@@ -73,7 +74,10 @@ module.exports = class Tabs
       eventPassthrough: true
       bounce: false
       snap: '.iscroll-tab'
-      deceleration: 0.002
+      # when disabled, bounce anim is done by our transitions and there
+      # is no momentum. fast swiping through photo gallery breaks with
+      # defaul deceleration
+      deceleration: if @disableDeceleration then 1 else 0.002
     }
 
     # @$$el.addEventListener 'touchstart', @onTouchStart

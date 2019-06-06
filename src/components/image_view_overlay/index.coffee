@@ -1,5 +1,7 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+_map = require 'lodash/map'
+_filter = require 'lodash/filter'
 
 Icon = require '../icon'
 ButtonBack = require '../button_back'
@@ -20,7 +22,7 @@ module.exports = class ImageViewOverlay
     @selectedIndex = new RxBehaviorSubject 1 # start in middle of 0 1 2
     @imageIndex = new RxBehaviorSubject imageIndex or 0
     @$tabs = new Tabs {
-      @model, @selectedIndex, hideTabBar: true
+      @model, @selectedIndex, hideTabBar: true, disableDeceleration: true
     }
     @$previousIcon = new Icon()
     @$nextIcon = new Icon()
@@ -49,9 +51,38 @@ module.exports = class ImageViewOverlay
   afterMount: (@$$el) =>
     $$tabs = @$$el.querySelector('.tabs')
 
-    @mountDisposable = @selectedIndex.do((index) =>
+    @preloadedImageIndices = [0]
+
+    @mountDisposable1 = @imageIndex.subscribe (imageIndex) =>
+      {images} = @state.getValue()
+
+      imageCount = images?.length or 0
+      # preload next 2 and prev 2 images
+      prev1 = imageIndex - 1
+      if prev1 < 0
+        prev1 = images?.length - 1
+      prev2 = imageIndex - 2
+      if prev2 < 0
+        prev2 = images?.length - 2
+      toPreload = [
+        (imageIndex + 1) % (imageCount)
+        (imageIndex + 2) % (imageCount)
+        prev1
+        prev2
+      ].slice(0, imageCount - 1)
+      toPreload = _filter toPreload, (index) =>
+        @preloadedImageIndices.indexOf(index) is -1
+      @preloadedImageIndices = @preloadedImageIndices.concat toPreload
+      _map toPreload, (preloadIndex) ->
+        img = new Image()
+        img.src = images[preloadIndex]?.url
+      # @preloadedImageIndices
+
+
+    @mountDisposable2 = @selectedIndex.do((index) =>
       {images, imageIndex} = @state.getValue()
 
+      imageCount = images?.length or 0
       if index is 2
         imageIndex = imageIndex += 1
         if imageIndex >= images?.length
@@ -68,6 +99,7 @@ module.exports = class ImageViewOverlay
         imageIndex = imageIndex -= 1
         if imageIndex < 0
           imageIndex = images?.length - 1
+      if index in [0, 2]
         setTimeout =>
           @$tabs.disableTransition()
           @selectedIndex.next 1
@@ -79,7 +111,9 @@ module.exports = class ImageViewOverlay
     ).subscribe()
 
   beforeUnmount: =>
-    @mountDisposable?.unsubscribe()
+    @preloadedImageIndices = []
+    @mountDisposable1?.unsubscribe()
+    @mountDisposable2?.unsubscribe()
 
   getDimensions: (aspectRatio) =>
     {windowSize, appBarHeight} = @state.getValue()
