@@ -19,9 +19,9 @@ if window?
 
 module.exports = class ProfileDialog
   constructor: (options) ->
-    {@model, @router, @user, group} = options
+    {@model, @router, @user, groupUser, group,
+      @onDeleteMessage, @onDeleteMessagesLast7d} = options
 
-    console.log @user
     unless @user?.map
       @user = RxObservable.of @user
 
@@ -81,6 +81,7 @@ module.exports = class ProfileDialog
         else
           RxObservable.of null
       user: @user
+      groupUser: groupUser
       isBanned: groupAndUser.switchMap ([group, user]) =>
         if group and user
           @model.ban.getByGroupIdAndUserId group.id, user.id
@@ -217,7 +218,7 @@ module.exports = class ProfileDialog
               }
           ]
         }
-      if hasDeleteMessagePermission and user?.onDeleteMessage
+      if hasDeleteMessagePermission and @onDeleteMessage
         {
           icon: 'edit'
           $icon: @$deleteIcon
@@ -246,7 +247,7 @@ module.exports = class ProfileDialog
                 unless confirm @model.l.get 'general.confirm'
                   return
                 @setLoadingByText @model.l.get 'profileDialog.delete'
-                user.onDeleteMessage()
+                @onDeleteMessage()
                 .then =>
                   @unsetLoadingByText @model.l.get 'profileDialog.delete'
                   @model.overlay.close()
@@ -263,7 +264,7 @@ module.exports = class ProfileDialog
                   @setLoadingByText(
                     @model.l.get 'profileDialog.deleteMessagesLast7d'
                   )
-                  user.onDeleteMessagesLast7d()
+                  @onDeleteMessagesLast7d()
                   .then =>
                     @unsetLoadingByText(
                       @model.l.get 'profileDialog.deleteMessagesLast7d'
@@ -434,14 +435,13 @@ module.exports = class ProfileDialog
 
 
   render: =>
-    {me, user, group, isVisible, windowSize, $links} = @state.getValue()
+    {me, user, group, groupUser, isVisible,
+      windowSize, $links} = @state.getValue()
 
     isMe = user?.id is me?.id
 
     userOptions = @getUserOptions()
     modOptions = @getModOptions()
-
-    console.log 'isvis', isVisible
 
     z '.z-profile-dialog', {
       className: z.classKebab {isVisible: me and user and isVisible}
@@ -457,8 +457,8 @@ module.exports = class ProfileDialog
                 z @$avatar, {user, bgColor: colors.$grey100, size: '72px'}
               z '.about',
                 z '.name', @model.user.getDisplayName user
-                if not _isEmpty user?.groupUser?.roleNames
-                  z '.roles', user?.groupUser?.roleNames.join ', '
+                if not _isEmpty groupUser?.roleNames
+                  z '.roles', groupUser?.roleNames.join ', '
                 z '.links',
                   _map $links, ({$icon, link, type}) =>
                     @router.link z 'a.link', {

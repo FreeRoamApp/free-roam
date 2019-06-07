@@ -226,7 +226,7 @@ module.exports = class NewPlaceReview
             JSON.parse err.message
           catch
             {}
-          @step.next STEPS[err.info.step] or 0
+          @step.next STEPS[err.info?.step] or 0
           errorSubject = switch err.info.field
             when 'body' then @reviewFields.body.errorSubject
             else @reviewFields.body.errorSubject

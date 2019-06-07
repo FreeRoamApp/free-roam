@@ -242,38 +242,40 @@ module.exports = class Profile extends Base
                 z @$profileBoxes
 
           z '.section',
-            z '.title',
-              @model.l.get 'general.photos'
-              z 'span.count', attachmentsCount
-            z '.photos',
-              z @$attachments
-            @router.link z 'a.see-all', {
-              href: if user?.username \
-                  then @router.get 'profileAttachments', {username: user?.username}
-                  else @router.get 'profileAttachmentsById', {id: user?.id}
-            },
-              z '.text', @model.l.get 'general.seeAll'
-              z '.icon',
-                z @$seeAllAttachmentsChevronIcon,
-                  icon: 'chevron-right'
-                  color: colors.$bgText54
-                  isTouchTarget: false
+            z '.g-grid',
+              z '.title',
+                @model.l.get 'general.photos'
+                z 'span.count', attachmentsCount
+              z '.photos',
+                z @$attachments
+              @router.link z 'a.see-all', {
+                href: if user?.username \
+                    then @router.get 'profileAttachments', {username: user?.username}
+                    else @router.get 'profileAttachmentsById', {id: user?.id}
+              },
+                z '.text', @model.l.get 'general.seeAll'
+                z '.icon',
+                  z @$seeAllAttachmentsChevronIcon,
+                    icon: 'chevron-right'
+                    color: colors.$bgText54
+                    isTouchTarget: false
 
           z '.section',
-            z '.title',
-              @model.l.get 'general.friends'
-              z 'span.count', friendsCount
-            z '.friends',
-              z @$friendsList
-            @router.link z 'a.see-all', {
-              href: if user?.username \
-                  then @router.get 'profileFriends', {username: user?.username}
-                  else @router.get 'profileFriendsById', {id: user?.id}
-            },
-              z '.text', @model.l.get 'general.seeAll'
-              z '.icon',
-                z @$seeAllFriendsChevronIcon,
-                  icon: 'chevron-right'
-                  color: colors.$bgText54
-                  isTouchTarget: false
+            z '.g-grid',
+              z '.title',
+                @model.l.get 'general.friends'
+                z 'span.count', friendsCount
+              z '.friends',
+                z @$friendsList
+              @router.link z 'a.see-all', {
+                href: if user?.username \
+                    then @router.get 'profileFriends', {username: user?.username}
+                    else @router.get 'profileFriendsById', {id: user?.id}
+              },
+                z '.text', @model.l.get 'general.seeAll'
+                z '.icon',
+                  z @$seeAllFriendsChevronIcon,
+                    icon: 'chevron-right'
+                    color: colors.$bgText54
+                    isTouchTarget: false
         ]

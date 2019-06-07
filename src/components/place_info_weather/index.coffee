@@ -19,14 +19,16 @@ module.exports = class PlaceInfoWeather
       place: place
       forecastDaily: place.map (place) ->
         days = place?.forecast?.daily
+        console.log 'days', days
         today = new Date()
-        todayFullDateStr =
-          "#{today.getYear()}/#{today.getMonth() + 1}/#{today.getDate()}"
+        todayVal =
+          today.getYear() * 366 + today.getMonth() * 31 + today.getDate()
         _filter _map days, (day) ->
           # TODO: use day.day instead
           date = new Date((day.time + 3600) * 1000)
           dateStr = "#{date.getMonth() + 1}/#{date.getDate()}"
-          if "#{date.getYear()}/#{dateStr}" < todayFullDateStr
+          dateVal = date.getYear() * 366 + date.getMonth() * 31 + date.getDate()
+          if dateVal < todayVal
             return
           _defaults {
             dow: date.getDay()
@@ -42,6 +44,8 @@ module.exports = class PlaceInfoWeather
     {place, forecastDaily, currentTab} = @state.getValue()
 
     tabs = ['avg', 'forecast']
+
+    console.log forecastDaily
 
 
     z '.z-place-info-weather',

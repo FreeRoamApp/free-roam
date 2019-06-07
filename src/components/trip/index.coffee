@@ -4,6 +4,7 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
+_clone = require 'lodash/clone'
 _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
 _isEmpty = require 'lodash/isEmpty'
@@ -76,7 +77,7 @@ module.exports = class Trip extends Base
     {trip} = @state.getValue()
     @model.trip.upsert {
       id: trip.id
-      checkInIds: ids
+      checkInIds: _clone(ids).reverse()
     }
 
   render: =>

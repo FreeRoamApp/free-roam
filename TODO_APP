@@ -1,7 +1,11 @@
 TODOS:
 
+- conversation/welcome only add once
+
 - Profiles
   - Add to user photos when adding checkin photos
+
+- Better trip sorting
 
 x Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
   x Reset tokens for all iOS users (broke after app transfer)
@@ -34,7 +38,7 @@ x Trip map glitchy / slow?
 - Chat search
 - Filter campgrounds that aren't open for season
 x Social links not opening
-- Adding review checks into place & includes photos in checkin
+x Adding review checks into place & includes photos in checkin
 - Autosave chat draft
 - Dashboard
   - Allow search for campground (if on desktop and location isn't super accurate)
