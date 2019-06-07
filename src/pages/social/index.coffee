@@ -12,7 +12,6 @@ FindFriends = require '../../components/find_friends'
 Friends = require '../../components/friends'
 Groups = require '../../components/groups'
 UsersNearby = require '../../components/users_nearby'
-ProfileDialog = require '../../components/profile_dialog'
 TooltipPositioner = require '../../components/tooltip_positioner'
 Icon = require '../../components/icon'
 Tabs = require '../../components/tabs'
@@ -39,16 +38,11 @@ module.exports = class SocialPage
     @$fabIcon = new Icon()
     @$fab = new Fab()
 
-    @selectedProfileDialogUser = new RxBehaviorSubject null
-
     @$conversations = new Conversations {@model, @router}
-    @$friends = new Friends {@model, @router, @selectedProfileDialogUser}
+    @$friends = new Friends {@model, @router}
     @$groups = new Groups {@model, @router}
     @$usersNearby = new UsersNearby {
-      @model, @router, @selectedProfileDialogUser
-    }
-    @$profileDialog = new ProfileDialog {
-      @model, @router, @selectedProfileDialogUser
+      @model, @router
     }
     @$tooltip = new TooltipPositioner {
       @model
@@ -66,7 +60,6 @@ module.exports = class SocialPage
 
     @state = z.state {
       hasUnreadMessages
-      @selectedProfileDialogUser
       @selectedIndex
       unreadNotifications: @model.notification.getUnreadCount()
     }
@@ -86,8 +79,7 @@ module.exports = class SocialPage
     }
 
   render: =>
-    {hasUnreadMessages, selectedProfileDialogUser,
-      selectedIndex, unreadNotifications} = @state.getValue()
+    {hasUnreadMessages, selectedIndex, unreadNotifications} = @state.getValue()
     z '.p-social',
       z @$appBar, {
         title: @model.l.get 'socialPage.title'
@@ -136,9 +128,6 @@ module.exports = class SocialPage
         ]
       @$bottomBar
 
-      if selectedProfileDialogUser
-        z @$profileDialog, {user: selectedProfileDialogUser}
-
       if selectedIndex is 3
         z '.fab',
           z @$fab,
@@ -146,6 +135,5 @@ module.exports = class SocialPage
             icon: 'search'
             onclick: =>
               @model.overlay.open new FindFriends {
-                @model, @portal
-                @selectedProfileDialogUser
+                @model, @router
               }

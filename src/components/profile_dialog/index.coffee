@@ -19,10 +19,15 @@ if window?
 
 module.exports = class ProfileDialog
   constructor: (options) ->
-    {@model, @router, @selectedProfileDialogUser, group} = options
+    {@model, @router, @user, group} = options
+
+    console.log @user
+    unless @user?.map
+      @user = RxObservable.of @user
+
     @$dialog = new Dialog {
       onLeave: =>
-        @selectedProfileDialogUser.next null
+        @model.overlay.close()
     }
     @$avatar = new Avatar()
 
@@ -56,13 +61,13 @@ module.exports = class ProfileDialog
 
     groupAndUser = RxObservable.combineLatest(
       group or RxObservable.of null
-      @selectedProfileDialogUser
+      @user
       (vals...) -> vals
     )
 
     @state = z.state
       me: me
-      $links: @selectedProfileDialogUser.map (user) ->
+      $links: @user.map (user) ->
         _filter _map user?.links, (link, type) ->
           if link
             {
@@ -75,31 +80,38 @@ module.exports = class ProfileDialog
           @model.groupUser.getByGroupIdAndUserId group.id, me.id
         else
           RxObservable.of null
-      user: @selectedProfileDialogUser
+      user: @user
       isBanned: groupAndUser.switchMap ([group, user]) =>
         if group and user
           @model.ban.getByGroupIdAndUserId group.id, user.id
         else
           RxObservable.of null
-      isFriends: @selectedProfileDialogUser.switchMap (user) =>
+      isFriends: @user.switchMap (user) =>
         if user
           @model.connection.isConnectedByUserIdAndType(
             user.id, 'friend'
           )
         else
           RxObservable.of false
-      isFriendRequested: @selectedProfileDialogUser.switchMap (user) =>
+      isFriendRequested: @user.switchMap (user) =>
         if user
           @model.connection.isConnectedByUserIdAndType(
             user.id, 'friendRequestSent'
           )
         else
           RxObservable.of false
+      isVisible: false
       group: group
       loadingItems: []
       expandedItems: []
       blockedUserIds: [] # TODO: @model.userBlock.getAllIds()
       windowSize: @model.window.getSize()
+
+  afterMount: =>
+    @state.set isVisible: true
+
+  beforeUnmount: =>
+    @state.set isVisible: false
 
   isLoadingByText: (text) =>
     {loadingItems} = @state.getValue()
@@ -163,7 +175,7 @@ module.exports = class ProfileDialog
                     @model.ban.banByGroupIdAndUserId group?.id, user?.id, {
                       duration: '24h', groupId: group?.id
                     }
-                  @selectedProfileDialogUser.next null
+                  @model.overlay.close()
               }
             if hasPermaBanPermission
               {
@@ -182,7 +194,7 @@ module.exports = class ProfileDialog
                     @model.ban.banByGroupIdAndUserId group?.id, user?.id, {
                       duration: 'permanent'
                     }
-                  @selectedProfileDialogUser.next null
+                  @model.overlay.close()
               }
             if hasPermaBanPermission
               {
@@ -201,7 +213,7 @@ module.exports = class ProfileDialog
                     @model.ban.banByGroupIdAndUserId group?.id, user?.id, {
                       type: 'ip', duration: 'permanent'
                     }
-                  @selectedProfileDialogUser.next null
+                  @model.overlay.close()
               }
           ]
         }
@@ -237,7 +249,7 @@ module.exports = class ProfileDialog
                 user.onDeleteMessage()
                 .then =>
                   @unsetLoadingByText @model.l.get 'profileDialog.delete'
-                  @selectedProfileDialogUser.next null
+                  @model.overlay.close()
             }
             if group
               {
@@ -256,7 +268,7 @@ module.exports = class ProfileDialog
                     @unsetLoadingByText(
                       @model.l.get 'profileDialog.deleteMessagesLast7d'
                     )
-                    @selectedProfileDialogUser.next null
+                    @model.overlay.close()
               }
           ]
         }
@@ -270,7 +282,7 @@ module.exports = class ProfileDialog
             @model.group.goPath group, 'groupAdminManage', {
               @router, replacements: {userId: user?.id}
             }
-            @selectedProfileDialogUser.next null
+            @model.overlay.close()
         }
     ]
 
@@ -293,7 +305,7 @@ module.exports = class ProfileDialog
             @router.go 'profile', {username: user?.username}
           else
             @router.go 'profileById', {id: user?.id}
-          @selectedProfileDialogUser.next null
+          @model.overlay.close()
       }
       {
         icon: 'chat-bubble'
@@ -312,7 +324,7 @@ module.exports = class ProfileDialog
             .then (conversation) =>
               @unsetLoadingByText @model.l.get 'profileDialog.message'
               @router.go 'conversation', {id: conversation.id}
-              @selectedProfileDialogUser.next null
+              @model.overlay.close()
       }
       {
         icon: 'add-friend'
@@ -364,7 +376,7 @@ module.exports = class ProfileDialog
                 @model.userBlock.unblockByUserId user?.id
               else
                 @model.userBlock.blockByUserId user?.id
-              @selectedProfileDialogUser.next null
+              @model.overlay.close()
         }
       {
         icon: 'warning'
@@ -375,7 +387,7 @@ module.exports = class ProfileDialog
         onclick: =>
           @state.set isFlagged: true
           setTimeout =>
-            @selectedProfileDialogUser.next null
+            @model.overlay.close()
           , 1000
       }
     ]
@@ -422,14 +434,18 @@ module.exports = class ProfileDialog
 
 
   render: =>
-    {me, user, group, windowSize, $links} = @state.getValue()
+    {me, user, group, isVisible, windowSize, $links} = @state.getValue()
 
     isMe = user?.id is me?.id
 
     userOptions = @getUserOptions()
     modOptions = @getModOptions()
 
-    z '.z-profile-dialog', {className: z.classKebab {isVisible: me and user}},
+    console.log 'isvis', isVisible
+
+    z '.z-profile-dialog', {
+      className: z.classKebab {isVisible: me and user and isVisible}
+    },
       z @$dialog,
         $content:
           z '.z-profile-dialog_dialog', {
@@ -464,7 +480,7 @@ module.exports = class ProfileDialog
                     isAlignedTop: true
                     isAlignedRight: true
                     onclick: =>
-                      @selectedProfileDialogUser.next null
+                      @model.overlay.close()
 
             z 'ul.menu',
               [

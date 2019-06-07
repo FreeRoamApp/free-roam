@@ -14,6 +14,7 @@ require 'rxjs/add/observable/of'
 FlatButton = require '../flat_button'
 ImageViewOverlay = require '../image_view_overlay'
 EmbeddedVideo = require '../embedded_video'
+ProfileDialog = require '../profile_dialog'
 config = require '../../config'
 
 if window?
@@ -22,7 +23,7 @@ if window?
 module.exports = class FormattedText
   constructor: (options) ->
     {text, @imageWidth, @model, @router, @skipImages, @mentionedUsers,
-      @selectedProfileDialogUser, @isFullWidth, @embedVideos, @truncate
+      @isFullWidth, @embedVideos, @truncate
       @useThumbnails} = options
 
     if text?.map
@@ -169,10 +170,12 @@ module.exports = class FormattedText
               onclick: (e) =>
                 e?.stopPropagation()
                 e?.preventDefault()
-                if isMention and @selectedProfileDialogUser
+                if isMention
                   username = props.title.replace 'user:', ''
                   user = _find @mentionedUsers, {username}
-                  @selectedProfileDialogUser.next user
+                  @model.overlay.open new ProfileDialog {
+                    @model, @router, user
+                  }
                 else
                   @router.openLink props.href
             }, children

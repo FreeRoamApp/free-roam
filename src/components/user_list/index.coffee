@@ -3,6 +3,7 @@ _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 
 Avatar = require '../avatar'
+ProfileDialog = require '../profile_dialog'
 Icon = require '../icon'
 SecondaryButton = require '../secondary_button'
 colors = require '../../colors'
@@ -11,7 +12,9 @@ if window?
   require './index.styl'
 
 module.exports = class UserList
-  constructor: ({@model, users, @selectedProfileDialogUser, actionButtons}) ->
+  constructor: (options) ->
+    {@model, @router, users, actionButtons} = options
+
     @state = z.state
       users: users.map (users) ->
         _map users, (user) ->
@@ -38,7 +41,9 @@ module.exports = class UserList
             if onclick
               onclick user.userInfo
             else
-              @selectedProfileDialogUser.next user.userInfo
+              @model.overlay.open new ProfileDialog {
+                @model, @router, user: user.userInfo
+              }
         },
           z '.avatar',
             z user.$avatar,

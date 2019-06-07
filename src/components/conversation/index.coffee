@@ -46,7 +46,7 @@ DELAY_BETWEEN_LOAD_MORE_MS = 250
 module.exports = class Conversation extends Base
   constructor: (options) ->
     {@model, @router, @error, @conversation, isActive,
-      selectedProfileDialogUser, @scrollYOnly, @isGroup, isLoading, @onScrollUp,
+      @scrollYOnly, @isGroup, isLoading, @onScrollUp,
       @onScrollDown, @minId, hasBottomBar, group} = options
 
     isLoading ?= new RxBehaviorSubject false
@@ -213,13 +213,13 @@ module.exports = class Conversation extends Base
               messageCacheKey = "#{id}:#{message.lastUpdateTime}:message"
 
               $body = @getCached$ bodyCacheKey, FormattedText, {
-                @model, @router, text: message.body, selectedProfileDialogUser
+                @model, @router, text: message.body
                 mentionedUsers: message.mentionedUsers
                 useThumbnails: true
               }
               $el = @getCached$ messageCacheKey, ConversationMessage, {
                 message, @model, @router, isMe, @isTextareaFocused,
-                isGrouped, selectedProfileDialogUser, $body,
+                isGrouped, $body,
                 @messageBatchesStreams
               }
               prevMessage = message

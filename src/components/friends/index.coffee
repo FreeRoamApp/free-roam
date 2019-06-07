@@ -12,7 +12,7 @@ if window?
   require './index.styl'
 
 module.exports = class Friends
-  constructor: ({@model, selectedProfileDialogUser}) ->
+  constructor: ({@model, @router}) ->
     @$spinner = new Spinner()
     @$friendsIcon = new Icon()
 
@@ -27,11 +27,11 @@ module.exports = class Friends
     #   _filter friends, 'isOnline'
 
     # @$onlineUsersList = new UserList {
-    #   @model, friends: onlineUsers, selectedProfileDialogUser
+    #   @model, @router, friends: onlineUsers
     # }
 
     @$requestsList = new UserList {
-      @model, selectedProfileDialogUser
+      @model, @router
       users: requests
       actionButtons: [
         {
@@ -52,8 +52,7 @@ module.exports = class Friends
     }
 
     @$friendsList = new UserList {
-      @model, selectedProfileDialogUser
-      users: friends
+      @model, @router, users: friends
     }
 
     @state = z.state

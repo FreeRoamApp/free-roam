@@ -14,7 +14,7 @@ if window?
 SEARCH_DEBOUNCE = 300
 
 module.exports = class FindFriends
-  constructor: ({@model, portal, selectedProfileDialogUser}) ->
+  constructor: ({@model, router}) ->
 
     @value = new RxBehaviorSubject ''
 
@@ -34,7 +34,7 @@ module.exports = class FindFriends
     @$clear = new Icon()
 
     @$userList = new UserList {
-      @model, portal, users, selectedProfileDialogUser
+      @model, router, users
     }
 
     @state = z.state

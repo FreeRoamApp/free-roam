@@ -20,26 +20,20 @@ module.exports = class Reviews extends Base
     @searchValue = new RxBehaviorSubject ''
     @$searchInput = new SearchInput {@model, @router, @searchValue}
 
-    dialogData = new RxBehaviorSubject null
-    @$profileDialog = new ProfileDialog {
-      @model, @router, selectedProfileDialogUser: dialogData
-    }
     @$spinner = new Spinner()
 
     @state = z.state {
       parent: parent
-      dialogData: dialogData
       reviews: reviews.map (reviews) =>
         _map reviews, (review) =>
           bodyCacheKey = "#{review.id}:text"
           reviewCacheKey = "#{review.id}:#{review.lastUpdateTime}:message"
 
           $body = @getCached$ bodyCacheKey, FormattedText, {
-            @model, @router, text: review.body, dialogData
+            @model, @router, text: review.body
           }
           $el = @getCached$ reviewCacheKey, Review, {
-            review, parent, @model, @router,
-            dialogData, $body
+            review, parent, @model, @router, $body
           }
           # update cached version
           $el.setReview review
@@ -47,7 +41,7 @@ module.exports = class Reviews extends Base
     }
 
   render: ({$emptyState} = {}) =>
-    {reviews, dialogData} = @state.getValue()
+    {reviews} = @state.getValue()
 
     z '.z-reviews',
       z '.g-grid',
@@ -67,6 +61,3 @@ module.exports = class Reviews extends Base
             _map reviews, ($review) ->
               z '.review',
                 z $review
-
-      if dialogData
-        z @$profileDialog

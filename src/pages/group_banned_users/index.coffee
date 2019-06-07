@@ -9,7 +9,6 @@ AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 Tabs = require '../../components/tabs'
 GroupBannedUsers = require '../../components/group_banned_users'
-ProfileDialog = require '../../components/profile_dialog'
 config = require '../../config'
 colors = require '../../colors'
 
@@ -24,21 +23,16 @@ module.exports = class GroupBannedUsersPage
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
 
-    @selectedProfileDialogUser = new RxBehaviorSubject null
-    @$profileDialog = new ProfileDialog {
-      @model, @portal, @router, @selectedProfileDialogUser, group
-    }
-
     @$tempBanned = new GroupBannedUsers {
       @model
-      selectedProfileDialogUser: @selectedProfileDialogUser
+      @router
       bans: group.switchMap (group) =>
         @model.ban.getAllByGroupId group.id, {duration: '24h'}
     }
 
     @$permBanned = new GroupBannedUsers {
       @model
-      selectedProfileDialogUser: @selectedProfileDialogUser
+      @router
       bans: group.switchMap (group) =>
         @model.ban.getAllByGroupId group.id, {duration: 'permanent'}
     }
@@ -46,7 +40,6 @@ module.exports = class GroupBannedUsersPage
 
     @state = z.state
       group: group
-      selectedProfileDialogUser: @selectedProfileDialogUser
 
   getMeta: =>
     {
@@ -54,7 +47,7 @@ module.exports = class GroupBannedUsersPage
     }
 
   render: =>
-    {group, selectedProfileDialogUser} = @state.getValue()
+    {group} = @state.getValue()
 
     z '.p-group-banned-users',
       z @$appBar, {
@@ -75,5 +68,3 @@ module.exports = class GroupBannedUsersPage
             $el: z @$permBanned
           }
         ]
-      if selectedProfileDialogUser
-        @$profileDialog

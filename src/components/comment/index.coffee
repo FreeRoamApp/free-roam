@@ -10,6 +10,7 @@ Icon = require '../icon'
 Message = require '../message'
 ConversationInput = require '../conversation_input'
 FormattedText = require '../formatted_text'
+ProfileDialog = require '../profile_dialog'
 VoteButton = require '../vote_button'
 colors = require '../../colors'
 config = require '../../config'
@@ -22,8 +23,7 @@ MAX_COMMENT_DEPTH = 3
 
 module.exports = class Comment
   constructor: (options) ->
-    {@comment, @depth, @isMe, @model,
-      @selectedProfileDialogUser, @router, @commentStreams,
+    {@comment, @depth, @isMe, @model, @router, @commentStreams,
       @group} = options
 
     @depth ?= 0
@@ -43,7 +43,7 @@ module.exports = class Comment
         @model, @router
       }
       messageBatchesStreams: @commentStreams
-      @group, @isMe, @model, @selectedProfileDialogUser, @router
+      @group, @isMe, @model, @router
     }
 
     @$upvoteButton = new VoteButton {@model}
@@ -59,7 +59,6 @@ module.exports = class Comment
         depth: @depth + 1
         @isMe
         @model
-        @selectedProfileDialogUser
         @router
         @group
       }
@@ -85,7 +84,6 @@ module.exports = class Comment
           depth: @depth + 1
           @isMe
           @model
-          @selectedProfileDialogUser
           @router
           @group
         }
@@ -146,7 +144,8 @@ module.exports = class Comment
         z @$message, {
           isTimeAlignedLeft: true
           openProfileDialogFn: (id, user, groupUser) =>
-            @selectedProfileDialogUser.next _defaults {
+            @model.overlay.open new ProfileDialog {
+              @model, @router, user, groupUser
               onDeleteMessage: =>
                 @model.comment.deleteByComment voteParent, {
                   groupId: group?.id
@@ -161,7 +160,7 @@ module.exports = class Comment
                 )
                 .then =>
                   @commentStreams.take(1).toPromise()
-            }, user
+            }
         }
 
       z '.bottom',

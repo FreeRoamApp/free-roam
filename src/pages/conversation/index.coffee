@@ -5,7 +5,6 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 Conversation = require '../../components/conversation'
-ProfileDialog = require '../../components/profile_dialog'
 colors = require '../../colors'
 
 if window?
@@ -19,21 +18,15 @@ module.exports = class ConversationPage
       @model.conversation.getById route.params.id
     .publishReplay(1).refCount()
 
-    selectedProfileDialogUser = new RxBehaviorSubject null
-
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$profileDialog = new ProfileDialog {
-      @model, @router, selectedProfileDialogUser
-    }
     @$conversation = new Conversation {
-      @model, @router, conversation, selectedProfileDialogUser, group
+      @model, @router, conversation, group
     }
 
     @state = z.state
       me: @model.user.getMe()
       conversation: conversation
-      selectedProfileDialogUser: selectedProfileDialogUser
 
   getMeta: =>
     {
@@ -41,7 +34,7 @@ module.exports = class ConversationPage
     }
 
   render: =>
-    {conversation, me, selectedProfileDialogUser} = @state.getValue()
+    {conversation, me} = @state.getValue()
 
     toUser = _find conversation?.users, (user) ->
       me?.id isnt user.id
@@ -55,6 +48,3 @@ module.exports = class ConversationPage
       }
       z '.g-grid',
         @$conversation
-
-      if selectedProfileDialogUser
-        z @$profileDialog, {user: selectedProfileDialogUser}

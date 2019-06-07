@@ -10,7 +10,6 @@ GroupChat = require '../../components/group_chat'
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 ChannelDrawer = require '../../components/channel_drawer'
-ProfileDialog = require '../../components/profile_dialog'
 GroupUserSettingsDialog = require '../../components/group_user_settings_dialog'
 Icon = require '../../components/icon'
 Environment = require '../../services/environment'
@@ -36,7 +35,6 @@ module.exports = class GroupChatPage
       req.query.minId
 
     @isChannelDrawerOpen = new RxBehaviorSubject false
-    selectedProfileDialogUser = new RxBehaviorSubject null
     isLoading = new RxBehaviorSubject false
     me = @model.user.getMe()
 
@@ -92,7 +90,6 @@ module.exports = class GroupChatPage
       @model
       @router
       @group
-      selectedProfileDialogUser
       @group
       isLoading: isLoading
       conversation: conversation
@@ -102,13 +99,6 @@ module.exports = class GroupChatPage
       # hasBottomBar: @hasBottomBarObs
     }
 
-    @$profileDialog = new ProfileDialog {
-      @model
-      @router
-      @group
-      selectedProfileDialogUser
-      @group
-    }
     @$groupUserSettingsDialog = new GroupUserSettingsDialog {
       @model
       @router
@@ -131,7 +121,6 @@ module.exports = class GroupChatPage
       breakpoint: @model.window.getBreakpoint()
       group: @group
       me: me
-      selectedProfileDialogUser: selectedProfileDialogUser
       isChannelDrawerOpen: @isChannelDrawerOpen
       conversation: conversation
       # shouldShowBottomBar: @hasBottomBarObs
@@ -177,7 +166,7 @@ module.exports = class GroupChatPage
 
   render: =>
     {group, me, conversation, isChannelDrawerOpen, breakpoint
-      selectedProfileDialogUser, shouldShowBottomBar} = @state.getValue()
+      shouldShowBottomBar} = @state.getValue()
 
     # synchronous so it doesn't flash has-bottom-bar on ($spinner moves)
     shouldShowBottomBar ?= @model.window.getBreakpointVal() in ['tablet', 'mobile']
@@ -218,9 +207,6 @@ module.exports = class GroupChatPage
         if breakpoint in ['desktop']
           z @$channelDrawer
       # @$bottomBar
-
-      if selectedProfileDialogUser
-        z @$profileDialog
 
       if breakpoint in ['mobile', 'tablet']
         z @$channelDrawer

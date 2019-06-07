@@ -60,11 +60,6 @@ module.exports = class Thread extends Base
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}
 
-    @selectedProfileDialogUser = new RxBehaviorSubject false
-    @$profileDialog = new ProfileDialog {
-      @model, @router, @selectedProfileDialogUser, group
-    }
-
     filter = new RxBehaviorSubject {
       sort: 'popular'
     }
@@ -99,7 +94,6 @@ module.exports = class Thread extends Base
 
     @state = z.state
       me: @model.user.getMe()
-      selectedProfileDialogUser: @selectedProfileDialogUser
       thread: thread
       hasLoadedAll: false
       group: group
@@ -122,8 +116,7 @@ module.exports = class Thread extends Base
           # cache, otherwise there's a flicker on invalidate
           cacheId = "comment-#{comment.id}"
           $el = @getCached$ cacheId, Comment, {
-            @model, @router, @selectedProfileDialogUser, comment
-            @commentStreams, group
+            @model, @router, comment, @commentStreams, group
           }
           # update cached version
           $el.setComment comment
@@ -221,8 +214,7 @@ module.exports = class Thread extends Base
 
   render: =>
     {me, thread, $body, comments, windowSize,
-      selectedProfileDialogUser, isLoading, group,
-      isPostLoading} = @state.getValue()
+      isLoading, group, isPostLoading} = @state.getValue()
 
     hasVotedUp = thread?.myVote?.vote is 1
     hasVotedDown = thread?.myVote?.vote is -1
@@ -315,7 +307,9 @@ module.exports = class Thread extends Base
                   # groupUser: thread?.groupUser
                   time: thread?.time
                   onclick: =>
-                    @selectedProfileDialogUser.next thread?.user
+                    @model.overlay.open new ProfileDialog {
+                      @model, @router, user: thread?.user
+                    }
                 }
             z 'h1.title',
               thread?.title
@@ -376,6 +370,3 @@ module.exports = class Thread extends Base
                   if isLoading
                     z '.loading', @$spinner
                 ]
-
-      if selectedProfileDialogUser
-        z @$profileDialog

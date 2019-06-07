@@ -75,9 +75,8 @@ module.exports = class Profile extends Base
       @model.connection.getAllByUserIdAndType user.id, 'friend'
       .map (connections) ->
         _map connections, (connection) -> connection?.other
-    selectedProfileDialogUser = new RxBehaviorSubject null
     @$friendsList = new UserList {
-      @model, selectedProfileDialogUser
+      @model, @router
       users: friends.map (friends) ->
         friends.slice 0, 4
     }

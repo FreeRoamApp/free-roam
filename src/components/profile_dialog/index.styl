@@ -1,12 +1,14 @@
-
-
 @require '../../vars'
 
 .z-profile-dialog
-  display: none
+  opacity: 0
+  will-change: opacity
+  position: relative
+  z-index: 99999
 
   &.is-visible
-    display: block
+    opacity: 1
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
 .z-profile-dialog_dialog
   background: getColor('$tertiary0')

@@ -27,10 +27,8 @@ module.exports = class ProfileFriendsPage
       @model.connection.getAllByUserIdAndType user.id, 'friend'
       .map (connections) ->
         _map connections, (connection) -> connection?.other
-    selectedProfileDialogUser = new RxBehaviorSubject null
     @$friendsList = new UserList {
-      @model, selectedProfileDialogUser
-      users: friends
+      @model, @router, users: friends
     }
 
     @state = z.state

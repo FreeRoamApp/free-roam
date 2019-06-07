@@ -2,13 +2,14 @@ z = require 'zorium'
 _defaults = require 'lodash/defaults'
 
 Message = require '../message'
+ProfileDialog = require '../profile_dialog'
 
 if window?
   require './index.styl'
 
 module.exports = class ConversationMessage
   constructor: (options) ->
-    {@selectedProfileDialogUser, @messageBatchesStreams, @model,
+    {@messageBatchesStreams, @model, @router,
       @isTextareaFocused} = options
     @$message = new Message options
 
@@ -16,8 +17,9 @@ module.exports = class ConversationMessage
     z '.z-conversation-message',
       z @$message, {
         openProfileDialogFn: (id, user, groupUser) =>
-          @selectedProfileDialogUser.next _defaults {
-            groupUser: groupUser
+          @model.overlay.open new ProfileDialog {
+            user
+            groupUser
             onDeleteMessage: =>
               @model.conversationMessage.deleteById id
               .then =>
@@ -28,5 +30,5 @@ module.exports = class ConversationMessage
               )
               .then =>
                 @messageBatchesStreams.take(1).toPromise()
-          }, user
+          }
       }

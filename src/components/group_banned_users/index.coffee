@@ -7,12 +7,13 @@ log = require 'loga'
 config = require '../../config'
 Icon = require '../icon'
 Avatar = require '../avatar'
+ProfileDialog = require '../profile_dialog'
 
 if window?
   require './index.styl'
 
 module.exports = class GroupBannedUsers
-  constructor: ({@model, @portal, bans, @selectedProfileDialogUser}) ->
+  constructor: ({@model, @router, bans}) ->
     @state = z.state
       bans: bans.map (bans) ->
         _map bans, (ban) ->
@@ -29,7 +30,10 @@ module.exports = class GroupBannedUsers
         _map bans, ({$avatar, banInfo}) =>
           z '.user', {
             onclick: =>
-              @selectedProfileDialogUser.next banInfo.user
+              @model.overlay.open new ProfileDialog {
+                @model, @router
+                user: banInfo.user
+              }
           },
             z '.avatar',
               z $avatar,

@@ -9,6 +9,7 @@ Avatar = require '../avatar'
 CurrentLocation = require '../current_location'
 Icon = require '../icon'
 FlatButton = require '../flat_button'
+ProfileDialog = require '../profile_dialog'
 Toggle = require '../toggle'
 DateService = require '../../services/date'
 colors = require '../../colors'
@@ -17,7 +18,7 @@ if window?
   require './index.styl'
 
 module.exports = class UsersNearby
-  constructor: ({@model, @router, @selectedProfileDialogUser}) ->
+  constructor: ({@model, @router}) ->
     @isLocationEnabledStreams = new RxReplaySubject 1
     @isLocationEnabledStreams.next(
       @model.userSettings.getByMe().map (settings) ->
@@ -97,7 +98,10 @@ module.exports = class UsersNearby
                            else userLocation.distance
                 z '.user', {
                   onclick: =>
-                    @selectedProfileDialogUser.next userLocation.user
+                    @model.overlay.open new ProfileDialog {
+                      @model, @router
+                      user: userLocation.user
+                    }
                 },
                   z '.avatar',
                     z $avatar, {
