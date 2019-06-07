@@ -128,7 +128,8 @@ module.exports = class Dashboard
 
     @state = z.state {
       myLocation
-      review: reviewValueStreams.switch()
+      review: reviewValueStreams.switch().map (review) ->
+        review or false
       hasLocationPermission: @hasLocationPermissionStreams.switch()
     }
 
@@ -142,10 +143,10 @@ module.exports = class Dashboard
 
     z '.z-dashboard',
       z '.g-grid',
-        if myLocation
+        if myLocation and review?
           z '.current-location',
             z @$currentLocation
-        if not myLocation?
+        if not myLocation? or not review?
           z @$spinner
         else if not myLocation or not hasInfo
           z '.empty',

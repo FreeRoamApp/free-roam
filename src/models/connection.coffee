@@ -9,6 +9,9 @@ module.exports = class Connection
   getAllByType: (type) =>
     @auth.stream "#{@namespace}.getAllByType", {type}
 
+  getAllByUserIdAndType: (userId, type) =>
+    @auth.stream "#{@namespace}.getAllByUserIdAndType", {userId, type}
+
   getAllGrouped: (type) =>
     @auth.stream "#{@namespace}.getAllGrouped", {type}
 

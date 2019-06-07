@@ -1,5 +1,8 @@
 TODOS:
 
+- Profiles
+  - Add to user photos when adding checkin photos
+
 x Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
   x Reset tokens for all iOS users (broke after app transfer)
 

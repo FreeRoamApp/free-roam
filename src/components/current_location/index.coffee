@@ -14,7 +14,8 @@ module.exports = class CurrentLocation
     @$changeIcon = new Icon()
 
     @state = z.state {
-      myLocation: @model.userLocation.getByMe()
+      myLocation: @model.userLocation.getByMe().map (myLocation) ->
+        myLocation or false
     }
 
   openCoordinatePickerOverlay: =>
@@ -42,7 +43,7 @@ module.exports = class CurrentLocation
   render: =>
     {myLocation} = @state.getValue()
 
-    console.log myLocation
+    console.log 'ml', myLocation
 
     z '.z-current-location',
       z '.icon',
@@ -54,9 +55,9 @@ module.exports = class CurrentLocation
         if myLocation
           [
             z '.name', @model.placeBase.getName myLocation.place
-            # z '.date', 'test'
+            z '.location', @model.placeBase.getLocation myLocation.place
           ]
-        else
+        else if myLocation?
           z '.name', @model.l.get 'usersNearby.emptyLocation'
       z '.change',
         z @$changeIcon,

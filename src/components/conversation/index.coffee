@@ -505,7 +505,7 @@ module.exports = class Conversation extends Base
              else if conversation?.groupId
              then 'group'
              else 'private'
-      ga? 'send', 'event', 'conversation_message', 'post', type
+      ga? 'send', 'event', 'conversation_message', 'post', type, 1
 
       @model.conversationMessage.create {
         body: messageBody

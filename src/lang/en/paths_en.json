@@ -80,6 +80,8 @@
   "profileMe": "/profile",
   "profileAttachments": "/user/:username/media",
   "profileAttachmentsById": "/user/id/:id/media",
+  "profileFriends": "/user/:username/friends",
+  "profileFriendsById": "/user/id/:id/friends",
   "profileReviews": "/user/:username/reviews",
   "profileReviewsById": "/user/id/:id/reviews",
 

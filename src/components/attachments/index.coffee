@@ -12,12 +12,16 @@ if window?
   require './index.styl'
 
 module.exports = class Attachments
-  constructor: ({@model, @router, attachments}) ->
+  constructor: ({@model, @router, attachments, limit}) ->
     @$spinner = new Spinner()
 
     @state = z.state
       me: @model.user.getMe()
-      attachments: attachments
+      attachments: attachments.map (attachments) ->
+        if limit
+          attachments.slice 0, limit
+        else
+          attachments
 
   render: =>
     {me, attachments, attachments} = @state.getValue()
@@ -38,7 +42,7 @@ module.exports = class Attachments
               src = @model.image.getSrcByPrefix attachment.prefix, {
                 size: 'small'
               }
-              z '.g-col.g-xs-4.g-md-2',
+              z '.g-col.g-xs-6.g-md-3',
                 z '.attachment', {
                   onclick: =>
                     @model.overlay.open new ImageViewOverlay {

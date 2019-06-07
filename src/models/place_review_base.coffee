@@ -14,5 +14,5 @@ module.exports = class PlaceReviewBase extends ReviewBase
 
   upsertRatingOnly: (options, {invalidateAll} = {}) =>
     invalidateAll ?= true
-    ga? 'send', 'event', 'ugc', 'ratingOnly', options.parentId
+    ga? 'send', 'event', 'ugc', 'ratingOnly', options.parentId, 1
     @auth.call "#{@namespace}.upsertRatingOnly", options, {invalidateAll}

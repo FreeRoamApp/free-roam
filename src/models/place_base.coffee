@@ -19,7 +19,7 @@ module.exports = class PlaceBase
 
   upsert: (options, {invalidateAll} = {}) =>
     invalidateAll ?= true
-    ga? 'send', 'event', 'ugc', 'place', @namespace
+    ga? 'send', 'event', 'ugc', 'place', @namespace, 1
     @auth.call "#{@namespace}.upsert", options, {invalidateAll}
 
   dedupe: (options) =>
