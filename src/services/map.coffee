@@ -146,6 +146,13 @@ class MapService
         field: 'amenities'
         type: 'booleanArray'
         isBoolean: true
+        arrayValue: 'laundry'
+        name: model.l.get 'amenities.laundry'
+      }
+      {
+        field: 'amenities'
+        type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'gas'
         name: model.l.get 'amenities.gas'
       }

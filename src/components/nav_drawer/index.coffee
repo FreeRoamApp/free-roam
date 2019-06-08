@@ -7,6 +7,7 @@ _orderBy = require 'lodash/orderBy'
 _clone = require 'lodash/clone'
 _find = require 'lodash/find'
 _some = require 'lodash/some'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/map'
@@ -46,6 +47,7 @@ module.exports = class NavDrawer
       RxObservable.of null
 
     me = @model.user.getMe()
+    @isRateLoading = new RxBehaviorSubject false
     # settle as soon as one is ready, otherwise the nav menu might flash blank
     # while the others load
     menuItemsInfo = RxObservable.combineLatest(
@@ -53,6 +55,7 @@ module.exports = class NavDrawer
       group.startWith(null)
       @model.l.getLanguage().startWith(null)
       hasUnreadMessages.startWith(null)
+      @isRateLoading.startWith(null)
     )
 
     myGroups = me.switchMap (me) =>
@@ -90,7 +93,9 @@ module.exports = class NavDrawer
       drawerWidth: @model.window.getDrawerWidth()
       breakpoint: @model.window.getBreakpoint()
 
-      menuItems: menuItemsInfo.map ([me, group, language, hasUnreadMessages]) =>
+      menuItems: menuItemsInfo.map (menuItemsInfo) =>
+        [me, group, language, hasUnreadMessages, isRateLoading] = menuItemsInfo
+
         meGroupUser = group?.meGroupUser
 
         userAgent = @model.window.getUserAgent()
@@ -278,6 +283,7 @@ module.exports = class NavDrawer
             {
               onclick: =>
                 @model.portal.call 'app.install', {group}
+                @model.drawer.close()
               title: @model.l.get 'drawer.menuItemNeedsApp'
               $icon: new Icon()
               $ripple: new Ripple()
@@ -287,8 +293,18 @@ module.exports = class NavDrawer
             {
               onclick: =>
                 ga? 'send', 'event', 'drawer', 'rate'
-                @model.portal.call 'app.rate'
-              title: @model.l.get 'drawer.menuItemRate'
+                @isRateLoading.next true
+                # once ios app v2.0.0+ is out, use this
+                # @model.portal.call 'app.rate'
+                @model.portal.appRate()
+                .catch (err) =>
+                  @isRateLoading.next false
+                .then =>
+                  @isRateLoading.next false
+                  @model.drawer.close()
+              title: if isRateLoading \
+                     then @model.l.get 'general.loading'
+                     else @model.l.get 'drawer.menuItemRate'
               $icon: new Icon()
               $ripple: new Ripple()
               iconName: 'star'
@@ -415,7 +431,6 @@ module.exports = class NavDrawer
                             expand()
                           else if onclick
                             onclick()
-                            @model.drawer.close()
                           else if path
                             @router.goPath path
                             @model.drawer.close()

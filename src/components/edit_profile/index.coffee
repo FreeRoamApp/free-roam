@@ -193,10 +193,10 @@ module.exports = class EditProfile
             $menuText: @model.l.get 'general.general'
             $el: @$editProfileGeneral
           }
-          # {
-          #   $menuText: @model.l.get 'general.about'
-          #   $el: z @$usersNearby
-          # }
+          {
+            $menuText: @model.l.get 'general.about'
+            $el: z @$editProfileAbout
+          }
           # {
           #   $menuText: @model.l.get 'general.settings'
           #   $el: z @$usersNearby

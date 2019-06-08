@@ -1,7 +1,9 @@
 z = require 'zorium'
 _find = require 'lodash/find'
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 
 PrimaryButton = require '../primary_button'
+PrimaryInput = require '../primary_input'
 SecondaryButton = require '../secondary_button'
 DuplicatePlaceDialog = require '../duplicate_place_dialog'
 colors = require '../../colors'
@@ -17,11 +19,17 @@ module.exports = class EditPlace
     @$duplicateButton = new SecondaryButton()
     @$saveButton = new PrimaryButton()
 
+
+    @priceValueStreams = new RxReplaySubject 1
+    @$priceInput = new PrimaryInput {
+      valueStreams: @priceValueStreams
+    }
+
     @resetValueStreams()
 
     @$initialInfo = new @NewPlaceInitialInfo {
-        @model, @router, fields: @initialInfoFields
-      }
+      @model, @router, fields: @initialInfoFields
+    }
 
     @state = z.state {
       me: @model.user.getMe()
@@ -31,16 +39,21 @@ module.exports = class EditPlace
       detailsValue: @initialInfoFields.details.valueStreams.switch()
       locationValue: @initialInfoFields.location.valueStreams.switch()
       subTypeValue: @initialInfoFields.subType?.valueStreams.switch()
+      priceValue: @priceValueStreams.switch()
     }
 
   upsert: =>
     {me, place, nameValue, detailsValue, locationValue,
-      subTypeValue} = @state.getValue()
+      subTypeValue, priceValue} = @state.getValue()
 
     @state.set isLoading: true
 
     @model.user.requestLoginIfGuest me
     .then =>
+      priceValue = parseInt priceValue
+      if isNaN priceValue
+        priceValue = 0
+
       @placeModel.upsert {
         id: place.id
         slug: place.slug
@@ -48,6 +61,9 @@ module.exports = class EditPlace
         details: detailsValue
         location: locationValue
         subType: subTypeValue
+        prices:
+          all:
+            mode: priceValue
       }
       .catch (err) =>
         err = try
@@ -70,7 +86,6 @@ module.exports = class EditPlace
 
   resetValueStreams: =>
     @initialInfoFields.name.valueStreams.next @place.map (place) ->
-      console.log 'plac', place
       place.name or ''
     @initialInfoFields.details.valueStreams.next @place.map (place) ->
       place.details or ''
@@ -78,22 +93,31 @@ module.exports = class EditPlace
       location = "#{Math.round(place.location.lat * 10000) / 10000}, " +
       "#{Math.round(place.location.lon * 10000) / 10000}"
       location or ''
+    @priceValueStreams.next @place.map (place) ->
+      place.prices.all?.mode or 0
 
   render: =>
     {place, isLoading} = @state.getValue()
 
     z '.z-edit-place',
-      z @$duplicateButton,
-        text: @model.l.get 'editPlace.markAsDupe'
-        onclick: =>
-          @model.overlay.open new DuplicatePlaceDialog {
-            @model, @router, place
-          }
+      # z @$duplicateButton,
+      #   text: @model.l.get 'editPlace.markAsDupe'
+      #   onclick: =>
+      #     @model.overlay.open new DuplicatePlaceDialog {
+      #       @model, @router, place
+      #     }
+      z '.g-grid',
+        z @$initialInfo
 
-      z @$initialInfo
+        if place?.type is 'campground'
+          z '.input',
+            z @$priceInput, {
+              hintText: @model.l.get 'general.price'
+              type: 'number'
+            }
 
-      z @$saveButton,
-        text: if isLoading \
-              then @model.l.get 'general.loading'
-              else @model.l.get 'general.save'
-        onclick: @upsert
+        z @$saveButton,
+          text: if isLoading \
+                then @model.l.get 'general.loading'
+                else @model.l.get 'general.save'
+          onclick: @upsert

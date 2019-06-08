@@ -54,7 +54,6 @@ class PushService
     .then ([{token, sourceType} = {}, deviceId]) ->
       if token?
         if not isAlwaysCalled or not model.cookie.get 'hasPushToken'
-          appVersion = Environment.getAppVersion 'freeroam'
           sourceType ?= if Environment.isAndroid() \
                         then 'android'
                         else 'ios-fcm'

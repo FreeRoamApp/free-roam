@@ -4,6 +4,7 @@ _startCase = require 'lodash/startCase'
 
 Avatar = require '../avatar'
 Author = require '../author'
+ProfileDialog = require '../profile_dialog'
 Review = require '../review'
 colors = require '../../colors'
 config = require '../../config'
@@ -13,8 +14,7 @@ if window?
 
 module.exports = class PlaceReview
   constructor: (options) ->
-    {@model, @router, @review, parent, @$body, isMe
-      @dialogData} = options
+    {@model, @router, @review, parent, @$body, isMe} = options
 
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}
@@ -29,7 +29,8 @@ module.exports = class PlaceReview
     }
 
   openDialog: ({user, review, parent}) =>
-    @dialogData.next _defaults user, {
+    @model.overlay.open new new ProfileDialog {
+      @model, @router, user
       onDeleteMessage: =>
         @model[review.type].deleteById review.id
       onEditMessage: =>

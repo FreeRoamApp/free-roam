@@ -26,8 +26,7 @@ if window?
 
 module.exports = class PlaceReview
   constructor: (options) ->
-    {@model, @router, @review, user, @$body, isMe
-      @dialogData} = options
+    {@model, @router, @review, user, @$body, isMe} = options
 
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}

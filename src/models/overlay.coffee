@@ -4,6 +4,8 @@ _filter = require 'lodash/filter'
 _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 
+Environment = require '../services/environment'
+
 module.exports = class Overlay
   constructor: ->
     @overlays = new RxBehaviorSubject null
@@ -22,6 +24,12 @@ module.exports = class Overlay
     @overlays.map (overlays) -> _map overlays, '$'
 
   open: ($, {data, onComplete, onCancel} = {}) =>
+    if Environment.isIos()
+      document.activeElement.blur() # hide keyboard
+      # setTimeout ->
+      #   document.activeElement.blur()
+      # , 0
+
     newOverlays = _filter (@overlays.getValue() or []).concat(
       {$, onComplete, onCancel}
     )
