@@ -1,4 +1,6 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 UiCard = require '../ui_card'
 colors = require '../../colors'

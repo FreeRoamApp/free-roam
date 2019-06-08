@@ -1,6 +1,9 @@
 TODOS:
 
 - conversation/welcome only add once
+- random tips in splash screen
+  - https://androidforums.com/threads/how-to-add-random-text-to-splash-screen.1306232/
+  - https://stackoverflow.com/questions/56380112/how-to-add-changable-text-on-splash-screen
 
 - Profiles
   - Add to user photos when adding checkin photos

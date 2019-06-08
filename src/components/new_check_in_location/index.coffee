@@ -7,7 +7,6 @@ _find = require 'lodash/find'
 
 CoordinatePicker = require '../coordinate_picker'
 PrimaryInput = require '../primary_input'
-PrimaryButton = require '../primary_button'
 UploadImagesList = require '../upload_images_list'
 Icon = require '../icon'
 DateService = require '../../services/date'

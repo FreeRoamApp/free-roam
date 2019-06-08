@@ -56,7 +56,7 @@ module.exports = class Reviews extends Base
           if not reviews?
             z @$spinner
           else if _isEmpty reviews
-            z '.empty', $emptyState
+            $emptyState
           else
             _map reviews, ($review) ->
               z '.review',

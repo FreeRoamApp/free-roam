@@ -34,7 +34,7 @@ module.exports = class PlaceReviews
     z '.z-place-reviews',
       z @$reviews, {
         $emptyState:
-          z '.empty',
+          z '.z-place-reviews_empty',
             @model.l.get 'placeReviews.empty'
             z '.add-review',
               z @$addReviewButton,
