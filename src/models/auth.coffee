@@ -49,6 +49,9 @@ module.exports = class Auth
       @setAccessToken accessToken
       @exoid.invalidateAll()
 
+  resetPassword: ({email, username} = {}) =>
+    @exoid.call 'auth.resetPassword', {email, username}
+
   afterLogin: ({accessToken}) =>
     @setAccessToken accessToken
     @exoid.invalidateAll()
@@ -63,6 +66,10 @@ module.exports = class Auth
 
   login: ({username, password} = {}) =>
     @exoid.call 'auth.loginUsername', {username, password}
+    .then @afterLogin
+
+  loginLink: ({userId, token} = {}) =>
+    @exoid.call 'auth.loginLink', {userId, token}
     .then @afterLogin
 
   stream: (path, body, options = {}) =>

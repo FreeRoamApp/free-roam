@@ -61,6 +61,8 @@
   "overnightAttachments": "/overnight/:slug/attachments",
   "overnightWithTab": "/overnight/:slug/:tab",
 
+  "loginLink": "/loginLink/:userId/:token",
+
   "partners": "/partners",
 
   "places": "/places",

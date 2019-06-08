@@ -408,6 +408,8 @@
   "reviewThanksDialog.description": "Thank you for your review! Your review helps other users find cool spots and build a stronger community.",
   "rigInfo.placeholder": "No rig set",
   "rigInfo.yourRig": "Your rig",
+  "signInDialog.resetPassword": "Reset password",
+  "signInDialog.emailResetLink": "Email reset link",
   "signInDialog.join": "Get started!",
   "signInDialog.signIn": "Welcome back!",
   "signInDialog.createAccount": "Create account",
@@ -731,6 +733,7 @@
   "weather.cloudy": "Cloudy",
 
   "error.usernameTaken": "Username is taken",
+  "error.emailMismatch": "Email doesn't match",
   "error.emptyReview": "Review cannot be blank",
   "error.invalid": "Invalid",
   "error.invalidCoordinates": "Invalid coordinates",
