@@ -18,6 +18,7 @@ ShareMapDialog = require '../share_map_dialog'
 Spinner = require '../spinner'
 UserList = require '../user_list'
 Icon = require '../icon'
+DateService = require '../../services/date'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -39,6 +40,9 @@ module.exports = class Profile extends Base
     @$shareIcon = new Icon()
     @$karmaIcon = new Icon()
     @$editUsernameIcon = new Icon()
+    @$homeIcon = new Icon()
+    @$occupationIcon = new Icon()
+    @$startIcon = new Icon()
     @$reviewsChevronIcon = new Icon()
     @$checkInsChevronIcon = new Icon()
     @$plannedChevronIcon = new Icon()
@@ -140,6 +144,7 @@ module.exports = class Profile extends Base
     {user, me, attachmentsCount, friendsCount,
       pastTrip, $links} = @state.getValue()
 
+    console.log 'user', user
     tripImage = @getCoverUrl pastTrip
 
     isMe = user and user?.id is me?.id
@@ -214,7 +219,44 @@ module.exports = class Profile extends Base
                       isTouchTarget: false
                       onclick: =>
                         @router.go 'editProfile'
-              z '.bio', user?.bio
+
+              if user?.data?.bio
+                [
+                  z '.bio', user.data.bio
+                  z '.divider'
+                ]
+
+              z '.bits',
+                if user?.data?.home
+                  z '.bit',
+                    z '.icon',
+                      z @$homeIcon,
+                        icon: 'home'
+                        color: colors.$black54
+                        isTouchTarget: false
+                    z '.text', user.data.home
+                if user?.data?.occupation
+                  z '.bit',
+                    z '.icon',
+                      z @$occupationIcon,
+                        icon: 'work'
+                        color: colors.$black54
+                        isTouchTarget: false
+                    z '.text', user.data.occupation
+                if user?.data?.startTime
+                  z '.bit',
+                    z '.icon',
+                      z @$startIcon,
+                        icon: 'flag'
+                        color: colors.$black54
+                        isTouchTarget: false
+                    z '.text', @model.l.get 'profile.startTime', {
+                      replacements:
+                        date: DateService.format(
+                          new Date user.data.startTime
+                          'MMMM yyyy'
+                        )
+                    }
 
               unless isMe
                 z @$profileActions
@@ -232,7 +274,7 @@ module.exports = class Profile extends Base
                       },
                         z $icon, {
                           icon: type
-                          size: '32px'
+                          size: '28px'
                           isTouchTarget: false
                           color: colors.$bgText54
                         }

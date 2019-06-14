@@ -45,9 +45,6 @@ module.exports = class PlaceInfoWeather
 
     tabs = ['avg', 'forecast']
 
-    console.log forecastDaily
-
-
     z '.z-place-info-weather',
       z '.title', @model.l.get 'placeInfo.weather'
 

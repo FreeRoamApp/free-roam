@@ -63,15 +63,14 @@ module.exports = class Places
           filters: MapService.getAmenityFilters {@model}
         }
         {
-          dataType: 'lowClearance'
-          filters: MapService.getLowClearanceFilters {@model}
+          dataType: 'hazard'
+          filters: MapService.getHazardFilters {@model}
           onclick: =>
             unless @model.cookie.get('hasSeenLowClearanceWarning')
               @model.cookie.set 'hasSeenLowClearanceWarning', '1'
               @model.overlay.open new ClearanceWarningDialog {@model}
         }
       ]
-      optionalLayers: MapService.getOptionalLayers {@model}
     }
 
     @state = z.state {

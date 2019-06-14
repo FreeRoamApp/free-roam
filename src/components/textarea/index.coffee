@@ -67,14 +67,11 @@ module.exports = class Textarea
     @$$textarea.setSelectionRange startPos + newOffset, endPos + newOffset
 
   afterMount: (@$$el) =>
-    @$$textarea = @$$el.querySelector('#textarea')
-    @$$textarea?.value = @message.getValue()
-    @$$textarea?.setSelectionRange(
-      @selectionStart.getValue(), @selectionEnd.getValue()
-    )
-    if Environment.isIos()
-      # ios focuses on setSelectionRange
-      @$$textarea?.blur()
+    $$textarea = @$$el.querySelector('#textarea')
+    @valueStreams.take(1).subscribe =>
+      setTimeout =>
+        @resizeTextarea {target: $$textarea}
+      , 0
 
   resizeTextarea: (e) =>
     {textareaHeight} = @state.getValue()
@@ -128,7 +125,7 @@ module.exports = class Textarea
                  then colors.c500
       },
         hintText
-      z 'textarea.textarea',
+      z 'textarea.textarea#textarea',
         attributes:
           disabled: if isDisabled then true else undefined
           type: type

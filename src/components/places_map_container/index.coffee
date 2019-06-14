@@ -35,7 +35,7 @@ if window?
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, isShell, @trip, @dataTypes, showScale, mapBoundsStreams,
-      @persistentCookiePrefix, @addPlacesStreams, @optionalLayers,
+      @persistentCookiePrefix, @addPlacesStreams,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
       @initialFilters, initialCenter, center, initialZoom, zoom,
       searchQuery, @isSearchHidden} = options
@@ -110,6 +110,14 @@ module.exports = class PlacesMapContainer
         left: 60
     }
 
+    @$placeTooltip = new PlaceTooltip {
+      @model, @router, @place, position: @placePosition, @mapSize
+    }
+
+    @optionalLayers = MapService.getOptionalLayers {
+      @model, @place, @placePosition
+    }
+
     persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
     layersVisible = try
       JSON.parse @model.cookie.get persistentCookie
@@ -125,9 +133,6 @@ module.exports = class PlacesMapContainer
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
       defaultOpacity, initialCenter, center, initialZoom,  zoom,
       initialLayers, route
-    }
-    @$placeTooltip = new PlaceTooltip {
-      @model, @router, @place, position: @placePosition, @mapSize
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
@@ -343,11 +348,7 @@ module.exports = class PlacesMapContainer
     persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
     @model.cookie.set persistentCookie, JSON.stringify layersVisible
 
-    @$map.toggleLayer layer, {
-      insertBeneathLabels
-      source: source
-      sourceId: sourceId
-    }
+    @$map.toggleLayer optionalLayer
 
 
   render: =>

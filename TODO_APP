@@ -1,5 +1,11 @@
 TODOS:
 
+x fire
+  x delete all fires before resyncing
+  x fix existing fill (states)
+
+- setting for not auto-checking in when reviewing
+
 - conversation/welcome only add once
 - random tips in splash screen
   - https://androidforums.com/threads/how-to-add-random-text-to-splash-screen.1306232/

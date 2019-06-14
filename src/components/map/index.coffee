@@ -55,7 +55,9 @@ module.exports = class Map
       i += 1
     return beforeLayer
 
-  addLayer: (layer, {source, sourceId, insertBeneathLabels} = {}) =>
+  addLayer: (optionalLayer) =>
+    {layer, source, sourceId, insertBeneathLabels, onclick} = optionalLayer
+
     if @layers.indexOf(layer.id) is -1
       @layers.push layer.id
       layerId = if insertBeneathLabels then @getBeforeLayer(layer.metadata?.zIndex) else undefined
@@ -64,6 +66,12 @@ module.exports = class Map
       catch err
         console.log 'source exists', err
       @map.addLayer layer, layerId
+
+      if onclick
+        @map.on 'click', layer.id, (e) =>
+          e.originalEvent.stopPropagation()
+          onclick e, @map.queryRenderedFeatures(e.point)?[0]?.properties
+
 
   removeLayerById: (id) =>
     index = @layers.indexOf(id)
@@ -74,11 +82,11 @@ module.exports = class Map
     # source = layer.source
     # @map.removeSource source
 
-  toggleLayer: (layer, options) =>
-    if @layers.indexOf(layer.id) is -1
-      @addLayer layer, options
+  toggleLayer: (layer) =>
+    if @layers.indexOf(layer.layer.id) is -1
+      @addLayer layer
     else
-      @removeLayerById layer.id
+      @removeLayerById layer.layer.id
 
   getBlob: =>
     new Promise (resolve) =>
@@ -212,6 +220,7 @@ module.exports = class Map
   # TODO: might be better to just handle this in calling component (trip),
   # but would need to handle for shareMap too
   addFillLayer: =>
+    # FIXME: custom sourceId, custom onclick, color, opacity
     @map.addSource 'fill', {
       type: 'geojson'
       data: {
@@ -228,7 +237,6 @@ module.exports = class Map
         'fill-color': colors.getRawColor colors.$primary500
         'fill-opacity': 0.1
     }
-
   afterMount: ($$el) =>
     @state.set isLoading: true
     @initializeMap $$el
@@ -384,14 +392,7 @@ module.exports = class Map
         @map.removeLayer layer.id
 
   addInitialLayers: =>
-    _map @initialLayers, (initialLayer) =>
-      {layer, insertBeneathLabels, source, sourceId} = initialLayer
-
-      @addLayer layer, {
-        insertBeneathLabels
-        source: source
-        sourceId: sourceId
-      }
+    _map @initialLayers, @addLayer
 
   subscribeToResize: =>
     @resizeSubscription = @model.window.getSize().subscribe =>
@@ -478,7 +479,7 @@ module.exports = class Map
   # update tooltip pos
   onMapMove: =>
     {place} = @state.getValue()
-    if place
+    if place?.location
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>

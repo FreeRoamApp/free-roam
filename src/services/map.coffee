@@ -5,7 +5,9 @@ _some = require 'lodash/some'
 _uniq = require 'lodash/uniq'
 
 Environment = require './environment'
+DateService = require './date'
 colors = require '../colors'
+config = require '../config'
 
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
           'oct', 'nov', 'dec']
@@ -141,6 +143,10 @@ class MapService
         ]
         arrayValue: 'shower'
         name: model.l.get 'amenities.shower'
+        valueFn: (value) ->
+          _filter _map value, (subTypeValue, subTypeKey) ->
+            if subTypeValue
+              {match: subType: subTypeKey}
       }
       {
         field: 'amenities'
@@ -243,12 +249,30 @@ class MapService
       }
     ]
 
-  getLowClearanceFilters: ({model}) ->
+  getHazardFilters: ({model}) ->
     [
       {
-        field: 'heightInches'
+        field: 'subType'
+        type: 'booleanArray'
+        isBoolean: true
+        arrayValue: 'wildfire'
+        name: model.l.get 'hazard.wildfire'
+      }
+      {
+        field: 'subType'
         type: 'maxClearance'
-        name: model.l.get 'lowClearance.maxClearance'
+        name: model.l.get 'hazard.lowClearance'
+        arrayValue: 'lowClearance'
+        valueFn: (value) ->
+          if value
+            feet = parseInt value.feet
+            if isNaN feet
+              feet = 0
+            inches = parseInt value.inches
+            if isNaN inches
+              feet = 0
+            inches = feet * 12 + inches
+            {range: 'data.heightInches': lte: inches}
       }
     ]
 
@@ -298,7 +322,9 @@ class MapService
       }
     ]
 
-  getOptionalLayers: ({model}) ->
+  getOptionalLayers: ({model, place, placePosition}) ->
+    date = DateService.format new Date(), 'yyyy-mm-dd'
+
     [
       {
         name: model.l.get 'placesMapContainer.layerBlm'
@@ -421,6 +447,55 @@ class MapService
       }
 
       {
+        name: model.l.get 'placesMapContainer.layerSmoke'
+        source:
+          type: 'geojson'
+          data: "#{config.MAPS_CDN_URL}/smoke.json?#{date}"
+        layer:
+          id: 'smoke'
+          type: 'fill'
+          source: 'smoke'
+          layout: {}
+          paint:
+            'fill-opacity':
+              property: 'Density',
+              stops: [[0, 0], [100, 0.8]]
+            'fill-color': colors.$grey700
+          metadata:
+            zIndex: 2
+        insertBeneathLabels: true
+      }
+
+      {
+        name: model.l.get 'placesMapContainer.layerFireWeather'
+        source:
+          type: 'geojson'
+          data: "#{config.MAPS_CDN_URL}/fire_weather.json?#{date}"
+        layer:
+          id: 'fire-weather'
+          type: 'fill'
+          source: 'fire-weather'
+          layout: {}
+          paint:
+            'fill-color': [
+              'match'
+              ['get', 'name']
+              'Red Flag Warning', colors.$red500
+              colors.$yellow500 # other
+            ]
+            'fill-opacity': 0.5
+          metadata:
+            zIndex: 2
+        insertBeneathLabels: true
+        onclick: (e, properties) ->
+          place.next {
+            name: properties.name
+            description: properties.description
+          }
+          placePosition.next e.point
+      }
+
+      {
         name: model.l.get 'placesMapContainer.layerSatellite'
         sourceId: 'mapbox'
         source:
@@ -466,19 +541,19 @@ class MapService
               "#{field}.#{filter.value.season}":
                 lte: filter.value.value
           }
-        when 'maxClearance'
-          feet = parseInt filter.value.feet
-          if isNaN feet
-            feet = 0
-          inches = parseInt filter.value.inches
-          if isNaN inches
-            feet = 0
-          inches = feet * 12 + inches
-          {
-            range:
-              heightInches:
-                lt: inches
-          }
+        # when 'maxClearance'
+        #   feet = parseInt filter.value.feet
+        #   if isNaN feet
+        #     feet = 0
+        #   inches = parseInt filter.value.inches
+        #   if isNaN inches
+        #     feet = 0
+        #   inches = feet * 12 + inches
+        #   {
+        #     range:
+        #       'data.heightInches':
+        #         lt: inches
+        #   }
         when 'maxIntDayNight'
           {
             range:
@@ -547,16 +622,14 @@ class MapService
           {
             # there's potentially a cleaner way to do this?
             bool:
-              should: _map withValues, ({value, arrayValue}) ->
+              should: _map withValues, ({value, arrayValue, valueFn}) ->
                 # if subtypes are specified
                 if typeof value is 'object'
                   bool:
                     must: [
                       {match: "#{field}": arrayValue}
                       bool:
-                        should: _filter _map value, (subTypeValue, subTypeKey) ->
-                          if subTypeValue
-                            {match: subType: subTypeKey}
+                        should: valueFn value
                     ]
                 else
                   {match: "#{field}": arrayValue}

@@ -32,8 +32,6 @@ module.exports = class UserList
   render: ({onclick} = {}) =>
     {users} = @state.getValue()
 
-    console.log users
-
     z '.z-user-list',
       _map users, (user) =>
         z '.user', {
@@ -41,9 +39,17 @@ module.exports = class UserList
             if onclick
               onclick user.userInfo
             else
-              @model.overlay.open new ProfileDialog {
-                @model, @router, user: user.userInfo
-              }
+              if user.userInfo.username
+                @router.go 'profile', {
+                  username: user.userInfo.username
+                }
+              else
+                @router.go 'profileById', {
+                  id: user.userInfo.id
+                }
+              # @model.overlay.open new ProfileDialog {
+              #   @model, @router, user: user.userInfo
+              # }
         },
           z '.avatar',
             z user.$avatar,

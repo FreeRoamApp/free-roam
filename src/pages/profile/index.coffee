@@ -18,11 +18,11 @@ module.exports = class ProfilePage
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     user = requests.switchMap ({route}) =>
       if route.params.username
-        @model.user.getByUsername route.params.username
+        @model.user.getByUsername route.params.username, {embed: ['data']}
       else if route.params.id
-        @model.user.getById route.params.id
+        @model.user.getById route.params.id, {embed: ['data']}
       else
-        @model.user.getMe()
+        @model.user.getMe {embed: ['data']}
 
     trip = user.switchMap (user) =>
       if user

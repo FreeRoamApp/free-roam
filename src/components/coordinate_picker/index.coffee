@@ -135,15 +135,11 @@ module.exports = class CoordinatePicker
     {isSatelliteVisible} = @state.getValue()
 
     layers = MapService.getOptionalLayers {@model}
-    {layer, source, sourceId, insertBeneathLabels} = _find layers, (layer) ->
+    optionalLayer = _find layers, (layer) ->
       layer.layer.id is 'satellite'
 
     @state.set isSatelliteVisible: not isSatelliteVisible
-    @$map.toggleLayer layer, {
-      insertBeneathLabels
-      source: source
-      sourceId: sourceId
-    }
+    @$map.toggleLayer optionalLayer
 
   render: =>
     {isSatelliteVisible} = @state.getValue()

@@ -1,10 +1,4 @@
 z = require 'zorium'
-Environment = require '../../services/environment'
-RxReplaySubject = require('rxjs/BehaviorSubject').BehaviorSubject
-RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
-require 'rxjs/add/operator/map'
-require 'rxjs/add/operator/switchMap'
-_map = require 'lodash/map'
 
 Icon = require '../icon'
 FlatButton = require '../flat_button'
@@ -25,6 +19,11 @@ module.exports = class EditProfileGeneral
 
     @$rigInfo = new RigInfo {@model, @router}
 
+    @$webIcon = new Icon()
+    @$instagramIcon = new Icon()
+    @$youtubeIcon = new Icon()
+    @$facebookIcon = new Icon()
+
     @$usernameInput = new PrimaryInput
       valueStreams: @fields.username.valueStreams
       error: @fields.username.errorSubject
@@ -36,11 +35,14 @@ module.exports = class EditProfileGeneral
     @$instagramInput = new PrimaryInput
       valueStreams: @fields.instagram.valueStreams
 
+    @$youtubeInput = new PrimaryInput
+      valueStreams: @fields.youtube.valueStreams
+
     @$webInput = new PrimaryInput
       valueStreams: @fields.web.valueStreams
 
-    @$bioTextarea = new PrimaryTextarea
-      valueStreams: @fields.bio.valueStreams
+    @$facebookInput = new PrimaryInput
+      valueStreams: @fields.facebook.valueStreams
 
     @$newPasswordInput = new PrimaryInput
       value: @fields.newPassword.value
@@ -55,9 +57,9 @@ module.exports = class EditProfileGeneral
       newPassword: @fields.newPassword.value
 
   render: =>
-    {me, newPassword, players, isSaving, isSaved} = @state.getValue()
+    {me, newPassword, isSaving, isSaved} = @state.getValue()
 
-    z '.z-edit-profile',
+    z '.z-edit-profile-general',
       z '.g-grid',
 
         z '.section',
@@ -90,22 +92,49 @@ module.exports = class EditProfileGeneral
                 isFullWidth: false
                 type: 'password'
 
+        z '.title', @model.l.get 'editProfile.socialMedia'
         z '.section',
+          z '.icon',
+            z @$instagramIcon,
+              icon: 'instagram'
+              isTouchTarget: false
+              color: colors.$primary500
           z '.input',
             z @$instagramInput,
               hintText: @model.l.get 'general.instagram'
               isFullWidth: false
 
         z '.section',
+          z '.icon',
+            z @$youtubeIcon,
+              icon: 'youtube'
+              isTouchTarget: false
+              color: colors.$primary500
+          z '.input',
+            z @$youtubeInput,
+              hintText: @model.l.get 'general.youtube'
+              isFullWidth: false
+
+        z '.section',
+          z '.icon',
+            z @$webIcon,
+              icon: 'web'
+              isTouchTarget: false
+              color: colors.$primary500
           z '.input',
             z @$webInput,
               hintText: @model.l.get 'general.web'
               isFullWidth: false
 
         z '.section',
+          z '.icon',
+            z @$facebookIcon,
+              icon: 'facebook'
+              isTouchTarget: false
+              color: colors.$primary500
           z '.input',
-            z @$bioTextarea,
-              hintText: @model.l.get 'general.bio'
+            z @$facebookInput,
+              hintText: @model.l.get 'general.facebook'
               isFullWidth: false
 
         z '.actions',

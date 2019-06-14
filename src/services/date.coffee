@@ -18,7 +18,10 @@ class DateService
       MMM = @l.get("months.#{date.getMonth()}").substring(0, 3)
       D = date.getDate()
       "#{MMM} #{D}"
-
+    else if format is 'MMMM yyyy'
+      MMMM = @l.get("months.#{date.getMonth()}")
+      yyyy = date.getFullYear()
+      "#{MMMM} #{yyyy}"
     else
       yyyy = date.getFullYear()
       mm = date.getMonth() + 1

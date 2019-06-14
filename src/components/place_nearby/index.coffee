@@ -95,7 +95,6 @@ module.exports = class PlaceNearby
           isCheckedValueStreams: @isCellTowersCheckedStreams
         }
       ]
-      optionalLayers: MapService.getOptionalLayers {@model}
     }
     # TODO: better solution than @$placesMapContainer.getPlacesStream()?
     placesStream = @$placesMapContainer.getPlacesStream()

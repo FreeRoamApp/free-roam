@@ -6,8 +6,8 @@ module.exports = class User
 
   constructor: ({@auth, @proxy, @exoid, @cookie, @l, @overlay, @portal}) -> null
 
-  getMe: =>
-    @auth.stream "#{@namespace}.getMe"
+  getMe: ({embed} = {}) =>
+    @auth.stream "#{@namespace}.getMe", {embed}
 
   getIp: =>
     @cookie.get 'ip'
@@ -15,11 +15,11 @@ module.exports = class User
   getCountry: =>
     @auth.stream "#{@namespace}.getCountry"
 
-  getById: (id) =>
-    @auth.stream "#{@namespace}.getById", {id}
+  getById: (id, {embed} = {}) =>
+    @auth.stream "#{@namespace}.getById", {id, embed}
 
-  getByUsername: (username) =>
-    @auth.stream "#{@namespace}.getByUsername", {username}
+  getByUsername: (username, {embed} = {}) =>
+    @auth.stream "#{@namespace}.getByUsername", {username, embed}
 
   search: ({query, limit}) =>
     @auth.stream "#{@namespace}.search", {query, limit}

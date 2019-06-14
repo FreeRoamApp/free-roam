@@ -61,6 +61,12 @@
           font-body2()
           margin-left: 8px
 
+      > .divider
+        width: 100%
+        height: 1px
+        background: getColor('$bgText12')
+        margin: 12px 0
+
       > .see-all
         display: flex
         align-items: center
@@ -95,7 +101,7 @@
 
         &.name
           font-h3()
-          margin-bottom: 4px
+          margin-bottom: 8px
           display: flex
           align-items: center
           justify-content: center
@@ -105,6 +111,24 @@
 
         &.bio
           font-body2()
+          padding: 0 16px
+
+      > .bits
+        padding: 0 16px
+
+        > .bit
+          display: flex
+          align-items: center
+          margin-bottom: 12px
+
+          &:last-child
+            margin-bottom: 16px
+
+          > .icon
+            margin-right:12px
+
+          > .text
+            color: getColor('$bgText54')
 
       > .links
         display: flex
@@ -118,5 +142,5 @@
         > .divider
           width: 1px
           height: 100%
-          background: getColor('$bgText26')
+          background: getColor('$bgText12')
           margin: 0 8px
