@@ -81,7 +81,7 @@ module.exports = class PlaceTooltip extends MapTooltip
       className: z.classKebab {isVisible, @isImageLoaded}
       onclick: (e) =>
         e?.stopPropagation()
-        if place?.type is 'hazard'
+        if place?.type is 'hazard' and place?.subType is 'lowClearance'
           [lon, lat] = place.location
           @model.portal.call 'browser.openWindow', {
             url:
@@ -160,6 +160,6 @@ module.exports = class PlaceTooltip extends MapTooltip
                 else if isSaved then @model.l.get 'general.saved'
                 else @model.l.get 'general.save'
 
-        else if place?.type in ['campground', 'overnight', 'amenity']
+        else if place?.type isnt 'hazard'
           z '.rating',
             z @$rating

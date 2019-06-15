@@ -3,14 +3,35 @@
 .z-attachments-list
   // display: flex
 
-  > .attachment
+  > .attachment-wrapper
     display: inline-block
     padding: 0 4px
     box-sizing: border-box
 
-    > .img
+    > .attachment
       width: 100%
       height: 100%
-      background-size: cover
-      background-position: center
-      cursor: pointer
+      position: relative
+
+      > .more
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        background: getColor('$black54')
+        display: flex
+        align-items: center
+        justify-content: center
+
+        > .text
+          font-title()
+          color: getColor('$white')
+
+
+      > .img
+        width: 100%
+        height: 100%
+        background-size: cover
+        background-position: center
+        cursor: pointer

@@ -69,8 +69,9 @@ module.exports = class Map
 
       if onclick
         @map.on 'click', layer.id, (e) =>
-          e.originalEvent.stopPropagation()
-          onclick e, @map.queryRenderedFeatures(e.point)?[0]?.properties
+          unless e.originalEvent.isPropagationStopped
+            e.originalEvent.stopPropagation()
+            onclick e, @map.queryRenderedFeatures(e.point)?[0]?.properties
 
 
   removeLayerById: (id) =>
@@ -330,6 +331,8 @@ module.exports = class Map
           }
 
         onclick = (e) =>
+          e.originalEvent.isPropagationStopped = true
+
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
           number = e.features[0].properties.number

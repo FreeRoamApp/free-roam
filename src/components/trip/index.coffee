@@ -57,6 +57,16 @@ module.exports = class Trip extends Base
             "attachmentsList-#{id}", AttachmentsList, {
               @model, @router
               attachments: RxObservable.of checkIn.attachments
+              limit: 4
+              more:
+                if checkIn.attachments.length > 4
+                  {
+                    onclick: =>
+                      @router.goOverlay 'checkIn', {
+                        id: checkIn.id
+                      }
+                    count: checkIn.attachments.length - 4
+                  }
             }
           )
           {

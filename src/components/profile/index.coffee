@@ -1,5 +1,6 @@
 z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 require 'rxjs/add/operator/catch'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
@@ -71,8 +72,21 @@ module.exports = class Profile extends Base
         return RxObservable.of null
       @model.placeAttachment.getAllByUserId user.id
 
+    attachmentsCount = attachments.map (attachments) ->
+      attachments?.length or 0
+
+    userAndAttachmentsCount = RxObservable.combineLatest(
+      user, attachmentsCount, (vals...) -> vals
+    )
+
     @$attachments = new Attachments {
       @model, @router, attachments, limit: 4
+      more: userAndAttachmentsCount.map ([user, count]) =>
+        if count > 4 # limit
+          path = if user?.username \
+                 then @router.get 'profileAttachments', {username: user?.username}
+                 else @router.get 'profileAttachmentsById', {id: user?.id}
+          {path, count: count - 4}
     }
 
     friends = user.switchMap (user) =>
@@ -109,8 +123,7 @@ module.exports = class Profile extends Base
       me: @model.user.getMe()
       friendsCount: friends.map (friends) ->
         friends?.length or 0
-      attachmentsCount: attachments.map (attachments) ->
-        attachments?.length or 0
+      attachmentsCount: attachmentsCount
       $links: user.map (user) ->
         _filter _map user?.links, (link, type) ->
           if link
@@ -144,7 +157,6 @@ module.exports = class Profile extends Base
     {user, me, attachmentsCount, friendsCount,
       pastTrip, $links} = @state.getValue()
 
-    console.log 'user', user
     tripImage = @getCoverUrl pastTrip
 
     isMe = user and user?.id is me?.id

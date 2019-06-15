@@ -93,7 +93,7 @@ module.exports = class PlacesListAmenity
           if @place?.sourceType isnt 'coordinate'
             z '.action',
               z @$detailsButton,
-                icon: 'info'
+                # icon: 'info'
                 text: @model.l.get 'general.info'
                 colors:
                   cText: colors.$primary500
@@ -102,7 +102,7 @@ module.exports = class PlacesListAmenity
           z '.action',
             z @$directionsButton,
               text: @model.l.get 'general.directions'
-              icon: 'directions'
+              # icon: 'directions'
               colors:
                 cText: colors.$primary500
               onclick: =>

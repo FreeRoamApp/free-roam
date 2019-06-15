@@ -178,7 +178,7 @@ module.exports = class Dashboard
               [
                 z '.nearby',
                   z '.title', @model.l.get 'dashboard.emptyNearby'
-                  z @$nearbyPlaces, {isPlain: true}
+                  z @$nearbyPlaces
                 z '.add',
                   z @$addCampgroundButton,
                     text: @model.l.get 'dashboard.addCampground'
@@ -206,7 +206,7 @@ module.exports = class Dashboard
               else
                 z '.text', @model.l.get 'dashboard.rate'
 
-            z '.card',
+            z '.card.has-padding',
               z '.title', @model.l.get 'dashboard.weather'
               @router.link z 'a.weather', {
                 className: z.classKebab {"is#{weatherType}": true}
@@ -266,7 +266,7 @@ module.exports = class Dashboard
 
             z '.card',
               z '.title', @model.l.get 'dashboard.nearby'
-              z @$nearbyFacilities, {isPlain: true}
+              z @$nearbyFacilities
               @router.link z 'a.view-more', {
                 href: @router.get 'campgroundWithTab', {
                   slug: myLocation?.place?.slug

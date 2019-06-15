@@ -11,12 +11,15 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+# TODO: combine with attachmentslist
+
 module.exports = class Attachments
-  constructor: ({@model, @router, attachments, limit}) ->
+  constructor: ({@model, @router, attachments, more, limit}) ->
     @$spinner = new Spinner()
 
     @state = z.state
       me: @model.user.getMe()
+      more: more
       attachments: attachments.map (attachments) ->
         if limit
           attachments.slice 0, limit
@@ -24,7 +27,7 @@ module.exports = class Attachments
           attachments
 
   render: =>
-    {me, attachments, attachments} = @state.getValue()
+    {me, more, attachments, attachments} = @state.getValue()
 
     images = _map attachments, (attachment) =>
       {
@@ -56,6 +59,18 @@ module.exports = class Attachments
                       e?.preventDefault()
                       @model.campgroundAttachment.deleteByRow attachment
                 },
+                  if more and i is attachments.length - 1
+                    z 'a.more', {
+                      href: more.path
+                      onclick: (e) =>
+                        e.preventDefault()
+                        e.stopPropagation()
+                        if more.onclick
+                          more.onclick()
+                        else
+                          @router.goPath more.path
+                    },
+                      z '.text', "+#{more.count}"
                   z '.image',
                     style:
                       backgroundImage:

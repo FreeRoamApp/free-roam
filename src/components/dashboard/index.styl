@@ -66,19 +66,27 @@
 
     > .card
       background: getColor('$tertiary0')
-      padding: 16px
       width: 100%
       box-sizing: border-box
       margin-bottom: 16px
 
+      &.has-padding
+        padding: 16px
+
+        > .title
+          padding: 0
+
       > .title
         font-title()
+        padding: 16px 16px 0 16px
         margin-bottom: 16px
+
 
       > .view-more
         display: flex
         align-items: center
         margin-bottom: -16px
+        padding: 0 16px
 
         > .text
           color: getColor('$bgText70')

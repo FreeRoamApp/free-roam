@@ -3,8 +3,11 @@ TODOS:
 x fire
   x delete all fires before resyncing
   x fix existing fill (states)
-
+- look into using https://inciweb.nwcg.gov/feeds/ for fires
 - setting for not auto-checking in when reviewing
+- new icon for propane
+- link to fire weather info for each red flag
+- make offline maps more intuitive
 
 - conversation/welcome only add once
 - random tips in splash screen

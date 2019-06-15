@@ -26,15 +26,16 @@ module.exports = class PlacesList
                 new PlacesListCampground {@model, @router, place, action}
             }
 
-  render: ({hideRating, isPlain} = {}) =>
+  render: ({hideRating} = {}) =>
     {me, places} = @state.getValue()
-
-    hasShadow = not isPlain
 
     z '.z-places-list',
       z '.g-grid',
         _map places, (place) =>
           {place, $el} = place
 
-          z '.place', {className: z.classKebab {hasShadow}},
-            z $el, {hideRating}
+          [
+            z '.place',
+              z $el, {hideRating}
+            z '.divider'
+          ]
