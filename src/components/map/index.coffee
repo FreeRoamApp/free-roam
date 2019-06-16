@@ -2,6 +2,7 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _map = require 'lodash/map'
+_find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _forEach = require 'lodash/forEach'
 
@@ -71,7 +72,9 @@ module.exports = class Map
         @map.on 'click', layer.id, (e) =>
           unless e.originalEvent.isPropagationStopped
             e.originalEvent.stopPropagation()
-            onclick e, @map.queryRenderedFeatures(e.point)?[0]?.properties
+            features = @map.queryRenderedFeatures(e.point)
+            feature = _find features, ({properties}) -> properties?.name
+            onclick e, feature?.properties
 
 
   removeLayerById: (id) =>

@@ -1,5 +1,4 @@
 #!/usr/bin/env coffee
-log = require 'loga'
 
 app = require '../server'
 config = require '../src/config'
@@ -21,9 +20,9 @@ app.all '/*', (req, res, next) ->
 
 if config.DEV_USE_HTTPS
   httpsServer.listen config.PORT, ->
-    log.info 'Listening (https) on port %d', config.PORT
+    console.log 'Listening (https) on port %d', config.PORT
 else
   app.listen config.PORT, ->
-    log.info
+    console.log
       event: 'dev_server_start'
       message: "Listening on port #{config.PORT}"

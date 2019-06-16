@@ -43,8 +43,6 @@ module.exports = class CurrentLocation
   render: =>
     {myLocation} = @state.getValue()
 
-    console.log 'ml', myLocation
-
     z '.z-current-location',
       z '.icon',
         z @$locationIcon,

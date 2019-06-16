@@ -19,7 +19,6 @@ module.exports = class PlaceInfoWeather
       place: place
       forecastDaily: place.map (place) ->
         days = place?.forecast?.daily
-        console.log 'days', days
         today = new Date()
         todayVal =
           today.getYear() * 366 + today.getMonth() * 31 + today.getDate()

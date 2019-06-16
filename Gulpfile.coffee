@@ -4,7 +4,6 @@ _defaults = require 'lodash/defaults'
 _defaultsDeep = require 'lodash/defaultsDeep'
 _map = require 'lodash/map'
 _mapValues = require 'lodash/mapValues'
-log = require 'loga'
 gulp = require 'gulp'
 gutil = require 'gulp-util'
 webpack = require 'webpack'
@@ -138,9 +137,9 @@ gulp.task 'dev:webpack-server', ->
   new WebpackDevServer compiler, webpackOptions
   .listen config.WEBPACK_DEV_PORT, (err) ->
     if err
-      log.error err
+      console.log err
     else
-      log.info
+      console.log
         event: 'webpack_server_start'
         message: "Webpack listening on port #{config.WEBPACK_DEV_PORT}"
 

@@ -1,6 +1,7 @@
 if window?
   PortalGun = require 'portal-gun'
 
+config = require '../config'
 PushService = require './push'
 
 class ServiceWorkerService
@@ -15,6 +16,15 @@ class ServiceWorkerService
         @listenForWaitingServiceWorker registration, (registration) =>
           @handleUpdate registration, {model}
       .catch (err) ->
+        window.fetch config.API_URL + '/log',
+          method: 'POST'
+          headers:
+            'Content-Type': 'text/plain' # Avoid CORS preflight
+          body: JSON.stringify
+            event: 'client_error'
+            trace: null # trace
+            error: 'SERVICE WORKER' + String(err)
+
         console.log 'sw promise err', err
     catch err
       console.log 'sw err', err

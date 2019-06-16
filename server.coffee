@@ -5,7 +5,6 @@ _defaults = require 'lodash/defaults'
 _mapValues = require 'lodash/mapValues'
 _map = require 'lodash/map'
 compress = require 'compression'
-log = require 'loga'
 helmet = require 'helmet'
 z = require 'zorium'
 Promise = require 'bluebird'
@@ -193,7 +192,8 @@ app.use (req, res, next) ->
     io.disconnect()
     model.dispose()
     disposable?.unsubscribe()
-    log.error err
+    if err?.message?.indexOf('Timeout') is -1
+      console.log err
     if err.html
       hasSent = true
       if err.html.indexOf('<head>') is -1

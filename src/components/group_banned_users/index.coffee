@@ -2,7 +2,6 @@ z = require 'zorium'
 colors = require '../../colors'
 _map = require 'lodash/map'
 _startCase = require 'lodash/startCase'
-log = require 'loga'
 
 config = require '../../config'
 Icon = require '../icon'

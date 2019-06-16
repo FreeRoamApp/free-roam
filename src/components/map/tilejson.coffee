@@ -23,7 +23,7 @@ module.exports = {
     }
   },
   "glyphs": "https://tileserver.freeroam.app/fonts/{fontstack}/{range}.pbf",
-  "sprite": "https://fdn.uno/d/images/maps/sprite_2019_06_01",
+  "sprite": "https://fdn.uno/d/images/maps/sprite_2019_06_14",
   "layers": [{
       "id": "background",
       "type": "background",

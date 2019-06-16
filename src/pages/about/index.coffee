@@ -18,8 +18,7 @@ module.exports = class AboutPage
   getMeta: =>
     {
       title: @model.l.get 'drawer.about'
-      description:
-        "#{@model.l.get('about.text2')} #{@model.l.get 'about.text3'}"
+      description: @model.l.get 'about.mission'
     }
 
   render: =>

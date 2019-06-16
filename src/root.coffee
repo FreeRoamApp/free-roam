@@ -3,7 +3,6 @@ require './polyfill'
 _map = require 'lodash/map'
 _mapValues = require 'lodash/mapValues'
 z = require 'zorium'
-log = require 'loga'
 cookie = require 'cookie'
 LocationRouter = require 'location-router'
 Environment = require './services/environment'
@@ -29,9 +28,6 @@ MAX_ERRORS_LOGGED = 5
 # LOGGING #
 ###########
 
-if config.ENV is config.ENVS.PROD
-  log.level = 'warn'
-
 # Report errors to API_URL/log
 errorsSent = 0
 postErrToServer = (err) ->
@@ -44,11 +40,9 @@ postErrToServer = (err) ->
       body: JSON.stringify
         event: 'client_error'
         trace: null # trace
-        error: String(err)
+        error: JSON.stringify err
     .catch (err) ->
       console?.log 'logs post', err
-
-log.on 'error', postErrToServer
 
 oldOnError = window.onerror
 window.onerror = (message, file, line, column, error) ->
@@ -257,7 +251,7 @@ init = ->
     Promise.resolve null)
   .then routeHandler
   .catch (err) ->
-    log.error err
+    console.log err
     router.go()
   .then ->
     model.portal.call 'app.isLoaded'

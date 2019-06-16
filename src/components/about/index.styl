@@ -1,46 +1,115 @@
 @require '../../vars'
 
 .z-about
-  padding: 0 16px 16px 16px
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
 
   > .g-grid
 
-    > .title
-      font-display1()
-      // text-align: center
-      margin: 16px 0
+    > .mission, > .meet, > .help, > .transparency
+      padding: 16px
 
-    > .divider
-      width: 100%
-      height: 1px
-      background: getColor('$bgText6')
-      margin: 8px 0
+      > .title
+        font-display1()
+        text-align: center
+        margin: 16px 0
+
+    > .mission
+      display: flex
+      flex-direction: column
+      align-items: center
+      min-height: 370px
+      background-image: url($cdnUrl + '/about/desert.jpg')
+      background-size: 100% auto
+
+      > .text
+        font-title()
+        max-width: 300px
+        margin-bottom: 16px
+
+      > .button
+        width: 150px
+
+    > .meet
+      background: getColor('$tertiary0')
+      padding-bottom: 32px
+
+      > .g-grid > .g-cols > .g-col
+        > .image
+          width: 100%
+          height: 0
+          padding-bottom: (100 * 184 / 328)%
+          background-size: 100%
+          margin: 16px 0
+
+          &.austin
+            background-image: url($cdnUrl + '/about/austin.jpg')
+
+          &.rachel
+            background-image: url($cdnUrl + '/about/rachel.jpg')
+
+        > .name
+          font-h3()
+          margin-bottom: 8px
+
+    > .help
+      background: getColor('$yellow50')
+      text-align: center
+      padding-bottom: 32px
+
+      > .g-grid > .g-cols > .g-col
+        > .image
+          width: 140px
+          height: 140px
+          margin: 28px auto 0 auto
+          background-size: 100%
+
+          &.share
+            background-image: url($cdnUrl + '/about/share.svg')
+
+          &.review
+            background-image: url($cdnUrl + '/about/review.svg')
+
+          &.feedback
+            background-image: url($cdnUrl + '/about/feedback.svg')
+
+        > .title
+          font-h3()
+          margin-top: 16px
+          margin-bottom: 8px
+
+        > .description
+          width: 235px
+          margin: 0 auto
+
+        > .button
+          width: 148px
+          margin: 12px auto 0 auto
+
+    > .transparency
+      background: getColor('$tertiary0')
+      display: flex
+      flex-direction: column
+      align-items: center
+      padding-bottom: 32px
+
+      > .button
+        margin-top: 24px
 
     > .clear
       clear: both
-
-    > .us
-      padding: 8px 32px
-
-    > .home
-      width: 100%
-      margin-top: 8px
-      max-width: 800px
 
     a
       font-weight: 500
 
     > .disclaimer
       font-caption2()
+      margin: 12px 0
+      text-align: center
 
 
   @media (min-width: $breakPointMedium)
     > .g-grid
-      > .us
-        float: left
-        margin-right: 16px
-        margin-bottom: 8px
-        padding: 0
+      > .mission
+        background-position: center
