@@ -41,8 +41,11 @@ module.exports = class PlacesPage
       @model.geocoder.getBoundingFromRegion region
 
     searchQuery = requests.map ({route}) ->
-      if route.params.city
+      if route.params.city is 'all'
+        "#{route.params.state.toUpperCase()}"
+      else if route.params.city
         "#{_startCase route.params.city}, #{route.params.state.toUpperCase()}"
+
 
     @$places = new Places {
       @model, @router, isShell, type, subType, trip, mapBoundsStreams

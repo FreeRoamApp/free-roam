@@ -5,23 +5,28 @@
   overflow: auto
   -webkit-overflow-scrolling: touch
 
-  > .g-grid
-
-    > .mission, > .meet, > .help, > .transparency
+  > .mission, > .meet, > .help, > .transparency
+    > .g-grid
       padding: 16px
+      box-sizing: border-box
 
       > .title
         font-display1()
         text-align: center
         margin: 16px 0
 
-    > .mission
+  > .mission
+    display: flex
+    flex-direction: column
+    align-items: center
+    min-height: 370px
+    background-image: url($cdnUrl + '/about/desert.jpg')
+    background-size: 100% auto
+
+    > .g-grid
       display: flex
       flex-direction: column
       align-items: center
-      min-height: 370px
-      background-image: url($cdnUrl + '/about/desert.jpg')
-      background-size: 100% auto
 
       > .text
         font-title()
@@ -31,9 +36,11 @@
       > .button
         width: 150px
 
-    > .meet
-      background: getColor('$tertiary0')
-      padding-bottom: 32px
+  > .meet
+    background: getColor('$tertiary0')
+    padding-bottom: 32px
+
+    > .g-grid
 
       > .g-grid > .g-cols > .g-col
         > .image
@@ -53,10 +60,12 @@
           font-h3()
           margin-bottom: 8px
 
-    > .help
-      background: getColor('$yellow50')
-      text-align: center
-      padding-bottom: 32px
+  > .help
+    background: getColor('$yellow50')
+    text-align: center
+    padding-bottom: 32px
+
+    > .g-grid
 
       > .g-grid > .g-cols > .g-col
         > .image
@@ -87,29 +96,28 @@
           width: 148px
           margin: 12px auto 0 auto
 
-    > .transparency
-      background: getColor('$tertiary0')
-      display: flex
-      flex-direction: column
-      align-items: center
-      padding-bottom: 32px
+  > .transparency
+    background: getColor('$tertiary0')
+    display: flex
+    flex-direction: column
+    align-items: center
+    padding-bottom: 32px
+
+    > .g-grid
 
       > .button
-        margin-top: 24px
+        width: 220px
+        margin: 24px auto 0 auto
 
-    > .clear
-      clear: both
+  a
+    font-weight: 500
 
-    a
-      font-weight: 500
-
-    > .disclaimer
-      font-caption2()
-      margin: 12px 0
-      text-align: center
+  > .disclaimer
+    font-caption2()
+    margin: 12px 0
+    text-align: center
 
 
   @media (min-width: $breakPointMedium)
-    > .g-grid
-      > .mission
-        background-position: center
+    > .mission
+      background-position: center

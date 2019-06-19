@@ -313,7 +313,10 @@ module.exports = class Map
           e.originalEvent.stopPropagation()
           @onclick e
       else
-        @map.on 'click', =>
+        @map.on 'click', (e) =>
+
+          features = @map.queryRenderedFeatures(e.point)
+          console.log features
           @place.next null
 
         console.log 'listen ctx'

@@ -3,6 +3,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 
+BasePage = require '../base'
 # AppBar = require '../../components/app_bar'
 # ButtonMenu = require '../../components/button_menu'
 Profile = require '../../components/profile'
@@ -12,11 +13,11 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-module.exports = class ProfilePage
+module.exports = class ProfilePage extends BasePage
   @hasBottomBar: true
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
-    user = requests.switchMap ({route}) =>
+    user = @clearOnUnmount requests.switchMap ({route}) =>
       if route.params.username
         @model.user.getByUsername route.params.username, {embed: ['data']}
       else if route.params.id

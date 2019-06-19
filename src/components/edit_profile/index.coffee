@@ -4,8 +4,9 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Avatar = require '../avatar'
 Icon = require '../icon'
-EditProfileGeneral = require '../edit_profile_general'
 EditProfileAbout = require '../edit_profile_about'
+EditProfileGeneral = require '../edit_profile_general'
+EditProfileSettings = require '../edit_profile_settings'
 UploadOverlay = require '../upload_overlay'
 Tabs = require '../tabs'
 Icon = require '../icon'
@@ -70,10 +71,13 @@ module.exports = class EditProfile
 
     @resetValueStreams()
 
+    @$editProfileAbout = new EditProfileAbout {
+      @model, @router, @fields
+    }
     @$editProfileGeneral = new EditProfileGeneral {
       @model, @router, @fields
     }
-    @$editProfileAbout = new EditProfileAbout {
+    @$editProfileSettings = new EditProfileSettings {
       @model, @router, @fields
     }
 
@@ -251,6 +255,6 @@ module.exports = class EditProfile
           }
           # {
           #   $menuText: @model.l.get 'general.settings'
-          #   $el: z @$usersNearby
+          #   $el: z @$editProfileSettings
           # }
         ]

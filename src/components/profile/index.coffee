@@ -90,6 +90,8 @@ module.exports = class Profile extends Base
     }
 
     friends = user.switchMap (user) =>
+      unless user
+        return RxObservable.of null
       @model.connection.getAllByUserIdAndType user.id, 'friend'
       .map (connections) ->
         _map connections, (connection) -> connection?.other
@@ -141,7 +143,7 @@ module.exports = class Profile extends Base
       prefix, {size: 'large', cacheBust}
     )
 
-  afterMount: =>
+  afterMount: (@$$el) =>
     super
     # FIXME: figure out why i can't use take(1) here...
     # returns null for some. probably has to do with the unloading we do in
@@ -150,6 +152,7 @@ module.exports = class Profile extends Base
       @fadeInWhenLoaded @getCoverUrl(pastTrip)
 
   beforeUnmount: =>
+    @$$el?.scrollTop = 0
     super
     @disposable?.unsubscribe()
 
@@ -166,6 +169,9 @@ module.exports = class Profile extends Base
 
     z '.z-profile', {
       className: z.classKebab {@isImageLoaded}
+      # causes unmount when switching between users' profiles
+      # (which we want to happen)
+      key: window?.location.pathname
     },
       z '.header',
         z '.cover', {

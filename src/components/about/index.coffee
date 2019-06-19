@@ -29,8 +29,8 @@ module.exports = class About
     {windowSize} = @state.getValue()
 
     z '.z-about',
-      z '.g-grid',
-        z '.mission',
+      z '.mission',
+        z '.g-grid',
           z 'h1.title', @model.l.get 'about.missionTitle'
           z '.text', @model.l.get 'about.mission'
           # z '.button',
@@ -38,7 +38,8 @@ module.exports = class About
           #     text: @model.l.get 'general.learnMore'
           #     isOutline: true
 
-        z '.meet',
+      z '.meet',
+        z '.g-grid',
           z 'h1.title', @model.l.get 'about.meetTitle'
           z '.g-grid',
             z '.g-cols',
@@ -53,7 +54,8 @@ module.exports = class About
                 z '.text',
                   @model.l.get 'about.meetRachelText'
 
-        z '.help',
+      z '.help',
+        z '.g-grid',
           z 'h1.title', @model.l.get 'about.helpTitle'
           z '.text', @model.l.get 'about.help'
           z '.g-grid',
@@ -66,7 +68,11 @@ module.exports = class About
                   z @$shareButton,
                     text: @model.l.get 'about.helpShareButton'
                     onclick: =>
-                      null
+                      @model.portal.call 'share.any', {
+                        text: 'FreeRoam'
+                        path: ''
+                        url: "https://#{config.HOST}"
+                      }
                     colors:
                       c200: colors.$green200
                       c500: colors.$green500
@@ -81,12 +87,12 @@ module.exports = class About
                   z @$reviewButton,
                     text: @model.l.get 'about.helpReviewButton'
                     onclick: =>
-                      null
+                      @router.go 'home'
                     colors:
-                      c200: colors.$blue200
-                      c500: colors.$blue500
-                      c600: colors.$blue600
-                      c700: colors.$blue700
+                      c200: colors.$skyBlue200
+                      c500: colors.$skyBlue500
+                      c600: colors.$skyBlue600
+                      c700: colors.$skyBlue700
                       ink: colors.$white
               z '.g-col.g-xs-12.g-md-4',
                 z '.image.feedback'
@@ -96,7 +102,9 @@ module.exports = class About
                   z @$feedbackButton,
                     text: @model.l.get 'about.helpFeedbackButton'
                     onclick: =>
-                      null
+                      @router.go 'groupChat', {
+                        groupId: 'boondocking'
+                      }
                     colors:
                       c200: colors.$yellow200
                       c500: colors.$yellow500
@@ -104,7 +112,8 @@ module.exports = class About
                       c700: colors.$yellow700
                       ink: colors.$white
 
-        z '.transparency',
+      z '.transparency',
+        z '.g-grid',
           z 'h1.title', @model.l.get 'about.transparencyTitle'
           z '.text',
             @model.l.get 'about.transparency1'
@@ -118,11 +127,13 @@ module.exports = class About
             z @$irsButton,
               text: @model.l.get 'about.irsDetermination'
               isOutline: true
-              isFullWidth: false
+              # isFullWidth: false
               onclick: =>
                 @router.openLink(
                   'https://fdn.uno/d/documents/irs-determination.pdf'
                 )
 
-        # z 'p.disclaimer', @model.l.get 'about.amazon'
-        z '.disclaimer', @model.l.get 'about.opencellid'
+      # z 'p.disclaimer', @model.l.get 'about.amazon'
+      z '.disclaimer',
+        z '.g-grid',
+          @model.l.get 'about.opencellid'

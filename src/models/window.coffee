@@ -1,7 +1,8 @@
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 require 'rxjs/add/operator/map'
-id = require 'uuid'
 _forEach = require 'lodash/forEach'
+if window?
+  uuid = require 'uuid'
 
 DRAWER_RIGHT_PADDING = 56
 DRAWER_MAX_WIDTH = 336
@@ -135,7 +136,7 @@ module.exports = class Window
       fn()
 
   onResume: (fn) =>
-    id = id.v4()
+    id = uuid.v4()
     @resumeFns[id] = fn
     unsubscribe: =>
       delete @resumeFns[id]

@@ -300,7 +300,7 @@ module.exports = class ProfileDialog
         icon: 'profile'
         $icon: @$profileIcon
         text: @model.l.get 'general.profile'
-        # isVisible: not isMe
+        isVisible: true
         onclick: =>
           if user?.username
             @router.go 'profile', {username: user?.username}
@@ -381,6 +381,7 @@ module.exports = class ProfileDialog
         }
       {
         icon: 'warning'
+        isVisible: not isMe
         $icon: @$flagIcon
         text: if isFlagged \
               then @model.l.get 'profileDialog.isFlagged'
@@ -396,6 +397,9 @@ module.exports = class ProfileDialog
   renderItem: (options) =>
     {icon, $icon, $chevronIcon, text, onclick,
       children, isVisible} = options
+
+    unless isVisible
+      return
 
     {expandedItems} = @state.getValue()
 

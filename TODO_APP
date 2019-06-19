@@ -1,5 +1,13 @@
 TODOS:
 
+- Sometimes satellite doesn't show when it should
+- Get local owner for BLM/USFS maps
+
+- Because Android splash screen launches to splash activity, clicking on the app icon on home page reloads the entire app instead of opening existing session
+- 89beaver the main chat doesn't show new messages when opening app from notification
+  - Should have exoid invalidate a re-fetch stream when reopening app? In case socket stops accepting messages?
+  - Seems to work for him now. So maybe just not properly reconnecting to socket.io after networking issues
+
 x fire
   x delete all fires before resyncing
   x fix existing fill (states)

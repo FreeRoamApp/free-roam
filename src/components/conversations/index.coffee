@@ -36,18 +36,27 @@ module.exports = class Conversations
       conversations: conversationsAndBlockedUserIdsAndMe
       .map ([conversations, blockedUserIds, me]) =>
         if _isEmpty conversations
+          # 0-7 go to austin, 89abcdef to rachel. ALSO in back-roads
+          devUsername = if me?.id.substr(-1) > '7' then 'rachel' else 'austin'
           welcomeConversation = {
             id: 'welcome'
             lastMessage:
               body:
-                @model.l.get 'conversations.welcome'
+                @model.l.get "conversations.welcome#{devUsername}"
             lastUpdateTime: Date.now()
             users: [
-              {
-                username: 'austin'
-                avatarImage:
-                  prefix: 'uav/4120c690-aa76-11e8-a3bd-4a64b58f0b6a_d5208ce0-d988-11e8-9184-55468ca0fad7'
-              }
+              if devUsername is 'rachel'
+                {
+                  username: 'rachel'
+                  avatarImage:
+                    prefix: 'uav/4edd8280-b770-11e8-af80-50a0d22170d8_58738740-6f94-11e9-bdc2-e257e314293d'
+                }
+              else
+                {
+                  username: 'austin'
+                  avatarImage:
+                    prefix: 'uav/4120c690-aa76-11e8-a3bd-4a64b58f0b6a_af9fa160-82fa-11e9-8112-44058eac982e'
+                }
             ]
           }
           conversations = [welcomeConversation]
