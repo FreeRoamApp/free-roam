@@ -2,6 +2,7 @@ _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _groupBy = require 'lodash/groupBy'
 _some = require 'lodash/some'
+_startCase = require 'lodash/startCase'
 _uniq = require 'lodash/uniq'
 
 Environment = require './environment'
@@ -344,6 +345,26 @@ class MapService
           metadata:
             zIndex: 2
         insertBeneathLabels: true
+        onclick: (e, properties) ->
+          area = if properties.Loc_Nm \
+                 then _startCase properties.Loc_Nm.toLowerCase()
+                 else model.l.get 'general.unknown'
+          access = if properties.Access \
+                   then model.l.get "placeTooltip.pla.#{properties.Access}"
+                   else model.l.get 'general.unknown'
+          place.next {
+            type: 'pad'
+            location:
+              lon: e.lngLat.lng
+              lat: e.lngLat.lat
+            name: 'BLM'
+            description: """
+Office: #{area}
+
+Access: #{access}
+            """
+          }
+          placePosition.next e.point
       }
 
       {
@@ -364,6 +385,26 @@ class MapService
           metadata:
             zIndex: 2
         insertBeneathLabels: true
+        onclick: (e, properties) ->
+          area = if properties.Loc_Nm \
+                 then _startCase properties.Loc_Nm.toLowerCase()
+                 else model.l.get 'general.unknown'
+          access = if properties.Access \
+                   then model.l.get "placeTooltip.pla.#{properties.Access}"
+                   else model.l.get 'general.unknown'
+          place.next {
+            type: 'pad'
+            location:
+              lon: e.lngLat.lng
+              lat: e.lngLat.lat
+            name: 'USFS'
+            description: """
+Forest: #{area}
+
+Access: #{access}
+            """
+          }
+          placePosition.next e.point
       }
 
       {

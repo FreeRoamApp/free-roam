@@ -21,7 +21,7 @@ module.exports = class Attachments
       me: @model.user.getMe()
       more: more
       attachments: attachments.map (attachments) ->
-        if limit
+        if limit and attachments
           attachments.slice 0, limit
         else
           attachments

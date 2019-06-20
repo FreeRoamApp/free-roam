@@ -17,3 +17,6 @@ module.exports = class Geocoder
 
   getElevationFromLocation: (location) ->
     @auth.stream "#{@namespace}.getElevationFromLocation", {location}
+
+  getFeaturesFromLocation: (location) ->
+    @auth.stream "#{@namespace}.getFeaturesFromLocation", {location}

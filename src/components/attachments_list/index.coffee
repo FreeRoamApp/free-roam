@@ -20,7 +20,7 @@ module.exports = class AttachmentsList
       contentWidth: null
       more: more
       attachments: attachments.map (attachments) ->
-        if limit
+        if limit and attachments
           attachments.slice 0, limit
         else
           attachments

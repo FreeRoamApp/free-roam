@@ -4,6 +4,7 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
 Icon = require '../icon'
+FormattedText = require '../formatted_text'
 Rating = require '../rating'
 MapTooltip = require '../map_tooltip'
 MapService = require '../../services/map'
@@ -27,6 +28,14 @@ module.exports = class PlaceTooltip extends MapTooltip
       @place
       @mapSize
       @size
+      $description: new FormattedText {
+        text: @place.map (place) -> place?.description
+      }
+      features: @place.switchMap (place) =>
+        if place?.type is 'pad'
+          @model.geocoder.getFeaturesFromLocation place.location
+        else
+          RxObservable.of false
       elevation: @place.switchMap (place) =>
         if place?.type is 'coordinate'
           @model.geocoder.getElevationFromLocation place.location
@@ -61,7 +70,8 @@ module.exports = class PlaceTooltip extends MapTooltip
       @state.set isSaving: false, isSaved: true
 
   render: ({isVisible} = {}) =>
-    {place, mapSize, size, isSaving, isSaved, elevation} = @state.getValue()
+    {place, $description, mapSize, size, isSaving,
+      isSaved, features, elevation} = @state.getValue()
 
     isVisible ?= Boolean place and Boolean size.width
 
@@ -115,7 +125,12 @@ module.exports = class PlaceTooltip extends MapTooltip
           z '.elevation',
             @model.l.get 'placeTooltip.elevation', {replacements: {elevation}}
         if place?.description
-          z '.description', place?.description
+          z '.description',
+            $description
+        if features
+          z '.features',
+            # TODO: lang
+            'Subregion: ' + features?[0]?.Unit_Nm
         if place?.type is 'coordinate'
           z '.actions',
             z '.action', {
@@ -160,6 +175,6 @@ module.exports = class PlaceTooltip extends MapTooltip
                 else if isSaved then @model.l.get 'general.saved'
                 else @model.l.get 'general.save'
 
-        else if place?.type and place?.type isnt 'hazard'
+        else if place?.type and not place?.type in ['hazard', 'pad']
           z '.rating',
             z @$rating

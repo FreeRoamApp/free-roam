@@ -1,4 +1,5 @@
 z = require 'zorium'
+RxObservable = require('rxjs/Observable').Observable
 
 PrimaryButton = require '../primary_button'
 colors = require '../../colors'

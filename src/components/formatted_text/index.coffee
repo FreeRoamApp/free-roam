@@ -46,22 +46,22 @@ module.exports = class FormattedText
       isExpanded: false
 
   get$: ({text, model, state}) =>
-    isSticker = text?.match /^:[a-z_\^0-9]+:$/
-
-    stickers = _uniq text?.match /:[a-z_\^0-9]+:/g
-    text = _reduce stickers, (newText, find) ->
-      stickerText = find.replace /:/g, ''
-      parts = stickerText.split '^'
-      sticker = parts[0]
-      level = parts[1] or 1
-      findRegex = new RegExp find.replace('^', '\\^'), 'g'
-      stickerDir = sticker?.split('_')[0]
-      newText.replace(
-        findRegex
-        "![sticker](#{config.CDN_URL}/stickers/#{stickerDir}/" +
-          "#{sticker}_#{level}_tiny.png)"
-      )
-    , text
+    # isSticker = text?.match /^:[a-z_\^0-9]+:$/
+    #
+    # stickers = _uniq text?.match /:[a-z_\^0-9]+:/g
+    # text = _reduce stickers, (newText, find) ->
+    #   stickerText = find.replace /:/g, ''
+    #   parts = stickerText.split '^'
+    #   sticker = parts[0]
+    #   level = parts[1] or 1
+    #   findRegex = new RegExp find.replace('^', '\\^'), 'g'
+    #   stickerDir = sticker?.split('_')[0]
+    #   newText.replace(
+    #     findRegex
+    #     "![sticker](#{config.CDN_URL}/stickers/#{stickerDir}/" +
+    #       "#{sticker}_#{level}_tiny.png)"
+    #   )
+    # , text
 
     mentions = text?.match config.MENTION_REGEX
     text = _reduce mentions, (newText, find) ->

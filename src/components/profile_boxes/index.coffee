@@ -19,6 +19,8 @@ module.exports = class ProfileActions
       hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
       pastTrip: @pastTrip.map (pastTrip) -> pastTrip or false
       reviewCount: user.switchMap (user) =>
+        unless user
+          return RxObservable.of null
         @model.placeReview.getCountByUserId user.id
       futureTrip: user.switchMap (user) =>
         if user

@@ -2,9 +2,10 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _map = require 'lodash/map'
-_find = require 'lodash/find'
+_filter = require 'lodash/filter'
 _flatten = require 'lodash/flatten'
 _forEach = require 'lodash/forEach'
+_orderBy = require 'lodash/orderBy'
 
 tile = require './tilejson'
 Spinner = require '../spinner'
@@ -73,8 +74,14 @@ module.exports = class Map
           unless e.originalEvent.isPropagationStopped
             e.originalEvent.stopPropagation()
             features = @map.queryRenderedFeatures(e.point)
-            feature = _find features, ({properties}) -> properties?.name
-            onclick e, feature?.properties
+            # console.log JSON.stringify _map(features, 'properties'), null, '\t'
+            features = _filter features, ({layer}) -> layer?.id in [
+              'fire-weather', 'us-blm', 'us-usfs'
+            ]
+            features = _orderBy features, ({layer}) ->
+              if layer?.id is 'fire-weather' then 0 else 1
+            if features?[0]?.layer?.id is layer.id
+              onclick e, features[0].properties
 
 
   removeLayerById: (id) =>
@@ -316,7 +323,6 @@ module.exports = class Map
         @map.on 'click', (e) =>
 
           features = @map.queryRenderedFeatures(e.point)
-          console.log features
           @place.next null
 
         console.log 'listen ctx'
