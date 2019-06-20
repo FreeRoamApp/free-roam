@@ -1,6 +1,8 @@
 TODOS:
 
 - Sometimes satellite doesn't show when it should
+  - Think it happens when map (loads fine first time) -> unmount map -> back to map
+  - Need to have it add the saved layers afterMount instead
 - Get local owner for BLM/USFS maps
 
 - Because Android splash screen launches to splash activity, clicking on the app icon on home page reloads the entire app instead of opening existing session

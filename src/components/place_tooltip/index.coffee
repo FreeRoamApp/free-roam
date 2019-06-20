@@ -127,7 +127,7 @@ module.exports = class PlaceTooltip extends MapTooltip
         if place?.description
           z '.description',
             $description
-        if features
+        if features?[0]?.Unit_Nm
           z '.features',
             # TODO: lang
             'Subregion: ' + features?[0]?.Unit_Nm

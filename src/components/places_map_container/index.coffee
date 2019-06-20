@@ -128,8 +128,6 @@ module.exports = class PlacesMapContainer
       optionalLayer = _find @optionalLayers, (optionalLayer) ->
         optionalLayer.layer.id is layerId
 
-    console.log initialLayers
-
     @$map = new Map {
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds

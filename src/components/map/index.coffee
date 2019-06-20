@@ -3,6 +3,7 @@ RxObservable = require('rxjs/Observable').Observable
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
+_findIndex = require 'lodash/findIndex'
 _flatten = require 'lodash/flatten'
 _forEach = require 'lodash/forEach'
 _orderBy = require 'lodash/orderBy'
@@ -32,6 +33,7 @@ module.exports = class Map
     @initialZoom ?= 4
     @initialCenter ?= [-105.894, 40.048]
 
+    @savedLayers = @initialLayers or []
     @layers = []
     @$spinner = new Spinner()
 
@@ -60,13 +62,13 @@ module.exports = class Map
   addLayer: (optionalLayer) =>
     {layer, source, sourceId, insertBeneathLabels, onclick} = optionalLayer
 
-    if @layers.indexOf(layer.id) is -1
-      @layers.push layer.id
+    if @getLayerIndexById(layer.id) is -1
+      @layers.push optionalLayer
       layerId = if insertBeneathLabels then @getBeforeLayer(layer.metadata?.zIndex) else undefined
       try
         @map.addSource sourceId or layer.id, source
       catch err
-        console.log 'source exists', err
+        console.log 'source exists...', err
       @map.addLayer layer, layerId
 
       if onclick
@@ -83,9 +85,11 @@ module.exports = class Map
             if features?[0]?.layer?.id is layer.id
               onclick e, features[0].properties
 
+  getLayerIndexById: (id) ->
+    _findIndex(@layers, ({layer}) -> layer.id is id)
 
   removeLayerById: (id) =>
-    index = @layers.indexOf(id)
+    index = @getLayerIndexById id
     if index isnt -1
       @layers.splice index, 1
     layer = @map.getLayer id
@@ -94,7 +98,7 @@ module.exports = class Map
     # @map.removeSource source
 
   toggleLayer: (layer) =>
-    if @layers.indexOf(layer.layer.id) is -1
+    if @getLayerIndexById(layer.layer.id) is -1
       @addLayer layer
     else
       @removeLayerById layer.layer.id
@@ -270,7 +274,7 @@ module.exports = class Map
 
         @addPlacesLayer()
 
-        @addInitialLayers()
+        @addSavedLayers()
 
         @updateMapLocation()
         if @mapBoundsStreams
@@ -398,6 +402,8 @@ module.exports = class Map
     @centerDisposable?.unsubscribe()
     @zoomDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
+    @savedLayers = @layers
+    @layers = []
     @map?.remove()
     @map = null
 
@@ -406,8 +412,8 @@ module.exports = class Map
       if layer.type is 'symbol'
         @map.removeLayer layer.id
 
-  addInitialLayers: =>
-    _map @initialLayers, @addLayer
+  addSavedLayers: =>
+    _map @savedLayers, @addLayer
 
   subscribeToResize: =>
     @resizeSubscription = @model.window.getSize().subscribe =>

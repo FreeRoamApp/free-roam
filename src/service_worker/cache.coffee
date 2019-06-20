@@ -26,7 +26,7 @@ module.exports = class Cache
         ]
       }
       sprites: {
-        version: 2 # bump when changing
+        version: 3 # bump when changing
         files: [
           'https://fdn.uno/d/images/maps/sprite_2019_06_14.json'
           'https://fdn.uno/d/images/maps/sprite_2019_06_14.png'
@@ -35,7 +35,7 @@ module.exports = class Cache
         ]
       }
       mapbox: {
-        version: 2 # bump when changing
+        version: 3 # bump when changing
         files: [
           "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.0.0.css"
           "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.0.0.js"
