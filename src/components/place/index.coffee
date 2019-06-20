@@ -87,7 +87,6 @@ module.exports = class Place
             isPrimary: true
             icon: 'add'
             onclick: =>
-              console.log 'click', @newReviewPath
               @router.go @newReviewPath, {
                 slug: place.slug
               }, {ignoreHistory: true}
