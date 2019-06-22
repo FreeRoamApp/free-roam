@@ -152,6 +152,14 @@ module.exports = class NavDrawer
             iconName: 'star'
           }
           {
+            path: @router.get 'roamWithCare'
+            title: @model.l.get 'drawer.roamWithCare'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'heart'
+            color: colors.$red500
+          }
+          {
             path: @router.get 'about'
             title: @model.l.get 'drawer.about'
             $icon: new Icon()
@@ -400,7 +408,8 @@ module.exports = class NavDrawer
                     ]
                   _map menuItems, (menuItem) =>
                     {path, onclick, title, $icon, $chevronIcon, $ripple, isNew,
-                      iconName, isDivider, children, expandOnClick} = menuItem
+                      iconName, isDivider, children, expandOnClick
+                      color} = menuItem
 
                     hasChildren = not _isEmpty children
 
@@ -425,6 +434,9 @@ module.exports = class NavDrawer
                     },
                       z 'a.menu-item-link', {
                         href: path
+                        style:
+                          if color
+                            color: color
                         onclick: (e) =>
                           e.preventDefault()
                           if expandOnClick
@@ -439,7 +451,7 @@ module.exports = class NavDrawer
                           z $icon,
                             isTouchTarget: false
                             icon: iconName
-                            color: colors.$primary500
+                            color: color or colors.$primary500
                         title
                         z '.notification', {
                           className: z.classKebab {

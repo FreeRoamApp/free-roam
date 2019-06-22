@@ -231,8 +231,6 @@ colors = _defaults {
   '$bgText70': 'var(--bg-text-70)'
   '$bgText87': 'var(--bg-text-87)'
 
-  '$orange500': '#ff7b45'
-
   '$salmon500': '#f3a37e'
   '$salmon500Text': '#ffffff'
 
@@ -257,6 +255,9 @@ colors = _defaults {
   '$green800': '#63A57C'
   '$green900': '#50976B'
 
+  '$orange50': '#ffedd3'
+  '$orange500': '#ff7b45'
+
   '$yellow50': '#ffecbd'
   '$yellow100': '#FEEDC2'
   '$yellow200': '#FDE19A'
@@ -268,7 +269,8 @@ colors = _defaults {
   '$yellow800': '#F8AE22'
   '$yellow900': '#F6A116'
 
-  '$red500': '#e98383'
+  '$red300': '#e98383'
+  '$red500': '#f61111'
 
   '$skyBlue50': '#E6F8FD'
   '$skyBlue100': '#C1EDF9'

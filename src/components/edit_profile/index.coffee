@@ -20,7 +20,7 @@ if window?
 B_IN_MB = 1024 * 1024
 
 module.exports = class EditProfile
-  constructor: ({@model, @router, group}) ->
+  constructor: ({@model, @router, group, passwordReset}) ->
     @me = @model.user.getMe()
     @meData = @model.userData.getByMe()
 
@@ -75,7 +75,7 @@ module.exports = class EditProfile
       @model, @router, @fields
     }
     @$editProfileGeneral = new EditProfileGeneral {
-      @model, @router, @fields
+      @model, @router, @fields, passwordReset
     }
     @$editProfileSettings = new EditProfileSettings {
       @model, @router, @fields
@@ -112,6 +112,7 @@ module.exports = class EditProfile
 
       newPassword: @fields.newPassword.valueSubject
       currentPassword: @fields.currentPassword.valueSubject
+      passwordReset: passwordReset
 
   resetValueStreams: =>
     @fields.username.valueStreams.next @me.map (me) ->
@@ -149,7 +150,7 @@ module.exports = class EditProfile
 
   save: =>
     {avatarImage, username, name, instagram, web, youtube, facebook
-       newPassword, currentPassword, me, isSaving, group
+       newPassword, currentPassword, passwordReset, me, isSaving, group
       bio, occupation, home, startTime} = @state.getValue()
 
     if isSaving
@@ -177,6 +178,8 @@ module.exports = class EditProfile
       if newPassword
         userDiff.password = newPassword
         userDiff.currentPassword = currentPassword
+        if passwordReset
+          userDiff.passwordReset = passwordReset
 
       if startTime
         startTime = DateService.getLocalDateFromStr startTime
@@ -192,7 +195,10 @@ module.exports = class EditProfile
           isSaving: false
           isSaved: true
 
-        @router.go 'profileMe'
+        # profile fetch fails after changing password w/o setTimeout
+        setTimeout =>
+          @router.go 'profileMe'
+        , 100
 
       .catch (err) =>
         error = try

@@ -33,6 +33,7 @@ module.exports = class PlaceInfo extends Base
       {key: 'fall', text: @model.l.get 'seasons.fall'}
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
+    @$warningIcon = new Icon()
     @$actionBox = new ActionBox {@model, @router, @place}
     @$contact = new Contact {@model, @router, @place}
     @$placeInfoWeather = new Weather {@model, @router, @place}
@@ -140,6 +141,15 @@ module.exports = class PlaceInfo extends Base
             }
       else
         z '.no-cover' # we want a div here so vdom doesn't move everything else
+      if place?.forecast?.fireWeather
+        z '.warning',
+          z '.g-grid',
+            z '.icon',
+              z @$warningIcon,
+                icon: 'warning'
+                isTouchTarget: false
+                color: colors.$red500Text
+            z '.text', @model.l.get 'placeInfo.fireWarning'
       z '.g-grid',
         z '.top-info',
           z '.left',
@@ -175,7 +185,7 @@ module.exports = class PlaceInfo extends Base
               cancel:
                 text: @model.l.get 'general.readMore'
                 onclick: =>
-                  @router.go 'preservation'
+                  @router.go 'roamWithCare'
               submit:
                 text: @model.l.get 'general.gotIt'
                 onclick: =>

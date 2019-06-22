@@ -300,7 +300,7 @@ module.exports = class App
       'placesWithLocation', 'placesWithLocationAndType'
       'placesWithLocationAndTypeAndSubType'
     ], 'PlacesPage'
-    route 'preservation', 'PreservationPage'
+    route ['preservation', 'roamWithCare'], 'PreservationPage'
     route 'product', 'ProductPage'
     route 'productGuides', 'ProductGuidesPage'
     route ['profile', 'profileMe', 'profileById'], 'ProfilePage'

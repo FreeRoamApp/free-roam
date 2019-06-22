@@ -13,25 +13,38 @@ module.exports = class Preservation
     {} = @state.getValue()
 
     z '.z-preservation',
-      z '.g-grid',
-        # z '.h1.title', @model.l.get 'preservation.title'
-        z 'p', @model.l.get 'preservation.text1'
-        z 'ul',
-          z 'li', @model.l.get 'preservation.text1a'
-          z 'li', @model.l.get 'preservation.text1b'
-          z 'li', @model.l.get 'preservation.text1c'
-
-        z 'p', @model.l.get 'preservation.text2'
-        z 'ul',
-          z 'li',
-            @router.link z 'a', {
-              href: 'https://lnt.org/learn/7-principles'
-            }, 'Leave No Trace'
-          z 'li',
-            @router.link z 'a', {
-              href: 'https://roadslesstraveled.us/boondocking/'
-            }, 'Roads Less Traveled'
-          z 'li',
-            @router.link z 'a', {
-              href: 'https://wheelingit.us/2014/01/17/7-tips-on-boondocking-etiquette-rights-wrongs-plain-common-sense/'
-            }, 'Wheeling It'
+      z '.top',
+        z '.g-grid',
+          z 'h1.title', @model.l.get 'preservation.title'
+          z '.description', @model.l.get 'preservation.description'
+      z '.content',
+        z '.lesson',
+          z '.g-grid',
+            z '.icon.pack-out'
+            z '.title', @model.l.get 'preservation.packOutTitle'
+            z '.description', @model.l.get 'preservation.packOut'
+            z 'ul.bullets',
+              z 'li', @model.l.get 'preservation.packOutBullet1'
+              z 'li', @model.l.get 'preservation.packOutBullet2'
+              z 'li', @model.l.get 'preservation.packOutBullet3'
+              z 'li', @model.l.get 'preservation.packOutBullet4'
+        z '.lesson',
+          z '.g-grid',
+            z '.icon.fire-safety'
+            z '.title', @model.l.get 'preservation.fireSafetyTitle'
+            z '.description', @model.l.get 'preservation.fireSafety'
+            z 'ul.bullets',
+              z 'li', @model.l.get 'preservation.fireSafetyBullet1'
+              z 'li', @model.l.get 'preservation.fireSafetyBullet2'
+        z '.lesson',
+          z '.g-grid',
+            z '.icon.trails'
+            z '.title', @model.l.get 'preservation.trailsTitle'
+            z '.description', @model.l.get 'preservation.trails'
+            z 'ul.bullets',
+              z 'li', @model.l.get 'preservation.trailsBullet1'
+        z '.lesson',
+          z '.g-grid',
+            z '.icon.stay-limit'
+            z '.title', @model.l.get 'preservation.stayLimitTitle'
+            z '.description', @model.l.get 'preservation.stayLimit'

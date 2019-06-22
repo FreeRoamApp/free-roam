@@ -1,17 +1,74 @@
 @require '../../vars'
 
 .z-preservation
-  padding: 0 16px 16px 16px
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
 
-  > .g-grid
+  > .top
+    padding: 0 16px 32px 16px
+    text-align: center
 
-    > .title
-      font-display1()
-      // text-align: center
-      margin: 16px 0
+    > .g-grid
 
-    a
-      font-weight: 500
+      > .title
+        font-display1()
+        margin: 32px 0
+
+      > .description
+        font-title()
+
+  > .content
+    background-color: getColor('$orange50')
+    padding: 16px 16px 32px 16px
+    position: relative
+
+    &:after
+      content: ''
+      position: absolute
+      top: 0
+      left: 50%
+      margin-left: -20px
+      width: 0
+      height: 0
+      border-left: 20px solid transparent
+      border-right: 20px solid transparent
+      border-top: 20px solid getColor('$tertiary100')
+
+    > .lesson
+      margin-top: 40px
+
+      > .g-grid
+
+        > .icon
+          width: 50px
+          height: 50px
+          background-size: 100%
+
+          &.pack-out
+            background-image: url($cdnUrl + '/roam_with_care/apple_icon.svg')
+            margin: 0 auto
+
+          &.fire-safety
+            background-image: url($cdnUrl + '/roam_with_care/fire_icon.svg')
+            margin: 0 auto
+
+          &.trails
+            background-image: url($cdnUrl + '/roam_with_care/plant_icon.svg')
+            margin: 0 auto
+
+          &.stay-limit
+            background-image: url($cdnUrl + '/roam_with_care/date_icon.svg')
+            margin: 0 auto
+
+        > .title
+          font-h1()
+          margin: 16px 0 12px 0
+          text-align: center
+
+        > .bullets
+          text-align: left
+
+          li
+            list-style-type: circle
+            margin-top: 8px

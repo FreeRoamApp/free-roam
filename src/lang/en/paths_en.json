@@ -77,6 +77,7 @@
   "preservation": "/respect-the-land",
   "productGuides": "/product-guides",
   "product": "/product/:slug",
+
   "profile": "/user/:username",
   "profileById": "/user/id/:id",
   "profileMe": "/profile",
@@ -87,6 +88,7 @@
   "profileReviews": "/user/:username/reviews",
   "profileReviewsById": "/user/id/:id/reviews",
 
+  "roamWithCare": "/roam-with-care",
   "settings": "/settings",
   "social": "/social",
   "shell": "/shell",

@@ -98,7 +98,7 @@ module.exports = class Profile extends Base
     @$friendsList = new UserList {
       @model, @router
       users: friends.map (friends) ->
-        friends.slice 0, 4
+        friends?.slice 0, 4
     }
 
     @$shareMapDialog = new ShareMapDialog {

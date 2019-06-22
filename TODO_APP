@@ -3,7 +3,18 @@ TODOS:
 - Sometimes satellite doesn't show when it should
   - Think it happens when map (loads fine first time) -> unmount map -> back to map
   - Need to have it add the saved layers afterMount instead
+
+- Images don't show on Android
+  - Happens when Chrome is updated (sometimes?)
+    - Think it happens more if there's a new service worker available when opening new chrome version at same time
+
+
 - Get local owner for BLM/USFS maps
+
+- Validate youtube, etc... urls
+- If someone goes to broken url in app, redirect them to homepage (esp. important on ios)
+
+- replace cell-signal-estimate with feature-lookup
 
 - Because Android splash screen launches to splash activity, clicking on the app icon on home page reloads the entire app instead of opening existing session
 - 89beaver the main chat doesn't show new messages when opening app from notification

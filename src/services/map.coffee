@@ -13,6 +13,8 @@ config = require '../config'
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
           'oct', 'nov', 'dec']
 
+console.log 'abcd'
+
 class MapService
   hasLocationPermission: ({model} = {}) ->
     unless navigator?
@@ -83,13 +85,14 @@ class MapService
     onError = =>
       url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
       model.portal.call 'browser.openWindow', {url, target}
-    if Environment.isNativeApp 'freeroam'
-      console.log 'getttt2' # FIXME FIXME: use fn here
-      navigator.geolocation.getCurrentPosition onLocation, onError
-    else
-      console.log 'err'
+    # FIXME takes like a minute to load?
+    # if Environment.isNativeApp 'freeroam'
+    #   console.log 'getttt2' # FIXME FIXME: use fn here
+    #   navigator.geolocation.getCurrentPosition onLocation, onError
+    # else
+    console.log 'err'
       # just use the "my location" version, to avoid popup blocker
-      onError()
+    onError()
 
   getAmenityFilters: ({model}) ->
     [

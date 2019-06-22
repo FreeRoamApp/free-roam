@@ -29,7 +29,7 @@ module.exports = class PlaceReview
     }
 
   openDialog: ({user, review, parent}) =>
-    @model.overlay.open new new ProfileDialog {
+    @model.overlay.open new ProfileDialog {
       @model, @router, user
       onDeleteMessage: =>
         @model[review.type].deleteById review.id

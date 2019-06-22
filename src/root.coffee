@@ -139,7 +139,7 @@ model.l.getLanguage().take(1).subscribe (lang) ->
 # Service workers
 # previously we didn't wait for load event. adding to see if it gets rid of
 # "Failed to register a ServiceWorker: The document is in an invalid state"
-# on some devices
+# on some devices. Might be better anyways so initial load can be quicker?
 ###
 window.addEventListener 'load', ->
   ServiceWorkerService.register {model}

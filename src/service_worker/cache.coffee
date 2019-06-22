@@ -50,6 +50,7 @@ module.exports = class Cache
       cache.addAll files
 
   fetchViaNetwork: (request) =>
+    console.log 'fetch', request
     fetch(request)
     .then (response) =>
       if @isRecording and request.method is 'GET'
@@ -125,6 +126,7 @@ module.exports = class Cache
       .then (response) =>
         response or @fetchViaNetwork event.request
       .catch (err) -> # throws when offline
+        console.log err
         caches.open('recorded') # user-recorded requests for offline mode
         .then (cache) ->
           cache.match event.request

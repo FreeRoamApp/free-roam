@@ -13,9 +13,12 @@ module.exports = class EditProfilePage
   hideDrawer: true
 
   constructor: ({@model, requests, router, serverData, group}) ->
+    passwordReset = requests.map ({req}) ->
+      req.query.passwordReset
+
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, router}
-    @$editProfile = new EditProfile {@model, router, group}
+    @$editProfile = new EditProfile {@model, router, group, passwordReset}
 
     @state = z.state {
       isSaving: false

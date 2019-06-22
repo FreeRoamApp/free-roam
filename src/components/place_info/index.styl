@@ -28,6 +28,20 @@
       background: getColor('$white70')
       color: getColor('$black')
 
+  > .warning
+    font-title()
+    background: getColor('$red500')
+    color: getColor('$red500Text')
+    padding: 8px
+
+    > .g-grid
+      display: flex
+      align-items: center
+
+      > .icon
+        margin-right: 12px
+
+
   &.is-loading
     > .g-grid
       display: none
@@ -91,6 +105,9 @@
 
       > .button
         flex1()
+
+        &:first-child
+          margin-right: 8px
 
     > .masonry
       margin: -4px -16px // account for padding in .section

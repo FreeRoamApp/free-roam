@@ -12,7 +12,7 @@ if window?
   require './index.styl'
 
 module.exports = class EditProfileGeneral
-  constructor: ({@model, @router, @fields}) ->
+  constructor: ({@model, @router, @fields, passwordReset}) ->
     me = @model.user.getMe()
 
     @$logoutButton = new FlatButton()
@@ -45,19 +45,20 @@ module.exports = class EditProfileGeneral
       valueStreams: @fields.facebook.valueStreams
 
     @$newPasswordInput = new PrimaryInput
-      value: @fields.newPassword.value
+      value: @fields.newPassword.valueSubject
       error: @fields.newPassword.errorSubject
 
     @$currentPasswordInput = new PrimaryInput
-      value: @fields.currentPassword.value
+      value: @fields.currentPassword.valueSubject
       error: @fields.currentPassword.errorSubject
 
     @state = z.state
       me: me
-      newPassword: @fields.newPassword.value
+      newPassword: @fields.newPassword.valueSubject
+      passwordReset: passwordReset
 
   render: =>
-    {me, newPassword, isSaving, isSaved} = @state.getValue()
+    {me, newPassword, passwordReset, isSaving, isSaved} = @state.getValue()
 
     z '.z-edit-profile-general',
       z '.g-grid',
@@ -82,15 +83,15 @@ module.exports = class EditProfileGeneral
               type: 'password'
               disableAutoComplete: true
 
-        z @$rigInfo
-
-        if newPassword
+        if newPassword and not passwordReset
           z '.section',
             z '.input',
               z @$currentPasswordInput,
                 hintText: @model.l.get 'editProfile.currentPassword'
                 isFullWidth: false
                 type: 'password'
+
+        z @$rigInfo
 
         z '.title', @model.l.get 'editProfile.socialMedia'
         z '.section',
