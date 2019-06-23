@@ -7,25 +7,29 @@ PushService = require './push'
 class ServiceWorkerService
   register: ({model}) =>
     try
-      navigator.serviceWorker?.register '/service_worker.js'
-      .then (registration) =>
-        PushService.setFirebaseServiceWorker registration
-
-        @hasActiveServiceWorker = Boolean registration.active
-
-        @listenForWaitingServiceWorker registration, (registration) =>
-          @handleUpdate registration, {model}
-      .catch (err) ->
-        window.fetch config.API_URL + '/log',
-          method: 'POST'
-          headers:
-            'Content-Type': 'text/plain' # Avoid CORS preflight
-          body: JSON.stringify
-            event: 'client_error'
-            trace: null # trace
-            error: 'SERVICE WORKER' + String(err)
-
-        console.log 'sw promise err', err
+      navigator.serviceWorker?.getRegistrations()
+      .then (registrations) ->
+        registrations.forEach (registration) ->
+          registration.unregister()
+      # navigator.serviceWorker?.register '/service_worker.js'
+      # .then (registration) =>
+      #   PushService.setFirebaseServiceWorker registration
+      #
+      #   @hasActiveServiceWorker = Boolean registration.active
+      #
+      #   @listenForWaitingServiceWorker registration, (registration) =>
+      #     @handleUpdate registration, {model}
+      # .catch (err) ->
+      #   window.fetch config.API_URL + '/log',
+      #     method: 'POST'
+      #     headers:
+      #       'Content-Type': 'text/plain' # Avoid CORS preflight
+      #     body: JSON.stringify
+      #       event: 'client_error'
+      #       trace: null # trace
+      #       error: 'SERVICE WORKER' + String(err)
+      #
+      #   console.log 'sw promise err', err
     catch err
       console.log 'sw err', err
 

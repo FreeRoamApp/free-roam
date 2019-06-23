@@ -284,9 +284,10 @@ init = ->
   # window.addEventListener 'resize', app.onResize
   # model.portal.call 'orientation.onChange', app.onResize
 
-  PushService.init {model}
   (if Environment.isNativeApp('freeroam')
     PushService.register {model, isAlwaysCalled: true}
+    .then ->
+      PushService.init {model}
   else
     Promise.resolve null)
   .then ->

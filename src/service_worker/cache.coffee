@@ -152,6 +152,7 @@ module.exports = class Cache
   listen: =>
     self.addEventListener 'install', @onInstall
 
-    self.addEventListener 'fetch', @onFetch
+    # FIXME
+    # self.addEventListener 'fetch', @onFetch
 
     self.addEventListener 'activate', @onActivate

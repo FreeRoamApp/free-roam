@@ -7,6 +7,12 @@ TODOS:
 - Images don't show on Android
   - Happens when Chrome is updated (sometimes?)
     - Think it happens more if there's a new service worker available when opening new chrome version at same time
+  - Did Chrome start sharing service workers between chrome and webview?
+    - If so is that causing issues? Is hack fix to have native app use different sw?
+
+- Disable push register on whatever version of chrome rachel's phone has when uninstalled?
+  - Firebase crashes
+  - 06-22 20:35:24.838 23508 23591 E AndroidRuntime: java.lang.IllegalStateException: Default FirebaseApp is not initialized in this process app.freeroam.main. Make sure to call FirebaseApp.initializeApp(Context) first.
 
 - Clear app storage data, reopen and sometimes map only fills small portion of screen
 

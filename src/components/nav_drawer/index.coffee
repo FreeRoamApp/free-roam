@@ -195,7 +195,8 @@ module.exports = class NavDrawer
           #     $ripple: new Ripple()
           #     iconName: 'edit'
           #   }
-          if navigator?.serviceWorker
+          # FIXME FIXME
+          if false and navigator?.serviceWorker
             {
               path: @router.get 'settings'
               title: @model.l.get 'settingsPage.title'
