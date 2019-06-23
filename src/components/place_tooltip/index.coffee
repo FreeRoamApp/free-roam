@@ -175,6 +175,6 @@ module.exports = class PlaceTooltip extends MapTooltip
                 else if isSaved then @model.l.get 'general.saved'
                 else @model.l.get 'general.save'
 
-        else if place?.type and not place?.type in ['hazard', 'pad']
+        else if place?.type and not (place?.type in ['hazard', 'pad'])
           z '.rating',
             z @$rating

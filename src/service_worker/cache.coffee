@@ -126,10 +126,13 @@ module.exports = class Cache
       .then (response) =>
         response or @fetchViaNetwork event.request
       .catch (err) -> # throws when offline
-        console.log err
-        caches.open('recorded') # user-recorded requests for offline mode
+        console.log 'fetch err.....', err
+        return caches.open('recorded') # user-recorded requests for offline mode
         .then (cache) ->
-          cache.match event.request
+          recordedCache = cache.match event.request
+          unless recordedCache
+            throw err
+          recordedCache
     )
 
   onActivate: (event) =>

@@ -13,8 +13,6 @@ config = require '../config'
 MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
           'oct', 'nov', 'dec']
 
-console.log 'abcd'
-
 class MapService
   hasLocationPermission: ({model} = {}) ->
     unless navigator?

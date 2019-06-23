@@ -8,6 +8,7 @@ TODOS:
   - Happens when Chrome is updated (sometimes?)
     - Think it happens more if there's a new service worker available when opening new chrome version at same time
 
+- Clear app storage data, reopen and sometimes map only fills small portion of screen
 
 - Get local owner for BLM/USFS maps
 
