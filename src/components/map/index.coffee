@@ -416,13 +416,20 @@ module.exports = class Map
     _map @savedLayers, @addLayer
 
   subscribeToResize: =>
-    @resizeSubscription = @model.window.getSize().subscribe =>
-      setTimeout =>
-        @map?.resize()
-        @mapSize?.next {
-          width: @$$mapEl.offsetWidth, height: @$$mapEl.offsetHeight
-        }
-      , 0
+    setTimeout =>
+      checkIsReady = =>
+        if @$$mapEl and @$$mapEl.offsetWidth
+          @resizeSubscription = @model.window.getSize().subscribe =>
+            setTimeout =>
+              @map?.resize()
+              @mapSize?.next {
+                width: @$$mapEl.offsetWidth, height: @$$mapEl.offsetHeight
+              }
+            , 0
+        else
+          setTimeout checkIsReady, 100
+      checkIsReady()
+    , 0 # give time for re-render...
 
   subscribeToMapBounds: =>
     @mapBoundsStreamsDisposable = @mapBoundsStreams.switch()

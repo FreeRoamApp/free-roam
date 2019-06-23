@@ -195,15 +195,13 @@ module.exports = class NavDrawer
           #     $ripple: new Ripple()
           #     iconName: 'edit'
           #   }
-          # FIXME FIXME
-          if false and navigator?.serviceWorker
-            {
-              path: @router.get 'settings'
-              title: @model.l.get 'settingsPage.title'
-              $icon: new Icon()
-              $ripple: new Ripple()
-              iconName: 'settings'
-            }
+          {
+            path: @router.get 'settings'
+            title: @model.l.get 'settingsPage.title'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'settings'
+          }
           # {
           #   path: @model.group.getPath group, 'groupPeople', {@router}
           #   title: @model.l.get 'people.title'

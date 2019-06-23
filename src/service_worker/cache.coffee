@@ -2,6 +2,7 @@ _map = require 'lodash/map'
 _find = require 'lodash/find'
 _sum = require 'lodash/sum'
 
+Environment = require '../services/environment'
 config = require '../config'
 
 module.exports = class Cache
@@ -129,10 +130,11 @@ module.exports = class Cache
         console.log 'fetch err.....', err
         return caches.open('recorded') # user-recorded requests for offline mode
         .then (cache) ->
-          recordedCache = cache.match event.request
-          unless recordedCache
-            throw err
-          recordedCache
+          cache.match event.request
+          .then (recordedCache) ->
+            unless recordedCache
+              throw err
+            recordedCache
     )
 
   onActivate: (event) =>
@@ -153,6 +155,9 @@ module.exports = class Cache
     self.addEventListener 'install', @onInstall
 
     # FIXME
-    # self.addEventListener 'fetch', @onFetch
+    isBuggedWebview = Environment.isNativeApp('freeroam') and
+                        Environment.getChromeVerison() >= 75
+    unless isBuggedWebview
+      self.addEventListener 'fetch', @onFetch
 
     self.addEventListener 'activate', @onActivate

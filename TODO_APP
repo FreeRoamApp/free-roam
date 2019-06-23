@@ -1,22 +1,20 @@
 TODOS:
 
-- Sometimes satellite doesn't show when it should
-  - Think it happens when map (loads fine first time) -> unmount map -> back to map
-  - Need to have it add the saved layers afterMount instead
+x Sometimes satellite doesn't show when it should
+  x Think it happens when map (loads fine first time) -> unmount map -> back to map
+  x Need to have it add the saved layers afterMount instead
 
 - Images don't show on Android
-  - Happens when Chrome is updated (sometimes?)
-    - Think it happens more if there's a new service worker available when opening new chrome version at same time
-  - Did Chrome start sharing service workers between chrome and webview?
-    - If so is that causing issues? Is hack fix to have native app use different sw?
+  - https://stackoverflow.com/questions/56719340/fetch-request-immediately-failing-in-service-worker-running-through-android-we
+  - Maybe it was fixed with one of the many changes I made? But didn't seem fixed because of app auto backup that was bringing back old service worker???
 
-- Disable push register on whatever version of chrome rachel's phone has when uninstalled?
-  - Firebase crashes
-  - 06-22 20:35:24.838 23508 23591 E AndroidRuntime: java.lang.IllegalStateException: Default FirebaseApp is not initialized in this process app.freeroam.main. Make sure to call FirebaseApp.initializeApp(Context) first.
+x fix push register crash on whatever version of chrome rachel's phone has when uninstalled?
+  x Firebase crashes
+  x 06-22 20:35:24.838 23508 23591 E AndroidRuntime: java.lang.IllegalStateException: Default FirebaseApp is not initialized in this process app.freeroam.main. Make sure to call FirebaseApp.initializeApp(Context) first.
 
-- Clear app storage data, reopen and sometimes map only fills small portion of screen
+x Clear app storage data, reopen and sometimes map only fills small portion of screen
 
-- Get local owner for BLM/USFS maps
+x Get local owner for BLM/USFS maps
 
 - Validate youtube, etc... urls
 - If someone goes to broken url in app, redirect them to homepage (esp. important on ios)
@@ -33,11 +31,11 @@ x fire
   x fix existing fill (states)
 - look into using https://inciweb.nwcg.gov/feeds/ for fires
 - setting for not auto-checking in when reviewing
-- new icon for propane
+x new icon for propane
 - link to fire weather info for each red flag
 - make offline maps more intuitive
 
-- conversation/welcome only add once
+x conversation/welcome only add once
 - random tips in splash screen
   - https://androidforums.com/threads/how-to-add-random-text-to-splash-screen.1306232/
   - https://stackoverflow.com/questions/56380112/how-to-add-changable-text-on-splash-screen

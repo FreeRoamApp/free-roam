@@ -63,6 +63,15 @@ class Environment
     matches = userAgent.match /freeroam\/([a-zA-Z0-9-]+)/
     matches?[1] or 'browser'
 
+  getChromeVerison: ({userAgent} = {}) ->
+    userAgent ?= navigator?.userAgent
+    matches = userAgent.match /Chrome\/(.+?)\./
+    version = parseInt matches?[1]
+    if isNaN version
+      false
+    else
+      version
+
   getAppVersion: (gameKey, {userAgent} = {}) ->
     userAgent ?= navigator?.userAgent
     regex = new RegExp("(#{gameKey})\/(?:[a-zA-Z0-9]+/)?([0-9\.]+)")

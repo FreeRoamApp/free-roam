@@ -2,6 +2,7 @@ z = require 'zorium'
 
 SecondaryButton = require '../secondary_button'
 FlatButton = require '../flat_button'
+Environment = require '../../services/environment'
 
 if window?
   require './index.styl'
@@ -19,9 +20,24 @@ module.exports = class Settings
   render: =>
     {} = @state.getValue()
 
+    isBuggedWebview = Environment.isNativeApp('freeroam') and
+                        Environment.getChromeVerison() >= 75
+
     z '.z-settings',
       z '.g-grid',
-        if navigator?.serviceWorker
+        if not navigator?.serviceWorker or isBuggedWebview
+          z '.section',
+            z 'p', 'Due to a bug I\'m currently trying to fix, offline mode is temporarily not available in the app.'
+            z 'p', 'However, you can access it through the website on your phone or computer'
+            z '.actions',
+              z @$recordButton,
+                text: 'Visit website'
+                onclick: =>
+                  @model.portal.call 'browser.openWindow', {
+                    url: 'https://freeroam.app'
+                  }
+            z 'p', 'Sorry for the inconvenience!'
+        else
           z '.section',
             z '.title', @model.l.get 'settings.offlineMode'
             z '.description', @model.l.get 'settings.description'
