@@ -26,6 +26,26 @@
         > .tab
           flex1()
 
+  &.is-arrow
+    > .g-grid
+      overflow: visible
+
+      > .bar
+        > .selector
+          background: none !important
+
+          &:after
+            content: ''
+            position: absolute
+            bottom: -12px
+            left: 50%
+            margin-left: -12px
+            width: 0
+            height: 0
+            border-left: 12px solid transparent
+            border-right: 12px solid transparent
+            border-top: 12px solid getColor('$tertiary0')
+
 
   > .g-grid
     height: 100%
@@ -38,9 +58,9 @@
 
       > .selector
         transition: transform 0.25s
+        position: absolute
         height: 2px
         background: getColor('$primary500')
-        position: absolute
         bottom: 0
 
       > .tab

@@ -81,7 +81,7 @@ module.exports = class PlacePage extends BasePage
           color: colors.$header500Icon
         }
         $topRightButton:
-          if me?.username in ['austin', 'big_boxtruck', 'roadpickle']
+          if me?.username in ['austin', 'big_boxtruck', 'roadpickle', 'rachel']
             z '.p-place_top-right',
               z @$editIcon,
                 icon: 'edit'

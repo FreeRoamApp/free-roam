@@ -4,6 +4,7 @@ Icon = require '../icon'
 PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
 TertiaryButton = require '../tertiary_button'
+Tabs = require '../tabs'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -22,6 +23,8 @@ module.exports = class About
 
     @$irsButton = new SecondaryButton()
 
+    @$tabs = new Tabs {@model, @selectedIndex}
+
     @state = z.state
       windowSize: @model.window.getSize()
 
@@ -33,10 +36,70 @@ module.exports = class About
         z '.g-grid',
           z 'h1.title', @model.l.get 'about.missionTitle'
           z '.text', @model.l.get 'about.mission'
-          # z '.button',
-          #   z @$learnMoreButton,
-          #     text: @model.l.get 'general.learnMore'
-          #     isOutline: true
+          z '.button',
+            z @$learnMoreButton,
+              text: @model.l.get 'drawer.roamWithCare'
+              isOutline: true
+              onclick: =>
+                @router.go 'roamWithCare'
+
+      z '.roadmap',
+        z '.info',
+          z '.title', @model.l.get 'about.roadmapTitle'
+          z '.description', @model.l.get 'about.roadmapDescription'
+        z @$tabs,
+          isBarFixed: false
+          isBarArrow: true
+          tabs: [
+            {
+              $menuText: @model.l.get 'about.phase1'
+              $el:
+                z '.z-about_roadmap-phase.phase-1',
+                  z '.image'
+                  z '.phase', @model.l.get('about.phase1')+ ':'
+                  z '.title', @model.l.get 'about.phase1Title'
+                  z 'ul.bullets',
+                    z 'li', @model.l.get 'about.phase1Bullet1'
+                    z 'li', @model.l.get 'about.phase1Bullet2'
+                    z 'li', @model.l.get 'about.phase1Bullet3'
+            }
+            {
+              $menuText: @model.l.get 'about.phase2'
+              $el:
+                z '.z-about_roadmap-phase.phase-2',
+                  z '.image'
+                  z '.phase', @model.l.get('about.phase2')+ ':'
+                  z '.title', @model.l.get 'about.phase2Title'
+                  z 'ul.bullets',
+                    z 'li', @model.l.get 'about.phase2Bullet1'
+                    z 'li', @model.l.get 'about.phase2Bullet2'
+                    # z 'li', @model.l.get 'about.phase2Bullet3'
+            }
+            {
+              $menuText: @model.l.get 'about.phase3'
+              $el:
+                z '.z-about_roadmap-phase.phase-3',
+                  z '.image'
+                  z '.phase', @model.l.get('about.phase3')+ ':'
+                  z '.title', @model.l.get 'about.phase3Title'
+                  z 'ul.bullets',
+                    z 'li', @model.l.get 'about.phase3Bullet1'
+                    z 'li', @model.l.get 'about.phase3Bullet2'
+                    z 'li', @model.l.get 'about.phase3Bullet3'
+            }
+            {
+              $menuText: @model.l.get 'about.phase4'
+              $el:
+                z '.z-about_roadmap-phase.phase-4',
+                  z '.image'
+                  z '.phase', @model.l.get('about.phase4')+ ':'
+                  z '.title', @model.l.get 'about.phase4Title'
+                  z 'ul.bullets',
+                    z 'li', @model.l.get 'about.phase4Bullet1'
+                    # z 'li', @model.l.get 'about.phase4Bullet2'
+                    # z 'li', @model.l.get 'about.phase4Bullet3'
+            }
+          ]
 
       z '.meet',
         z '.g-grid',

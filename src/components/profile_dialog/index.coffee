@@ -19,7 +19,7 @@ if window?
 
 module.exports = class ProfileDialog
   constructor: (options) ->
-    {@model, @router, @user, groupUser, group,
+    {@model, @router, @user, groupUser, group, @onEditMessage,
       @onDeleteMessage, @onDeleteMessagesLast7d} = options
 
     unless @user?.map
@@ -233,8 +233,8 @@ module.exports = class ProfileDialog
                     then @model.l.get 'general.loading'
                     else @model.l.get 'profileDialog.edit'
               isVisible: true
-              onclick: ->
-                user.onEditMessage()
+              onclick: =>
+                @onEditMessage()
             }
             {
               icon: 'delete'

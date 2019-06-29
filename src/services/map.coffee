@@ -144,6 +144,7 @@ class MapService
         items: [
           {key: 'anytime', label: model.l.get 'gyms.anytime'}
           {key: 'planet', label: model.l.get 'gyms.planet'}
+          {key: '24Hour', label: model.l.get 'gyms.24Hour'}
         ]
         arrayValue: 'shower'
         name: model.l.get 'amenities.shower'

@@ -36,6 +36,20 @@
       > .button
         width: 150px
 
+  > .roadmap
+    text-align: center
+    background: getColor('$tertiary0')
+
+    > .info
+      padding: 36px 16px 16px 24px
+
+      > .title
+        font-display1()
+        margin-bottom: 16px
+
+      > .description
+        font-h3m()
+
   > .meet
     background: getColor('$tertiary0')
     padding-bottom: 32px
@@ -117,7 +131,43 @@
     margin: 12px 0
     text-align: center
 
-
   @media (min-width: $breakPointMedium)
     > .mission
       background-position: center
+
+.z-about_roadmap-phase
+  padding: 72px 48px
+  width: 100%
+
+  &.phase-1
+    background: #b6d8d8
+
+  &.phase-2
+    background: #f6cfa3
+
+  &.phase-3
+    background: #b6d8d8
+
+  &.phase-4
+    background: #b6d8d8
+
+  > .phase
+    font-h3()
+    color: getColor('$white')
+    margin-bottom: 4px
+
+  > .title
+    font-h1()
+    text-align: center
+    margin-bottom: 24px
+
+  > .bullets
+    margin: 0
+    padding-left: 20px
+    text-align: left
+    max-width: 500px
+    margin: 0 auto
+
+    > li
+       margin-top: 16px
+       list-style-type: circle

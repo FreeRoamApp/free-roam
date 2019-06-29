@@ -48,6 +48,9 @@ module.exports = class Trip extends Base
       trip: @trip.map (trip) ->
         _omit trip, ['route']
       checkIns: checkInsAndTrip.map ([checkIns, trip]) =>
+        tripLegs = _clone(_map trip.route?.legs, (leg) ->
+          _omit leg, ['shape']
+        ).reverse()
         _map checkIns, (checkIn, i) =>
           if _isEmpty checkIn.attachments
             id = checkIn.id
@@ -71,8 +74,7 @@ module.exports = class Trip extends Base
           )
           {
             checkIn
-            routeInfo: if trip.route?.legs?[i]
-              _omit trip.route.legs[i], ['shape']
+            routeInfo: tripLegs?[i]
             $attachmentsList: $attachmentsList
             $moreIcon: new Icon()
           }

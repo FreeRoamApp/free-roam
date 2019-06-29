@@ -29,7 +29,7 @@ module.exports = class TabsBar
 
   render: (props) =>
     {items, bgColor, color, style, inactiveColor, underlineColor, isFixed,
-      isFlat, tabWidth} = props
+      isFlat, isArrow, tabWidth} = props
     {selectedIndex} = @state.getValue()
 
     bgColor ?= colors.$tertiary0
@@ -40,7 +40,7 @@ module.exports = class TabsBar
     isFullWidth = not tabWidth
 
     z '.z-tabs-bar', {
-      className: z.classKebab {isFixed, isFlat, isFullWidth}
+      className: z.classKebab {isFixed, isArrow, isFlat, isFullWidth}
       style:
         background: bgColor
     },

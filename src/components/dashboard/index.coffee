@@ -7,6 +7,7 @@ require 'rxjs/add/observable/of'
 _camelCase = require 'lodash/camelCase'
 _startCase = require 'lodash/startCase'
 _reduce = require 'lodash/reduce'
+_filter = require 'lodash/filter'
 _map = require 'lodash/map'
 _defaults = require 'lodash/defaults'
 
@@ -131,12 +132,30 @@ module.exports = class Dashboard
       review: reviewValueStreams.switch().map (review) ->
         review or false
       hasLocationPermission: @hasLocationPermissionStreams.switch()
+      forecastDaily: myLocation.map (myLocation) ->
+        place = myLocation?.place
+        days = place?.forecast?.daily
+        today = new Date()
+        todayVal =
+          today.getYear() * 366 + today.getMonth() * 31 + today.getDate()
+        _filter _map days, (day) ->
+          # TODO: use day.day instead
+          date = new Date((day.time + 3600) * 1000)
+          dateStr = "#{date.getMonth() + 1}/#{date.getDate()}"
+          dateVal = date.getYear() * 366 + date.getMonth() * 31 + date.getDate()
+          if dateVal < todayVal
+            return
+          _defaults {
+            dow: date.getDay()
+            date: dateStr
+          }, day
     }
 
   render: =>
-    {myLocation, review, hasLocationPermission} = @state.getValue()
+    {myLocation, forecastDaily, review,
+      hasLocationPermission} = @state.getValue()
 
-    todayForecast = myLocation?.place?.forecast?.daily?[0]
+    todayForecast = forecastDaily?[0]
     icon = todayForecast?.icon?.replace 'night', 'day'
     weatherType = _startCase(icon).replace(/ /g, '')
     hasInfo = myLocation?.place?.type in ['campground', 'overnight']

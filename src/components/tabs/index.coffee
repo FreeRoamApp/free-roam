@@ -128,7 +128,7 @@ module.exports = class Tabs
 
   render: (options) =>
     {tabs, barColor, barBgColor, barInactiveColor, isBarFixed, isBarFlat,
-      barTabWidth, windowSize, vDomKey, barStyle} = options
+      isBarArrow, barTabWidth, windowSize, vDomKey, barStyle} = options
 
     {selectedIndex, hideTabBar, windowSize} = @state.getValue()
 
@@ -159,6 +159,7 @@ module.exports = class Tabs
             z @$tabsBar, {
               isFixed: isBarFixed
               isFlat: isBarFlat
+              isArrow: isBarArrow
               tabWidth: barTabWidth
               color: barColor
               inactiveColor: barInactiveColor

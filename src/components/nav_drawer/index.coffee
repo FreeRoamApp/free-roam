@@ -51,7 +51,7 @@ module.exports = class NavDrawer
     # settle as soon as one is ready, otherwise the nav menu might flash blank
     # while the others load
     menuItemsInfo = RxObservable.combineLatest(
-      me
+      me.startWith(null)
       group.startWith(null)
       @model.l.getLanguage().startWith(null)
       hasUnreadMessages.startWith(null)

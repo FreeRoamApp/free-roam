@@ -35,6 +35,7 @@ module.exports = class Settings
                 onclick: =>
                   @model.portal.call 'browser.openWindow', {
                     url: 'https://freeroam.app'
+                    target: '_system'
                   }
             z 'p', 'Sorry for the inconvenience!'
         else

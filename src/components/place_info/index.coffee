@@ -280,7 +280,7 @@ module.exports = class PlaceInfo extends Base
 
                 # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
                 # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
-              if place?.crowds or place?.fullness
+              if place?.crowds?[season] or place?.fullness?[season]
                 z '.section',
                   z '.seasons',
                      _map @seasons, ({key, text}) =>
@@ -292,45 +292,45 @@ module.exports = class PlaceInfo extends Base
                        },
                          text
 
-              if place?.crowds
+              if place?.crowds?[season]
                 z '.section',
                   z '.title', @model.l.get 'campground.crowds'
                   z @$crowdsInfoLevel, {
                     value: place?.crowds[season]
                   }
-              if place?.fullness
+              if place?.fullness?[season]
                 z '.section',
                   z '.title', @model.l.get 'campground.fullness'
                   z @$fullnessInfoLevel, {
                     value: place?.fullness[season]
                   }
-              if place?.noise
+              if place?.noise?['day']
                 z '.section',
                   z '.title', @model.l.get 'campground.noise'
                   z @$noiseInfoLevel, {
                     value: place?.noise['day']
                   }
-              if place?.shade
+              if place?.shade?.value
                 z '.section',
                   z '.title', @model.l.get 'campground.shade'
                   z @$shadeInfoLevel, {
                     value: place?.shade
                   }
-              if place?.cleanliness
+              if place?.cleanliness?.value
                 z '.section',
                   z '.title', @model.l.get 'campground.cleanliness'
                   z @$cleanlinessInfoLevel, {
                     value: place?.cleanliness
                     isReversed: true # 5 is bad 1 is good
                   }
-              if place?.safety
+              if place?.safety?.value
                 z '.section',
                   z '.title', @model.l.get 'campground.safety'
                   z @$safetyInfoLevel, {
                     value: place?.safety
                     isReversed: true # 5 is bad 1 is good
                   }
-              if place?.roadDifficulty
+              if place?.roadDifficulty?.value
                 z '.section',
                   z '.title', @model.l.get 'campground.roadDifficulty'
                   z @$roadDifficultyInfoLevel, {
