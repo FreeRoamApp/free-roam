@@ -8,6 +8,7 @@
   > .top
     padding: 0 16px 32px 16px
     text-align: center
+    background-color: #b6d8d8
 
     > .g-grid
 
@@ -19,7 +20,7 @@
         font-title()
 
   > .content
-    background-color: getColor('$orange50')
+    background-color: getColor('$tertiary0')
     padding: 16px 16px 32px 16px
     position: relative
 
@@ -33,7 +34,7 @@
       height: 0
       border-left: 20px solid transparent
       border-right: 20px solid transparent
-      border-top: 20px solid getColor('$tertiary100')
+      border-top: 20px solid #b6d8d8
 
     > .lesson
       margin-top: 40px
@@ -57,7 +58,7 @@
             background-image: url($cdnUrl + '/roam_with_care/plant_icon.svg')
             margin: 0 auto
 
-          &.stay-limit
+          &.rules
             background-image: url($cdnUrl + '/roam_with_care/date_icon.svg')
             margin: 0 auto
 
@@ -72,3 +73,7 @@
           li
             list-style-type: circle
             margin-top: 8px
+
+        > .button
+          max-width: 148px
+          margin: 24px auto 0 auto

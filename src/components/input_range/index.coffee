@@ -23,6 +23,8 @@ module.exports = class InputRange
 
     value = if value? then parseInt(value) else null
 
+    percent = parseInt 100 * ((value or 1) - @minValue) / (@maxValue - @minValue)
+
     # FIXME: handle null starting value better (clicking on mid should set value)
 
     z '.z-input-range', {
@@ -31,7 +33,7 @@ module.exports = class InputRange
       z 'label.label',
         label
         z '.range-container',
-          z 'input.range',
+          z "input.range.percent-#{percent}",
             type: 'range'
             min: "#{@minValue}"
             max: "#{@maxValue}"

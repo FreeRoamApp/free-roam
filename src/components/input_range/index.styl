@@ -9,14 +9,15 @@
   $upperBackground = linear-gradient(to bottom, $upperColor, $upperColor) 100% 50% \/ 100% $trackHeight no-repeat transparent
   $lowerBackground = linear-gradient(to bottom, $lowerColor, $lowerColor) 100% 50% \/ 100% $trackHeight no-repeat transparent
 
+  // this works, but generates huge css (60kb), so we use js instead
   // Webkit cannot style progress so we fake it with a long shadow
   // on the thumb element. src: https://codepen.io/dbushell/pen/awgLZK
-  webkit-slider-thumb-shadow($i = 1)
-    $val = '' + $i + 'px 0 0 -' + ($thumbHeight - $trackHeight) / 2 + ' ' + $upperColor
-    if $i == 1
-      for $k in (2)..(1000)
-        $val = $val + ', ' + webkit-slider-thumb-shadow($k)
-    $val
+  // webkit-slider-thumb-shadow($i = 1)
+  //   $val = '' + $i + 'px 0 0 -' + ($thumbHeight - $trackHeight) / 2 + ' ' + $upperColor
+  //   if $i == 1
+  //     for $k in (2)..(1000)
+  //       $val = $val + ', ' + webkit-slider-thumb-shadow($k)
+  //   $val
 
   &.has-value
     > .label
@@ -44,6 +45,29 @@
         outline: none
         background: $lowerBackground
 
+        &::after
+          content: ''
+          position: absolute
+          top: 1px
+          right: 0
+          height: 100%
+          background: $upperBackground
+
+        &.percent-0::after
+          width: 100%
+
+        &.percent-25::after
+          width: 75%
+
+        &.percent-50::after
+          width: 50%
+
+        &.percent-75::after
+          width: 25%
+
+        &.percent-100::after
+          width: 0%
+
         &::-webkit-slider-runnable-track
           width: 100%
           height: $height
@@ -51,6 +75,7 @@
 
         &::-webkit-slider-thumb
           position: relative
+          z-index: 1
           cursor: pointer
           appearance: none
           width: $thumbHeight
@@ -60,7 +85,7 @@
           top: 50%
           margin-top: -($thumbHeight / 2)
           background: $lowerColor
-          box-shadow: webkit-slider-thumb-shadow()
+          // box-shadow: webkit-slider-thumb-shadow()
 
         &::-moz-range-track,
         &::-moz-range-progress

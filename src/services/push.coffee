@@ -3,11 +3,6 @@ Environment = require '../services/environment'
 SemverService = require '../services/semver'
 config = require '../config'
 
-
-# TODO separate bundle for app that doesn't require this
-# firebase = require 'firebase/app'
-# require 'firebase/messaging'
-
 ONE_DAY_MS = 3600 * 24 * 1000
 
 class PushService
