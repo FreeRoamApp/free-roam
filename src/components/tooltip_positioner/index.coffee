@@ -25,6 +25,8 @@ module.exports = class TooltipPositioner extends Base
       prereqs: null
     usersNearby:
       prereqs: null
+    groupChat:
+      prereqs: null
 
   constructor: (options) ->
     unless window? # could also return right away if cookie exists for perf

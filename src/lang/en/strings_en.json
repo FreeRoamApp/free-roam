@@ -777,6 +777,8 @@
   "tooltips.saveLocationContent": "Tapping save will add this to your planned locations",
   "tooltips.usersNearbyTitle": "Find people nearby",
   "tooltips.usersNearbyContent": "An easy new way to make friends on the road",
+  "tooltips.groupChatTitle": "Join us in chat",
+  "tooltips.groupChatContent": "We're building a friendly community of people on the road. Introduce yourself :)",
 
   "status.newVersion": "Refresh to get the latest FreeRoam update",
   "status.offline": "You are offline, some features may not work",

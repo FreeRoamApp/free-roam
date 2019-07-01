@@ -27,6 +27,7 @@ PrimaryButton = require '../primary_button'
 ConversationInput = require '../conversation_input'
 ConversationMessage = require '../conversation_message'
 PushNotificationsSheet = require '../push_notifications_sheet'
+TooltipPositioner = require '../tooltip_positioner'
 config = require '../../config'
 
 if window?
@@ -129,6 +130,12 @@ module.exports = class Conversation extends Base
 
     @inputTranslateY = new RxReplaySubject 1
     @isTextareaFocused = new RxBehaviorSubject false
+
+    @$tooltip = new TooltipPositioner {
+      @model
+      key: 'groupChat'
+      anchor: 'bottom-left'
+    }
 
     @$loadingSpinner = new Spinner()
     @$joinButton = new PrimaryButton()
@@ -497,6 +504,8 @@ module.exports = class Conversation extends Base
 
     messageBody = @message.getValue()
 
+    @$tooltip.close()
+
     if not isPostLoading and messageBody
       @isPostLoading.next true
 
@@ -599,6 +608,8 @@ module.exports = class Conversation extends Base
             onclick: @join
       else
         z '.bottom',
+          if @model.experiment.get('chatTooltip') is 'visible'
+            z @$tooltip
           unless hasLoadedAllNewMessages
             z '.jump-new', {
               onclick: =>
