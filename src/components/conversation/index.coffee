@@ -48,7 +48,7 @@ module.exports = class Conversation extends Base
   constructor: (options) ->
     {@model, @router, @error, @conversation, isActive,
       @scrollYOnly, @isGroup, isLoading, @onScrollUp,
-      @onScrollDown, @minId, hasBottomBar, group} = options
+      @onScrollDown, @minId, hasBottomBar, @group} = options
 
     isLoading ?= new RxBehaviorSubject false
     @isPostLoading = new RxBehaviorSubject false
@@ -120,8 +120,8 @@ module.exports = class Conversation extends Base
 
     messageBatches = RxObservable.merge @resetMessageBatches, loadedMessages
 
-    @groupUser = if group \
-                then group.map (group) -> group?.meGroupUser
+    @groupUser = if @group \
+                then @group.map (group) -> group?.meGroupUser
                 else RxObservable.of null
 
     groupUserAndConversation = RxObservable.combineLatest(
@@ -147,7 +147,7 @@ module.exports = class Conversation extends Base
       @isPostLoading
       @inputTranslateY
       @conversation
-      group: group
+      group: @group
       meGroupUser: @groupUser
       onPost: @postMessage
       allowedPanels: groupUserAndConversation.map ([groupUser, conversation]) =>
@@ -191,7 +191,7 @@ module.exports = class Conversation extends Base
       error: null
       conversation: @conversation
       inputTranslateY: @inputTranslateY.switch()
-      group: group
+      group: @group
       groupUser: @groupUser
       isJoinLoading: false
       isLoaded: false
@@ -226,8 +226,7 @@ module.exports = class Conversation extends Base
               }
               $el = @getCached$ messageCacheKey, ConversationMessage, {
                 message, @model, @router, isMe, @isTextareaFocused,
-                isGrouped, $body,
-                @messageBatchesStreams
+                isGrouped, $body, @group, @messageBatchesStreams
               }
               prevMessage = message
               {$el, isGrouped, id}

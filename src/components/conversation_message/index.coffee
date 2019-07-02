@@ -16,10 +16,11 @@ module.exports = class ConversationMessage
   render:  =>
     z '.z-conversation-message',
       z @$message, {
-        openProfileDialogFn: (id, user, groupUser) =>
+        openProfileDialogFn: (id, user, groupUser, group) =>
           @model.overlay.open new ProfileDialog {
             @model
             @router
+            group
             user
             groupUser
             onDeleteMessage: =>

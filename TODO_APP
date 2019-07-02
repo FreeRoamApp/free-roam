@@ -56,6 +56,8 @@ x conversation/welcome only add once
 - Profiles
   - Add to user photos when adding checkin photos
 
+- Amenity: Dog park nearby
+
 - Better trip sorting
 
 x Sending push notifications to all on iOS not working (maybe no push notifications are working too?)

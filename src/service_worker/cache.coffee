@@ -51,7 +51,6 @@ module.exports = class Cache
       cache.addAll files
 
   fetchViaNetwork: (request) =>
-    console.log 'fetch', request
     fetch(request)
     .then (response) =>
       if @isRecording and request.method is 'GET'

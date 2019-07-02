@@ -22,7 +22,7 @@ DESCRIPTION_LENGTH = 100
 module.exports = class Message
   constructor: (options) ->
     {message, @$body, isGrouped, isMe, @model, @isTextareaFocused
-      @router, @messageBatchesStreams} = options
+      @router, @group, @messageBatchesStreams} = options
 
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}
@@ -51,10 +51,10 @@ module.exports = class Message
 
     onclick = =>
       unless @isTextareaFocused?.getValue()
-        openProfileDialogFn id, user, groupUser
+        openProfileDialogFn id, user, groupUser, @group
 
-    oncontextmenu = ->
-      openProfileDialogFn id, user, groupUser
+    oncontextmenu = =>
+      openProfileDialogFn id, user, groupUser, @group
 
     z '.z-message', {
       # re-use elements in v-dom. doesn't seem to work with prepending more

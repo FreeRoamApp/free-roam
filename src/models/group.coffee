@@ -70,7 +70,7 @@ module.exports = class Group
       path = path.replace "/#{group?.slug}", ''
     path
 
-  goPath: (group, key, {replacements, router, language}) ->
+  goPath: (group, key, {replacements, router, language}, options) ->
     subdomain = router.getSubdomain()
 
     replacements ?= {}
@@ -79,4 +79,4 @@ module.exports = class Group
     path = router.get key, replacements, {language}
     if subdomain is group?.slug
       path = path.replace "/#{group?.slug}", ''
-    router.goPath path
+    router.goPath path, options
