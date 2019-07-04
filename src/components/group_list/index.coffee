@@ -25,37 +25,21 @@ module.exports = class GroupList
     z '.z-group-list',
       if groups and _isEmpty groups
         z '.no-groups',
-          z '.g-grid',
-            @model.l.get 'groupList.empty'
+          @model.l.get 'groupList.empty'
       else if not groups
         @$spinner
       else if groups
-        z '.groups',
-          z '.g-grid',
-            z '.g-cols',
-              _map groups, ({group}) =>
-                key = if group?.slug is 'boondocking' \
-                      then 'freeroam'
-                      else group?.slug
-
-                group.type ?= 'general'
-                route = @model.group.getPath group, 'groupChat', {@router}
-                z '.g-col.g-xs-12.g-md-6',
-                  @router.link z 'a.group', {
-                    href: route
-                  },
-                    z '.image',
-                      style:
-                        backgroundImage:
-                          "url(#{config.CDN_URL}/groups/#{key}.png)"
-                    z '.content',
-                      z '.name', group.name or @model.l.get 'general.anonymous'
-                      z '.count',
-                        # @model.l.get "groupList.type#{_startCase(group.type)}"
-                        @model.l.get 'general.chat'
-                        # [
-                        #   z 'span.middot',
-                        #     innerHTML: ' &middot; '
-                        #   "#{FormatService.number group.userCount} "
-                        #   @model.l.get 'general.members'
-                        # ]
+        z '.groups', {
+          ontouchstart: (e) ->
+            e.stopPropagation()
+        },
+          _map groups, ({group}) =>
+            group.type ?= 'general'
+            route = @model.group.getPath group, 'groupChat', {@router}
+            @router.link z 'a.group', {
+              href: route
+              style:
+                backgroundImage:
+                  "url(#{config.CDN_URL}/groups/#{group?.slug}.jpg)"
+            },
+              z '.name', group.name or @model.l.get 'general.anonymous'

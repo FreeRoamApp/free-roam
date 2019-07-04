@@ -320,6 +320,13 @@ class MapService
         field: 'subType'
         type: 'booleanArray'
         isBoolean: true
+        arrayValue: 'cabelas'
+        name: model.l.get 'overnight.cabelas'
+      }
+      {
+        field: 'subType'
+        type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'other'
         name: model.l.get 'overnight.other'
       }

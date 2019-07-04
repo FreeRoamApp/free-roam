@@ -10,9 +10,8 @@ Conversations = require '../../components/conversations'
 Fab = require '../../components/fab'
 FindFriends = require '../../components/find_friends'
 Friends = require '../../components/friends'
-Groups = require '../../components/groups'
 UsersNearby = require '../../components/users_nearby'
-TooltipPositioner = require '../../components/tooltip_positioner'
+Groups = require '../../components/groups'
 Icon = require '../../components/icon'
 Tabs = require '../../components/tabs'
 colors = require '../../colors'
@@ -31,7 +30,7 @@ module.exports = class SocialPage
     @$tabs = new Tabs {@model, @selectedIndex}
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$notificationsIcon = new Icon()
-    @$chatIcon = new Icon()
+    @$groupsIcon = new Icon()
     @$usersNearbyIcon = new Icon()
     @$pmsIcon = new Icon()
     @$friendsIcon = new Icon()
@@ -41,14 +40,7 @@ module.exports = class SocialPage
     @$conversations = new Conversations {@model, @router}
     @$friends = new Friends {@model, @router}
     @$groups = new Groups {@model, @router}
-    @$usersNearby = new UsersNearby {
-      @model, @router
-    }
-    @$tooltip = new TooltipPositioner {
-      @model
-      key: 'usersNearby'
-      anchor: 'top-center'
-    }
+    @$usersNearby = new UsersNearby {@model, @router}
 
     # don't need to slow down server-side rendering for this
     hasUnreadMessages = if window?
@@ -67,8 +59,6 @@ module.exports = class SocialPage
   afterMount: =>
     @disposable = @selectedIndex.subscribe (index) =>
       ga? 'send', 'event', 'social', 'tab', index
-      if index is 1
-        @$tooltip.close()
 
   beforeUnmount: =>
     @disposable?.unsubscribe()
@@ -98,19 +88,10 @@ module.exports = class SocialPage
         isBarFixed: false
         tabs: [
           {
-            $menuIcon: @$chatIcon
-            menuIconName: 'chat-bubble'
-            $menuText: @model.l.get 'general.chat'
+            $menuIcon: @$groupsIcon
+            menuIconName: 'group'
+            $menuText: @model.l.get 'general.groups'
             $el: @$groups
-          }
-          {
-            $menuIcon: @$usersNearbyIcon
-            $after:
-              z '.p-social_tab-users-nearby-icon',
-                z @$tooltip
-            menuIconName: 'users-nearby'
-            $menuText: @model.l.get 'social.peopleNearby'
-            $el: z @$usersNearby
           }
           {
             $menuIcon: @$pmsIcon
@@ -120,8 +101,14 @@ module.exports = class SocialPage
             hasNotification: hasUnreadMessages
           }
           {
+            $menuIcon: @$usersNearbyIcon
+            menuIconName: 'users-nearby'
+            $menuText: @model.l.get 'social.peopleNearby'
+            $el: z @$usersNearby
+          }
+          {
             $menuIcon: @$friendsIcon
-            menuIconName: 'friends'
+            menuIconName: 'friend-heart'
             $menuText: @model.l.get 'general.friends'
             $el: z @$friends
           }

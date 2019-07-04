@@ -1,5 +1,7 @@
 z = require 'zorium'
+_defaults = require 'lodash/defaults'
 _map = require 'lodash/map'
+_take = require 'lodash/take'
 _unionBy = require 'lodash/unionBy'
 Environment = require '../../services/environment'
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
@@ -8,8 +10,9 @@ require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/switchMap'
 
 GroupList = require '../group_list'
-UiCard = require '../ui_card'
+EventList = require '../event_list'
 Icon = require '../icon'
+DateService = require '../../services/date'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -40,8 +43,16 @@ module.exports = class Groups
     #   groups: @model.group.getAll({filter: 'suggested'})
     # }
 
-    @$unreadInvitesIcon = new Icon()
-    @$unreadInvitesChevronIcon = new Icon()
+    @$eventList = new EventList {
+      @model
+      @router
+      events: @model.event.getAll().map (events) ->
+        _take events, 3
+    }
+
+    # @$unreadInvitesIcon = new Icon()
+    # @$unreadInvitesChevronIcon = new Icon()
+    @$seeAllEventsIcon = new Icon()
 
     language = @model.l.getLanguage()
 
@@ -49,9 +60,15 @@ module.exports = class Groups
       me: me
       language: language
       groups: myGroupsAndPublicGroups
+      events: @model.event.getAll().map (events) ->
+        _map events, (event) ->
+          _defaults {
+            startTime: DateService.format new Date(event.startTime), 'MMM D'
+            endTime: DateService.format new Date(event.endTime), 'MMM D'
+          }, event
 
   render: =>
-    {me, language, groups} = @state.getValue()
+    {me, language, groups, events} = @state.getValue()
 
     groupTypes = [
       {
@@ -67,7 +84,7 @@ module.exports = class Groups
     # unreadGroupInvites = me?.data.unreadGroupInvites
     # inviteStr = if unreadGroupInvites is 1 then 'invite' else 'invites'
 
-    z '.z-groups',
+    z '.z-groups', [
       # if unreadGroupInvites
       #   @router.link z 'a.unread-invites', {
       #     href: @router.get 'groupInvites'
@@ -84,7 +101,26 @@ module.exports = class Groups
       #         isTouchTarget: false
       #         color: colors.$primary500
       _map groupTypes, ({title, $groupList}) ->
-        z '.group-list',
+        [
+          z '.title',
+            z '.g-grid', title
+          z '.group-list',
+            z '.g-grid', $groupList
+        ]
+
+      z '.title',
+        z '.g-grid', @model.l.get 'general.meetups'
+      z '.events',
+        @$eventList
+
+        @router.link z 'a.see-all', {
+          href: @router.get 'events'
+        },
           z '.g-grid',
-            z 'h2.title', title
-          $groupList
+            z '.text', @model.l.get 'general.seeAll'
+            z '.icon',
+              z @$seeAllEventsIcon,
+                icon: 'chevron-right'
+                color: colors.$bgText54
+                isTouchTarget: false
+    ]

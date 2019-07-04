@@ -5,13 +5,12 @@
   width: 100%
   overflow: auto
   -webkit-overflow-scrolling: touch
-  padding: 16px
   box-sizing: border-box
 
   > .unread-invites
     display: flex
     align-items: center
-    padding: 16px 0
+    padding: 16px
 
     > .icon
       margin-right: 32px
@@ -19,7 +18,41 @@
     > .chevron
       margin-left: auto
 
+  > .title
+    font-title()
+    padding: 16px
+
+  > .group-list, > .events
+    background: getColor('$tertiary0')
+    border-top: 1px solid getColor('$tertiary200')
+    border-bottom: 1px solid getColor('$tertiary200')
+
+    > .see-all
+      padding: 16px
+      display: block
+
+      > .g-grid
+        display: flex
+        align-items: center
+
+        > .text
+          color: getColor('$bgText54')
+
+        > .icon
+          margin-left: auto
+
   > .group-list
-    > .g-grid
-      > .title
-        font-title()
+    padding: 16px
+
+  > .events
+    > .event
+      display: block
+      padding: 16px 20px
+      border-bottom: 1px solid getColor('$tertiary200')
+
+      > .g-grid
+        > .name
+          font-title()
+
+        > .info
+          font-caption2()

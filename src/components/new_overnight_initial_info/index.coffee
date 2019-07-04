@@ -11,6 +11,7 @@ module.exports = class NewOvernightInitialInfo extends NewPlaceInitialInfo
       truckStop: @model.l.get 'overnight.truckStop'
       casino: @model.l.get 'overnight.casino'
       crackerBarrel: @model.l.get 'overnight.crackerBarrel'
+      cabelas: @model.l.get 'overnight.cabelas'
       walmart: @model.l.get 'overnight.walmart'
     }
 

@@ -41,6 +41,8 @@
   "editCampgroundReview": "/campground/:slug/review/:reviewId/edit",
   "editOvernight": "/overnight/:slug/edit",
   "editOvernightReview": "/overnight/:slug/review/:reviewId/edit",
+  "events": "/events",
+  "event": "/event/:slug",
   "guide": "/guide/:slug",
   "guides": "/guides",
   "item": "/item/:slug",
