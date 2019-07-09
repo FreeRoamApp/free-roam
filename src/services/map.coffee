@@ -362,7 +362,7 @@ class MapService
                    then model.l.get "placeTooltip.pla.#{properties.Access}"
                    else model.l.get 'general.unknown'
           place.next {
-            type: 'pad'
+            type: 'blm'
             location:
               lon: e.lngLat.lng
               lat: e.lngLat.lat
@@ -402,7 +402,7 @@ Access: #{access}
                    then model.l.get "placeTooltip.pla.#{properties.Access}"
                    else model.l.get 'general.unknown'
           place.next {
-            type: 'pad'
+            type: 'usfs'
             location:
               lon: e.lngLat.lng
               lat: e.lngLat.lat

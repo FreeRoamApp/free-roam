@@ -1,16 +1,72 @@
 
 TODOS:
 
-- events
-  - nearby to friends tab
+- What if part of the onboarding process asked if they would like to join "x" community and then they get subscribed to those chats?
+
+- National Forest subregions on map w/ MVUM pdfs. What type of place? Facility? New: region (city, state, national forest, etc...)?
+  - "region" model is probably best
+  - region for areas of cities where street parking is specifically banned
+
+- Regional info
+  - Need new us_pad with normal stuff that shows on map (Fee?) for BLM office
+
+  - Public / Private
+    - Public: Federal, state, county, city
+      - Federal: BLM, USFS, Other (text, add agency, email me)
+      - State: ___ State Parks
+      - County, city: Text (add agency, email me)
+
+      - If BLM / USFS
+        - Get local office / ranger district
+    - Private: nothing
+
+  - Agency -> Region -> Office
+    - get all Loc_Nm from map (Office)
+
+  - Agency
+    - BLM, USFS, Texas Parks & Wildlife Department, Private/KOA/Thousand Trails etc...
+
+    - name
+    - slug. Geojsons of boundaries should reference this
+    - type: federal, state, city, private
+
+
+  - Region
+    - Sawtooth National Forest, Colorado BLM, Arizona BLM, Nothing for Texas state parks? Just "Texas"?
+    - MVUMs
+
+    - name
+    - slug
+
+  - Office
+    - Sawtooth National Recreation Area Ranger District, St. George Field Office, Inks Lake State Park
+    - MVUMs
+
+    - name
+    - slug
+
+  - campgroundType ()
+
+
+- Because Android splash screen launches to splash activity, clicking on the app icon on home page reloads the entire app instead of opening existing session
+  - Also screws up Samsung app switching (reloads whole app)
+
+- Better recovery on image upload when connection drops in middle
+
+x App crashing / hanging on splash screen whne returning to it in ios
+  x Look up crash logs in xcode
+
+- Progress bar for chat image uploads
+
+x events
 
 - connieandbill app crashes when uploading image (large image?)
 
-- events
-  - events table
-    - groupId, optional for each event, groups can create multiple events
-      - if groupId is specified, all advanced features get added
-    - chat is group-related, so will persist between events
+x events
+  x events table
+    x groupId, optional for each event, groups can create multiple events
+      x if groupId is specified, all advanced features get added
+    x chat is group-related, so will persist between events
 
 
 
@@ -21,9 +77,9 @@ x Sometimes satellite doesn't show when it should
 
 - Should app zoom to last location open on map, or current location?
 
-- Images don't show on Android
-  - https://stackoverflow.com/questions/56719340/fetch-request-immediately-failing-in-service-worker-running-through-android-we
-  - Maybe it was fixed with one of the many changes I made? But didn't seem fixed because of app auto backup that was bringing back old service worker???
+x Images don't show on Android
+  x https://stackoverflow.com/questions/56719340/fetch-request-immediately-failing-in-service-worker-running-through-android-we
+  x Maybe it was fixed with one of the many changes I made? But didn't seem fixed because of app auto backup that was bringing back old service worker???
 
 x fix push register crash on whatever version of chrome rachel's phone has when uninstalled?
   x Firebase crashes
@@ -38,10 +94,9 @@ x Get local owner for BLM/USFS maps
 
 - replace cell-signal-estimate with feature-lookup
 
-- Because Android splash screen launches to splash activity, clicking on the app icon on home page reloads the entire app instead of opening existing session
-- 89beaver the main chat doesn't show new messages when opening app from notification
-  - Should have exoid invalidate a re-fetch stream when reopening app? In case socket stops accepting messages?
-  - Seems to work for him now. So maybe just not properly reconnecting to socket.io after networking issues
+x 89beaver the main chat doesn't show new messages when opening app from notification
+  x Should have exoid invalidate a re-fetch stream when reopening app? In case socket stops accepting messages?
+  x Seems to work for him now. So maybe just not properly reconnecting to socket.io after networking issues
 
 x fire
   x delete all fires before resyncing
@@ -64,6 +119,8 @@ x conversation/welcome only add once
 
 - Better trip sorting
 
+- Add all Albertsons / Safeway / Randalls?
+
 x Sending push notifications to all on iOS not working (maybe no push notifications are working too?)
   x Reset tokens for all iOS users (broke after app transfer)
 
@@ -75,8 +132,7 @@ x Push token doesn't get added until second time opening app afer signing in. sh
     - Can choose what original is, (including if it's overnight) and move reviews to it
 
 x Rate after 3 places viewed
-- National Forest subregions on map w/ MVUM pdfs. What type of place? Facility? New: region (city, state, national forest, etc...)?
-  - "region" model is probably best
+
 x @router.link doesn't work on native (new window)
 x Add cracker barrels
 x New prompt for rating app on google play/ios

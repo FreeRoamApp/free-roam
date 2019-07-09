@@ -41,7 +41,7 @@ webpackBase =
     extensions: ['.coffee', '.js', '.json']
   output:
     filename: 'bundle.js'
-    publicPath: '/'
+    publicPath: "#{config.SCRIPTS_CDN_URL}/"
 
 gulp.task 'dev', ['dev:webpack-server', 'watch:dev:server']
 

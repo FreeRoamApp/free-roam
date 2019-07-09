@@ -20,12 +20,9 @@ module.exports = class Settings
   render: =>
     {} = @state.getValue()
 
-    isBuggedWebview = Environment.isNativeApp('freeroam') and
-                        Environment.getChromeVerison() >= 75
-
     z '.z-settings',
       z '.g-grid',
-        if not navigator?.serviceWorker or isBuggedWebview
+        if not navigator?.serviceWorker
           z '.section',
             z 'p', 'Due to a bug I\'m currently trying to fix, offline mode is temporarily not available in the app.'
             z 'p', 'However, you can access it through the website on your phone or computer'

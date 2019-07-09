@@ -3,6 +3,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Icon = require '../icon'
 Fab = require '../fab'
+FormatService = require '../../services/format'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -26,14 +27,18 @@ module.exports = class UploadImagePreview
           )
         imageData
       isUploading: false
+      progress: null
       rotation: @rotationValueSubject
       windowSize: @model.window.getSize()
 
   beforeUnmount: =>
     @rotationValueSubject.next null
+    @state.set progress: null
 
   render: ({iconName} = {}) =>
-    {imageData, rotation, isUploading, windowSize} = @state.getValue()
+    {imageData, rotation, isUploading, windowSize, progress} = @state.getValue()
+
+    console.log 'progress', progress
 
     imageData ?= {}
 
@@ -95,10 +100,17 @@ module.exports = class UploadImagePreview
             if not isUploading and not @isUploading
               @isUploading = true # instant, w/o we sometimes get 2 uploads
               @state.set isUploading: true
-              @uploadFn imageData.file
+              @uploadFn imageData.file, {
+                onProgress: (response) =>
+                  @state.set progress: response.loaded / response.total
+              }
               .then (image) =>
                 @onUpload image
                 @state.set isUploading: false
                 @isUploading = false
                 @imageData.next null
                 @model.overlay.close()
+        z '.progress', {
+          className: z.classKebab {isVisible: progress}
+        },
+          FormatService.percentage progress

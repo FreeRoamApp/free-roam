@@ -8,35 +8,25 @@ Environment = require './environment'
 class ServiceWorkerService
   register: ({model}) =>
     try
-      # FIXME FIXME: when i figure out https://stackoverflow.com/questions/56719340/fetch-request-immediately-failing-in-service-worker-running-through-android-we
-      # rm this part
-      isBuggedWebview = Environment.isNativeApp('freeroam') and
-                          Environment.getChromeVerison() >= 75
-      if isBuggedWebview
-        navigator.serviceWorker?.getRegistrations()
-        .then (registrations) ->
-          registrations.forEach (registration) ->
-            registration.unregister()
-      else
-        navigator.serviceWorker?.register '/service_worker.js'
-        .then (registration) =>
-          PushService.setFirebaseServiceWorker registration
+      navigator.serviceWorker?.register '/service_worker.js'
+      .then (registration) =>
+        PushService.setFirebaseServiceWorker registration
 
-          @hasActiveServiceWorker = Boolean registration.active
+        @hasActiveServiceWorker = Boolean registration.active
 
-          @listenForWaitingServiceWorker registration, (registration) =>
-            @handleUpdate registration, {model}
-        .catch (err) ->
-          window.fetch config.API_URL + '/log',
-            method: 'POST'
-            headers:
-              'Content-Type': 'text/plain' # Avoid CORS preflight
-            body: JSON.stringify
-              event: 'client_error'
-              trace: null # trace
-              error: 'SERVICE WORKER' + String(err)
+        @listenForWaitingServiceWorker registration, (registration) =>
+          @handleUpdate registration, {model}
+      .catch (err) ->
+        window.fetch config.API_URL + '/log',
+          method: 'POST'
+          headers:
+            'Content-Type': 'text/plain' # Avoid CORS preflight
+          body: JSON.stringify
+            event: 'client_error'
+            trace: null # trace
+            error: 'SERVICE WORKER' + String(err)
 
-          console.log 'sw promise err', err
+        console.log 'sw promise err', err
     catch err
       console.log 'sw err', err
 

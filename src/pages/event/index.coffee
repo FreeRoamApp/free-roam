@@ -50,10 +50,10 @@ module.exports = class EventPage extends BasePage
               onclick: =>
                 ga? 'send', 'event', 'events', 'share'
                 path = @router.get 'event', {
-                  slug: event?.slug
+                  slug: event.slug
                 }
                 @model.portal.call 'share.any', {
-                  text: 'Vanlife & RV Meetups'
+                  text: event.name
                   path: path
                   url: "https://#{config.HOST}#{path}"
                 }

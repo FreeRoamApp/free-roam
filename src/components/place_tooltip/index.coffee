@@ -32,8 +32,12 @@ module.exports = class PlaceTooltip extends MapTooltip
         text: @place.map (place) -> place?.description
       }
       features: @place.switchMap (place) =>
-        if place?.type is 'pad'
+        if place?.type is 'blm'
           @model.geocoder.getFeaturesFromLocation place.location
+        else if place?.type is 'usfs'
+          @model.geocoder.getFeaturesFromLocation place.location, {
+            file: 'usfs_ranger_districts'
+          }
         else
           RxObservable.of false
       elevation: @place.switchMap (place) =>
@@ -127,10 +131,14 @@ module.exports = class PlaceTooltip extends MapTooltip
         if place?.description
           z '.description',
             $description
-        if features?[0]?.Unit_Nm
+        if place?.type is 'blm' and features?[0]?.Unit_Nm
           z '.features',
             # TODO: lang
-            'Subregion: ' + features?[0]?.Unit_Nm
+            'Subarea: ' + features?[0]?.Unit_Nm
+        else if place?.type is 'usfs' and features?[0]?.DISTRICTNA
+          z '.features',
+            # TODO: lang
+            features?[0]?.DISTRICTNA
         if place?.type is 'coordinate'
           z '.actions',
             z '.action', {
@@ -175,6 +183,6 @@ module.exports = class PlaceTooltip extends MapTooltip
                 else if isSaved then @model.l.get 'general.saved'
                 else @model.l.get 'general.save'
 
-        else if place?.type and not (place?.type in ['hazard', 'pad'])
+        else if place?.type and not (place?.type in ['hazard', 'blm', 'usfs'])
           z '.rating',
             z @$rating

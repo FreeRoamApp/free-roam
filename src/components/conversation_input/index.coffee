@@ -42,9 +42,14 @@ module.exports = class ConversationInput
       uploadFn: @model.conversationMessage.uploadImage
       onUpload: ({prefix, aspectRatio}) =>
         src = @model.image.getSrcByPrefix prefix, {size: 'small'}
+
+        prevMessage = @message.getValue()
+
         @message.next "![](<#{src}" +
                           " =#{aspectRatio}>)"
         @onPost()
+
+        @message.next prevMessage
     }
 
     @currentPanel = new RxBehaviorSubject 'text'

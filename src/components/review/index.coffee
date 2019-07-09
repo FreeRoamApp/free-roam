@@ -70,9 +70,6 @@ module.exports = class Review
 
     {title, user, attachments, time} = review
 
-    oncontextmenu = =>
-      @openDialogFn {user, review, parent}
-
     hasVotedUp = review?.myVote?.vote is 1
     hasVotedDown = review?.myVote?.vote is -1
 
@@ -81,9 +78,6 @@ module.exports = class Review
     z '.z-review', {
       # re-use elements in v-dom. doesn't seem to work with prepending more
       className: z.classKebab {isMe}
-      oncontextmenu: (e) ->
-        e?.preventDefault()
-        oncontextmenu?()
     },
       z '.rating',
         z @$rating, {size: '16px'}

@@ -76,12 +76,16 @@ module.exports = class ConversationMessage
       isStreamed: true
     }
 
-  uploadImage: (file) =>
+  uploadImage: (file, {onProgress} = {}) =>
     formData = new FormData()
     formData.append 'file', file, file.name
 
     @proxy config.API_URL + '/upload', {
       method: 'post'
+      beforeSend: (xhr) ->
+        # if this isn't working, it might be serviceworker's fault
+        if onProgress
+          xhr.upload.addEventListener 'progress', onProgress, false
       query:
         path: "#{@namespace}.uploadImage"
       body: formData

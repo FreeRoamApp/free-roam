@@ -268,7 +268,10 @@ module.exports = class PlaceInfo extends Base
               unless _isEmpty cellCarriers
                 z '.section',
                   z '.title', @model.l.get 'campground.cellSignal'
-                  z '.carriers',
+                  z '.carriers', {
+                    ontouchstart: (e) ->
+                      e.stopPropagation()
+                  },
                     _map cellCarriers, ({$bars, carrier}) =>
                       z '.carrier',
                         z '.bars',

@@ -26,6 +26,10 @@ $zIndexImagePreviewClose = 2
     z-index: $zIndexImagePreviewOverlay
 
   > .image-wrapper
+    display: flex
+    align-items: center
+    justify-content: center
+
     &.rotate-180
       > img
         transform: rotate(180deg)
@@ -50,6 +54,17 @@ $zIndexImagePreviewClose = 2
     bottom: 16px
     left: 50%
     margin-left: -28px
+
+    > .progress
+      color: getColor('$white')
+      position: absolute
+      top: 16px
+      right: -40px
+      width: 32px
+      display: none
+
+      &.is-visible
+        display: block
 
   > .close
     position: absolute

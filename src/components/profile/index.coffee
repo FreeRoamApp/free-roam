@@ -87,6 +87,8 @@ module.exports = class Profile extends Base
                  then @router.get 'profileAttachments', {username: user?.username}
                  else @router.get 'profileAttachmentsById', {id: user?.id}
           {path, count: count - 4}
+        else
+          false
     }
 
     friends = user.switchMap (user) =>
@@ -282,6 +284,8 @@ module.exports = class Profile extends Base
               unless _isEmpty $links
                 z '.links',
                   _map $links, ({$icon, link, type}, i) =>
+                    if link is 'https://'
+                      return
                     [
                       unless i is 0
                         z '.divider'

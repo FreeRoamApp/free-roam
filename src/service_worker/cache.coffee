@@ -29,10 +29,10 @@ module.exports = class Cache
       sprites: {
         version: 3 # bump when changing
         files: [
-          'https://fdn.uno/d/images/maps/sprite_2019_06_14.json'
-          'https://fdn.uno/d/images/maps/sprite_2019_06_14.png'
-          'https://fdn.uno/d/images/maps/sprite_2019_06_14@2x.json'
-          'https://fdn.uno/d/images/maps/sprite_2019_06_14@2x.png'
+          'https://fdn.uno/d/images/maps/sprite_2019_07_03.json'
+          'https://fdn.uno/d/images/maps/sprite_2019_07_03.png'
+          'https://fdn.uno/d/images/maps/sprite_2019_07_03@2x.json'
+          'https://fdn.uno/d/images/maps/sprite_2019_07_03@2x.png'
         ]
       }
       mapbox: {
@@ -153,10 +153,6 @@ module.exports = class Cache
   listen: =>
     self.addEventListener 'install', @onInstall
 
-    # FIXME
-    isBuggedWebview = Environment.isNativeApp('freeroam') and
-                        Environment.getChromeVerison() >= 75
-    unless isBuggedWebview
-      self.addEventListener 'fetch', @onFetch
+    self.addEventListener 'fetch', @onFetch
 
     self.addEventListener 'activate', @onActivate

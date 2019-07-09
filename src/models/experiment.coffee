@@ -18,7 +18,7 @@ module.exports = class Experiment
                          else 'control'
       @cookie.set 'exp:control', expChatTooltip
 
-    ga? 'send', 'event', 'exp', "control:#{expChatTooltip}"
+    ga? 'send', 'event', 'exp', "chatTooltip:#{expChatTooltip}"
 
     @experiments =
       control: expControl
