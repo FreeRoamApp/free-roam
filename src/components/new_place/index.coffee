@@ -106,6 +106,9 @@ module.exports = class NewPlace
       detailsValue: @initialInfoFields.details.valueStreams.switch()
       locationValue: @initialInfoFields.location.valueStreams.switch()
       subTypeValue: @initialInfoFields.subType?.valueStreams.switch()
+      agencyValue: @initialInfoFields.agency?.valueStreams.switch()
+      regionValue: @initialInfoFields.region?.valueStreams.switch()
+      officeValue: @initialInfoFields.office?.valueStreams.switch()
       titleValue: @reviewFields.title.valueStreams.switch()
       bodyValue: @reviewFields.body.valueStreams.switch()
       attachmentsValue: @reviewFields.attachments.valueStreams.switch()
@@ -114,8 +117,8 @@ module.exports = class NewPlace
     }
 
   upsert: =>
-    {me, nameValue, detailsValue, locationValue, subTypeValue,
-      attachmentsValue} = @state.getValue()
+    {me, nameValue, detailsValue, locationValue, subTypeValue, agencyValue,
+      regionValue, officeValue, attachmentsValue} = @state.getValue()
 
     @state.set isLoading: true
 
@@ -132,6 +135,9 @@ module.exports = class NewPlace
           details: detailsValue
           location: locationValue
           subType: subTypeValue
+          agencySlug: agencyValue
+          regionSlug: regionValue
+          officeSlug: officeValue
         }
         .then @upsertReview
         .catch (err) =>
@@ -216,6 +222,32 @@ module.exports = class NewPlace
     if @location
       @initialInfoFields.location.valueStreams.next @location.map (location) ->
         location or autosave['initialInfo.location'] or ''
+
+    if @initialInfoFields.agency
+      agencyInfo = @initialInfoFields.location.valueStreams.switch().switchMap (location) =>
+        if location
+          @model.agency.getAgencyInfoFromLocation location
+        else
+          RxObservable.of null
+
+      @initialInfoFields.subType.valueStreams.next agencyInfo.map (agencyInfo) ->
+        if agencyInfo
+          'public'
+        else
+          ''
+
+      @initialInfoFields.agency.valueStreams.next agencyInfo.map (agencyInfo) ->
+        agencyInfo?.agencySlug or autosave['initialInfo.agency'] or ''
+
+      @initialInfoFields.region.valueStreams.next agencyInfo.map (agencyInfo) ->
+        agencyInfo?.regionSlug or autosave['initialInfo.region'] or ''
+
+      @initialInfoFields.office.valueStreams.next agencyInfo.map (agencyInfo) ->
+        agencyInfo?.slug or autosave['initialInfo.office'] or ''
+
+
+
+
     @reviewFields.title.valueStreams.next(
       RxObservable.of autosave['review.title'] or ''
     )

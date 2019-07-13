@@ -43,7 +43,10 @@ module.exports = class ConversationPage
       z @$appBar, {
         title: @model.user.getDisplayName toUser
         style: 'primary'
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {
+          color: colors.$header500Icon
+          fallbackPath: @router.get 'social'
+        }
         isFullWidth: true
       }
       z '.g-grid',

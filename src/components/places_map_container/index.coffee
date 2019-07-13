@@ -110,10 +110,6 @@ module.exports = class PlacesMapContainer
         left: 60
     }
 
-    @$placeTooltip = new PlaceTooltip {
-      @model, @router, @place, position: @placePosition, @mapSize
-    }
-
     @optionalLayers = MapService.getOptionalLayers {
       @model, @place, @placePosition
     }
@@ -133,6 +129,9 @@ module.exports = class PlacesMapContainer
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
       defaultOpacity, initialCenter, center, initialZoom,  zoom,
       initialLayers, route
+    }
+    @$placeTooltip = new PlaceTooltip {
+      @model, @router, @place, position: @placePosition, @mapSize, @toggleLayer
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true

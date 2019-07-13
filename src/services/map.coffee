@@ -378,6 +378,17 @@ Access: #{access}
 
       {
         name: model.l.get 'placesMapContainer.layerUsfs'
+        # source:
+        #   type: 'raster'
+        #   url: 'http://10.245.137.82:8080/data/deschutes-national-forest-43.92--121.337.json'
+        # layer:
+        #   id: 'us-usfs'
+        #   type: 'raster'
+        #   source: 'us-usfs'
+        #   paint:
+        #     'raster-opacity': 0.6
+        #   metadata:
+        #     zIndex: 2
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-usfs.json'

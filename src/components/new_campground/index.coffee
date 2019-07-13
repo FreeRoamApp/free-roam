@@ -25,6 +25,18 @@ module.exports = class NewCampground extends NewPlace
       location:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+      subType:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      agency:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      region:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      office:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
 
     @reviewExtraFields =
       crowds:

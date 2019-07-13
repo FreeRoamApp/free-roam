@@ -2,6 +2,9 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
+_kebabCase = require 'lodash/kebabCase'
+_isEmpty = require 'lodash/isEmpty'
+_map = require 'lodash/map'
 
 Icon = require '../icon'
 FormattedText = require '../formatted_text'
@@ -14,7 +17,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceTooltip extends MapTooltip
-  constructor: ({@model, @router, @place, @position, @mapSize}) ->
+  constructor: ({@model, @router, @place, @position, @mapSize, @toggleLayer}) ->
     @$closeIcon = new Icon()
     @$directionsIcon = new Icon()
     @$addCampsiteIcon = new Icon()
@@ -24,6 +27,21 @@ module.exports = class PlaceTooltip extends MapTooltip
     }
     @size = new RxBehaviorSubject {width: 0, height: 0}
 
+    features = @place.switchMap (place) =>
+      console.log 'place', place
+      if place?.type is 'blm'
+        @model.geocoder.getFeaturesFromLocation place.location
+      else if place?.type is 'usfs'
+        @model.geocoder.getFeaturesFromLocation place.location, {
+          file: 'usfs_ranger_districts'
+        }
+      else
+        RxObservable.of false
+
+    placeAndFeatures = RxObservable.combineLatest(
+      @place, features, (vals...) -> vals
+    )
+
     @state = z.state {
       @place
       @mapSize
@@ -31,15 +49,20 @@ module.exports = class PlaceTooltip extends MapTooltip
       $description: new FormattedText {
         text: @place.map (place) -> place?.description
       }
-      features: @place.switchMap (place) =>
-        if place?.type is 'blm'
-          @model.geocoder.getFeaturesFromLocation place.location
-        else if place?.type is 'usfs'
-          @model.geocoder.getFeaturesFromLocation place.location, {
-            file: 'usfs_ranger_districts'
+      features: features
+      mvums: placeAndFeatures.switchMap ([place, features]) =>
+        if features?[0]?.FORESTNAME
+          @model.localMap.getAllByRegionSlug _kebabCase(features?[0]?.FORESTNAME), {
+            location: place?.location
           }
+          .map (mvums) ->
+            _map mvums, (mvum) ->
+              {
+                mvum
+                $downloadIcon: new Icon()
+              }
         else
-          RxObservable.of false
+          RxObservable.of null
       elevation: @place.switchMap (place) =>
         if place?.type is 'coordinate'
           @model.geocoder.getElevationFromLocation place.location
@@ -75,7 +98,7 @@ module.exports = class PlaceTooltip extends MapTooltip
 
   render: ({isVisible} = {}) =>
     {place, $description, mapSize, size, isSaving,
-      isSaved, features, elevation} = @state.getValue()
+      isSaved, features, elevation, mvums} = @state.getValue()
 
     isVisible ?= Boolean place and Boolean size.width
 
@@ -137,8 +160,42 @@ module.exports = class PlaceTooltip extends MapTooltip
             'Subarea: ' + features?[0]?.Unit_Nm
         else if place?.type is 'usfs' and features?[0]?.DISTRICTNA
           z '.features',
-            # TODO: lang
             features?[0]?.DISTRICTNA
+            unless _isEmpty mvums
+              z '.mvums',
+                z '.title', 'MVUMs:'
+                _map mvums, ({mvum, $downloadIcon}) =>
+                  z '.mvum', {
+                    onclick: =>
+                      # TODO: zoom map in enough?
+                      @toggleLayer {
+                        name: @model.l.get 'placesMapContainer.mvum'
+                        source:
+                          type: 'raster'
+                          url: "https://localmaps.freeroam.app/data/#{mvum.slug}.json"
+                          tileSize: 256 # built as 512 block size, rendered as this for crisper look
+                        layer:
+                          id: 'mvum'
+                          type: 'raster'
+                          source: 'mvum'
+                          paint:
+                            'raster-opacity': 0.8
+                          metadata:
+                            zIndex: 2
+                      }
+                  },
+                    z '.text', mvum.name or 'MVUM'
+                    z 'a.icon', {
+                      href: mvum.url
+                      target: '_system'
+                      attributes:
+                        download: _kebabCase(mvum.name) + '.pdf'
+                    },
+                      z $downloadIcon,
+                        icon: 'download'
+                        isTouchTarget: false
+                        color: colors.$bgText
+
         if place?.type is 'coordinate'
           z '.actions',
             z '.action', {

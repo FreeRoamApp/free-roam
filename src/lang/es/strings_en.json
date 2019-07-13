@@ -248,6 +248,8 @@
   "placeInfo.plannedSaved": "Added to planned trip map",
   "placeInfo.visitedSaved": "Added to travel log map",
   "placeInfo.viewTrip": "View trip",
+  "placeInfo.landTypePublic": "Public",
+  "placeInfo.landTypePrivate": "Private",
   "placesFilterBar.alongRoute": "Along route",
   "placesMapContainer.filters": "Filters",
   "placesMapContainer.typesTitle": "Filter by type",

@@ -42,12 +42,51 @@ module.exports = class NewPlaceInitialInfo
         valueStreams: @fields.subType.valueStreams
       }
 
+    if @fields.subType
+      @$subTypeDropdown = new Dropdown {
+        valueStreams: @fields.subType.valueStreams
+      }
+      @$agencyDropdown = new Dropdown {
+        valueStreams: @fields.agency.valueStreams
+      }
+      @$regionDropdown = new Dropdown {
+        valueStreams: @fields.region.valueStreams
+      }
+      @$officeDropdown = new Dropdown {
+        valueStreams: @fields.office.valueStreams
+      }
+
     @$mapButton = new PrimaryButton()
     @$currentLocationButton = new SecondaryButton()
+
+    subType = @fields.subType?.valueStreams.switch()
+    agency = @fields.agency?.valueStreams.switch()
+    region = @fields.region?.valueStreams.switch()
+    agencyAndRegion = RxObservable.combineLatest(
+      agency, region, (vals...) -> vals
+    )
 
     @state = z.state {
       nameValue: @fields.name.valueStreams.switch()
       locationValue: @fields.location.valueStreams.switch()
+      subTypeValue: subType
+      agencyValue: agency
+      regionValue: region
+      agencies: subType?.switchMap (subType) =>
+        if subType is 'public'
+          @model.agency.getAll()
+        else
+          RxObservable.of null
+      regions: agency?.switchMap (agency) =>
+        if agency
+          @model.region.getAllByAgencySlug agency
+        else
+          RxObservable.of null
+      offices: agencyAndRegion?.switchMap ([agency, region]) =>
+        if agency and region
+          @model.office.getAllByAgencySlugAndRegionSlug agency, region
+        else
+          RxObservable.of null
     }
 
   isCompleted: =>
@@ -60,6 +99,9 @@ module.exports = class NewPlaceInitialInfo
     }
 
   render: =>
+    {subTypeValue, agencies, agencyValue, regions, regionValue,
+      offices} = @state.getValue()
+
     z '.z-new-place-initial-info',
       z '.g-grid',
         z 'label.field',
@@ -69,7 +111,7 @@ module.exports = class NewPlaceInitialInfo
           z @$nameInput,
             hintText: @prettyType
 
-        if @fields.subType
+        if @fields.subType and @subTypes
           z 'label.field',
             z '.name', @model.l.get 'newPlaceInitialInfo.placeType'
             z @$subTypeDropdown,
@@ -118,6 +160,86 @@ module.exports = class NewPlaceInitialInfo
                       @fields.location.valueStreams.next RxObservable.of(
                         "#{lat}, #{lon}"
                       )
+
+        if @fields.subType and not @subTypes
+          [
+            z '.field.optional',
+              @model.l.get 'newPlaceInitialInfo.optional'
+            z 'label.field',
+              z '.name', @model.l.get 'newPlaceInitialInfo.landType'
+              z @$subTypeDropdown,
+                options: [
+                  {
+                    value: ''
+                    text: @model.l.get 'newPlaceInitialInfo.selectLandType'
+                  }
+                  {
+                    value: 'public'
+                    text: @model.l.get 'placeInfo.landTypePublic'
+                  }
+                  {
+                    value: 'private'
+                    text: @model.l.get 'placeInfo.landTypePrivate'
+                  }
+                ]
+          ]
+
+        if subTypeValue is 'public'
+          z 'label.field',
+            z '.name', @model.l.get 'newPlaceInitialInfo.agency'
+            z @$agencyDropdown,
+              options: [
+                {
+                  value: ''
+                  text: @model.l.get 'general.none'
+                }
+                {
+                  value: 'other'
+                  text: @model.l.get 'general.other'
+                }
+              ].concat _map agencies, (agency) ->
+                {
+                  value: agency.slug
+                  text: agency.name
+                }
+
+        if subTypeValue is 'public' and agencyValue and agencyValue isnt 'other'
+          z 'label.field',
+            z '.name', @model.l.get 'newPlaceInitialInfo.region'
+            z @$regionDropdown,
+              options: [
+                {
+                  value: ''
+                  text: @model.l.get 'general.none'
+                }
+                {
+                  value: 'other'
+                  text: @model.l.get 'general.other'
+                }
+              ].concat _map regions, (region) ->
+                {
+                  value: region.slug
+                  text: region.name
+                }
+
+        if subTypeValue is 'public' and regionValue and regionValue isnt 'other' and agencyValue isnt 'other'
+          z 'label.field',
+            z '.name', @model.l.get 'newPlaceInitialInfo.office'
+            z @$officeDropdown,
+              options: [
+                {
+                  value: ''
+                  text: @model.l.get 'general.none'
+                }
+                {
+                  value: 'other'
+                  text: @model.l.get 'general.other'
+                }
+              ].concat _map offices, (office) ->
+                {
+                  value: office.slug
+                  text: office.name
+                }
 
         z 'label.field.details',
           z '.name', @model.l.get 'newPlaceInitialInfo.details'

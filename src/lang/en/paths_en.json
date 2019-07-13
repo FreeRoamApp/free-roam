@@ -54,6 +54,7 @@
   "newCampground": "/new-campground",
   "newCampgroundReview": "/campground/:slug/new-review",
   "newCheckIn": "/new-check-in/:tripType/:tripId",
+  "newMvum": "/new-mvum",
   "newOvernight": "/new-overnight",
   "newOvernightReview": "/overnight/:slug/new-review",
   "newTrip": "/new-trip",

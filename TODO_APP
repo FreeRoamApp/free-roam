@@ -1,14 +1,27 @@
 
 TODOS:
 
-- What if part of the onboarding process asked if they would like to join "x" community and then they get subscribed to those chats?
+- Ability to add/edit urls for campgrounds
+
+- MVUM failures:
+  - https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
+
+- MVUM add
+  - Pick region if office slug fails
+  - Error when one fails
+  - Success message
 
 - National Forest subregions on map w/ MVUM pdfs. What type of place? Facility? New: region (city, state, national forest, etc...)?
   - "region" model is probably best
   - region for areas of cities where street parking is specifically banned
 
 - Regional info
-  - Need new us_pad with normal stuff that shows on map (Fee?) for BLM office
+  x Need new us_pad with normal stuff that shows on map (Fee?) for BLM office
+
+  - Add MVUM page
+    - Pick ranger district / forest
+    - PDF URL
+    - Process PDF to get coordinate boundaries, convert to mbtiles and host
 
   - Public / Private
     - Public: Federal, state, county, city
@@ -47,6 +60,7 @@ TODOS:
 
   - campgroundType ()
 
+- What if part of the onboarding process asked if they would like to join "x" community and then they get subscribed to those chats?
 
 - Because Android splash screen launches to splash activity, clicking on the app icon on home page reloads the entire app instead of opening existing session
   - Also screws up Samsung app switching (reloads whole app)
