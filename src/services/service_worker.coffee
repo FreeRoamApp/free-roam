@@ -8,8 +8,10 @@ Environment = require './environment'
 class ServiceWorkerService
   register: ({model}) =>
     try
+      console.log 'registering service worker...'
       navigator.serviceWorker?.register '/service_worker.js'
       .then (registration) =>
+        console.log 'service worker registered'
         PushService.setFirebaseServiceWorker registration
 
         @hasActiveServiceWorker = Boolean registration.active
@@ -17,6 +19,7 @@ class ServiceWorkerService
         @listenForWaitingServiceWorker registration, (registration) =>
           @handleUpdate registration, {model}
       .catch (err) ->
+        console.log 'sw promise err', err
         window.fetch config.API_URL + '/log',
           method: 'POST'
           headers:
@@ -26,7 +29,6 @@ class ServiceWorkerService
             trace: null # trace
             error: 'SERVICE WORKER' + String(err)
 
-        console.log 'sw promise err', err
     catch err
       console.log 'sw err', err
 

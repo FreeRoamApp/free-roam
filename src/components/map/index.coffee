@@ -22,19 +22,21 @@ module.exports = class Map
 
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
-      @place, @placePosition, @mapSize, @initialZoom, @zoom, @initialCenter,
-      @initialBounds, @route, @fill, @initialLayers, @center, @defaultOpacity,
-      @onclick, @preserveDrawingBuffer, @onContentReady, @hideLabels,
-      @hideControls, @usePlaceNumbers} = options
+      @place, @coordinate, @placePosition, @mapSize, @initialZoom, @zoom,
+      @initialCenter, @initialBounds, @route, @fill, @initialLayers, @center,
+      @defaultOpacity, @onclick, @preserveDrawingBuffer, @onContentReady,
+      @hideLabels, @hideControls, @usePlaceNumbers,
+      @beforeMapClickFn} = options
 
     @place ?= new RxBehaviorSubject null
+    @coordinate ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
 
     @initialZoom ?= 4
     @initialCenter ?= [-105.894, 40.048]
 
     @savedLayers = @initialLayers or []
-    @layers = []
+    @visibleLayers = []
     @$spinner = new Spinner()
 
     @state = z.state
@@ -59,11 +61,19 @@ module.exports = class Map
       i += 1
     return beforeLayer
 
+  setLayerOpacityById: (id, opacity) =>
+    layer = @map.getLayer id
+    if layer
+      if layer.type is 'fill'
+        @map.setPaintProperty id, 'fill-opacity', opacity
+      else
+        @map.setPaintProperty id, 'raster-opacity', opacity
+
   addLayer: (optionalLayer) =>
     {layer, source, sourceId, insertBeneathLabels, onclick} = optionalLayer
 
     if @getLayerIndexById(layer.id) is -1
-      @layers.push optionalLayer
+      @visibleLayers.push optionalLayer
       layerId = if insertBeneathLabels then @getBeforeLayer(layer.metadata?.zIndex) else undefined
       try
         @map.addSource sourceId or layer.id, source
@@ -71,28 +81,14 @@ module.exports = class Map
         console.log 'source exists...', err
       @map.addLayer layer, layerId
 
-      if onclick
-        @map.on 'click', layer.id, (e) =>
-          unless e.originalEvent.isPropagationStopped
-            e.originalEvent.stopPropagation()
-            features = @map.queryRenderedFeatures(e.point)
-            # console.log JSON.stringify _map(features, 'properties'), null, '\t'
-            features = _filter features, ({layer}) -> layer?.id in [
-              'fire-weather', 'us-blm', 'us-usfs'
-            ]
-            features = _orderBy features, ({layer}) ->
-              if layer?.id is 'fire-weather' then 0 else 1
-            if features?[0]?.layer?.id is layer.id
-              onclick e, features[0].properties
-
   getLayerIndexById: (id) ->
-    _findIndex(@layers, ({layer}) -> layer.id is id)
+    _findIndex(@visibleLayers, ({layer}) -> layer.id is id)
 
   removeLayerById: (id) =>
     index = @getLayerIndexById id
     if index isnt -1
-      @layers.splice index, 1
-    layer = @map.getLayer id
+      @visibleLayers.splice index, 1
+    # layer = @map.getLayer id
     @map.removeLayer id
     # source = layer.source
     # @map.removeSource source
@@ -324,30 +320,59 @@ module.exports = class Map
           e.originalEvent.stopPropagation()
           @onclick e
       else
-        @map.on 'click', (e) =>
-
-          features = @map.queryRenderedFeatures(e.point)
-          @place.next null
-
         console.log 'listen ctx'
-        @map.on 'contextmenu', (e) =>
+        @map.on 'click', (e) =>
           e.originalEvent.preventDefault()
 
-          @placePosition.next e.point
+          if @beforeMapClickFn and @beforeMapClickFn() is false
+            return
 
-          latRounded = Math.round(e.lngLat.lat * 10000) / 10000
-          lonRounded = Math.round(e.lngLat.lng * 10000) / 10000
+          if @place.getValue()
+            return @place.next null
 
-          @place.next null # reset the tooltip for things like elevation
-          @place.next {
-            name: "#{latRounded}, #{lonRounded}"
-            type: 'coordinate'
-            position: e.point
-            location: [e.lngLat.lng, e.lngLat.lat]
-          }
+          coordinateValue = @coordinate.getValue()
+
+          if coordinateValue
+            @coordinate.next null # already open, close
+
+          # don't 'click' on double-tap zoom
+          if @clickTimeout
+            clearTimeout @clickTimeout
+            @clickTimeout = null
+            return
+
+          @clickTimeout = setTimeout =>
+            @clickTimeout = null
+            if e.originalEvent.isPropagationStopped
+              return
+
+            # @place.next null
+
+            unless coordinateValue
+              @coordinate.next null # reset the tooltip for things like elevation
+              latRounded = Math.round(e.lngLat.lat * 10000) / 10000
+              lonRounded = Math.round(e.lngLat.lng * 10000) / 10000
+
+              @coordinate.next {
+                name: "#{latRounded}, #{lonRounded}"
+                type: 'coordinate'
+                position: e.point
+                location: [e.lngLat.lng, e.lngLat.lat]
+                features:
+                  _filter @map.queryRenderedFeatures(e.point), (feature) ->
+                    feature.source in [
+                      'us-usfs', 'us-blm', 'fire-weather'
+                    ]
+              }
+          , 300
 
         onclick = (e) =>
           e.originalEvent.isPropagationStopped = true
+
+          if e.features[0].properties.type is 'coordinate'
+            return
+
+          @coordinate.next null
 
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
@@ -402,8 +427,8 @@ module.exports = class Map
     @centerDisposable?.unsubscribe()
     @zoomDisposable?.unsubscribe()
     @resizeSubscription?.unsubscribe()
-    @savedLayers = @layers
-    @layers = []
+    @savedLayers = @visibleLayers
+    @visibleLayers = []
     @map?.remove()
     @map = null
 
@@ -478,10 +503,30 @@ module.exports = class Map
 
   subscribeToPlaces: =>
     console.log 'create subscription'
-    @disposable = @places.subscribe (places) =>
+    placesAndCoordinate = RxObservable.combineLatest(
+      @places, @coordinate, (vals...) -> vals
+    )
+    @disposable = placesAndCoordinate.subscribe ([places, coordinate]) =>
+      if coordinate
+        baseArr = [
+          {
+            type: 'Feature'
+            properties:
+              name: coordinate.name
+              icon: 'drop_pin'
+              iconOpacity: @defaultOpacity
+              type: 'coordinate'
+            geometry:
+              type: 'Point'
+              coordinates: coordinate.location
+          }
+        ]
+      else
+        baseArr = []
+
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'
-        features: _map places, (place, i) =>
+        features: baseArr.concat _map places, (place, i) =>
           {
             type: 'Feature'
             properties:

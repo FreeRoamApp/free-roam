@@ -8,6 +8,7 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/switchMap'
+require 'rxjs/add/operator/startWith'
 
 GroupList = require '../group_list'
 EventList = require '../event_list'
@@ -46,7 +47,9 @@ module.exports = class Groups
     @$eventList = new EventList {
       @model
       @router
-      events: @model.event.getAll().map (events) ->
+      events: @model.event.getAll()
+      .startWith([{}, {}, {}]) # 3 placeholder for initial load less jank
+      .map (events) ->
         _take events, 3
     }
 

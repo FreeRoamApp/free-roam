@@ -37,7 +37,7 @@ module.exports = class NewMvum
 
     @state = z.state {
       isLoading: false
-      isSaved: false
+      lastSavedName: null
       requestRegion: false
       regions: @model.region.getAllByAgencySlug 'usfs'
     }
@@ -45,7 +45,7 @@ module.exports = class NewMvum
   upsert: (e) =>
     {isLoading} = @state.getValue()
     unless isLoading
-      @state.set isLoading: true, isSaved: false
+      @state.set isLoading: true, lastSavedName: null
       @nameError.next null
       @urlError.next null
 
@@ -56,7 +56,7 @@ module.exports = class NewMvum
         regionSlug: @regionValue.getValue()
       }
       .then =>
-        @state.set isLoading: false, isSaved: true
+        @state.set isLoading: false, lastSavedName: @nameValue.getValue()
         @nameValue.next ''
         @urlValue.next ''
         @regionValue.next ''
@@ -77,12 +77,12 @@ module.exports = class NewMvum
         @state.set isLoading: false
 
   render: =>
-    {isLoading, isSaved, requestRegion, regions} = @state.getValue()
+    {isLoading, lastSavedName, requestRegion, regions} = @state.getValue()
 
     z '.z-new-mvum',
       z '.g-grid',
-        if isSaved
-          z '.saved', @model.l.get 'general.saved'
+        if lastSavedName
+          z '.saved', "#{@model.l.get 'general.saved'} #{lastSavedName}"
         z '.notes',
           @model.l.get 'newMvum.notes'
         z 'label.field',
@@ -95,7 +95,7 @@ module.exports = class NewMvum
           z @$urlInput,
             hintText: @model.l.get 'newMvum.url'
 
-        if requestRegion or true
+        if requestRegion
           z 'label.field',
             z @$regionDropdown,
               options: [

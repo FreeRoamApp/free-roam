@@ -1,0 +1,49 @@
+@require '../../vars'
+
+.z-layer-settings-overlay
+  background: getColor('$tertiary100')
+  width: 100%
+  height: 100%
+  position: absolute
+  z-index: 999
+  display: flex
+  flex-direction: column
+
+  > .content
+    flex: 1
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+
+    > .title
+      font-title()
+      padding: 16px
+
+    > .layers
+      background: getColor('$tertiary0')
+
+      > .layer
+        padding: 16px
+        display: flex
+
+        > .icon
+          width: 48px
+          height: 48px
+          background-size: 100%
+          border-radius: 8px
+          border: 2px solid getColor('$black26')
+
+        > .info
+          margin-left: 24px
+          flex: 1
+
+          > .slider
+            display: flex
+            // align-items: center
+
+            > .range
+              flex: 1
+
+            > .percent
+              font-caption-bold(false)
+              margin-top: 4px
+              margin-left: 24px

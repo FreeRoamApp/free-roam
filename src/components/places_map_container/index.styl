@@ -105,11 +105,19 @@
     > .layers
       top: 16px
       right: 16px
+      z-index: 1000
 
       > .content
-        > .title
-          font-subhead2()
-          margin-bottom: 8px
+        > .top
+          display: flex
+          align-items: flex-start
+
+          > .title
+            font-subhead2()
+            margin-bottom: 8px
+
+          > .settings
+            margin-left: auto
 
         > .layer-icons
           > .g-grid
@@ -142,39 +150,3 @@
                 > .name
                   font-tiny(false)
                   margin-top: 4px
-
-                &.us-blm
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/blm_overlay.png')
-
-                &.us-usfs
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/usfs_overlay.png')
-
-                &.us-cell-att
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/att_overlay.png')
-
-                &.us-cell-sprint
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/sprint_overlay.png')
-
-                &.us-cell-tmobile
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/tmobile_overlay.png')
-
-                &.us-cell-verizon
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/verizon_overlay.png')
-
-                &.satellite
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/satellite_overlay.png')
-
-                &.smoke
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/smoke_overlay.png')
-
-                &.fire-weather
-                  > .icon
-                    background-image: url($cdnUrl + '/maps/fire_weather_overlay.png')

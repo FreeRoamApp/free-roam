@@ -38,8 +38,9 @@ module.exports = class EventList
               style:
                 backgroundImage:
                   "url(#{config.CDN_URL}/events/#{_snakeCase(event.slug)}_thumbnail.jpg)"
-            z '.content',
-              z '.name', event.name
-              z '.info',
-                "#{event.startTime} - #{event.endTime} · "
-                @model.placeBase.getLocation event
+            if event?.name
+              z '.content',
+                z '.name', event.name
+                z '.info',
+                  "#{event.startTime} - #{event.endTime} · "
+                  @model.placeBase.getLocation event

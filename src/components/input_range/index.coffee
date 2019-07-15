@@ -8,7 +8,8 @@ if window?
   require './index.styl'
 
 module.exports = class InputRange
-  constructor: ({@model, @value, @valueStreams, @minValue, @maxValue}) ->
+  constructor: (options) ->
+    {@model, @value, @valueStreams, @minValue, @maxValue, @onChange} = options
     @state = z.state
       value: @valueStreams?.switch() or @value
 
@@ -18,12 +19,19 @@ module.exports = class InputRange
     else
       @value.next value
 
-  render: ({label} = {}) =>
+  afterMount: =>
+    if @onChange
+      @disposable = (@valueStreams?.switch() or @value).subscribe @onChange
+
+  beforeUnmount: =>
+    @disposable?.unsubscribe()
+
+  render: ({label, hideInfo, step} = {}) =>
     {value} = @state.getValue()
 
     value = if value? then parseInt(value) else null
 
-    percent = parseInt 100 * ((value or 1) - @minValue) / (@maxValue - @minValue)
+    percent = parseInt 100 * ((if value? then value else 1) - @minValue) / (@maxValue - @minValue)
 
     # FIXME: handle null starting value better (clicking on mid should set value)
 
@@ -37,18 +45,20 @@ module.exports = class InputRange
             type: 'range'
             min: "#{@minValue}"
             max: "#{@maxValue}"
+            step: "#{step or 1}"
             value: "#{value}"
             onclick: (e) =>
               @setValue parseInt(e.currentTarget.value)
             oninput: (e) =>
               @setValue parseInt(e.currentTarget.value)
-        z '.info',
-          z '.unset', @model.l.get 'inputRange.default'
-          z '.numbers',
-            _map _range(@minValue, @maxValue + 1), (number) =>
-              z '.number', {
-                onclick: =>
-                  @setValue parseInt(number)
-              },
-                if number in [@minValue, @maxValue / 2, @maxValue, value]
-                  number
+        unless hideInfo
+          z '.info',
+            z '.unset', @model.l.get 'inputRange.default'
+            z '.numbers',
+              _map _range(@minValue, @maxValue + 1), (number) =>
+                z '.number', {
+                  onclick: =>
+                    @setValue parseInt(number)
+                },
+                  if number in [@minValue, @maxValue / 2, @maxValue, value]
+                    number

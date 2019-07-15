@@ -334,10 +334,12 @@ class MapService
 
   getOptionalLayers: ({model, place, placePosition}) ->
     date = DateService.format new Date(), 'yyyy-mm-dd'
-
-    [
-      {
+    layerSettings = JSON.parse localStorage?.layerSettings or '{}'
+    {
+      'us-blm': {
         name: model.l.get 'placesMapContainer.layerBlm'
+        thumb: "#{config.CDN_URL}/maps/blm_overlay.png"
+        defaultOpacity: 0.5
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-blm.json'
@@ -350,45 +352,15 @@ class MapService
           paint:
             # 'fill-color': colors.$mapLayerBlm
             'fill-pattern': 'blm_bg'
-            'fill-opacity': 0.5
           metadata:
             zIndex: 2
         insertBeneathLabels: true
-        onclick: (e, properties) ->
-          area = if properties.Loc_Nm \
-                 then _startCase properties.Loc_Nm.toLowerCase()
-                 else model.l.get 'general.unknown'
-          access = if properties.Access \
-                   then model.l.get "placeTooltip.pla.#{properties.Access}"
-                   else model.l.get 'general.unknown'
-          place.next {
-            type: 'blm'
-            location:
-              lon: e.lngLat.lng
-              lat: e.lngLat.lat
-            name: 'BLM'
-            description: """
-Office: #{area}
-
-Access: #{access}
-            """
-          }
-          placePosition.next e.point
       }
 
-      {
+      'us-usfs': {
         name: model.l.get 'placesMapContainer.layerUsfs'
-        # source:
-        #   type: 'raster'
-        #   url: 'http://10.245.137.82:8080/data/deschutes-national-forest-43.92--121.337.json'
-        # layer:
-        #   id: 'us-usfs'
-        #   type: 'raster'
-        #   source: 'us-usfs'
-        #   paint:
-        #     'raster-opacity': 0.6
-        #   metadata:
-        #     zIndex: 2
+        thumb: "#{config.CDN_URL}/maps/usfs_overlay.png"
+        defaultOpacity: 0.5
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-usfs.json'
@@ -401,34 +373,15 @@ Access: #{access}
           paint:
             # 'fill-color': colors.$mapLayerUsfs
             'fill-pattern': 'usfs_bg'
-            'fill-opacity': 0.5
           metadata:
             zIndex: 2
         insertBeneathLabels: true
-        onclick: (e, properties) ->
-          area = if properties.Loc_Nm \
-                 then _startCase properties.Loc_Nm.toLowerCase()
-                 else model.l.get 'general.unknown'
-          access = if properties.Access \
-                   then model.l.get "placeTooltip.pla.#{properties.Access}"
-                   else model.l.get 'general.unknown'
-          place.next {
-            type: 'usfs'
-            location:
-              lon: e.lngLat.lng
-              lat: e.lngLat.lat
-            name: 'USFS'
-            description: """
-Forest: #{area}
-
-Access: #{access}
-            """
-          }
-          placePosition.next e.point
       }
 
-      {
+      'us-cell-verizon': {
         name: model.l.get 'placesMapContainer.layerVerizonLte'
+        thumb: "#{config.CDN_URL}/maps/verizon_overlay.png"
+        defaultOpacity: 0.4
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-verizon.json'
@@ -441,14 +394,15 @@ Access: #{access}
           paint:
             # 'fill-color': colors.$verizon
             'fill-pattern': 'verizon_bg'
-            'fill-opacity': 0.4
           metadata:
             zIndex: 2
         insertBeneathLabels: true
       }
 
-      {
+      'us-cell-att': {
         name: model.l.get 'placesMapContainer.layerAttLte'
+        thumb: "#{config.CDN_URL}/maps/att_overlay.png"
+        defaultOpacity: 0.4
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-att.json'
@@ -461,14 +415,15 @@ Access: #{access}
           paint:
             # 'fill-color': colors.$att
             'fill-pattern': 'att_bg'
-            'fill-opacity': 0.4
           metadata:
             zIndex: 2
         insertBeneathLabels: true
       }
 
-      {
+      'us-cell-tmobile': {
         name: model.l.get 'placesMapContainer.layerTmobileLte'
+        thumb: "#{config.CDN_URL}/maps/tmobile_overlay.png"
+        defaultOpacity: 0.4
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-tmobile.json'
@@ -481,14 +436,15 @@ Access: #{access}
           paint:
             # 'fill-color': colors.$tmobile
             'fill-pattern': 'tmobile_bg'
-            'fill-opacity': 0.4
           metadata:
             zIndex: 2
         insertBeneathLabels: true
       }
 
-      {
+      'us-cell-sprint': {
         name: model.l.get 'placesMapContainer.layerSprintLte'
+        thumb: "#{config.CDN_URL}/maps/sprint_overlay.png"
+        defaultOpacity: 0.4
         source:
           type: 'vector'
           url: 'https://tileserver.freeroam.app/data/free-roam-us-cell-sprint.json'
@@ -501,14 +457,14 @@ Access: #{access}
           paint:
             # 'fill-color': colors.$sprint
             'fill-pattern': 'sprint_bg'
-            'fill-opacity': 0.4
           metadata:
             zIndex: 2
         insertBeneathLabels: true
       }
 
-      {
+      smoke: {
         name: model.l.get 'placesMapContainer.layerSmoke'
+        thumb: "#{config.CDN_URL}/maps/smoke_overlay.png"
         source:
           type: 'geojson'
           data: "#{config.MAPS_CDN_URL}/smoke.json?#{date}"
@@ -527,8 +483,10 @@ Access: #{access}
         insertBeneathLabels: true
       }
 
-      {
+      'fire-weather': {
         name: model.l.get 'placesMapContainer.layerFireWeather'
+        thumb: "#{config.CDN_URL}/maps/fire_weather_overlay.png"
+        defaultOpacity: 0.5
         source:
           type: 'geojson'
           data: "#{config.MAPS_CDN_URL}/fire_weather.json?#{date}"
@@ -544,7 +502,6 @@ Access: #{access}
               'Red Flag Warning', colors.$red500
               colors.$yellow500 # other
             ]
-            'fill-opacity': 0.5
           metadata:
             zIndex: 2
         insertBeneathLabels: true
@@ -556,8 +513,10 @@ Access: #{access}
           placePosition.next e.point
       }
 
-      {
+      satellite: {
         name: model.l.get 'placesMapContainer.layerSatellite'
+        thumb: "#{config.CDN_URL}/maps/satellite_overlay.png"
+        defaultOpacity: 1
         sourceId: 'mapbox'
         source:
           type: 'raster'
@@ -568,11 +527,12 @@ Access: #{access}
           type: 'raster'
           source: 'mapbox'
           'source-layer': 'mapbox_satellite_full'
+          paint: {} # necessary to add opacity
           metadata:
             zIndex: 1
         insertBeneathLabels: true
       }
-    ]
+    }
 
 
   getESQueryFromFilters: (filters, currentMapBounds) =>

@@ -18,6 +18,8 @@ require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 
 Checkbox = require '../checkbox'
+CoordinateSheet = require '../coordinate_sheet'
+LayerSettingsOverlay = require '../layer_settings_overlay'
 Map = require '../map'
 PlaceTooltip = require '../place_tooltip'
 PlacesFilterBar = require '../places_filter_bar'
@@ -99,10 +101,12 @@ module.exports = class PlacesMapContainer
     )
 
     @place = new RxBehaviorSubject null
+    @coordinate = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null
     @$fab = new Fab()
     @$layersIcon = new Icon()
+    @$layerSettingsIcon = new Icon()
     @$tooltip = new TooltipPositioner {
       @model
       key: 'mapLayers'
@@ -120,18 +124,27 @@ module.exports = class PlacesMapContainer
     catch
       []
     layersVisible or= []
-    initialLayers = _map layersVisible, (layerId) =>
-      optionalLayer = _find @optionalLayers, (optionalLayer) ->
-        optionalLayer.layer.id is layerId
+    @layersVisible = new RxBehaviorSubject layersVisible
+    initialLayers = _filter _map layersVisible, (layerId) =>
+      optionalLayer = @setOpacityByOptionalLayer @optionalLayers[layerId]
 
     @$map = new Map {
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
-      defaultOpacity, initialCenter, center, initialZoom,  zoom,
+      @coordinate, defaultOpacity, initialCenter, center, initialZoom,  zoom,
       initialLayers, route
+      beforeMapClickFn: =>
+        {isLayersPickerVisible} = @state.getValue()
+        # if layers picker is visible, cancel the normal map click
+        # but still allow clicking on places
+        Boolean not isLayersPickerVisible
     }
     @$placeTooltip = new PlaceTooltip {
-      @model, @router, @place, position: @placePosition, @mapSize, @toggleLayer
+      @model, @router, @place, position: @placePosition, @mapSize
+    }
+    @$coordinateSheet = new CoordinateSheet {
+      @model, @router, @coordinate, @addOptionalLayer, @layersVisible
+      @addLayerById, @removeLayerById
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
@@ -163,7 +176,7 @@ module.exports = class PlacesMapContainer
       isLayersPickerVisible: false
       isLegendVisible: @isLegendVisible
       isFilterTypesVisible: @isFilterTypesVisible
-      layersVisible: layersVisible
+      layersVisible: @layersVisible
 
   afterMount: =>
     @disposable = @currentMapBounds.subscribe ({zoom, center} = {}) =>
@@ -330,24 +343,50 @@ module.exports = class PlacesMapContainer
           places: places
         }
 
+  addOptionalLayer: (optionalLayer) =>
+    if optionalLayer
+      @optionalLayers[optionalLayer.layer.id] = optionalLayer
 
-  toggleLayer: (optionalLayer, index) =>
-    {source, sourceId, layer, insertBeneathLabels} = optionalLayer
+  setOpacityByOptionalLayer: (optionalLayer) ->
+    unless optionalLayer # for temporary layers like mvums
+      return
+    layerId = optionalLayer.layer.id
+    layerSettings = JSON.parse localStorage?.layerSettings or '{}'
+    if optionalLayer.layer.type is 'fill' and typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
+      optionalLayer.layer.paint['fill-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
+    else if typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
+      optionalLayer.layer.paint['raster-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
+    optionalLayer
+
+
+  addLayerById: (layerId, {skipSave} = {}) =>
+    optionalLayer = @optionalLayers[layerId]
+    optionalLayer = @setOpacityByOptionalLayer optionalLayer
+
+    @$map.addLayer optionalLayer
+
     {layersVisible} = @state.getValue()
+    ga? 'send', 'event', 'map', 'showLayer', layerId
+    layersVisible.push layerId
+    @layersVisible.next layersVisible
 
-    isVisible = index isnt -1
+    unless optionalLayer.isTemporary
+      persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
+      @model.cookie.set persistentCookie, JSON.stringify layersVisible
 
-    if isVisible
-      layersVisible.splice index, 1
-    else
-      ga? 'send', 'event', 'map', 'showLayer', layer.id
-      layersVisible.push layer.id
-    @state.set {layersVisible}
 
-    persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
-    @model.cookie.set persistentCookie, JSON.stringify layersVisible
+  removeLayerById: (layerId) =>
+    optionalLayer = @optionalLayers[layerId]
+    @$map.removeLayerById layerId
 
-    @$map.toggleLayer optionalLayer
+    {layersVisible} = @state.getValue()
+    index = layersVisible.indexOf(layerId)
+    layersVisible.splice index, 1
+    @layersVisible.next layersVisible
+
+    unless optionalLayer.isTemporary
+      persistentCookie = "#{@persistentCookiePrefix}_savedLayers"
+      @model.cookie.set persistentCookie, JSON.stringify layersVisible
 
 
   render: =>
@@ -385,6 +424,7 @@ module.exports = class PlacesMapContainer
         z '.map',
           z @$map
           z @$placeTooltip
+          z @$coordinateSheet
 
           z '.legend-fab', {
             onclick: =>
@@ -421,7 +461,19 @@ module.exports = class PlacesMapContainer
               e?.stopPropagation()
           },
             z '.content',
-              z '.title', @model.l.get 'placesMapContainer.layers'
+              z '.top',
+                z '.title', @model.l.get 'placesMapContainer.layers'
+                z '.settings',
+                  z @$layerSettingsIcon,
+                    icon: 'settings'
+                    color: colors.$bgText87
+                    isTouchTarget: false
+                    size: '18px'
+                    onclick: =>
+                      @model.overlay.open new LayerSettingsOverlay {
+                        @model, @optionalLayers
+                        setLayerOpacityById: @$map.setLayerOpacityById
+                      }
               z '.layer-icons',
                 z '.g-grid',
                   z '.g-cols',
@@ -430,11 +482,16 @@ module.exports = class PlacesMapContainer
                         {name, layer} = optionalLayer
                         index = layersVisible.indexOf(layer.id)
                         isVisible = index isnt -1
-                        z ".layer-icon.#{layer.id}.g-col.g-xs-4.g-md-4", {
+                        z ".layer-icon.g-col.g-xs-4.g-md-4", {
                           className: z.classKebab {isVisible}
                           onclick: =>
-                            @toggleLayer optionalLayer, index
+                            if isVisible
+                              @removeLayerById layer.id
+                            else
+                              @addLayerById layer.id
                         },
-                          z '.icon'
+                          z '.icon',
+                            style:
+                              backgroundImage: "url(#{optionalLayer.thumb})"
                           z '.name', name
       ]
