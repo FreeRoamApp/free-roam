@@ -1,6 +1,7 @@
 z = require 'zorium'
 _defaults = require 'lodash/defaults'
 _map = require 'lodash/map'
+_filter = require 'lodash/filter'
 _take = require 'lodash/take'
 _unionBy = require 'lodash/unionBy'
 Environment = require '../../services/environment'
@@ -50,6 +51,10 @@ module.exports = class Groups
       events: @model.event.getAll()
       .startWith([{}, {}, {}]) # 3 placeholder for initial load less jank
       .map (events) ->
+        now = new Date()
+        events = _filter events, (event) ->
+          endTime = new Date(event.endTime)
+          endTime >= now or not event.endTime
         _take events, 3
     }
 

@@ -20,11 +20,13 @@ module.exports = class EventPage extends BasePage
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
+    @$deleteIcon = new Icon()
     @$shareIcon = new Icon()
     @$event = new Event {@model, @router, @event}
 
     @state = z.state
       event: @event
+      me: @model.user.getMe()
 
   getMeta: =>
     @event.map (event) ->
@@ -34,7 +36,7 @@ module.exports = class EventPage extends BasePage
       }
 
   render: =>
-    {event} = @state.getValue()
+    {event, me} = @state.getValue()
 
     z '.p-event',
       z @$appBar, {
@@ -42,7 +44,18 @@ module.exports = class EventPage extends BasePage
         style: 'primary'
         $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         $topRightButton:
-          z '.share',
+          z '.p-event_top-right',
+            if me?.username is 'austin'
+              z @$deleteIcon,
+                icon: 'delete'
+                color: colors.$header500Icon
+                hasRipple: true
+                onclick: =>
+                  if confirm 'Are you sure?'
+                    @model.event.deleteByRow event
+                    .then =>
+                      @router.go 'social'
+
             z @$shareIcon,
               icon: 'share'
               color: colors.$header500Icon

@@ -1,11 +1,13 @@
 
 TODOS:
 
+- iOS push topics not working?
+
 - Ability to add/edit urls for campgrounds
 
-- upload MVUM PDF to FreeRoam CDN
+x upload MVUM PDF to FreeRoam CDN
 
-- Chat groups placeholder images like YouTube for less jank
+x Chat groups placeholder images like YouTube for less jank
 
 - MVUM failures:
   - https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf

@@ -9,7 +9,11 @@ if window?
 
 module.exports = class RequestRating
   constructor: ({@model}) ->
-    @$dialog = new Dialog()
+    @$dialog = new Dialog {
+      onLeave: =>
+        localStorage.hasSeenRequestRating = '1'
+        @model.overlay.close()
+    }
 
     @state = z.state {
       isLoading: false

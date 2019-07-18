@@ -1,6 +1,7 @@
 z = require 'zorium'
 _defaults = require 'lodash/defaults'
 _map = require 'lodash/map'
+_filter = require 'lodash/filter'
 _snakeCase = require 'lodash/snakeCase'
 
 Icon = require '../icon'
@@ -18,10 +19,14 @@ module.exports = class EventList
     @state = z.state
       me: me
       events: events.map (events) ->
-        _map events, (event) ->
+        now = new Date()
+        _filter _map events, (event) ->
+          endTime = new Date(event.endTime)
+          if event.endTime and endTime < now
+            return
           _defaults {
             startTime: DateService.format new Date(event.startTime), 'MMM D'
-            endTime: DateService.format new Date(event.endTime), 'MMM D'
+            endTime: DateService.format endTime, 'MMM D'
           }, event
 
   render: =>

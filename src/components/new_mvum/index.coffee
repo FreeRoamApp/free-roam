@@ -56,10 +56,14 @@ module.exports = class NewMvum
         regionSlug: @regionValue.getValue()
       }
       .then =>
-        @state.set isLoading: false, lastSavedName: @nameValue.getValue()
+        @state.set {
+          isLoading: false, lastSavedName: @nameValue.getValue()
+          requestRegion: false
+        }
         @nameValue.next ''
         @urlValue.next ''
-        @regionValue.next ''
+        alert @model.l.get 'general.saved'
+        # @regionValue.next ''
       .catch (err) =>
         err = try
           JSON.parse err.message
@@ -71,10 +75,11 @@ module.exports = class NewMvum
           else @urlError
         errorSubject.next err.info?.message or 'Error'
 
-        if err.info.requestRegion
+        if err.info?.requestRegion
           @state.set requestRegion: true
 
         @state.set isLoading: false
+        alert 'Error'
 
   render: =>
     {isLoading, lastSavedName, requestRegion, regions} = @state.getValue()
@@ -95,19 +100,18 @@ module.exports = class NewMvum
           z @$urlInput,
             hintText: @model.l.get 'newMvum.url'
 
-        if requestRegion
-          z 'label.field',
-            z @$regionDropdown,
-              options: [
-                {
-                  value: ''
-                  text: ''
-                }
-              ].concat _map regions, (region) ->
-                {
-                  value: region.slug
-                  text: region.name
-                }
+        z 'label.field',
+          z @$regionDropdown,
+            options: [
+              {
+                value: ''
+                text: 'Guess from map'
+              }
+            ].concat _map regions, (region) ->
+              {
+                value: region.slug
+                text: region.name
+              }
 
         z '.actions',
           z @$saveButton,

@@ -51,7 +51,7 @@ module.exports = class WelcomeDialog
                           text: @model.l.get 'welcomeDialog.watch'
                           onclick: =>
                             @model.portal.call 'browser.openWindow', {
-                              url: 'https://youtu.be/bInuqu6JyTI'
+                              url: 'https://youtu.be/GvRNzOFAbpg'
                               target: '_system'
                             }
                 }

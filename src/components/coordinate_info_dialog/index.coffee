@@ -30,7 +30,6 @@ module.exports = class CoordinateInfoDialog
           lat: @coordinate.location[1]
           lon: @coordinate.location[0]
         }
-        console.log location
         if feature.source is 'us-blm'
           @model.geocoder.getFeaturesFromLocation location
           .map (features) ->
@@ -76,7 +75,21 @@ module.exports = class CoordinateInfoDialog
         $content:
           z '.z-coordinate-info-dialog_dialog',
             _map @coordinate.features, ({source, properties}, i) =>
-              if source is 'us-usfs'
+              if source is 'us-blm'
+                area = if properties.Loc_Nm \
+                       then _startCase properties.Loc_Nm.toLowerCase()
+                       else @model.l.get 'general.unknown'
+                access = if properties.Access \
+                         then @model.l.get "coordinateInfoDialog.pla.#{properties.Access}"
+                         else @model.l.get 'general.unknown'
+                z '.feature',
+                  z '.layer', 'BLM'
+                  z '.office', features?[i]
+                  z '.region',
+                    "#{area}"
+                  z '.access',
+                    "Access: #{access}"
+              else if source is 'us-usfs'
                 area = if properties.Loc_Nm \
                        then _startCase properties.Loc_Nm.toLowerCase()
                        else @model.l.get 'general.unknown'
@@ -117,7 +130,8 @@ module.exports = class CoordinateInfoDialog
                         },
                           z '.text', mvum.name or 'MVUM'
                           z 'a.download-icon', {
-                            href: mvum.url
+                            # all should have download urls except deschutes & santa maria
+                            href: mvum.downloadUrl or mvum.url
                             target: '_system'
                             attributes:
                               download: _kebabCase(mvum.name) + '.pdf'
