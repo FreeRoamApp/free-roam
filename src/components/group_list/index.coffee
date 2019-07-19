@@ -38,6 +38,9 @@ module.exports = class GroupList
             route = @model.group.getPath group, 'groupChat', {@router}
             @router.link z 'a.group', {
               href: route
+              className: z.classKebab {
+                isLight: group?.slug is 'nomadcollab' # FIXME: rm hardcode
+              }
               style:
                 backgroundImage:
                   "url(#{config.CDN_URL}/groups/#{group?.slug}.jpg)"

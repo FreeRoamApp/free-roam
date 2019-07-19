@@ -12,3 +12,8 @@ module.exports = class Mvum
     @auth.call "#{@namespace}.upsert", {name, type, url, regionSlug}, {
       invalidateAll: true
     }
+
+  deleteByRow: (row) =>
+    @auth.call "#{@namespace}.deleteByRow", {row}, {
+      invalidateAll: true
+    }

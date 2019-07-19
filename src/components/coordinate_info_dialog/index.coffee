@@ -25,6 +25,7 @@ module.exports = class CoordinateInfoDialog
 
 
     @state = z.state
+      me: @model.user.getMe()
       features: RxObservable.combineLatest _map(@coordinate.features, (feature) =>
         location = {
           lat: @coordinate.location[1]
@@ -53,6 +54,7 @@ module.exports = class CoordinateInfoDialog
             _map mvums, (mvum) ->
               {
                 mvum
+                $deleteIcon: new Icon()
                 $downloadIcon: new Icon()
                 $mapIcon: new Icon()
               }
@@ -60,7 +62,7 @@ module.exports = class CoordinateInfoDialog
           null
 
   render: =>
-    {features, mvums} = @state.getValue()
+    {me, features, mvums} = @state.getValue()
     # area = if properties.Loc_Nm \
     #        then _startCase properties.Loc_Nm.toLowerCase()
     #        else @model.l.get 'general.unknown'
@@ -106,7 +108,8 @@ module.exports = class CoordinateInfoDialog
                   unless _isEmpty mvums
                     z '.mvums',
                       z '.title', 'MVUMs:'
-                      _map mvums, ({mvum, $downloadIcon, $mapIcon}) =>
+                      _map mvums, (mvum) =>
+                        {mvum, $downloadIcon, $deleteIcon, $mapIcon} = mvum
                         z '.mvum', {
                           onclick: =>
                             # TODO: zoom map in enough?
@@ -140,6 +143,16 @@ module.exports = class CoordinateInfoDialog
                               icon: 'download'
                               isTouchTarget: false
                               color: colors.$primary500
+                          if me?.username in ['austin', 'big_boxtruck']
+                            z '.map-icon',
+                              z $deleteIcon,
+                                icon: 'delete'
+                                isTouchTarget: false
+                                color: colors.$primary500
+                                onclick: (e) =>
+                                  e.stopPropagation()
+                                  if confirm @model.l.get 'general.confirm'
+                                    @model.localMap.deleteByRow mvum
                           z '.map-icon',
                             z $mapIcon,
                               icon: 'map-add'
