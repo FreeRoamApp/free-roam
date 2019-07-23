@@ -31,8 +31,6 @@ module.exports = class Notifications
   render: =>
     {notifications} = @state.getValue()
 
-    console.log notifications
-
     z '.z-notifications',
       if notifications and _isEmpty notifications
         z '.no-notifications',

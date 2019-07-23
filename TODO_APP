@@ -1,7 +1,18 @@
-
 TODOS:
 
+- Map contours overlay
+
+- Make adding an amenity suck less
+
 - iOS push topics not working?
+  - Actually seems like ios and android. Don't think initial joining of group subs to topics properly?
+  - Should just run through all the group/0000-000... subscription code
+
+- I think FCM topics do something weird where if the app hasn't been opened in a while, topic notifications aren't sent?
+  - "If you force close the app (by double tapping home and swiping it away) that tells the OS to not deliver messages at all, at least until you start the app again."
+
+- better backend sorting of conversations (redis leaderboard?) by lastUpdateTime
+  - currently just grabs 2k and manually sorts
 
 - Ability to add/edit urls for campgrounds
 
@@ -9,62 +20,59 @@ x upload MVUM PDF to FreeRoam CDN
 
 x Chat groups placeholder images like YouTube for less jank
 
-- MVUM failures:
-  - https://www.fs.usda.gov/Internet/FSE_DOCUMENTS/fseprd575890.pdf
+x MVUM add
+  x Pick region if office slug fails
+  x Error when one fails
+  x Success message
 
-- MVUM add
-  - Pick region if office slug fails
-  - Error when one fails
-  - Success message
+x National Forest subregions on map w/ MVUM pdfs. What type of place? Facility? New: region (city, state, national forest, etc...)?
+  x "region" model is probably best
+  x region for areas of cities where street parking is specifically banned
 
-- National Forest subregions on map w/ MVUM pdfs. What type of place? Facility? New: region (city, state, national forest, etc...)?
-  - "region" model is probably best
-  - region for areas of cities where street parking is specifically banned
-
-- Regional info
+x Regional info
   x Need new us_pad with normal stuff that shows on map (Fee?) for BLM office
 
-  - Add MVUM page
-    - Pick ranger district / forest
-    - PDF URL
-    - Process PDF to get coordinate boundaries, convert to mbtiles and host
+  x Add MVUM page
+    x Pick ranger district / forest
+    x PDF URL
+    x Process PDF to get coordinate boundaries, convert to mbtiles and host
 
-  - Public / Private
-    - Public: Federal, state, county, city
-      - Federal: BLM, USFS, Other (text, add agency, email me)
-      - State: ___ State Parks
-      - County, city: Text (add agency, email me)
+  x Public / Private
+    x Public: Federal, state, county, city
+      x Federal: BLM, USFS, Other (text, add agency, email me)
+      x State: ___ State Parks
+      x County, city: Text (add agency, email me)
 
-      - If BLM / USFS
-        - Get local office / ranger district
-    - Private: nothing
+      x If BLM / USFS
+        x Get local office / ranger district
+    x Private: nothing
 
-  - Agency -> Region -> Office
-    - get all Loc_Nm from map (Office)
+  x Agency -> Region -> Office
+    x get all Loc_Nm from map (Office)
 
-  - Agency
-    - BLM, USFS, Texas Parks & Wildlife Department, Private/KOA/Thousand Trails etc...
+  x Agency
+    x BLM, USFS, Texas Parks & Wildlife Department, Private/KOA/Thousand Trails etc...
 
-    - name
-    - slug. Geojsons of boundaries should reference this
-    - type: federal, state, city, private
+    x name
+    x slug. Geojsons of boundaries should reference this
+    x type: federal, state, city, private
 
 
-  - Region
-    - Sawtooth National Forest, Colorado BLM, Arizona BLM, Nothing for Texas state parks? Just "Texas"?
-    - MVUMs
+  x Region
+    x Sawtooth National Forest, Colorado BLM, Arizona BLM, Nothing for Texas state parks? Just "Texas"?
+    x MVUMs
 
-    - name
-    - slug
+    x name
+    x slug
 
-  - Office
-    - Sawtooth National Recreation Area Ranger District, St. George Field Office, Inks Lake State Park
-    - MVUMs
+  x Office
+    x Sawtooth National Recreation Area Ranger District, St. George Field Office, Inks Lake State Park
+    x MVUMs
 
-    - name
-    - slug
+    x name
+    x slug
 
-  - campgroundType ()
+  x campgroundType ()
 
 - What if part of the onboarding process asked if they would like to join "x" community and then they get subscribed to those chats?
 

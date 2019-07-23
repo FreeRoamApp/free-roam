@@ -69,7 +69,6 @@ module.exports = class CoordinatePicker
       @model, @router, position: @placePosition, @mapSize
       place: @placeStreams.switch()
       onSave: =>
-        console.log 'save', arguments
         @onPick arguments...
         .then =>
           @model.overlay.close()

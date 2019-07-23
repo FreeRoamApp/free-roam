@@ -23,7 +23,6 @@ module.exports = class CurrentLocation
       @model, @router, @isPlacesOnly
       pickButtonText: @model.l.get 'placeInfo.checkIn'
       onPick: (place) =>
-        console.log 'place', place
         (if not place.id
           @model.coordinate.upsert {
             name: place.name

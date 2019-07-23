@@ -92,7 +92,6 @@ module.exports = class NewThread
             else
               @model.thread.upsert newThread)
             .then (newThread) =>
-              console.log 'newthread', newThread
               @resetValueStreams()
               # FIXME FIXME: rm HACK. for some reason thread is empty initially?
               # still unsure why

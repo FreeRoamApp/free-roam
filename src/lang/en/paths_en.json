@@ -8,6 +8,8 @@
   "groupAdminNewChannel": "/g/:groupId/admin/new-channel",
   "groupAdminSettings": "/g/:groupId/admin/settings",
 
+  "group": "/g/:groupId",
+  "groupInfo": "/g/:groupId/info",
   "groupChat": "/g/:groupId/chat",
   "groupChatConversation": "/g/:groupId/chat/:conversationId",
   "groupForum": "/g/:groupId/forum",

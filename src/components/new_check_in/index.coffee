@@ -112,7 +112,6 @@ module.exports = class NewCheckIn
 
     attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
     if isReady
-      console.log 'upsert', checkIn
       @model.checkIn.upsert {
         tripIds: checkIn?.tripIds or [trip.id]
         setUserLocation: trip?.type is 'past'

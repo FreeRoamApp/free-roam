@@ -183,7 +183,8 @@ module.exports = class PlaceNewReviewExtras
     {me, fieldsValues} = @state.getValue()
     if @isOptional or me?.username is 'austin'
       return true
-    @season.getValue() and _every @sliders, ({field}) ->
+    hasPrice = not @fields.pricePaid or fieldsValues?['pricePaid']?
+    @season.getValue() and hasPrice and _every @sliders, ({field}) ->
       fieldsValues?[field]
 
   getTitle: =>

@@ -97,8 +97,6 @@ module.exports = class Trip extends Base
 
     hasEditPermission = @model.trip.hasEditPermission trip, me
 
-    console.log checkIns
-
     z '.z-trip',
       z '.map',
         z @$travelMap

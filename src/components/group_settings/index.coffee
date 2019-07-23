@@ -9,6 +9,7 @@ require 'rxjs/add/operator/map'
 require 'rxjs/add/operator/switchMap'
 require 'rxjs/add/operator/switch'
 
+ActionBar = require '../action_bar'
 Toggle = require '../toggle'
 PrimaryInput = require '../primary_input'
 PrimaryButton = require '../primary_button'
@@ -22,6 +23,8 @@ if window?
 
 module.exports = class GroupSettings
   constructor: ({@model, @router, group}) ->
+    @$actionBar = new ActionBar {@model}
+
     me = @model.user.getMe()
     @nameValueStreams = new RxReplaySubject 1
     @nameValueStreams.next (group?.map (group) ->
@@ -86,9 +89,21 @@ module.exports = class GroupSettings
 
     items = []
 
-    hasAdminPermission = @model.group.hasPermission group, me, {level: 'admin'}
+    hasAdminPermission = @model.groupUser.hasPermission {
+      meGroupUser: group?.meGroupUser, me, permissions: ['manageRole']
+    }
 
     z '.z-group-settings',
+      z @$actionBar, {
+        isSaving: isSaving
+        cancel:
+          text: @model.l.get 'general.discard'
+          onclick: =>
+            @router.back()
+        save:
+          text: @model.l.get 'general.done'
+          onclick: @save
+      }
       z '.g-grid',
         z '.title', @model.l.get 'general.general'
 

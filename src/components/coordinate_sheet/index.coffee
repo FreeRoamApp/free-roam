@@ -81,8 +81,6 @@ module.exports = class CoordinateSheet
     if not elevation? or elevation is false
       elevation = '...'
 
-    console.log coordinate, info
-
     z '.z-coordinate-sheet', {
       className: z.classKebab {isVisible}
     },

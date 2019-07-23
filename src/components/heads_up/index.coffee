@@ -51,8 +51,6 @@ module.exports = class HeadsUp
     notification ?= {}
     {icon, title, details, onclick} = notification
 
-    console.log isVisible, notification
-
     z '.z-heads-up', {
       className: z.classKebab {isVisible}
       onclick: (e) ->

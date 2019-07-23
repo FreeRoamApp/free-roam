@@ -113,8 +113,6 @@ module.exports = class PlaceInfo extends Base
     {place, amenities, hasSeenRespectCard,
       season, windowSize} = @state.getValue()
 
-    console.log 'place', place
-
     {place, $videos, cellCarriers} = place or {}
 
     cellBarsWidthPx = Math.min(

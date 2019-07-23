@@ -92,7 +92,6 @@ class RouterService
              else url
       @goPath path
     else
-      console.log 'open', url
       @model.portal.call 'browser.openWindow', {
         url: url
         target: '_system'
@@ -191,7 +190,7 @@ class RouterService
     @router.getStream()
 
   getSubdomain: =>
-    hostParts = @host.split '.'
+    hostParts = @host?.split '.'
     isStaging = hostParts[0] is 'free-roam-staging'
     isDevSubdomain = config.ENV is config.ENVS.DEV and hostParts.length is 7
     if (hostParts.length is 3 or isDevSubdomain) and not isStaging

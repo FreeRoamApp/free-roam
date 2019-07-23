@@ -1,1 +1,1 @@
-# TODO: script that installs everything required for Starire stack
+# TODO: script that installs everything required for FreeRoam stack

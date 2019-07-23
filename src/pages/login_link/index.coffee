@@ -17,7 +17,6 @@ module.exports = class LoginLinkPage
           route.params.token
         )
         .switchMap (loginLink) =>
-          console.log 'login', loginLink
           path = loginLink?.data?.path or {key: 'home'}
           # this can fail. if link is expired, won't login
           RxObservable.fromPromise @model.auth.loginLink({

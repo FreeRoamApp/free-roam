@@ -574,6 +574,7 @@
   "groupBannedUsersPage.tempBanned": "Temp banned",
   "groupBannedUsersPage.permBanned": "Perm banned",
   "groupAuditLogPage.title": "Audit log",
+  "groupInfoPage.title": "Group info",
   "groupManageRolesPage.title": "Manage roles",
   "groupManageMemberPage.title": "Manage member",
   "groupSettingsPage.title": "Group settings",

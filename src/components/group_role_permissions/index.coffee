@@ -11,7 +11,6 @@ require 'rxjs/add/observable/of'
 require 'rxjs/add/operator/map'
 require 'rxjs/add/operator/switch'
 
-ActionBar = require '../action_bar'
 FlatButton = require '../flat_button'
 PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'

@@ -38,8 +38,6 @@ module.exports = class UploadImagePreview
   render: ({iconName} = {}) =>
     {imageData, rotation, isUploading, windowSize, progress} = @state.getValue()
 
-    console.log 'progress', progress
-
     imageData ?= {}
 
     iconName ?= 'upload'
