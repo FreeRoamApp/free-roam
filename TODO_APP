@@ -4,6 +4,9 @@ TODOS:
 
 - Make adding an amenity suck less
 
+- Groups
+  - Public groups should let users w/o groupUser / role view messages
+
 - iOS push topics not working?
   - Actually seems like ios and android. Don't think initial joining of group subs to topics properly?
   - Should just run through all the group/0000-000... subscription code

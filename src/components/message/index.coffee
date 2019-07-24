@@ -7,6 +7,7 @@ _find = require 'lodash/find'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 Avatar = require '../avatar'
+ActionMessage = require '../action_message'
 Author = require '../author'
 Icon = require '../icon'
 FormatService = require '../../services/format'
@@ -22,10 +23,11 @@ DESCRIPTION_LENGTH = 100
 module.exports = class Message
   constructor: (options) ->
     {message, @$body, isGrouped, isMe, @model, @isTextareaFocused
-      @router, @group, @messageBatchesStreams} = options
+      @router, @group} = options
 
     @$avatar = new Avatar()
     @$author = new Author {@model, @router}
+    @$actionMessage = new ActionMessage {@model, @router, @$body}
 
     me = @model.user.getMe()
 
@@ -69,7 +71,7 @@ module.exports = class Message
         style:
           width: avatarSize
       },
-        unless isGrouped
+        if not isGrouped and message?.type isnt 'action'
           z @$avatar, {
             user
             groupUser
@@ -79,11 +81,16 @@ module.exports = class Message
         # z '.level', 1
 
       z '.content',
-        unless isGrouped
+        if message?.type is 'action'
+          z @$actionMessage, {
+            user, groupUser, time, isTimeAlignedLeft, onclick
+          }
+        else if not isGrouped
           z @$author, {user, groupUser, time, isTimeAlignedLeft, onclick}
 
-        z '.body',
-          @$body
+        unless message?.type is 'action'
+          z '.body',
+            @$body
 
         if card?.url
           z '.card', {

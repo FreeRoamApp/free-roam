@@ -3,6 +3,7 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
+require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/operator/map'
 require 'rxjs/add/operator/switch'
 
@@ -39,6 +40,18 @@ module.exports = class GroupEditChannel
       valueStreams: @descriptionValueStreams
       error: @descriptionError
 
+    if conversation
+      groupAndConversation = RxObservable.combineLatest(
+        group, conversation, (vals...) -> vals
+      )
+
+      @isWelcomeChannelStreams = new RxReplaySubject 1
+      @isWelcomeChannelStreams.next (
+        groupAndConversation?.map ([group, conversation]) ->
+          group?.data?.welcomeChannelId is conversation?.id
+        ) or RxObservable.of null
+      @$isWelcomeChannelToggle = new Toggle {isSelectedStreams: @isWelcomeChannelStreams}
+
     @$cancelButton = new FlatButton()
     @$saveButton = new PrimaryButton()
 
@@ -49,9 +62,11 @@ module.exports = class GroupEditChannel
       conversation: conversation
       name: @nameValueStreams.switch()
       description: @descriptionValueStreams.switch()
+      isWelcomeChannel: @isWelcomeChannelStreams?.switch()
 
   save: (isNewChannel) =>
-    {me, isSaving, group, conversation, name, description} = @state.getValue()
+    {me, isSaving, group, conversation, name, description,
+      isWelcomeChannel} = @state.getValue()
 
     if isSaving
       return
@@ -68,6 +83,7 @@ module.exports = class GroupEditChannel
     fn {
       name
       description
+      isWelcomeChannel
       groupId: group.id
     }
     .catch -> null
@@ -88,6 +104,12 @@ module.exports = class GroupEditChannel
         z '.input',
           z @$descriptionTextarea,
             hintText: @model.l.get 'general.description'
+
+        if @$isWelcomeChannelToggle
+          z '.input',
+            z 'label.label',
+              z '.text', @model.l.get 'groupEditChannel.welcomeChannel'
+              @$isWelcomeChannelToggle
 
         z '.actions',
           z '.cancel-button',

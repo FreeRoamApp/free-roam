@@ -153,11 +153,11 @@ module.exports = class App
       groupId or= @model.cookie.get 'lastGroupId'
 
       (if isUuid groupId
-        @model.group.getById groupId, {autoJoin: true}
+        @model.group.getById groupId, {autoJoin: false}
       else if groupId and groupId isnt 'undefined' and groupId isnt 'null'
-        @model.group.getBySlug groupId, {autoJoin: true}
+        @model.group.getBySlug groupId, {autoJoin: false}
       else
-        @model.group.getDefaultGroup {autoJoin: true}
+        @model.group.getDefaultGroup {autoJoin: false}
       )
     .publishReplay(1).refCount()
 

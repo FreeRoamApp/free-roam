@@ -311,10 +311,12 @@ module.exports = class PlacesMapContainer
 
       boundsTooSmall = not currentMapBounds or Math.abs(
         currentMapBounds.bounds._ne.lat - currentMapBounds.bounds._sw.lat
-      ) < 0.001
+      ) < 0.0005
 
       if boundsTooSmall
-        return RxObservable.of []
+        # RxObservable.of [] will make a place's icon disappear when zoomed max
+        # RxObservable.never keeps what's there
+        return RxObservable.never()
 
       RxObservable.combineLatest.apply null, _map dataTypes, ({dataType, isChecked}) =>
         unless isChecked

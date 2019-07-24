@@ -27,7 +27,6 @@ PrimaryButton = require '../primary_button'
 ConversationInput = require '../conversation_input'
 ConversationMessage = require '../conversation_message'
 PushNotificationsSheet = require '../push_notifications_sheet'
-TooltipPositioner = require '../tooltip_positioner'
 config = require '../../config'
 
 if window?
@@ -121,7 +120,7 @@ module.exports = class Conversation extends Base
     messageBatches = RxObservable.merge @resetMessageBatches, loadedMessages
 
     @groupUser = if @group \
-                then @group.map (group) -> group?.meGroupUser
+                then @group.map (group) -> group?.meGroupUser or false
                 else RxObservable.of null
 
     groupUserAndConversation = RxObservable.combineLatest(
@@ -130,12 +129,6 @@ module.exports = class Conversation extends Base
 
     @inputTranslateY = new RxReplaySubject 1
     @isTextareaFocused = new RxBehaviorSubject false
-
-    @$tooltip = new TooltipPositioner {
-      @model
-      key: 'groupChat'
-      anchor: 'bottom-left'
-    }
 
     @$loadingSpinner = new Spinner()
     @$joinButton = new PrimaryButton()
@@ -211,7 +204,8 @@ module.exports = class Conversation extends Base
                 return
               isRecent = new Date(message?.time) - new Date(prevMessage?.time) <
                           FIVE_MINUTES_MS
-              isGrouped = message.userId is prevMessage?.userId and isRecent
+              isGrouped = message.userId is prevMessage?.userId and isRecent and
+                            prevMessage?.type isnt 'action'
               isMe = message.userId is me.id
               id = message.id or message.clientId
               # if we get this in conversationmessasge, there's a flicker for
@@ -593,7 +587,7 @@ module.exports = class Conversation extends Base
                       z $el
                   ]
 
-      if conversation?.groupId and groupUser and not groupUser.userId
+      if conversation?.groupId and groupUser? and not groupUser.userId
         z '.bottom.is-gate',
           z '.text',
             @model.l.get 'conversation.joinMessage', {
@@ -607,8 +601,6 @@ module.exports = class Conversation extends Base
             onclick: @join
       else
         z '.bottom',
-          if @model.experiment.get('chatTooltip') is 'visible'
-            z @$tooltip
           unless hasLoadedAllNewMessages
             z '.jump-new', {
               onclick: =>

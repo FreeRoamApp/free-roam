@@ -37,12 +37,12 @@ module.exports = class NewPlaceInitialInfo
       valueStreams: @fields.details.valueStreams
     }
 
-    if @fields.subType
+    if @fields.subType and not @fields.agency
       @$subTypeDropdown = new Dropdown {
         valueStreams: @fields.subType.valueStreams
       }
 
-    if @fields.subType
+    if @fields.agency
       @$subTypeDropdown = new Dropdown {
         valueStreams: @fields.subType.valueStreams
       }
@@ -62,9 +62,10 @@ module.exports = class NewPlaceInitialInfo
     subType = @fields.subType?.valueStreams.switch()
     agency = @fields.agency?.valueStreams.switch()
     region = @fields.region?.valueStreams.switch()
-    agencyAndRegion = RxObservable.combineLatest(
-      agency, region, (vals...) -> vals
-    )
+    if agency and region
+      agencyAndRegion = RxObservable.combineLatest(
+        agency, region, (vals...) -> vals
+      )
 
     @state = z.state {
       nameValue: @fields.name.valueStreams.switch()

@@ -10,16 +10,6 @@ module.exports = class Experiment
 
     ga? 'send', 'event', 'exp', "control:#{expControl}"
 
-    expChatTooltip = @cookie.get 'exp:chatTooltip'
-    unless expChatTooltip
-      rand = Math.random()
-      expChatTooltip = if rand > 0.5 \
-                         then 'visible'
-                         else 'control'
-      @cookie.set 'exp:control', expChatTooltip
-
-    ga? 'send', 'event', 'exp', "chatTooltip:#{expChatTooltip}"
-
     @experiments =
       control: expControl
       chatTooltip: expChatTooltip
