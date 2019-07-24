@@ -204,6 +204,10 @@ module.exports = class App
     else
       null
 
+    $backupPage or= new Pages.FourOhFourPage {
+      @model, @router, @serverData
+    }
+
     @state = z.state {
       $backupPage: $backupPage
       me: me
