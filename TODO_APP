@@ -1,5 +1,7 @@
 TODOS:
 
+- if server-side error, redirect to homepage
+
 - Map contours overlay
 
 - Make adding an amenity suck less

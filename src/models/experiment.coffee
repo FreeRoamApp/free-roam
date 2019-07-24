@@ -12,7 +12,6 @@ module.exports = class Experiment
 
     @experiments =
       control: expControl
-      chatTooltip: expChatTooltip
 
   get: (key) =>
     @experiments[key]

@@ -174,21 +174,8 @@ app.use (req, res, next) ->
   isOtherBot = userAgent?.indexOf('bot') isnt -1
   isCrawler = isFacebookCrawler or isOtherBot
   start = Date.now()
-  z.renderToString new App({requests, model, serverData, router, isCrawler}), {
-    timeout: if isCrawler \
-             then BOT_RENDER_TO_STRING_TIMEOUT_MS
-             else RENDER_TO_STRING_TIMEOUT_MS
-  }
-  .then (html) ->
-    io.disconnect()
-    model.dispose()
-    disposable = null
-    hasSent = true
-    if html.indexOf('<head>') is -1
-      res.redirect 302, '/'
-    else
-      res.send '<!DOCTYPE html>' + html
-  .catch (err) ->
+
+  onError = (err) ->
     io.disconnect()
     model.dispose()
     disposable?.unsubscribe()
@@ -201,6 +188,28 @@ app.use (req, res, next) ->
       else
         res.send '<!DOCTYPE html>' + err.html
     else
-      next err
+      if config.ENV is config.ENVS.PROD and req.path isnt '/'
+        res.redirect 302, '/'
+      else
+        next err
+
+  try
+    z.renderToString new App({requests, model, serverData, router, isCrawler}), {
+      timeout: if isCrawler \
+               then BOT_RENDER_TO_STRING_TIMEOUT_MS
+               else RENDER_TO_STRING_TIMEOUT_MS
+    }
+    .then (html) ->
+      io.disconnect()
+      model.dispose()
+      disposable = null
+      hasSent = true
+      if html.indexOf('<head>') is -1
+        res.redirect 302, '/'
+      else
+        res.send '<!DOCTYPE html>' + html
+    .catch onError
+  catch err
+    onError err
 
 module.exports = app

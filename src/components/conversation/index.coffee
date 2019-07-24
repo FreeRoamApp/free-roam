@@ -497,8 +497,6 @@ module.exports = class Conversation extends Base
 
     messageBody = @message.getValue()
 
-    @$tooltip.close()
-
     if not isPostLoading and messageBody
       @isPostLoading.next true
 
