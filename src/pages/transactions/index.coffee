@@ -2,30 +2,30 @@ z = require 'zorium'
 
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
-Tos = require '../../components/tos'
+Transactions = require '../../components/transactions'
 colors = require '../../colors'
 
 if window?
   require './index.styl'
 
-module.exports = class TosPage
+module.exports = class TransactionsPage
   hideDrawer: true
 
   constructor: ({@model, requests, @router, serverData, group}) ->
     @$appBar = new AppBar {@model}
     @$backButton = new ButtonBack {@model, @router}
-    @$tos = new Tos {@model, @router}
+    @$transactions = new Transactions {@model, @router}
 
   getMeta: =>
     {
-      title: @model.l.get 'tosPage.title'
-      description: @model.l.get 'tosPage.title'
+      title: @model.l.get 'transactionsPage.title'
+      description: @model.l.get 'transactionsPage.title'
     }
 
   render: =>
-    z '.p-tos',
+    z '.p-transactions',
       z @$appBar, {
-        title: @model.l.get 'tosPage.title'
+        title: @model.l.get 'transactionsPage.title'
         $topLeftButton: z @$backButton, {color: colors.$header500Icon}
       }
-      @$tos
+      @$transactions

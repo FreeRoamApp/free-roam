@@ -51,7 +51,7 @@ module.exports = class Threads extends Base
       isLoading: false
       chunkedThreads: @threadStreams.switch().map (threads) =>
         # TODO: json file with vars that are used in stylus and js
-        # eg $contentMaxWidth
+        # eg $breakPointMedium
         if window?.matchMedia('(min-width: 1280px)').matches
           cols = 2
         else

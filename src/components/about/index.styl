@@ -6,7 +6,7 @@
   -webkit-overflow-scrolling: touch
 
   > .mission, > .meet, > .help, > .transparency
-    > .g-grid
+    > .g-grid, > .content
       padding: 16px
       box-sizing: border-box
 
@@ -22,19 +22,42 @@
     min-height: 370px
     background-image: url($cdnUrl + '/about/desert.jpg')
     background-size: 100% auto
+    padding: 16px
+    box-sizing: border-box
 
-    > .g-grid
+    > .content
+      width: 100%
+      max-width: 510px
+      padding: 32px 16px
+      box-sizing: border-box
       display: flex
       flex-direction: column
       align-items: center
+      background: getColor('$tertiary0')
+      margin: 40px auto 0 auto
+
+      > .title
+        margin-top: 0
 
       > .text
-        font-title()
-        max-width: 300px
-        margin-bottom: 16px
+        font-body1()
+        text-align: center
+        margin-bottom: 24px
 
-      > .button
-        width: 150px
+      > .actions
+        display: flex
+        width: 100%
+
+        > .action
+          flex1()
+          max-width: 146px
+          margin-right: 24px
+
+          &:first-child
+            margin-left: auto
+
+          &:last-child
+            margin-right: auto
 
   > .roadmap
     text-align: center
@@ -75,7 +98,7 @@
           margin-bottom: 8px
 
   > .help
-    background: getColor('$yellow50')
+    background: #f7f5f3
     text-align: center
     padding-bottom: 32px
 
@@ -135,34 +158,30 @@
     > .mission
       background-position: center
 
+      > .content
+        margin: 72px auto 0 auto
+
 .z-about_roadmap-phase
   padding: 72px 48px
   width: 100%
+  background-color: #f7f5f3
 
   &.phase-1
-    background: #b6d8d8
-
     > .image
       background-image: url($cdnUrl + '/about/education.png')
       height: 154px
 
   &.phase-2
-    background: #f6cfa3
-
     > .image
       background-image: url($cdnUrl + '/about/world.png')
       height: 193.5px
 
   &.phase-3
-    background: #b6d8d8
-
     > .image
       background-image: url($cdnUrl + '/about/money.png')
       height: 214.5px
 
   &.phase-4
-    background: #b6d8d8
-
     > .image
       background-image: url($cdnUrl + '/about/expand.png')
       height: 160px

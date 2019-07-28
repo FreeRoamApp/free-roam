@@ -10,7 +10,7 @@
   flex-direction: column
 
   > .content
-    flex: 1
+    flex1()
     overflow: auto
     -webkit-overflow-scrolling: touch
 
@@ -33,15 +33,15 @@
           border: 2px solid getColor('$black26')
 
         > .info
+          flex1()
           margin-left: 24px
-          flex: 1
 
           > .slider
             display: flex
             // align-items: center
 
             > .range
-              flex: 1
+              flex1()
 
             > .percent
               font-caption-bold(false)

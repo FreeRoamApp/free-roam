@@ -1,0 +1,55 @@
+@require '../../vars'
+
+.z-transactions
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .title
+    font-title()
+    padding: 16px
+
+  > .subscription
+    background: getColor('$tertiary0')
+    padding: 16px
+
+    > .g-grid
+
+      > .amount
+        font-h3()
+
+      > .payments
+        font-caption1()
+
+      > .actions
+        display: flex
+        justify-content: flex-end
+
+  > .transaction
+    background: getColor('$tertiary0')
+    padding: 16px
+    border-bottom: 1px solid getColor('$tertiary200')
+
+    > .g-grid
+      display: flex
+
+      > .icon
+        width: 40px
+        height: 40px
+        margin-right: 16px
+        background-size: 100%
+        background-image: url($cdnUrl + '/about/donation_one_time.svg')
+
+        &.monthly
+          background-image: url($cdnUrl + '/about/donation_monthly.svg')
+
+      > .content
+        > .name
+          font-title()
+
+        > .info
+          font-caption2()
+
+      > .amount
+        font-title()
+        margin-left: auto

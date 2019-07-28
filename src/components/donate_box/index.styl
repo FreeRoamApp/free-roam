@@ -1,0 +1,109 @@
+@require '../../vars'
+
+.z-donate-box
+  font-body1(false)
+
+  > .donation-box
+
+    > .thanks
+      padding: 36px
+
+      > .icon
+        margin-bottom: 16px
+
+      > .title
+        font-h1()
+        color: getColor('$primary500')
+        text-align: center
+        margin-bottom: 8px
+
+  > .tap-tabs
+    border: 1px solid getColor('$primary500')
+    border-radius: 4px
+    display: flex
+    max-width: 380px
+    margin-bottom: 20px
+
+    > .tab
+      font-title()
+      flex1()
+      cursor: pointer
+      padding: 12px
+      text-align: center
+      text-transform: uppercase
+
+      &:first-child
+        border-top-left-radius: 4px
+        border-bottom-left-radius: 4px
+
+      &:last-child
+        border-top-right-radius: 4px
+        border-bottom-right-radius: 4px
+
+      &.is-selected
+        background: getColor('$primary500')
+        color: getColor('$primary500Text')
+
+  > .donation-box
+    border: 1px solid getColor('$tertiary300')
+    border-radius: 4px
+    max-width: 380px
+
+    > .title
+      font-h3(false)
+      padding: 20px
+      text-align: center
+
+      > .edit
+        color: getColor('$primary500')
+        margin-left: 4px
+        cursor: pointer
+
+    > .content
+      background: getColor('$tertiary0')
+      border-bottom-left-radius: 4px
+      border-bottom-right-radius: 4px
+      padding: 20px
+
+      > .amounts
+        margin-bottom: 20px
+
+        > .amounts-line
+          display: flex
+          margin-bottom: 16px
+
+          &:last-child
+            margin-bottom: 0
+
+          > .amount
+            font-title2(false)
+            flex1()
+            padding: 16px
+            text-align: center
+            background: getColor('$tertiary200')
+            border-radius: 4px
+            margin: 0 8px
+            cursor: pointer
+
+            &.input
+              appearance: none
+              outline: none
+              border: none
+
+              &::placeholder
+                font-title2(false)
+                opacity: 1
+
+
+            &.is-selected
+              background: getColor('$primary500')
+              color: getColor('$primary500Text')
+
+              &.input::placeholder
+                color: getColor('$primary500Text')
+
+      > .stripe-form
+        margin-top: -8px
+
+      > .donate-button
+        margin-top: 20px

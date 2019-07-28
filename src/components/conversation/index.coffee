@@ -588,10 +588,7 @@ module.exports = class Conversation extends Base
       if conversation?.groupId and groupUser? and not groupUser.userId
         z '.bottom.is-gate',
           z '.text',
-            @model.l.get 'conversation.joinMessage', {
-              replacements:
-                name: @model.user.getDisplayName group.star?.user
-            }
+            @model.l.get 'conversation.joinMessage'
           z @$joinButton,
             text: if isJoinLoading \
                   then @model.l.get 'general.loading'
@@ -605,5 +602,5 @@ module.exports = class Conversation extends Base
                 @jumpToNew()
             },
               @model.l.get 'conversations.jumpNew'
-          if not group or hasSendMessagePermission
+          if not @isGroup or hasSendMessagePermission
             @$conversationInput

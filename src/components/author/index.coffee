@@ -14,6 +14,7 @@ module.exports = class Author
   constructor: ({@model, @router}) ->
     @$statusIcon = new Icon()
     @$karmaIcon = new Icon()
+    @$supporterIcon = new Icon()
 
   render: ({user, groupUser, time, isTimeAlignedLeft, onclick}) =>
     isModerator = groupUser?.roleNames and
@@ -38,6 +39,13 @@ module.exports = class Author
             isTouchTarget: false
             size: '22px'
       z '.icons',
+        if user?.flags?.isSupporter
+          z '.icon',
+            z @$supporterIcon,
+              icon: 'heart'
+              color: colors.$red500
+              isTouchTarget: false
+              size: '14px'
         z '.icon',
           z @$karmaIcon,
             icon: 'karma'

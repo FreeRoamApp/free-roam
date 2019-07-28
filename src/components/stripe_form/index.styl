@@ -1,0 +1,23 @@
+@require '../../vars'
+
+.z-stripe-form
+  > .stored-info
+    > .edit
+      font-caption1(false)
+      margin-top: 8px
+      cursor: pointer
+
+  > .form
+    > .payment-errors
+      font-caption1()
+      color: getColor('$red500')
+
+    > .form-row
+      margin: 8px 0
+
+      &.flex
+        display: flex
+        align-items: baseline
+
+        > .slash
+          margin: 0 16px

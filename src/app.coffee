@@ -37,6 +37,7 @@ Pages =
   ConversationPage: require './pages/conversation'
   ConversationsPage: require './pages/conversations'
   DashboardPage: require './pages/dashboard'
+  DonatePage: require './pages/donate'
   EditProfilePage: require './pages/edit_profile'
   EditAmenityPage: require './pages/edit_amenity'
   EditCampgroundPage: require './pages/edit_campground'
@@ -94,6 +95,7 @@ Pages =
   ThreadPage: require './pages/thread'
   TravelMapScreenshotPage: require './pages/travel_map_screenshot'
   TosPage: require './pages/tos'
+  TransactionsPage: require './pages/transactions'
   TripPage: require './pages/trip'
   FourOhFourPage: require './pages/404'
 
@@ -265,6 +267,7 @@ module.exports = class App
     route 'conversation', 'ConversationPage'
     route 'conversations', 'ConversationsPage'
     route 'dashboard', 'DashboardPage'
+    route 'donate', 'DonatePage'
     route 'editAmenity', 'EditAmenityPage'
     route 'editAmenityReview', 'EditAmenityReviewPage'
     route 'editCampground', 'EditCampgroundPage'
@@ -323,6 +326,7 @@ module.exports = class App
     route 'shell', 'ShellPage'
     route 'social', 'SocialPage'
     route 'termsOfService', 'TosPage'
+    route 'transactions', 'TransactionsPage'
     route 'travelMapScreenshot', 'TravelMapScreenshotPage'
     route ['trip', 'tripByType'], 'TripPage'
 

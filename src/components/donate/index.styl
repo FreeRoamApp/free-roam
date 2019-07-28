@@ -1,0 +1,47 @@
+@require '../../vars'
+
+.z-donate
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .top
+    padding: 36px 16px
+
+  > .description
+    background: getColor('$tertiary0')
+    padding: 36px 16px
+
+    > .content
+      text-align: center
+
+      > .title
+        font-display2()
+        margin-bottom: 20px
+
+  > .tax-info
+    font-title()
+    background: getColor('$secondary500')
+    color: getColor('$secondary500Text')
+    padding: 36px 16px
+
+    > .content
+      text-align: center
+
+  @media (min-width: $breakPointMedium)
+    > .top
+      max-width: 650px
+      margin: 0 auto
+      padding: 72px 16px
+
+    > .description
+      > .content
+        max-width: 650px
+        margin: 0 auto
+        padding: 76px
+
+    > .tax-info
+      > .content
+        max-width: 570px
+        margin: 0 auto
+        padding: 72px

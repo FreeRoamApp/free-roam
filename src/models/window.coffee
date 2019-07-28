@@ -49,7 +49,7 @@ module.exports = class Window
 
     {
       contentWidth:
-        if width >= 1280
+        if width >= 768
         then Math.min GRID_WIDTH, width - DRAWER_MAX_WIDTH
         else width
       width: width

@@ -40,7 +40,7 @@ $zIndexResults = 1000
 
     > .input
       shadow-1()
-      flex: 1
+      flex1()
       margin: 8px
       padding-left: 64px
       border-radius: 2px
@@ -59,10 +59,10 @@ $zIndexResults = 1000
       box-shadow: none
 
   > .results
+    flex1()
     background: getColor('$grey200')
     z-index: $zIndexResults // FIXME: global z-index
     display: flex
-    flex: 1
     padding-top: 10px
     box-sizing: border-box
     overflow: auto

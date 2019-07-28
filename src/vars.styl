@@ -13,9 +13,7 @@ $zIndexSheet = 300
 // TODO: move to vars.json, allow js to use (cardList)
 $breakPointSmall = 340px
 $breakPointMedium = 768px
-$breakPointLarge = 840px
-
-$contentMaxWidth = 1280px
+$breakPointLarge = 1280px // drawer shows here
 
 $inputMaxWidth = 600px
 
@@ -80,6 +78,20 @@ font-display1(scale = yes)
   if scale is yes
     @media (min-width: $breakPointLarge)
       font-size: 26px
+
+font-display2(scale = yes)
+  // font-family: Maven Pro
+  font-family: Maven Pro
+  color: getColor('$primary500')
+  font-weight: 600
+  font-size: 26px
+  line-height: 1.2em
+  letter-spacing: 1px
+  text-transform: uppercase
+
+  if scale is yes
+    @media (min-width: $breakPointLarge)
+      font-size: 28px
 
 font-h1(scale = yes)
   font-family: Maven Pro

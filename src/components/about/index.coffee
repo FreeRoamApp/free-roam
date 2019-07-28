@@ -3,7 +3,6 @@ z = require 'zorium'
 Icon = require '../icon'
 PrimaryButton = require '../primary_button'
 SecondaryButton = require '../secondary_button'
-TertiaryButton = require '../tertiary_button'
 Tabs = require '../tabs'
 colors = require '../../colors'
 config = require '../../config'
@@ -15,7 +14,8 @@ module.exports = class About
   constructor: ({@model, @router}) ->
     me = @model.user.getMe()
 
-    @$learnMoreButton = new TertiaryButton()
+    @$learnMoreButton = new SecondaryButton()
+    @$donateButton = new SecondaryButton()
 
     @$shareButton = new PrimaryButton()
     @$reviewButton = new PrimaryButton()
@@ -33,15 +33,21 @@ module.exports = class About
 
     z '.z-about',
       z '.mission',
-        z '.g-grid',
+        z '.content',
           z 'h1.title', @model.l.get 'about.missionTitle'
           z '.text', @model.l.get 'about.mission'
-          z '.button',
-            z @$learnMoreButton,
-              text: @model.l.get 'drawer.roamWithCare'
-              isOutline: true
-              onclick: =>
-                @router.go 'roamWithCare'
+          z '.actions',
+            z '.action',
+              z @$learnMoreButton,
+                text: @model.l.get 'drawer.roamWithCare'
+                isOutline: true
+                onclick: =>
+                  @router.go 'roamWithCare'
+            z '.action',
+              z @$donateButton,
+                text: @model.l.get 'general.donate'
+                onclick: =>
+                  @router.go 'donate'
 
       z '.roadmap',
         z '.info',

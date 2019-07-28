@@ -41,6 +41,8 @@ SCROLL_COMMENT_LOAD_COUNT = 30
 TIME_UNTIL_WIGGLE_MS = 2000
 
 module.exports = class Thread extends Base
+  hideDrawer: true
+
   constructor: ({@model, @router, thread, @isInline, group}) ->
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@router}

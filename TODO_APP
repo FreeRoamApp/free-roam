@@ -1,8 +1,32 @@
 TODOS:
 
+- Donate
+  x heart next to name in chat/review
+    x store as flag on user if they're a supporter. multi-levels?
+  x transaction page
+  x cancel subscription
+  x when new sub payment goes through, add transaction
+  x change stripe_signing_secret to prod val (staging currently has correct one)
+  x use prod publish and secret key
+
 - if server-side error, redirect to homepage
 
 - Map contours overlay
+
+- Group invite link that goes directly to app
+
+- Where friends are on map + where groups are on map
+  - Need perms/privacy settings first
+
+- Canadian cell coverage
+  - Bell, Rogers, Telus
+    - Freedom, KooDo, Sasktel
+
+- User settings
+  - Celsius option
+  - setting for not auto-checking in when reviewing
+
+- Price filter for dump/water
 
 - Make adding an amenity suck less
 
@@ -135,7 +159,6 @@ x fire
   x delete all fires before resyncing
   x fix existing fill (states)
 - look into using https://inciweb.nwcg.gov/feeds/ for fires
-- setting for not auto-checking in when reviewing
 x new icon for propane
 - link to fire weather info for each red flag
 - make offline maps more intuitive
@@ -175,7 +198,7 @@ x New prompt for rating app on google play/ios
 - Delete button on my places
 x Trip map glitchy / slow?
 - Changing date on trip should auto-sort
-- Friendliness of staff slider?
+- Bugginess, Friendliness of staff slider?
 - Nights stayed on review
 - Improved rest areas
   - # of parking spots, RV parking, dump
@@ -193,24 +216,18 @@ x Adding review checks into place & includes photos in checkin
   x A/B. new campground, new/edit review, new rating
   x Link to more facilities
   - "See forecast" button
-- Ability to add website for campground
 x Fix crosshair icon when choosing current location?
 x Forecast filter
 - Recent reviews (maybe on about page?)
 x Social tutorial tips
 - Script to combine duplicate campground / reviews
   - craggy wash, sedona
-- Find more free campsites in northern utah
 x Recycling
 - Warning message when difference between weather station and campground is high (far away, or big elevation difference)
 - Colorblind friendly
-- Midwest vanlife gathering
-  - Give permission for @everyone
-  - Some way to find group from the app
 - User-inputted info for low clearances
 x Show elevation when long-tapping on coordinate
 x Fix: At i12 and i55, theres a 9' and a 6'. These are running vertically along Lake Pontchartrain in La. The 9' is just past Hammond Both on the interstate.
-- Great National Forest areas here in NW Florida..Apalachicola National Forest has lots of boondocking opportunities, terrik
 x Products search is broken
 x Logging into Rachel's account on Kindle didn't login until refreshing (close/open app)
   x think this is fixed now

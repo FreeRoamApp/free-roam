@@ -12,7 +12,7 @@ module.exports = class ButtonMenu
 
   isVisible: ->
     # TODO: json file with vars that are used in stylus and js
-    # eg $contentMaxWidth
+    # eg $breakPointLarge
     not window?.matchMedia('(min-width: 1280px)').matches
 
   render: ({color, onclick, isAlignedLeft} = {}) =>
