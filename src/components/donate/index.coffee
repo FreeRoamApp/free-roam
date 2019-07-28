@@ -21,7 +21,9 @@ module.exports = class Donate
     z '.z-donate',
       if isDesktop
         z '.top',
-          z @$donateBox
+          z '.box',
+            z @$donateBox
+          z '.art'
       z '.description',
         z '.content',
           z '.title', @model.l.get 'donate.descriptionTitle'

@@ -7,6 +7,11 @@
 
   > .top
     padding: 36px 16px
+    width: 100%
+    box-sizing: border-box
+
+    > .art
+      display: none
 
   > .description
     background: getColor('$tertiary0')
@@ -30,9 +35,19 @@
 
   @media (min-width: $breakPointMedium)
     > .top
-      max-width: 650px
+      max-width: 720px
       margin: 0 auto
       padding: 72px 16px
+      box-sizing: border-box
+      display: flex
+      align-items: center
+
+      > .art
+        display: block
+        width: 243px
+        height: 225px
+        margin-left: auto
+        background-image: url($cdnUrl + '/about/donation_illustration.svg')
 
     > .description
       > .content

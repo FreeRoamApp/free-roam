@@ -47,7 +47,6 @@
   > .donation-box
     border: 1px solid getColor('$tertiary300')
     border-radius: 4px
-    max-width: 380px
 
     > .title
       font-h3(false)
@@ -78,7 +77,7 @@
           > .amount
             font-title2(false)
             flex1()
-            padding: 16px
+            padding: 16px 24px
             text-align: center
             background: getColor('$tertiary200')
             border-radius: 4px
@@ -107,3 +106,7 @@
 
       > .donate-button
         margin-top: 20px
+
+  @media (min-width: $breakPointMedium)
+    > .donation-box
+      max-width: 380px

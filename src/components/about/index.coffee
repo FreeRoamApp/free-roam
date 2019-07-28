@@ -142,12 +142,6 @@ module.exports = class About
                         path: ''
                         url: "https://#{config.HOST}"
                       }
-                    colors:
-                      c200: colors.$green200
-                      c500: colors.$green500
-                      c600: colors.$green600
-                      c700: colors.$green700
-                      ink: colors.$white
               z '.g-col.g-xs-12.g-md-4',
                 z '.image.review'
                 z '.title', @model.l.get 'about.helpReviewTitle'

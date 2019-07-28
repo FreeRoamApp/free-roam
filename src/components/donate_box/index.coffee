@@ -21,7 +21,7 @@ module.exports = class Donate
 
     @state = z.state {
       me: @model.user.getMe()
-      selectedAmount: '5'
+      selectedAmount: '10'
       amount: @amount
       subscriptionInterval: @subscriptionInterval
       step: 'amount' # amount, card, thanks
@@ -36,10 +36,10 @@ module.exports = class Donate
       {
         '5': '$5'
         '10': '$10'
-        '20': '$20'
+        '25': '$25'
       }
       {
-        '30': '$30'
+        '50': '$50'
         'other': @model.l.get 'donate.otherAmount'
       }
     ]
