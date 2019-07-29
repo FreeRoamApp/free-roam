@@ -67,7 +67,7 @@
   "overnightAttachments": "/overnight/:slug/attachments",
   "overnightWithTab": "/overnight/:slug/:tab",
 
-  "loginLink": "/loginLink/:userId/:token",
+  "loginLink": "/login-link/:userId/:token",
 
   "partners": "/partners",
 
@@ -103,6 +103,7 @@
   "transactions": "/transactions",
   "tripByType": "/trip/type/:type",
   "travelMapScreenshot": "/travel-map-screenshot/:id",
+  "verifyEmail": "/verify-email/:userId/:token",
   "home": "/",
   "404": "/*"
 }

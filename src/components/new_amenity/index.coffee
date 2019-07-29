@@ -90,14 +90,15 @@ module.exports = class NewAmenity
         amenities: amenities
         prices: prices
       }
-      .then =>
+      .then (amenity) =>
         @state.set isLoading: false
 
         # FIXME FIXME: rm HACK. for some reason thread is empty initially?
         # still unsure why
         setTimeout =>
-          # TODO: go back to campground page
-          @router.go 'places'
+          @router.go 'amenity', {
+            slug: amenity.slug
+          }
         , 200
       .catch =>
         @state.set isLoading: false
@@ -130,7 +131,7 @@ module.exports = class NewAmenity
                 prettyType: 'Amenity'
             }
 
-        z 'or', @model.l.get 'general.or'
+        z '.or', @model.l.get 'general.or'
 
         z '.button',
           z @$mapButton,

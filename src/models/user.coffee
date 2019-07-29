@@ -30,6 +30,9 @@ module.exports = class User
   setPartner: (partner) =>
     @auth.call "#{@namespace}.setPartner", {partner}
 
+  verifyEmail: ({userId, token}) =>
+    @auth.call "#{@namespace}.verifyEmail", {userId, token}
+
   upsert: (userDiff, {file} = {}) =>
     if file
       formData = new FormData()

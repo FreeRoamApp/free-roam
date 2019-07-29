@@ -568,6 +568,8 @@
   "usersNearby.emptyLocation": "Set a location to see who is nearby",
   "usersNearby.disabledTitle": "Make friends. Roast mallows.",
   "usersNearby.disabledDescription": "Turn your location on to see who's nearby and connect with fellow roamers",
+  "verifyEmail.isVerified": "Thank you! Your email is now verified.",
+  "verifyEmail.tapHome": "Return to homepage",
   "walmartInfoCard.title": "Does this location allow RVs overnight?",
   "walmartInfoCard.content": "Help us stay updated",
   "welcomeDialog.title": "Welcome to FreeRoam!",
@@ -851,6 +853,7 @@
   "weather.cloudy": "Cloudy",
 
   "error.usernameTaken": "Username is taken",
+  "error.emailTaken": "Email is taken",
   "error.emailMismatch": "Email doesn't match",
   "error.emptyReview": "Review cannot be blank",
   "error.invalid": "Invalid",

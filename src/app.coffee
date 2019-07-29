@@ -97,6 +97,7 @@ Pages =
   TosPage: require './pages/tos'
   TransactionsPage: require './pages/transactions'
   TripPage: require './pages/trip'
+  VerifyEmailPage: require './pages/verify_email'
   FourOhFourPage: require './pages/404'
 
 TIME_UNTIL_ADD_TO_HOME_PROMPT_MS = 90000 # 1.5 min
@@ -329,6 +330,7 @@ module.exports = class App
     route 'transactions', 'TransactionsPage'
     route 'travelMapScreenshot', 'TravelMapScreenshotPage'
     route ['trip', 'tripByType'], 'TripPage'
+    route 'verifyEmail', 'VerifyEmailPage'
 
     route '404', 'FourOhFourPage'
     routes

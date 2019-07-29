@@ -1,6 +1,15 @@
 TODOS:
 
-- Donate
+- Product guides
+  - Script that checks if an Amazon item is still/currently available?
+
+x Verify emails
+  x only 1 account per email...
+  x verification email
+  x switch austin@freeroam to team@freeroam
+  x better welcome message
+
+x Donate
   x heart next to name in chat/review
     x store as flag on user if they're a supporter. multi-levels?
   x transaction page
@@ -9,7 +18,7 @@ TODOS:
   x change stripe_signing_secret to prod val (staging currently has correct one)
   x use prod publish and secret key
 
-- if server-side error, redirect to homepage
+x if server-side error, redirect to homepage
 
 - Map contours overlay
 
@@ -21,6 +30,7 @@ TODOS:
 - Canadian cell coverage
   - Bell, Rogers, Telus
     - Freedom, KooDo, Sasktel
+  - Think I need to reach out to all of these
 
 - User settings
   - Celsius option
