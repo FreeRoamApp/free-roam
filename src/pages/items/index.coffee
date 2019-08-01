@@ -26,18 +26,22 @@ module.exports = class ItemsPage extends Base
       else
         {}
 
-    @$appBar = new AppBar {@model}
-    @$buttonBack = new ButtonBack {@model, @router}
-    @$items = new Items {@model, @router, filter}
-
-    @title = filter.switchMap (filter) =>
+    filterInfo = filter.switchMap (filter) =>
       if filter?.type is 'category'
         @model.category.getAll()
         .map (categories) =>
-          name = _find(categories, {slug: filter.value})?.name
-          @model.l.get 'itemsPage.title', {replacements: {name}}
+          _find(categories, {slug: filter.value})
+      else if filter
+        RxObservable.of {name: filter.value}
       else
-        RxObservable.of filter?.value
+        RxObservable.of null
+
+    @$appBar = new AppBar {@model}
+    @$buttonBack = new ButtonBack {@model, @router}
+    @$items = new Items {@model, @router, filter, filterInfo}
+
+    @title = filterInfo.map (filterInfo) =>
+      filterInfo?.name
 
     @state = z.state
       title: @title
@@ -57,21 +61,7 @@ module.exports = class ItemsPage extends Base
     z '.p-items',
       z @$appBar, {
         title: title
-        style: 'primary'
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
-        $topRightButton:
-          z '.p-group-home_top-right',
-            z @$notificationsIcon,
-              icon: 'notifications'
-              color: colors.$header500Icon
-              onclick: =>
-                @model.overlay.open @$notificationsOverlay
-            z @$settingsIcon,
-              icon: 'settings'
-              color: colors.$header500Icon
-              onclick: =>
-                @model.overlay.open new SetLanguageDialog {
-                  @model, @router, @group
-                }
+        isPrimary: true
+        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
       }
       @$items

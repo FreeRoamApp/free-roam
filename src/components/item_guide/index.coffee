@@ -4,7 +4,6 @@ require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 
-EmbeddedVideo = require '../embedded_video'
 FormattedText = require '../formatted_text'
 Spinner = require '../spinner'
 colors = require '../../colors'
@@ -27,12 +26,19 @@ module.exports = class ItemGuide
       $what: new FormattedText {
         text: item.map (item) -> item?.what
       }
-      $videos: item.map (item) =>
-        _map item?.videos, (video) =>
-          new EmbeddedVideo {@model, video}
+      $decisions: item.map (item) ->
+        _map item?.decisions, (decision) ->
+          new FormattedText {
+            # TODO
+            text:
+              if decision.text
+                decision.text
+                .replace /{home}/g, 'RV'
+                .replace /{Home}/g, 'RV'
+          }
 
   render: =>
-    {item, products, $why, $what, $videos} = @state.getValue()
+    {item, products, $why, $what, $decisions} = @state.getValue()
 
     z '.z-item-guide',
       if item?.name
@@ -40,14 +46,15 @@ module.exports = class ItemGuide
           z '.why',
             z '.title', @model.l.get 'item.why'
             $why
-          z '.what',
-            z '.title', @model.l.get 'item.what'
-            $what
-          unless _isEmpty item.videos
-            [
-              z '.title', @model.l.get 'item.helpfulVideos'
-              _map $videos, ($video) ->
-                z $video
-            ]
+          if item.what
+            z '.what',
+              z '.title', @model.l.get 'item.what'
+              $what
+          z '.decisions',
+            z '.title', @model.l.get 'item.decisions'
+            _map item.decisions, (decision, i) ->
+              z '.decision',
+                z '.title', decision.title
+                z '.text', $decisions[i]
       else
         z @$spinner

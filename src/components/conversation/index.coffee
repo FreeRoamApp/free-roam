@@ -210,7 +210,7 @@ module.exports = class Conversation extends Base
               id = message.id or message.clientId
               # if we get this in conversationmessasge, there's a flicker for
               # state to get set
-              bodyCacheKey = "#{message.clientId}:text"
+              bodyCacheKey = "#{message.id or message.clientId}:text"
               messageCacheKey = "#{id}:#{message.lastUpdateTime}:message"
 
               $body = @getCached$ bodyCacheKey, FormattedText, {
@@ -555,10 +555,10 @@ module.exports = class Conversation extends Base
 
     z '.z-conversation', {
       className: z.classKebab {hasBottomBar, @useIscroll}
-      onclick: (e) =>
-        if @isTextareaFocused.getValue() and Environment.isIos() and
-            e?.target isnt @$conversationInput.getTextarea$$()
-          document.activeElement.blur()
+      # onclick: (e) =>
+      #   if @isTextareaFocused.getValue() and Environment.isIos() and
+      #       e?.target isnt @$conversationInput.getTextarea$$()
+      #     document.activeElement.blur()
     },
       # toggled with vanilla js (non-vdom for perf)
       z '.loading', {

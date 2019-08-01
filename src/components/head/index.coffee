@@ -269,7 +269,7 @@ module.exports = class Head
       z 'script#bundle',
         key: 'bundle'
         async: true
-        src: @bundlePath or 'http://localhost:50341/bundle.js'
+        src: @bundlePath or "#{config.WEBPACK_DEV_URL}/bundle.js"
 
       # any conditional scripts need to be at end or else they interfere with others
       if meta.structuredData

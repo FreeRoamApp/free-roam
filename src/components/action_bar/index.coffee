@@ -28,11 +28,7 @@ module.exports = class ActionBar
     }
 
 
-    z '.z-action-bar', {
-      onclick: ->
-        if Environment.isIos()
-          document.activeElement.blur()
-    },
+    z '.z-action-bar',
       z @$appBar, {
         title: title
         style: 'primary'

@@ -125,7 +125,7 @@ module.exports = class FormattedText
                         else undefined
                 onclick: (e) =>
                   # get rid of keyboard on ios
-                  document.activeElement.blur()
+                  # document.activeElement.blur()
                   e?.stopPropagation()
                   e?.preventDefault()
                   @model.overlay.open new ImageViewOverlay {
@@ -143,6 +143,9 @@ module.exports = class FormattedText
 
         a: (tagName, props, children) =>
           isMention = props.title and props.title.indexOf('user:') isnt -1
+          if isMention
+            username = props.title.replace 'user:', ''
+            mentionedUser = _find @mentionedUsers, {username}
           youtubeId = props.href?.match(config.YOUTUBE_ID_REGEX)?[1]
           imgurId = props.href?.match(config.IMGUR_ID_REGEX)?[1]
 
@@ -163,6 +166,9 @@ module.exports = class FormattedText
                 webmSrc: "https://i.imgur.com/#{imgurId}.webm"
             }
             z $embeddedVideo
+          # no user found, don't make link
+          else if isMention and not mentionedUser
+            z 'span', children
           else
             z 'a.link', {
               href: props.href
@@ -171,14 +177,16 @@ module.exports = class FormattedText
                 e?.stopPropagation()
                 e?.preventDefault()
                 if isMention
-                  username = props.title.replace 'user:', ''
-                  user = _find @mentionedUsers, {username}
-                  @model.overlay.open new ProfileDialog {
-                    @model, @router, user
-                  }
+                  if mentionedUser
+                    @model.overlay.open new ProfileDialog {
+                      @model, @router, user: mentionedUser
+                    }
                 else
                   @router.openLink props.href
-            }, children
+            },
+              # w/o using raw username for mentions, user_test_
+              # will show up in italics
+              if isMention then "@#{username}" else children
     }
     .processSync text
     .contents

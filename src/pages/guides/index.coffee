@@ -1,9 +1,10 @@
 z = require 'zorium'
-_map = require 'lodash/map'
 
 AppBar = require '../../components/app_bar'
 ButtonMenu = require '../../components/button_menu'
-Guides = require '../../components/guides'
+ProductGuides = require '../../components/product_guides'
+HowToGuides = require '../../components/how_to_guides'
+Tabs = require '../../components/tabs'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -11,26 +12,43 @@ if window?
   require './index.styl'
 
 module.exports = class GuidesPage
-  # hideDrawer: true
   @hasBottomBar: true
 
-  constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
+  constructor: ({@model, @router, requests, @$bottomBar}) ->
     @$appBar = new AppBar {@model}
+    @$tabs = new Tabs {@model}
     @$buttonMenu = new ButtonMenu {@model, @router}
-    @$guides = new Guides {@model, @router}
+    @$productGuides = new ProductGuides {@model, @router}
+    @$howToGuides = new HowToGuides {@model, @router}
 
   getMeta: =>
     {
       title: @model.l.get 'guidesPage.title'
-      description: @model.l.get 'guidesPage.description'
+      # description: guides?.why
     }
 
   render: =>
     z '.p-guides',
       z @$appBar, {
         title: @model.l.get 'guidesPage.title'
-        style: 'primary'
+        isFlat: true
+        # isPrimary: true
         $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
       }
+      z @$tabs,
+        isBarFixed: false
+        # isPrimary: true
+        tabs: [
+          {
+            $menuText: @model.l.get 'guidesPage.products'
+            $el: @$productGuides
+          }
+          {
+            $menuText: @model.l.get 'guidesPage.howTo'
+            $el: z @$howToGuides
+          }
+        ]
       @$guides
-      @$bottomBar
+
+      if @model.experiment.get('guides') is 'visible'
+        @$bottomBar

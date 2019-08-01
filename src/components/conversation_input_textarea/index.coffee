@@ -58,7 +58,12 @@ module.exports = class ConversationInputTextarea
     {isPostLoading} = @state.getValue()
     unless isPostLoading
       $$textarea = @$$el.querySelector('#textarea')
-      $$textarea?.focus()
+
+      unless Environment.isIos()
+        # not sure why this is here, but it causes the pause/resume resizing
+        # to bug out on ios
+        $$textarea?.focus()
+
       $$textarea?.style.height = "#{DEFAULT_TEXTAREA_HEIGHT}px"
       @textareaHeight.next DEFAULT_TEXTAREA_HEIGHT
       $$textarea?.value = ''
@@ -135,7 +140,10 @@ module.exports = class ConversationInputTextarea
               isFocused = e.target is document.activeElement
               unless isFocused
                 if Environment.isIos() and not Environment.isNativeApp 'freeroam'
-                  @model.window.resumeResizing()
+                  # give time for keyboard anim to finish
+                  setTimeout =>
+                    @model.window.resumeResizing()
+                  , 100
                 setTimeout =>
                   @isTextareaFocused.next false
                 , 0

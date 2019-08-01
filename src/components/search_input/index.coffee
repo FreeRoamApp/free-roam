@@ -48,7 +48,7 @@ module.exports = class SearchInput
     onBack ?= =>
       @router.back()
     clearOnBack ?= true
-    height ?= '36px'
+    height ?= '48px'
     bgColor ?= colors.$tertiary0
     placeholder ?= @model.l.get 'searchInput.placeholder'
 

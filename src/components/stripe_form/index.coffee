@@ -77,12 +77,27 @@ module.exports = class StripeForm
         resolve @model.payment.purchase {
           stripeToken, platform: 'web', amount, subscriptionInterval
         }
+        .catch (error) =>
+          error = try
+            JSON.parse error.message
+          catch err
+            {info: 'Error'}
+
+          @state.set error: error.info, isLoading: false
+          throw error
 
   onPurchase: =>
     {amount, subscriptionInterval} = @state.getValue()
     @model.payment.purchase {
       platform: 'web', amount, subscriptionInterval
     }
+    .catch (error) =>
+      error = try
+        JSON.parse error.message
+      catch err
+        {info: 'Error'}
+      @state.set error: error.info, isLoading: false
+      throw error
 
   render: =>
     {me, error} = @state.getValue()
@@ -95,9 +110,13 @@ module.exports = class StripeForm
 
     hasStripeId = me?.flags.hasStripeId
 
+    console.log error
+
     z '.z-stripe-form',
       if hasStripeId
         z '.stored-info',
+          if error
+            z 'span.payment-errors', error
           z '.description', @model.l.get 'stripeForm.useSavedInfo'
           z '.edit', {
             onclick: =>

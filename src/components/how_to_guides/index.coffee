@@ -14,7 +14,7 @@ BG_COLORS = [
   colors.$red50026
 ]
 
-module.exports = class Guides
+module.exports = class HowToGuides
   constructor: ({@model, @router}) ->
     me = @model.user.getMe()
 
@@ -29,13 +29,9 @@ module.exports = class Guides
         slug: 'how-to-boondock'
         name: 'How to boondock'
       }
-      {
-        key: 'productGuides'
-        name: 'Product guides'
-      }
     ]
 
-    z '.z-guides',
+    z '.z-how-to-guides',
       z '.g-grid',
         z '.g-cols.lt-md-no-padding',
           _map guides, (guide, i) =>
@@ -47,7 +43,7 @@ module.exports = class Guides
                 z '.background',
                   # style:
                   #   backgroundImage:
-                  #     "url(#{config.CDN_URL}/products/#{slug}-200h.jpg)"
+                  #     "url(#{config.CDN_URL}/products/#{slug}-300h.jpg)"
                   z '.gradient'
                 z '.overlay', {
                   style:

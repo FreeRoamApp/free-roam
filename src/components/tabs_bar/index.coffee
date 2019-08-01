@@ -28,14 +28,20 @@ module.exports = class TabsBar
     @$$el?.removeEventListener 'touchmove', @onTouchMove
 
   render: (props) =>
-    {items, bgColor, color, style, inactiveColor, underlineColor, isFixed,
+    {items, bgColor, color, isPrimary, inactiveColor, underlineColor, isFixed,
       isFlat, isArrow, tabWidth} = props
     {selectedIndex} = @state.getValue()
 
-    bgColor ?= colors.$tertiary0
-    inactiveColor ?= colors.$bgText54
-    color ?= colors.$bgText
-    underlineColor ?= colors.$primary500
+    bgColor ?= if isPrimary then colors.$primary500 else colors.$tertiary0
+    inactiveColor ?= if isPrimary \
+                     then colors.$primary500Text54
+                     else colors.$bgText54
+    color ?= if isPrimary \
+             then colors.$primary500Text
+             else colors.$bgText
+    underlineColor ?= if isPrimary \
+                      then colors.$primary500Text
+                      else colors.$primary500
 
     isFullWidth = not tabWidth
 

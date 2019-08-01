@@ -4,6 +4,7 @@ AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 ItemProducts = require '../../components/item_products'
 ItemGuide = require '../../components/item_guide'
+ItemVideos = require '../../components/item_videos'
 BasePage = require '../base'
 Tabs = require '../../components/tabs'
 colors = require '../../colors'
@@ -24,6 +25,7 @@ module.exports = class ItemPage extends BasePage
     @$buttonBack = new ButtonBack {@model, @router}
     @$itemProducts = new ItemProducts {@model, @router, @item}
     @$itemGuide = new ItemGuide {@model, @router, @item}
+    @$itemVideos = new ItemVideos {@model, @router, @item}
 
     @state = z.state
       item: @item
@@ -42,10 +44,12 @@ module.exports = class ItemPage extends BasePage
       z @$appBar, {
         title: item?.name
         isFlat: true
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
+        isPrimary: true
+        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
       }
       z @$tabs,
         isBarFixed: false
+        isPrimary: true
         tabs: [
           {
             $menuText: @model.l.get 'itemsPage.products'
@@ -54,6 +58,10 @@ module.exports = class ItemPage extends BasePage
           {
             $menuText: @model.l.get 'itemsPage.guide'
             $el: z @$itemGuide
+          }
+          {
+            $menuText: @model.l.get 'itemsPage.videos'
+            $el: z @$itemVideos
           }
         ]
       @$item

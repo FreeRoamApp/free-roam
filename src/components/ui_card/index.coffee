@@ -3,6 +3,7 @@ z = require 'zorium'
 
 FlatButton = require '../flat_button'
 PushService = require '../../services/push'
+colors = require '../../colors'
 
 if window?
   require './index.styl'
@@ -47,3 +48,5 @@ module.exports = class UiCard
               text: submit.text
               isFullWidth: false
               onclick: submit.onclick
+              colors:
+                cText: colors.$primary500

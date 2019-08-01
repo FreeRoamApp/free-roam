@@ -38,9 +38,9 @@ $zIndexForm = 1
     > .input
       // shadow-1()
       flex1()
-      font-h3()
+      font-title()
       appearance: none
-      padding-left: 48px
+      padding: 14px 14px 14px 48px
       border-radius: 8px
       border: 2px solid getColor('$tertiary300')
       box-sizing: border-box
@@ -51,8 +51,9 @@ $zIndexForm = 1
       outline: none
 
       &::placeholder
-        font-h3()
-        color: getColor('$bgText87')
+        font-title()
+        opacity: 1
+        color: getColor('$bgText54')
 
       &::-moz-placeholder
         line-height: 48px // should center in ff

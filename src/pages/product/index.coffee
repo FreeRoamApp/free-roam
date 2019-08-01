@@ -36,7 +36,7 @@ module.exports = class ProductPage
     z '.p-product',
       z @$appBar, {
         title: product?.item?.name
-        style: 'primary'
-        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
+        isPrimary: true
+        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
       }
       @$product

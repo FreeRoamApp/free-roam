@@ -26,6 +26,7 @@ colors = _defaults {
     '--primary-300-text': materialColors.$white
     '--primary-400-text': materialColors.$white
     '--primary-500-text': materialColors.$white
+    '--primary-500-text-54': materialColors.$white54
     '--primary-600-text': materialColors.$white
     '--primary-700-text': materialColors.$white
     '--primary-800-text': materialColors.$white
@@ -149,6 +150,7 @@ colors = _defaults {
   '$primary300Text': 'var(--primary-300-text)'
   '$primary400Text': 'var(--primary-400-text)'
   '$primary500Text': 'var(--primary-500-text)'
+  '$primary500Text54': 'var(--primary-500-text-54)'
   '$primary600Text': 'var(--primary-600-text)'
   '$primary700Text': 'var(--primary-700-text)'
   '$primary800Text': 'var(--primary-800-text)'

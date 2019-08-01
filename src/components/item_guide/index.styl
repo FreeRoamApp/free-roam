@@ -1,20 +1,28 @@
 @require '../../vars'
 
 .z-item-guide
-  padding: 8px 16px
+  padding: 24px 16px
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
 
   > .g-grid
 
-    > .what, .why
+    > .what, > .why, > .decisions
       margin-bottom: 16px
 
       > .title
-        font-title()
+        font-h3()
         margin-bottom: 8px
 
     > .title
       font-title()
       margin-bottom: 8px
+
+    > .decisions
+      > .decision
+        margin-bottom: 8px
+
+        > .title
+          font-title()
+          margin-bottom: 4px

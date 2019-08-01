@@ -81,8 +81,6 @@ Pages =
   OvernightAttachmentsPage: require './pages/overnight_attachments'
   PlacesPage: require './pages/places'
   PreservationPage: require './pages/preservation'
-  ProductPage: require './pages/product'
-  ProductGuidesPage: require './pages/product_guides'
   ProfilePage: require './pages/profile'
   ProfileAttachmentsPage: require './pages/profile_attachments'
   ProfileFriendsPage: require './pages/profile_friends'
@@ -315,8 +313,6 @@ module.exports = class App
       'placesWithLocationAndTypeAndSubType'
     ], 'PlacesPage'
     route ['preservation', 'roamWithCare'], 'PreservationPage'
-    route 'product', 'ProductPage'
-    route 'productGuides', 'ProductGuidesPage'
     route ['profile', 'profileMe', 'profileById'], 'ProfilePage'
     route ['profileAttachments', 'profileAttachmentsById'], 'ProfileAttachmentsPage'
     route ['profileFriends', 'profileFriendsById'], 'ProfileFriendsPage'
@@ -355,6 +351,8 @@ module.exports = class App
 
     hasOverlayPage = $overlayPage?
 
+    focusTags = ['INPUT', 'TEXTAREA', 'SELECT']
+
     z 'html', {
       attributes:
         lang: 'en'
@@ -363,6 +361,11 @@ module.exports = class App
       z 'body',
         z '#zorium-root', {
           className: z.classKebab {isIos, isAndroid, hasOverlayPage}
+          onclick: if Environment.isIos()
+            (e) ->
+              focusTag = document.activeElement.tagName
+              if focusTag in focusTags and not (e.target.tagName in focusTags)
+                document.activeElement.blur()
         },
           # used for screenshotting
           if $page?.isPlain

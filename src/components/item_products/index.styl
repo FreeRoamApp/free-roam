@@ -1,32 +1,89 @@
 @require '../../vars'
 
 .z-item-products
-  // padding: 16px
+  padding: 16px
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
-  padding-top: 8px
 
   > .g-grid > .g-cols > .g-col
     > .product
-      shadow-1()
-      display: flex
-      padding: 16px
-      background: getColor('$white')
-      border-radius: 2px
-      margin-bottom: 8px
+      card()
+      margin-bottom: 12px
 
-      > .image
-        width: 128px
-        height: 128px
-        margin: 0 auto
-        max-width: 100%
-        background-size: 100%
-        background-repeat: no-repeat
-        background-position: center center
+      > .content
+        padding: 16px
 
-      > .name
-        font-title()
+        > .image
+          width: 150px
+          height: 150px
+          margin: 0 auto
+          max-width: 100%
+          background-size: 100%
+          background-repeat: no-repeat
+          background-position: center center
+
+        > .buy
+          margin-top: 12px
+
+        > .name
+          font-h1(false)
+          margin-top: 24px
+
+        > .description
+          margin-top: 12px
+
+        > .pros-cons
+          display: flex
+          margin-top: 20px
+
+          > .pros, > .cons
+            flex: 1
+
+            > .title
+              font-title()
+              margin-bottom: 4px
+              text-transform: uppercase
+
+            > .pro, > .con
+              line-height: 1em
+              margin-bottom: 8px
+
+        > .decisions
+          margin-top: 16px
+
+          > .decision
+            font-title()
+            display: inline-block
+            padding: 4px 12px
+            border-radius: 6px
+            margin-right: 12px
+
+            &:nth-child(3n)
+              border: 1px solid #7388a0
+              color: #7388a0
+
+            &:nth-child(3n+1)
+              border: 1px solid #7eaf73
+              color: #7eaf73
+
+            &:nth-child(3n+2)
+              border: 1px solid #cd8022
+              color: #cd8022
+
+
+      > .bottom
+        border-top: 1px solid getColor('$black12')
+        display: flex
+        align-items: center
+        padding: 14px 16px
+
+        > .left
+          display: flex
+          cursor: pointer
+
+          > .icon
+            margin-right: 12px
 
   @media (min-width: $breakPointMedium)
     padding: 16px

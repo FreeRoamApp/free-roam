@@ -31,25 +31,32 @@ module.exports = class ProductGuides
     @$spinner = new Spinner()
 
     @state = z.state
-      categories: @model.category.getAll()
+      categories: @model.category.getAll().map (categories) ->
+        _map categories, (category) ->
+          {
+            category
+            $chevronIcon: new Icon()
+          }
       hasSeenProductGuidesCard: @model.cookie.get 'hasSeenProductGuidesCard'
 
   render: =>
     {categories, hasSeenProductGuidesCard} = @state.getValue()
 
+    console.log categories
+
     z '.z-product-guides',
       z '.g-grid',
-        unless hasSeenProductGuidesCard
-          z '.info-card',
-            z @$infoCard, {
-              $title: @model.l.get 'productGuides.infoCardTitle'
-              $content: @model.l.get 'productGuides.infoCard'
-              submit:
-                text: @model.l.get 'general.gotIt'
-                onclick: =>
-                  @state.set hasSeenProductGuidesCard: true
-                  @model.cookie.set 'hasSeenProductGuidesCard', '1'
-            }
+        # unless hasSeenProductGuidesCard
+        #   z '.info-card',
+        #     z @$infoCard, {
+        #       $title: @model.l.get 'productGuides.infoCardTitle'
+        #       $content: @model.l.get 'productGuides.infoCard'
+        #       submit:
+        #         text: @model.l.get 'general.gotIt'
+        #         onclick: =>
+        #           @state.set hasSeenProductGuidesCard: true
+        #           @model.cookie.set 'hasSeenProductGuidesCard', '1'
+        #     }
 
         z '.search',
           z @$searchInput, {
@@ -61,23 +68,25 @@ module.exports = class ProductGuides
 
         z '.g-cols.lt-md-no-padding',
           if categories
-            _map categories, (category, i) =>
-              productSlug = category?.data?.defaultProductSlug or
-                            category?.firstItemFirstProductSlug
+            _map categories, ({category, $chevronIcon}, i) =>
+              products = category.itemNames.join ', '
               z '.g-col.g-xs-12.g-md-6',
-                @router.link z 'a.category', {
+                @router.link z 'a.card', {
                   href: @router.get 'itemsByCategory', {category: category.slug}
                 },
-                  z '.background',
-                    style:
-                      backgroundImage:
-                        "url(#{config.CDN_URL}/products/#{productSlug}-200h.jpg)"
-                    z '.gradient'
-                  z '.overlay', {
-                    style:
-                        backgroundColor: BG_COLORS[i % BG_COLORS.length]
-                  },
-                    z '.name', "\##{category.name.toLowerCase()}"
-                    z '.description', category.description
+                  z '.top',
+                    z '.icon',
+                      style:
+                        backgroundImage:
+                          "url(#{config.CDN_URL}/guides/#{category.slug}.jpg)"
+                    z '.content',
+                      z '.name', category.name
+                      z '.products', "#{products}..."
+                    z '.chevron',
+                      z $chevronIcon,
+                        icon: 'chevron-right'
+                        color: colors.$primary500
+                        isTouchTarget: false
+                  z '.description', category.description
           else
             @$spinner

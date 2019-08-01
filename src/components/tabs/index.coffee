@@ -128,7 +128,7 @@ module.exports = class Tabs
 
   render: (options) =>
     {tabs, barColor, barBgColor, barInactiveColor, isBarFixed, isBarFlat,
-      isBarArrow, barTabWidth, windowSize, vDomKey, barStyle} = options
+      isBarArrow, barTabWidth, windowSize, vDomKey, isPrimary} = options
 
     {selectedIndex, hideTabBar, windowSize} = @state.getValue()
 
@@ -164,7 +164,7 @@ module.exports = class Tabs
               color: barColor
               inactiveColor: barInactiveColor
               bgColor: barBgColor
-              style: barStyle
+              isPrimary: isPrimary
               items: tabs
             }
         z '.tabs-scroller', {

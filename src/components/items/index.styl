@@ -5,3 +5,82 @@
   flex1()
   overflow: auto
   -webkit-overflow-scrolling: touch
+
+  > .g-grid
+    > .category-info
+      padding: 24px 20px
+      text-align: center
+
+      > .icon
+        width: 90px
+        height: 90px
+        margin: 0 auto
+        border-radius: 50%
+        background-size: 100%
+
+      > .name
+        font-h2()
+        margin-top: 8px
+
+      > .description
+        margin-top: 4px
+
+    > .g-cols
+      > .item
+        card()
+        margin-bottom: 12px
+
+        > .top
+          padding: 16px
+          border-bottom: 1px solid getColor('$black12')
+
+          > .name
+            font-h3()
+
+        > .products
+          display: flex
+          border-bottom: 1px solid getColor('$black12')
+
+          > .image
+            width: 50%
+            height: 150px
+            background-size: contain
+            background-repeat: no-repeat
+            background-position: center
+            border-right: 1px solid getColor('$black12')
+            box-sizing: border-box
+
+            &.has-more
+              position: relative
+              display: flex
+              align-items: center
+              justify-content: center
+
+              > .count
+                font-h1()
+                position: relative
+                z-index: 1
+
+              &:after
+                content: ''
+                position: absolute
+                top: 0
+                left: 0
+                width: 100%
+                height: 100%
+                background: getColor('$white70')
+
+            &:last-child
+              border-right: none
+
+        > .bottom
+          padding: 14px 16px
+          display: flex
+          align-items: center
+
+          > .text
+            font-title()
+            color: getColor('$primary500')
+
+          > .chevron
+            margin-left: auto

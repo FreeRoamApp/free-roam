@@ -82,7 +82,6 @@
   "privacy": "/privacy",
   "preservation": "/respect-the-land",
   "productGuides": "/product-guides",
-  "product": "/product/:slug",
 
   "profile": "/user/:username",
   "profileById": "/user/id/:id",
