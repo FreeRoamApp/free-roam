@@ -32,10 +32,14 @@
         margin-right: 0
 
       > .name
+        font-subhead(false)
         position: absolute
         bottom: 6px
         left: 6px
-        font-subhead(false)
+        overflow: hidden
+        text-overflow: ellipsis
+        white-space: nowrap
+        width: 100%
         color: getColor('$white')
 
       &.is-light

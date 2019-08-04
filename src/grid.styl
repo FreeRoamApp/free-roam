@@ -49,13 +49,15 @@ grid(class = 'xs', columns = 12)
 // ------
 
 .g-grid
-  // overflow: hidden
-  // ^^ screws with box shadows
+  overflow: hidden // prevents horiz scroll from g-cols neg margin
   list-style: none
   max-width: 1280px
   margin: 0 auto
   width: 100%
   clearfix()
+
+  &.overflow-visible
+    overflow: visible
 
   .g-cols
     margin-left: -4px

@@ -72,6 +72,14 @@ class MapService
     else
       get()
 
+  getDirectionsBetweenPlaces: (place1, place2, {model}) ->
+    target = '_system'
+    baseUrl = 'https://google.com/maps/dir/?api=1'
+    origin = place1?.location?.lat + ',' + place1?.location?.lon
+    destination = place2?.location?.lat + ',' + place2?.location?.lon
+    url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
+    model.portal.call 'browser.openWindow', {url, target}
+
   getDirections: (place, {model}) ->
     target = '_system'
     baseUrl = 'https://google.com/maps/dir/?api=1'

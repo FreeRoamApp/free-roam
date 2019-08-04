@@ -18,6 +18,7 @@ TravelMap = require '../travel_map'
 CheckInTooltip = require '../check_in_tooltip'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -141,6 +142,8 @@ module.exports = class Trip extends Base
 
                 location = @model.checkIn.getLocation checkIn
 
+                previousCheckIn = checkIns[i - 1]?.checkIn
+
                 z '.check-in.draggable', {
                   onclick: =>
                     @router.goOverlay 'checkIn', {
@@ -158,7 +161,13 @@ module.exports = class Trip extends Base
                     @onDragEnd e
                 },
                   z '.time-wrapper',
-                    z '.time',
+                    z '.time', {
+                      onclick: =>
+                        console.log checkIn
+                        MapService.getDirectionsBetweenPlaces(
+                          previousCheckIn.place, checkIn.place, {@model}
+                        )
+                    },
                       z '.date',
                         if checkIn.startTime
                           DateService.format new Date(checkIn.startTime), 'MMM D'

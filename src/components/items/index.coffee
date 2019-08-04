@@ -1,6 +1,7 @@
 z = require 'zorium'
 _map = require 'lodash/map'
 _take = require 'lodash/take'
+_snakeCase = require 'lodash/snakeCase'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
@@ -44,14 +45,16 @@ module.exports = class Items extends Base
   render: =>
     {filterInfo, items} = @state.getValue()
 
+    snakeSlug = _snakeCase filterInfo?.slug
+
     z '.z-items',
-      z '.g-grid',
+      z '.g-grid.overflow-visible',
         if filterInfo?.slug
           z '.category-info',
             z '.icon',
               style:
                 backgroundImage:
-                  "url(#{config.CDN_URL}/guides/#{filterInfo.slug}.jpg)"
+                  "url(#{config.CDN_URL}/guides/#{snakeSlug}.jpg)"
             z '.name', filterInfo?.name
             z '.description', filterInfo?.description
         z '.g-cols',

@@ -23,9 +23,7 @@ module.exports = class TooltipPositioner extends Base
       prereqs: ['placeSearch']
     placeTooltip:
       prereqs: null
-    usersNearby:
-      prereqs: null
-    groupChat:
+    itemGuides:
       prereqs: null
 
   constructor: (options) ->

@@ -1,5 +1,27 @@
 TODOS:
 
+- Trips
+  - Custom trips (not tied to past/future)
+
+  - Trip card in chat, post in #announcements
+
+  - Campsites / rally points / activities
+    - Dates and times for each thing?
+      - Once that date has past, gray it out on the trip map
+
+  - People can subscribe to / "join" a trip so it shows up somewhere for them?
+
+  - Google maps directions for each leg of trip
+
+x URLs -> card
+
+x Native
+  x Make sure deep linking works. freeroam://g/nomadcollab/chat
+  x Figure out push topics on iOS
+  x Test removal of local web server
+
+- Profile page on ios scrolls horizontally
+
 - Product guides
   - Script that checks if an Amazon item is still/currently available?
 

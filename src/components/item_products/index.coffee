@@ -50,7 +50,7 @@ module.exports = class ItemProducts
 
     z '.z-item-products',
       if item?.name
-        z '.g-grid',
+        z '.g-grid.overflow-visible',
           z '.g-cols.lt-md-no-padding',
             _map products, ({product, $buyButton, $videoIcon}) =>
               z '.g-col.g-xs-12.g-md-6',
@@ -84,7 +84,8 @@ module.exports = class ItemProducts
                   if product?.videos?[0]
                     z '.bottom',
                       z '.left', {
-                        onclick: =>
+                        onclick: (e) =>
+                          e.stopPropagation()
                           sourceId = product?.videos?[0]?.sourceId
                           @model.portal.call 'browser.openWindow', {
                             url:

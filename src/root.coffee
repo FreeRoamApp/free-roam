@@ -214,7 +214,7 @@ init = ->
     {path, query, source, _isPush, _original, _isDeepLink} = data
 
     if _isDeepLink
-      return # FIXME only for fb login links
+      return router.goPath path
 
     # ios fcm for now. TODO: figure out how to get it a better way
     if not path and typeof _original?.additionalData?.path is 'string'
@@ -246,6 +246,7 @@ init = ->
       ga? 'send', 'event', category, action, label
 
   model.portal.call 'top.onData', (e) ->
+    console.log 'top on data', e
     routeHandler e
 
   start = Date.now()

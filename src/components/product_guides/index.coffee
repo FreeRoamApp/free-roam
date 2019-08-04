@@ -1,7 +1,7 @@
 z = require 'zorium'
 _map = require 'lodash/map'
+_snakeCase = require 'lodash/snakeCase'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
-
 
 Icon = require '../icon'
 SearchInput = require '../search_input'
@@ -42,21 +42,19 @@ module.exports = class ProductGuides
   render: =>
     {categories, hasSeenProductGuidesCard} = @state.getValue()
 
-    console.log categories
-
     z '.z-product-guides',
-      z '.g-grid',
-        # unless hasSeenProductGuidesCard
-        #   z '.info-card',
-        #     z @$infoCard, {
-        #       $title: @model.l.get 'productGuides.infoCardTitle'
-        #       $content: @model.l.get 'productGuides.infoCard'
-        #       submit:
-        #         text: @model.l.get 'general.gotIt'
-        #         onclick: =>
-        #           @state.set hasSeenProductGuidesCard: true
-        #           @model.cookie.set 'hasSeenProductGuidesCard', '1'
-        #     }
+      z '.g-grid.overflow-visible',
+        unless hasSeenProductGuidesCard
+          z '.info-card',
+            z @$infoCard, {
+              $title: @model.l.get 'productGuides.infoCardTitle'
+              $content: @model.l.get 'productGuides.infoCard'
+              submit:
+                text: @model.l.get 'general.gotIt'
+                onclick: =>
+                  @state.set hasSeenProductGuidesCard: true
+                  @model.cookie.set 'hasSeenProductGuidesCard', '1'
+            }
 
         z '.search',
           z @$searchInput, {
@@ -70,6 +68,7 @@ module.exports = class ProductGuides
           if categories
             _map categories, ({category, $chevronIcon}, i) =>
               products = category.itemNames.join ', '
+              snakeSlug = _snakeCase category.slug
               z '.g-col.g-xs-12.g-md-6',
                 @router.link z 'a.card', {
                   href: @router.get 'itemsByCategory', {category: category.slug}
@@ -78,7 +77,7 @@ module.exports = class ProductGuides
                     z '.icon',
                       style:
                         backgroundImage:
-                          "url(#{config.CDN_URL}/guides/#{category.slug}.jpg)"
+                          "url(#{config.CDN_URL}/guides/#{snakeSlug}.jpg)"
                     z '.content',
                       z '.name', category.name
                       z '.products', "#{products}..."
@@ -87,6 +86,7 @@ module.exports = class ProductGuides
                         icon: 'chevron-right'
                         color: colors.$primary500
                         isTouchTarget: false
-                  z '.description', category.description
+                  z '.description',
+                    category.description.replace /{home}/g, 'RV'
           else
             @$spinner
