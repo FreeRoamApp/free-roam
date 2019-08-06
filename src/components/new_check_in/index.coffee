@@ -37,6 +37,9 @@ module.exports = class NewCheckIn
       endTime:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+      notes:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
       attachments:
         valueStreams: new RxReplaySubject 1
 
@@ -68,6 +71,7 @@ module.exports = class NewCheckIn
       sourceValue: @fields.source.valueStreams.switch()
       attachmentsValue: @fields.attachments.valueStreams.switch()
       nameValue: @fields.name.valueStreams.switch()
+      notesValue: @fields.notes.valueStreams.switch()
       startTimeValue: @fields.startTime.valueStreams.switch()
       endTimeValue: @fields.endTime.valueStreams.switch()
       isLoading: false
@@ -93,6 +97,8 @@ module.exports = class NewCheckIn
         today
     @fields.attachments.valueStreams.next @checkIn.map (checkIn) ->
       checkIn?.attachments or []
+    @fields.notes.valueStreams.next @checkIn.map (checkIn) ->
+      checkIn?.notes or ''
     @fields.source.valueStreams.next @checkIn.map (checkIn) ->
       if checkIn
         {sourceId: checkIn.sourceId, sourceType: checkIn.sourceType}

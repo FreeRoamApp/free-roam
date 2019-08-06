@@ -11,6 +11,9 @@ module.exports = class Trip
   getAll: (id) =>
     @auth.stream "#{@namespace}.getAll", {id}
 
+  getAllFollowingByUserId: (userId) =>
+    @auth.stream "#{@namespace}.getAllFollowingByUserId", {userId}
+
   getByType: (type) =>
     @auth.stream "#{@namespace}.getByType", {type}
 

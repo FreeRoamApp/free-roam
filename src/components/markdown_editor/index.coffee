@@ -80,7 +80,7 @@ module.exports = class MarkdownEditor
     @$textarea = new Textarea {@valueStreams, @error}
 
     @state = z.state {
-      attachments: @attachmentsValueStreams.switch()
+      attachments: @attachmentsValueStreams?.switch()
     }
 
   render: ({hintText, imagesAllowed} = {}) =>

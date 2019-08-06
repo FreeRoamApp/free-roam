@@ -7,6 +7,7 @@ _find = require 'lodash/find'
 
 PrimaryInput = require '../primary_input'
 UploadImagesList = require '../upload_images_list'
+MarkdownEditor = require '../markdown_editor'
 Icon = require '../icon'
 DateService = require '../../services/date'
 colors = require '../../colors'
@@ -40,6 +41,11 @@ module.exports = class NewCheckInInfo
       valueStreams: @fields.endTime.valueStreams
       error: @fields.endTime.errorSubject
 
+    @$markdownEditor = new MarkdownEditor {
+      @model
+      valueStreams: @fields.notes.valueStreams
+    }
+
     @$uploadImagesList = new UploadImagesList {
       @model, @router, attachmentsValueStreams: @fields.attachments.valueStreams
       requestTags: false, requestLocation: false
@@ -67,16 +73,21 @@ module.exports = class NewCheckInInfo
             z @$nameInput,
               hintText: @model.l.get 'editCheckIn.namePlaceholder'
 
-        z '.field',
+        z '.field.flex',
           z '.input',
             z @$startTimeInput,
               type: 'date'
               hintText: @model.l.get 'editCheckIn.startTimePlaceholder'
 
-        z '.field',
           z '.input',
             z @$endTimeInput,
               type: 'date'
               hintText: @model.l.get 'editCheckIn.endTimePlaceholder'
 
-          z @$uploadImagesList
+        z '.notes',
+          z @$markdownEditor,
+            imagesAllowed: false
+            hintText: @model.l.get 'compose.postHintText'
+
+
+        z @$uploadImagesList

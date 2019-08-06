@@ -71,7 +71,7 @@ module.exports = class ProfileActions
 
       z '.g-grid',
         z '.g-cols',
-          z '.g-col.g-xs-12.md-12',
+          z '.g-col.g-xs-12.g-md-12',
             @router.link z 'a.box.reviews', {
               href: if user?.username \
                   then @router.get 'profileReviews', {username: user?.username}
@@ -85,10 +85,10 @@ module.exports = class ProfileActions
                   icon: 'chevron-right'
                   isTouchTarget: false
                   color: colors.$white
-          z '.g-col.g-xs-12.md-12',
+          z '.g-col.g-xs-12.g-md-12',
             z '.g-grid',
               z '.g-cols',
-                z '.g-col.g-xs-6.md-6',
+                z '.g-col.g-xs-6.g-md-6',
                   if pastTrip is 'private' and not isMe # false = private
                     z '.box.check-ins',
                       z '.info',
@@ -107,7 +107,7 @@ module.exports = class ProfileActions
                           icon: 'chevron-right'
                           isTouchTarget: false
                           color: colors.$white
-                z '.g-col.g-xs-6.md-6',
+                z '.g-col.g-xs-6.g-md-6',
                   if futureTrip is 'private' and not isMe # false = private
                     z '.box.planned',
                       z '.info',

@@ -32,16 +32,16 @@ colors = _defaults {
     '--primary-800-text': materialColors.$white
     '--primary-900-text': materialColors.$white
 
-    '--secondary-50': '#EDF6F0'
-    '--secondary-100': '#D2E7DB'
-    '--secondary-200': '#B4D8C3'
-    '--secondary-300': '#95C8AA'
-    '--secondary-400': '#7FBC98'
-    '--secondary-500': '#68B086'
-    '--secondary-600': '#60A97E'
-    '--secondary-700': '#55A073'
-    '--secondary-800': '#4B9769'
-    '--secondary-900': '#3A8756'
+    '--secondary-50': '#E1F7F4'
+    '--secondary-100': '#B3ECE4'
+    '--secondary-200': '#80DFD2'
+    '--secondary-300': '#4DD2C0'
+    '--secondary-400': '#27C9B3'
+    '--secondary-500': '#01BFA5'
+    '--secondary-600': '#01B99D'
+    '--secondary-700': '#01B193'
+    '--secondary-800': '#01A98A'
+    '--secondary-900': '#009B79'
     '--secondary-100-text': materialColors.$black
     '--secondary-200-text': materialColors.$black
     '--secondary-300-text': materialColors.$black

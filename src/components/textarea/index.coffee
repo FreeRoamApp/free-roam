@@ -31,8 +31,12 @@ module.exports = class Textarea
       error: @error
     }
 
-  afterMount: ($$el) =>
-    @$$textarea = $$el.querySelector('.textarea')
+  afterMount: (@$$el) =>
+    @$$textarea = @$$el.querySelector('#textarea')
+    @valueStreams.take(1).subscribe =>
+      setTimeout =>
+        @resizeTextarea {target: @$$textarea}
+      , 0
 
   setValueFromEvent: (e) =>
     e?.preventDefault()
@@ -53,6 +57,7 @@ module.exports = class Textarea
     # problem is the valueStreams / switch
     {value} = @state.getValue()
 
+    console.log @$$textarea
     startPos = @$$textarea.selectionStart
     endPos = @$$textarea.selectionEnd
     selectedText = value.substring startPos, endPos
@@ -65,13 +70,6 @@ module.exports = class Textarea
     @setValue newValue, {updateDom: true}
     @$$textarea.focus()
     @$$textarea.setSelectionRange startPos + newOffset, endPos + newOffset
-
-  afterMount: (@$$el) =>
-    $$textarea = @$$el.querySelector('#textarea')
-    @valueStreams.take(1).subscribe =>
-      setTimeout =>
-        @resizeTextarea {target: $$textarea}
-      , 0
 
   resizeTextarea: (e) =>
     {textareaHeight} = @state.getValue()

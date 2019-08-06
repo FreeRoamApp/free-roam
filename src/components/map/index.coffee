@@ -123,6 +123,8 @@ module.exports = class Map
         bounds: @initialBounds
         preserveDrawingBuffer: @preserveDrawingBuffer
       }
+      @map.dragRotate.disable()
+      @map.touchZoomRotate.disableRotation()
 
   addPlacesLayer: =>
     @map.addSource 'places', {
@@ -301,9 +303,6 @@ module.exports = class Map
             enableHighAccuracy: true
           trackUserLocation: true
         }), 'bottom-left'
-        @map.addControl new mapboxgl.NavigationControl({
-          showZoom: false
-        }), 'bottom-right'
 
       if @showScale
         @map.addControl new mapboxgl.ScaleControl {

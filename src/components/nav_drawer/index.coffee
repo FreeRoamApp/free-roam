@@ -173,6 +173,13 @@ module.exports = class NavDrawer
             $ripple: new Ripple()
             iconName: 'guides'
           }
+          {
+            path: @router.get 'trips'
+            title: @model.l.get 'tripsPage.title'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'trip'
+          }
           # {
           #   path: @router.get 'backpack'
           #   title: @model.l.get 'drawer.backpack'

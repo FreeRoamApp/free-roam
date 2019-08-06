@@ -65,13 +65,19 @@
       //   background-repeat: no-repeat
       //   margin-right: auto
 
+    > .action
+      font-action()
+      margin-top: 8px
+
     > .card
       position: relative
+      display: block
       z-index: 2
       background: getColor('$tertiary0')
-      padding: 8px
+      border: 1px solid getColor('$bgText12')
+      padding: 12px
       margin-top: 12px
-      border-radius: 2px
+      border-radius: 4px
       cursor: pointer
       max-width: 300px
       overflow: hidden

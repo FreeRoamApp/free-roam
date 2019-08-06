@@ -1,17 +1,19 @@
 TODOS:
 
+- Get roads to show up at lower zoom levels. I don't think the problem is with styling, I think it's with the north-america mbtiles
+  - Should manual create mbtiles from the pbf and keep road names at lesser zoom levels
+  - https://github.com/openmaptiles/openmaptiles/issues/79
+
+- Fix city market and maverick in moab (amenity undefined)
+
+- get coord, scylla err offices_by_slug { ResponseError: Invalid null value for clustering key part slug
+
+- Cannot read property 'isChatBanned' of null placeReviewBase ctrl upsert 126
+
 - Trips
-  - Custom trips (not tied to past/future)
-
-  - Trip card in chat, post in #announcements
-
-  - Campsites / rally points / activities
-    - Dates and times for each thing?
-      - Once that date has past, gray it out on the trip map
-
-  - People can subscribe to / "join" a trip so it shows up somewhere for them?
-
-  - Google maps directions for each leg of trip
+  - Cache trips getall
+  - new trip
+  - edit trip
 
 x URLs -> card
 

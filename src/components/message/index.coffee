@@ -40,12 +40,17 @@ module.exports = class Message
         _find mentions, (mention) ->
           username = mention.replace('@', '').toLowerCase()
           username and username is me?.username
+      cardInfo: if message?.card?.type is 'trip'
+        @model.trip.getById message?.card.sourceId
       windowSize: @model.window.getSize()
 
   render: ({openProfileDialogFn, isTimeAlignedLeft}) =>
-    {isMe, message, isGrouped, isMeMentioned, windowSize} = @state.getValue()
+    {isMe, message, cardInfo, isGrouped,
+      isMeMentioned, windowSize} = @state.getValue()
 
     {user, groupUser, time, card, id, clientId} = message
+
+    console.log 'cardinfo', cardInfo
 
     avatarSize = if windowSize.width > 840 \
                  then '40px'
@@ -88,7 +93,7 @@ module.exports = class Message
         else if not isGrouped
           z @$author, {user, groupUser, time, isTimeAlignedLeft, onclick}
 
-        unless message?.type is 'action'
+        unless message?.type is 'action' or card?.type
           z '.body',
             @$body
 
@@ -102,3 +107,18 @@ module.exports = class Message
             z '.description', _truncate card.description, {
               length: DESCRIPTION_LENGTH
             }
+        else if card?.type
+          [
+            z '.action',
+              @model.l.get 'message.tripCardAction'
+            @router.link z 'a.card', {
+              href: @router.get 'trip', {
+                id: cardInfo?.id
+              }
+            },
+              z '.title', cardInfo?.name
+              z '.stats',
+                @model.l.get 'message.tripCardStats',
+                  replacements:
+                    stops: cardInfo?.checkIns?.length
+          ]

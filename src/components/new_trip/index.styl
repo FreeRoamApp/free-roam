@@ -1,0 +1,42 @@
+@require '../../vars'
+
+.z-new-trip
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .g-grid
+
+    > .photos-description
+      font-body2()
+      margin-top: 32px
+      text-align: center
+      max-width: 200px
+      margin: 0 auto
+
+    > .photos
+      padding: 0 16px
+      margin-top: 24px
+      box-sizing: border-box
+
+      > .g-cols
+        > .g-col
+          > .photo
+            height: 0
+            padding-bottom: 56.25%
+            background: #000
+            border-radius: 6px
+
+    > .field
+      padding: 16px
+      display: block
+
+      > .name
+        font-body1()
+        margin-bottom: 4px
+
+    > .actions
+      max-width: 260px
+      margin: 0 auto
+      padding: 16px
+      margin-top: 24px

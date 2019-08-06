@@ -1,0 +1,96 @@
+@require '../../vars'
+
+.z-trip-itenerary
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  position: relative
+
+  > .g-grid
+    > .check-ins
+      padding: 0 16px
+      margin-top: 24px
+      position: relative
+
+      > .divider
+        position: absolute
+        top: 4px
+        bottom: 84px - 4px // height of check-in
+        left: 16px + 5px // padding + 1/2 circle
+        width: 2px
+        background: getColor('$secondary500')
+
+      > .placeholder
+        text-align: center
+
+        > .icon
+          width: 80px
+          height: 80px
+          margin: 0 auto
+          background: #000
+
+        > .title
+          font-title()
+          margin-top: 40px
+          color: getColor('$primary500')
+
+        > .description
+          font-body2()
+          margin-top: 8px
+
+      > .check-in
+        display: flex
+        align-items: flex-start
+        cursor: pointer
+        min-height: 72px
+        position: relative
+
+        > .dot
+          flex-shrink: 0
+          width: 12px
+          height: 12px
+          margin-top: 4px
+          border-radius: 50%
+          background: getColor('$secondary500')
+          position: relative
+          z-index: 1
+
+        > .info
+          flex1()
+          margin-left: 16px
+          margin-bottom: 16px
+
+          > .dates
+            display: flex
+
+            > .date
+              font-caption1()
+
+            > .travel-time
+              font-caption3()
+              margin-left: auto
+              display: flex
+              align-items: center
+
+              > .icon
+                margin-right: 6px
+
+
+          > .name
+            font-title()
+
+          > .location
+            font-caption2()
+
+          > .attachments
+            margin-top: 8px
+
+        > .actions
+          margin-left: auto
+
+
+    > .privacy
+      padding: 16px
+
+  @media (min-width: $breakPointMedium)
+    position: relative

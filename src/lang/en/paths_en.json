@@ -99,6 +99,7 @@
   "shell": "/shell",
   "termsOfService": "/tos",
   "trip": "/trip/:id",
+  "trips": "/trips",
   "transactions": "/transactions",
   "tripByType": "/trip/type/:type",
   "travelMapScreenshot": "/travel-map-screenshot/:id",
