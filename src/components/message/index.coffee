@@ -10,6 +10,7 @@ Avatar = require '../avatar'
 ActionMessage = require '../action_message'
 Author = require '../author'
 Icon = require '../icon'
+TripListItem = require '../trip_list_item'
 FormatService = require '../../services/format'
 colors = require '../../colors'
 config = require '../../config'
@@ -42,6 +43,9 @@ module.exports = class Message
           username and username is me?.username
       cardInfo: if message?.card?.type is 'trip'
         @model.trip.getById message?.card.sourceId
+        .map (trip) =>
+          if trip
+            {info: trip, $card: new TripListItem {@model, @router, trip}}
       windowSize: @model.window.getSize()
 
   render: ({openProfileDialogFn, isTimeAlignedLeft}) =>
@@ -111,14 +115,11 @@ module.exports = class Message
           [
             z '.action',
               @model.l.get 'message.tripCardAction'
-            @router.link z 'a.card', {
-              href: @router.get 'trip', {
-                id: cardInfo?.id
-              }
-            },
-              z '.title', cardInfo?.name
-              z '.stats',
-                @model.l.get 'message.tripCardStats',
-                  replacements:
-                    stops: cardInfo?.checkIns?.length
+            # @router.link z 'a.card', {
+            #   href: @router.get 'trip', {
+            #     id: cardInfo?.info?.id
+            #   }
+            # },
+            z '.custom-card',
+              z cardInfo?.$card
           ]

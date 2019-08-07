@@ -530,7 +530,7 @@ module.exports = class Map
             type: 'Feature'
             properties:
               name: place.name
-              number: "#{places.length - i}"
+              number: "#{i + 1}"
               id: place.id
               slug: place.slug
               rating: place.rating

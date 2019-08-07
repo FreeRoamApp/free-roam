@@ -23,6 +23,7 @@ module.exports = class TripPage
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
     @$shareIcon = new Icon()
+    @$editIcon = new Icon()
     @$trip = new Trip {@model, @router, @trip}
 
     @state = z.state {
@@ -59,17 +60,26 @@ module.exports = class TripPage
       }
 
   render: =>
+    {me, trip} = @state.getValue()
+
+    hasEditPermission = @model.trip.hasEditPermission trip, me
+
     z '.p-trip',
       z @$appBar, {
-        title: @getTitle()
-        isPrimary: true
-        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
+        isFlat: true
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         $topRightButton:
           z '.p-trip_top-right',
             z @$shareIcon,
               icon: 'share'
-              color: colors.$primary500Text
+              color: colors.$header500Icon
               onclick: =>
                 @$trip.share()
+            if hasEditPermission
+              z @$editIcon,
+                icon: 'edit'
+                color: colors.$header500Icon
+                onclick: =>
+                  @router.go 'editTrip', {id: trip.id}
       }
       @$trip

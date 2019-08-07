@@ -2,7 +2,8 @@ _map = require 'lodash/map'
 
 getDraggable = (el, tries = 0) ->
   parent = el.parentNode
-  maxTries = 5
+  # go up until we get the draggable class
+  maxTries = 8
   if tries < maxTries and parent.className.indexOf('draggable') is -1
     parent = getDraggable parent, tries + 1
   else

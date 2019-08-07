@@ -38,6 +38,7 @@
   "donate": "/donate",
   "editCheckIn": "/edit-check-in/:id",
   "editProfile": "/edit-profile",
+  "editTrip": "/edit-trip/:id",
   "editAmenity": "/amenity/:slug/edit",
   "editAmenityReview": "/amenity/:slug/review/:reviewId/edit",
   "editCampground": "/campground/:slug/edit",

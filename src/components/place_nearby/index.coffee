@@ -15,7 +15,7 @@ _uniqBy = require 'lodash/uniqBy'
 Fab = require '../fab'
 Icon = require '../icon'
 PlacesMapContainer = require '../places_map_container'
-PlacesList = require '../places_list'
+PlaceList = require '../place_list'
 MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
@@ -101,7 +101,7 @@ module.exports = class PlaceNearby
     placeAndNearestAmenitiesAndPlacesStream = RxObservable.combineLatest(
       @place, nearestAmenities, placesStream, (vals...) -> vals
     )
-    @$placesList = new PlacesList {
+    @$placeList = new PlaceList {
       @model, @router
       places: placeAndNearestAmenitiesAndPlacesStream
       .map ([place, nearestAmenities, placesWithCounts]) ->
@@ -166,8 +166,8 @@ module.exports = class PlaceNearby
             @model.l.get 'campgroundNearby.hideCellTowers'
           else
             @model.l.get 'campgroundNearby.showCellTowers'
-      z '.places-list',
-        z @$placesList, {hideRating: true}
+      z '.place-list',
+        z @$placeList, {hideRating: true}
 
       z '.fab',
         z @$fab,

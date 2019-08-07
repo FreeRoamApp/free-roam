@@ -106,7 +106,7 @@ module.exports = class NewCheckIn
         {}
 
   upsert: =>
-    {checkIn, trip, attachmentsValue, nameValue, sourceValue,
+    {checkIn, trip, attachmentsValue, nameValue, sourceValue, notesValue,
       startTimeValue, endTimeValue} = @state.getValue()
 
     @state.set isLoading: true
@@ -126,6 +126,7 @@ module.exports = class NewCheckIn
         sourceId: sourceValue?.sourceId
         sourceType: sourceValue?.sourceType
         name: nameValue
+        notes: notesValue
         startTime: DateService.getLocalDateFromStr startTimeValue
         endTime: DateService.getLocalDateFromStr endTimeValue
       }

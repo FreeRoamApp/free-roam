@@ -6,19 +6,6 @@
   -webkit-overflow-scrolling: touch
 
   > .g-grid
-
-    > .info
-      padding: 16px
-      border-bottom: 1px solid getColor('$bgText26')
-      text-align: center
-
-      > .name
-        font-h2()
-
-      > .date
-        font-body2()
-        margin-top: 4px
-
     > .title
       font-title()
       padding: 16px
@@ -30,5 +17,20 @@
         font-title()
         padding: 16px 0
 
+    > .actions
+      display: flex
+      padding: 0 16px
+      margin-top: 12px
+
+      > .action
+        flex1()
+        margin-right: 16px
+
+        &:last-child
+          margin-right: 0
+
+    > .notes
+      padding: 0 16px
+
     > .photos
-      padding: 8px
+      padding: 0 8px

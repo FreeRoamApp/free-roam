@@ -14,7 +14,7 @@ _defaults = require 'lodash/defaults'
 CurrentLocation = require '../current_location'
 FlatButton = require '../flat_button'
 Icon = require '../icon'
-PlacesList = require '../places_list'
+PlaceList = require '../place_list'
 Rating = require '../rating'
 SecondaryButton = require '../secondary_button'
 Spinner = require '../spinner'
@@ -53,7 +53,7 @@ module.exports = class Dashboard
     )
     location = @locationStreams.switch()
 
-    @$nearbyPlaces = new PlacesList {
+    @$nearbyPlaces = new PlaceList {
       @model, @router
       places: location.switchMap (location) =>
         @model.campground.searchNearby {location, limit: 3}
@@ -106,7 +106,7 @@ module.exports = class Dashboard
       myLocation, nearestAmenities, (vals...) -> vals
     )
 
-    @$nearbyFacilities = new PlacesList {
+    @$nearbyFacilities = new PlaceList {
       @model, @router
       places: myLocationAndNearestAmenities
       .map ([myLocation, nearestAmenities]) =>

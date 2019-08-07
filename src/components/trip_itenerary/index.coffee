@@ -11,7 +11,7 @@ _isEmpty = require 'lodash/isEmpty'
 _omit = require 'lodash/omit'
 
 Base = require '../base'
-AttachmentsList = require '../attachments_list'
+PlaceListItem = require '../place_list_item'
 Icon = require '../icon'
 CheckInTooltip = require '../check_in_tooltip'
 DateService = require '../../services/date'
@@ -38,35 +38,22 @@ module.exports = class TripItenerary extends Base
       trip: @trip.map (trip) ->
         _omit trip, ['route']
       checkIns: checkInsAndTrip.map ([checkIns, trip]) =>
-        tripLegs = _clone(_map trip.route?.legs, (leg) ->
+        tripLegs = _clone(_map trip?.route?.legs, (leg) ->
           _omit leg, ['shape']
-        ).reverse()
+        )
         _map checkIns, (checkIn, i) =>
           if _isEmpty checkIn.attachments
             id = checkIn.id
           else
             id = _map(checkIn.attachments, 'id').join(',')
-          $attachmentsList = @getCached$(
-            "attachmentsList-#{id}", AttachmentsList, {
-              @model, @router
-              attachments: RxObservable.of checkIn.attachments
-              limit: 4
-              more:
-                if checkIn.attachments?.length > 4
-                  {
-                    onclick: =>
-                      @router.goOverlay 'checkIn', {
-                        id: checkIn.id
-                      }
-                    count: checkIn.attachments.length - 4
-                  }
-            }
-          )
+
           {
             checkIn
-            routeInfo: tripLegs?[i]
-            $attachmentsList: $attachmentsList
-            $roadIcon: new Icon()
+            routeInfo: tripLegs?[i - 1]
+            $place: new PlaceListItem {
+              @model, @router, place: checkIn.place
+            }
+            $directionsIcon: new Icon()
           }
     }
 
@@ -75,7 +62,7 @@ module.exports = class TripItenerary extends Base
     {trip} = @state.getValue()
     @model.trip.upsert {
       id: trip.id
-      checkInIds: _clone(ids).reverse()
+      checkInIds: ids # _clone(ids).reverse()
     }
 
   render: =>
@@ -87,13 +74,13 @@ module.exports = class TripItenerary extends Base
           [
             if _isEmpty checkIns
               z '.placeholder',
-                z '.icon'
+                # z '.icon'
                 z '.title', @model.l.get 'trip.placeHolderTitle'
                 z '.description', @model.l.get 'trip.placeHolderDescription'
             else
               z '.divider'
             _map checkIns, (checkIn, i) =>
-              {checkIn, routeInfo,  $roadIcon, $attachmentsList} = checkIn
+              {checkIn, routeInfo,  $directionsIcon, $place} = checkIn
 
               location = @model.checkIn.getLocation checkIn
 
@@ -125,40 +112,33 @@ module.exports = class TripItenerary extends Base
                         DateService.format new Date(checkIn.startTime), 'MMM D'
                     if routeInfo
                       z '.travel-time', {
-                        onclick: =>
-                          console.log checkIn
+                        onclick: (e) =>
+                          e.stopPropagation()
                           MapService.getDirectionsBetweenPlaces(
                             previousCheckIn.place, checkIn.place, {@model}
                           )
                       },
                         z '.icon',
-                          z $roadIcon,
-                            icon: 'road'
+                          z $directionsIcon,
+                            icon: 'directions'
                             isTouchTarget: false
                             size: '16px'
                             color: colors.$bgText54
                         "#{FormatService.number routeInfo?.distance}mi, "
                         "#{DateService.formatSeconds routeInfo?.time, 1}"
 
-                  z '.location',
-                    "#{checkIns.length - i}. #{location}"
-                  z '.name', @model.checkIn.getName checkIn
-                  z '.attachments',
-                    z $attachmentsList, {sizePx: 56}
+                  z '.place-list-item',
+                    z $place
           ]
 
-        z '.follow', {
-          onclick: =>
-            @model.tripFollower.upsertByTripId trip.id
-        }, 'follow'
-
-        z '.privacy', {
-          onclick: =>
-            @model.trip.upsert {
-              id: trip.id
-              privacy: if trip?.privacy is 'private' \
-                       then 'public'
-                       else 'private'
-            }
-        },
-          "#{@model.l.get 'general.privacy'}: #{trip?.privacy or 'public'}"
+        if not _isEmpty checkIns
+          z '.privacy', {
+            onclick: =>
+              @model.trip.upsert {
+                id: trip.id
+                privacy: if trip?.privacy is 'private' \
+                         then 'public'
+                         else 'private'
+              }
+          },
+            "#{@model.l.get 'general.privacy'}: #{trip?.privacy or 'public'}"

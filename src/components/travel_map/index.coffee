@@ -1,5 +1,6 @@
 z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
@@ -37,6 +38,14 @@ module.exports = class TravelMap
           stats?.stateCounts?[id] > 0
       }
 
+    mapBoundsStreams = new RxReplaySubject 1
+    mapBoundsStreams.next(
+      @trip.map (trip) =>
+        unless trip
+          return RxObservable.of {}
+        trip.route.bounds
+    )
+
     @mapSize = new RxBehaviorSubject null
     mapOptions = {
       @model, @router
@@ -44,14 +53,15 @@ module.exports = class TravelMap
       route: route
       fill: filledStates
       usePlaceNumbers: true
-      initialBounds: [[-141.187, 18.440], [-53.766, 55.152]]
+      mapBoundsStreams: mapBoundsStreams
+      # initialBounds: [[-141.187, 18.440], [-53.766, 55.152]]
       onclick: onclick
     }
     if prepScreenshot
       mapOptions = _defaults {
         preserveDrawingBuffer: true
         hideLabels: true
-        initialBounds: [[-133, 18], [-58, 58]]
+        # initialBounds: [[-133, 18], [-58, 58]]
         onContentReady: ->
           # screenshotter service waits until this is true
           window.isScreenshotReady = true

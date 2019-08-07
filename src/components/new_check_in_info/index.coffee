@@ -79,15 +79,17 @@ module.exports = class NewCheckInInfo
               type: 'date'
               hintText: @model.l.get 'editCheckIn.startTimePlaceholder'
 
-          z '.input',
+          z '.input.left-auto',
             z @$endTimeInput,
               type: 'date'
               hintText: @model.l.get 'editCheckIn.endTimePlaceholder'
 
         z '.notes',
-          z @$markdownEditor,
-            imagesAllowed: false
-            hintText: @model.l.get 'compose.postHintText'
+          z '.title', @model.l.get 'editCheckIn.notes'
+          z '.editor',
+            z @$markdownEditor,
+              imagesAllowed: false
+              hintText: @model.l.get 'editCheckIn.notesHintText'
 
 
         z @$uploadImagesList

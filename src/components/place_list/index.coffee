@@ -2,8 +2,8 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 
-PlacesListAmenity = require '../places_list_amenity'
-PlacesListCampground = require '../places_list_campground'
+PlaceListAmenity = require '../place_list_amenity'
+PlaceListCampground = require '../place_list_campground'
 MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
@@ -11,8 +11,10 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class PlacesList
+module.exports = class PlaceList
   constructor: ({@model, @router, places, action}) ->
+    action ?= 'checkIn'
+
     @state = z.state
       me: @model.user.getMe()
       places: places.map (places) =>
@@ -21,15 +23,15 @@ module.exports = class PlacesList
             {
               place
               $el: if place.type is 'amenity'
-                new PlacesListAmenity {@model, @router, place}
+                new PlaceListAmenity {@model, @router, place}
               else
-                new PlacesListCampground {@model, @router, place, action}
+                new PlaceListCampground {@model, @router, place, action}
             }
 
   render: ({hideRating} = {}) =>
     {me, places} = @state.getValue()
 
-    z '.z-places-list',
+    z '.z-place-list',
       z '.g-grid',
         _map places, (place) =>
           {place, $el} = place

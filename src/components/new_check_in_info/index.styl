@@ -1,11 +1,23 @@
 @require '../../vars'
 
 .z-edit-check-in
-  padding: 16px
+  padding: 16px 0
 
   > .g-grid
     > .field
-      margin-bottom: 16px
+      margin-bottom: 24px
+      padding: 0 16px
 
       &.flex
         display: flex
+
+        > .left-auto
+          margin-left: auto
+
+    > .notes
+      > .title
+        font-body2()
+        padding: 0 16px 16px 16px
+
+      > .editor
+        min-height: 200px

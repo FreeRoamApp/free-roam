@@ -1,7 +1,7 @@
 z = require 'zorium'
 _isEmpty = require 'lodash/isEmpty'
 
-PlacesList = require '../places_list'
+PlaceList = require '../place_list'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -11,7 +11,7 @@ if window?
 module.exports = class MyPlaces
   constructor: ({@model, @router}) ->
     places = @model.checkIn.getAll {includeDetails: true}
-    @$placesList = new PlacesList {
+    @$placeList = new PlaceList {
       @model, @router, places, action: 'info'
     }
 
@@ -27,4 +27,4 @@ module.exports = class MyPlaces
         z '.empty',
           @model.l.get 'myPlaces.empty'
       else
-        z @$placesList
+        z @$placeList

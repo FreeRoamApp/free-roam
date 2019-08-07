@@ -4,25 +4,27 @@ _snakeCase = require 'lodash/snakeCase'
 
 Icon = require '../icon'
 DateService = require '../../services/date'
+FormatService = require '../../services/format'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class TripCard
+module.exports = class TripListItem
   constructor: ({@model, @router, trip}) ->
     me = @model.user.getMe()
 
     now = new Date()
-    console.log 'TRIP', trip
     # firstDate = _minBy
     startTime = new Date(trip.overview.startTime)
     endTime = new Date(trip.overview.endTime)
     @trip = _defaults {
       isPast: endTime < now
-      startTime: DateService.format startTime, 'MMM D'
-      endTime: DateService.format endTime, 'MMM D'
+      startTime: if trip.overview.startTime
+        DateService.format startTime, 'MMM D'
+      endTime: if trip.overview.endTime
+        DateService.format endTime, 'MMM D'
     }, trip
 
     @state = z.state
@@ -33,23 +35,36 @@ module.exports = class TripCard
 
     trip = @trip
 
-    @router.link z 'a.z-trip-card', {
-      href: @router.get 'trip', {id: trip?.id}
+    if trip.thumbnailPrefix
+      imageUrl = @model.image.getSrcByPrefix(trip?.thumbnailPrefix)
+    else if trip
+      imageUrl = "#{config.CDN_URL}/trips/empty_trip.svg"
+    else
+      imageUrl = null
+
+    @router.link z 'a.z-trip-list-item', {
+      href:
+        if trip?.id
+          @router.get 'trip', {id: trip?.id}
+        else
+          @router.get 'tripByType', {type: trip?.type}
     },
       z '.g-grid',
         z '.image',
           style:
-            backgroundImage:
-              "url(#{config.CDN_URL}/trips/_thumbnail.jpg)"
+            backgroundImage: if imageUrl
+              "url(#{imageUrl})"
         if trip?.name
           z '.content',
             z '.name', trip.name
             z '.dates',
-              "#{trip.startTime} - #{trip.endTime} · "
-              @model.placeBase.getLocation trip
+              if trip.endTime
+                "#{trip.startTime} - #{trip.endTime}"
+              else if trip.startTime
+                "#{trip.startTime}"
             z '.stats',
               @model.l.get 'tripCard.stats', {
                 replacements:
-                  distance: Math.round trip?.overview?.distance
+                  distance: FormatService.number trip?.overview?.distance or 0
                   stops: trip?.overview?.stops
               }

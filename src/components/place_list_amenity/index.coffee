@@ -12,7 +12,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class PlacesListAmenity
+module.exports = class PlaceListAmenity
   constructor: ({@model, @router, @place}) ->
     @$detailsButton = new FlatButton()
     @$directionsButton = new FlatButton()
@@ -45,7 +45,7 @@ module.exports = class PlacesListAmenity
     place ?= @place
     amenities ?= @amenities
 
-    z '.z-places-list-amenity', {
+    z '.z-place-list-amenity', {
       # onclick: =>
       #   if me?.username is 'austin' and confirm 'Delete?'
       #     @model.amenity.deleteByRow place
@@ -55,7 +55,7 @@ module.exports = class PlacesListAmenity
             @place?.name
           if @place?.distance
             z '.caption',
-              @model.l.get 'placesList.distance', {
+              @model.l.get 'placeList.distance', {
                 replacements:
                   distance: @place?.distance.distance
                   time: @place?.distance.time

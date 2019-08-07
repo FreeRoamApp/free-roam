@@ -1,5 +1,37 @@
 TODOS:
 
+
+- group chat title
+
+- Trips
+  - delete trip
+  - back after creating new trip shouldn't go to create trip page
+  - "from" in trip card
+  - trip following empty state
+  - privacy to new/edit trip page
+  - make new checkin page prettier
+  - past checkins grayed out
+  x base trip default image
+  x default images / upload
+  x auto-create past/future trips for new accounts?
+    x or just link to /past, /future from my trips
+  x Cache trips getall
+  x notes as markdown
+  x checkIn info and directions buttons
+  x new trip
+  x edit trip
+  x trip list item stats
+  x fix sorting of trip
+
+- TVA lands https://tva.maps.arcgis.com/apps/Embed/index.html?webmap=b110b866ffec492cb95e5c62b1a4f40f&extent=-88.891,33.5017,-82.0685,37.389&home=true&zoom=true&scale=true&search=true&searchextent=true&legend=true&show_panel=true&basemap_gallery=true&disable_scroll=false&theme=light
+
+- chat: attachments, (schedule, pdfs)
+
+
+- Product guide
+  - portable solar panel video
+
+
 - Get roads to show up at lower zoom levels. I don't think the problem is with styling, I think it's with the north-america mbtiles
   - Should manual create mbtiles from the pbf and keep road names at lesser zoom levels
   - https://github.com/openmaptiles/openmaptiles/issues/79
@@ -9,11 +41,6 @@ TODOS:
 - get coord, scylla err offices_by_slug { ResponseError: Invalid null value for clustering key part slug
 
 - Cannot read property 'isChatBanned' of null placeReviewBase ctrl upsert 126
-
-- Trips
-  - Cache trips getall
-  - new trip
-  - edit trip
 
 x URLs -> card
 

@@ -5,7 +5,7 @@ _filter = require 'lodash/filter'
 _snakeCase = require 'lodash/snakeCase'
 
 Base = require '../base'
-TripCard = require '../trip_card'
+TripListItem = require '../trip_list_item'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -20,8 +20,8 @@ module.exports = class TripList extends Base
       me: me
       $trips: trips.map (trips) =>
         _map trips, (trip) =>
-          cacheId = "tripCard-#{cachePrefix}-#{trip.id}"
-          @getCached$ cacheId, TripCard, {
+          cacheId = "tripListItem-#{cachePrefix}-#{trip.id}-#{trip.type}"
+          @getCached$ cacheId, TripListItem, {
             @model, @router, trip
           }
 
@@ -30,5 +30,8 @@ module.exports = class TripList extends Base
     {me, $trips} = @state.getValue()
 
     z '.z-trip-list',
-      _map $trips, ($trip) ->
-        z '.trip', $trip
+      z '.g-grid',
+        z '.g-cols',
+          _map $trips, ($trip) ->
+            z '.g-col.g-xs-12.g-md-6',
+              z '.trip', $trip

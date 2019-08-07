@@ -126,6 +126,7 @@ module.exports = class PlaceInfo extends Base
       className: z.classKebab {isLoading, @isImageLoaded}
     },
       if place?.attachmentsPreview?.count
+        console.log 'place', @getCoverUrl place
         src = @getCoverUrl place
         z '.cover', {
           style:

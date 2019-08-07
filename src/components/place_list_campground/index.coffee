@@ -12,12 +12,19 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class PlacesListCampground
+module.exports = class PlaceListCampground
   constructor: ({@model, @router, @place, @action}) ->
     @$actionButton = new SecondaryButton()
     @$rating = new Rating {
       value: if @place?.map then @place else RxObservable.of @place?.rating
     }
+
+    @defaultImages = [
+      "#{config.CDN_URL}/places/empty_campground.svg"
+      "#{config.CDN_URL}/places/empty_campground_green.svg"
+      "#{config.CDN_URL}/places/empty_campground_blue.svg"
+      "#{config.CDN_URL}/places/empty_campground_beige.svg"
+    ]
 
     @state = z.state
       me: @model.user.getMe()
@@ -25,9 +32,17 @@ module.exports = class PlacesListCampground
       isActionLoading: false
 
   getThumbnailUrl: (place) =>
-    @model.image.getSrcByPrefix(
+    url = @model.image.getSrcByPrefix(
       place?.thumbnailPrefix, {size: 'tiny'}
-    ) or "#{config.CDN_URL}/empty_state/empty_campground.svg"
+    )
+    if url
+      url
+    else
+      lastChar = place?.id?.substr(place?.id?.length - 1, 1) or 'a'
+      console.log 'go', lastChar
+      @defaultImages[\
+        Math.ceil (parseInt(lastChar, 16) / 16) * (@defaultImages.length - 1)
+      ]
 
   checkIn: (place) =>
     @model.checkIn.upsert {
@@ -48,7 +63,7 @@ module.exports = class PlacesListCampground
       'campground', 'amenity'
     ]
 
-    z '.z-places-list-campground',
+    z '.z-place-list-campground',
       z '.thumbnail',
         style:
           backgroundImage: "url(#{thumbnailSrc})"
@@ -57,7 +72,7 @@ module.exports = class PlacesListCampground
           place?.name
         if place?.distance
           z '.caption',
-            @model.l.get 'placesList.distance', {
+            @model.l.get 'placeList.distance', {
               replacements:
                 distance: place?.distance.distance
                 time: place?.distance.time
@@ -70,27 +85,28 @@ module.exports = class PlacesListCampground
         if not hideRating
           z '.rating',
             z @$rating
-      z '.actions',
-        z '.action',
-          z @$actionButton,
-            text: if isActionLoading \
-                  then @model.l.get 'general.loading'
-                  else if hasInfoButton
-                  then @model.l.get 'general.info'
-                  else if @action is 'info'
-                  then @model.l.get 'general.directions'
-                  else @model.l.get 'placeInfo.checkIn'
-            isOutline: true
-            heightPx: 28
-            onclick: =>
-              if hasInfoButton
-                @router.go place?.type, {
-                  slug: place?.slug
-                }
-              else if @action is 'info'
-                MapService.getDirections place, {@model}
-              else
-                @state.set isActionLoading: true
-                @checkIn place
-                .then =>
-                  @state.set isActionLoading: false
+      if @action
+        z '.actions',
+          z '.action',
+            z @$actionButton,
+              text: if isActionLoading \
+                    then @model.l.get 'general.loading'
+                    else if hasInfoButton
+                    then @model.l.get 'general.info'
+                    else if @action is 'info'
+                    then @model.l.get 'general.directions'
+                    else @model.l.get 'placeInfo.checkIn'
+              isOutline: true
+              heightPx: 28
+              onclick: =>
+                if hasInfoButton
+                  @router.go place?.type, {
+                    slug: place?.slug
+                  }
+                else if @action is 'info'
+                  MapService.getDirections place, {@model}
+                else
+                  @state.set isActionLoading: true
+                  @checkIn place
+                  .then =>
+                    @state.set isActionLoading: false

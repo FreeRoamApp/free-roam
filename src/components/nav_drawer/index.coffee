@@ -178,7 +178,7 @@ module.exports = class NavDrawer
             title: @model.l.get 'tripsPage.title'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'trip'
+            iconName: 'road'
           }
           # {
           #   path: @router.get 'backpack'

@@ -1,3 +1,5 @@
+_find = require 'lodash/find'
+
 module.exports = class TripFollower
   namespace: 'tripFollowers'
 
@@ -14,7 +16,12 @@ module.exports = class TripFollower
       invalidateAll: true
     }
 
-  deleteByRow: (row) =>
-    @auth.call "#{@namespace}.deleteByRow", {row}, {
+  deleteByTripId: (tripId) =>
+    @auth.call "#{@namespace}.deleteByTripId", {tripId}, {
       invalidateAll: true
     }
+
+  isFollowingByUserIdAndTripId: (userId, tripId) =>
+    @getAllByUserId userId
+    .map (tripFollowers) ->
+      _find(tripFollowers, {tripId}) or false

@@ -15,7 +15,7 @@
       > .divider
         position: absolute
         top: 4px
-        bottom: 84px - 4px // height of check-in
+        bottom: 122px - 4px // height of check-in
         left: 16px + 5px // padding + 1/2 circle
         width: 2px
         background: getColor('$secondary500')
@@ -42,7 +42,7 @@
         display: flex
         align-items: flex-start
         cursor: pointer
-        min-height: 72px
+        height: 122px
         position: relative
 
         > .dot
@@ -75,14 +75,7 @@
               > .icon
                 margin-right: 6px
 
-
-          > .name
-            font-title()
-
-          > .location
-            font-caption2()
-
-          > .attachments
+          > .place-list-item
             margin-top: 8px
 
         > .actions
@@ -91,6 +84,7 @@
 
     > .privacy
       padding: 16px
+      font-caption1()
 
   @media (min-width: $breakPointMedium)
     position: relative

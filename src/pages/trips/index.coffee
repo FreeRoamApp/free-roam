@@ -12,8 +12,6 @@ if window?
   require './index.styl'
 
 module.exports = class TripsPage
-  hideDrawer: true
-
   constructor: ({@model, @router, requests, serverData, group}) ->
     @selectedIndex = new RxBehaviorSubject 0
 
