@@ -1,9 +1,10 @@
 TODOS:
 
-
-- group chat title
+- always perform sanitize private on user, except when specified?
 
 - Trips
+  - find places along route
+  x following trip doesn't add to followed trips until app is background -> foreground (invalidated exoid cache)
   - delete trip
   - back after creating new trip shouldn't go to create trip page
   - "from" in trip card

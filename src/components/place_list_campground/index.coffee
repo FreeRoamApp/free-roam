@@ -39,7 +39,6 @@ module.exports = class PlaceListCampground
       url
     else
       lastChar = place?.id?.substr(place?.id?.length - 1, 1) or 'a'
-      console.log 'go', lastChar
       @defaultImages[\
         Math.ceil (parseInt(lastChar, 16) / 16) * (@defaultImages.length - 1)
       ]

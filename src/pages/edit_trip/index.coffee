@@ -43,7 +43,7 @@ module.exports = class EditTripPage
         style: 'primary'
         $topLeftButton: z @$buttonBack
         $topRightButton:
-          if trip?.id
+          if trip?.id and trip.type is 'custom'
             z @$deleteIcon,
               icon: 'delete'
               color: colors.$header500Icon
@@ -52,6 +52,6 @@ module.exports = class EditTripPage
                 if confirm @model.l.get 'general.confirm'
                   @model.trip.deleteByRow trip
                   .then =>
-                    @router.back()
+                    @router.go 'trips'
       }
       @$newTrip

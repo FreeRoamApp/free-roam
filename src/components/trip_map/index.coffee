@@ -37,14 +37,16 @@ module.exports = class TripMap
       @model, @router, @trip, checkIns
     }
 
-    # @state = z.state {
-    # }
+    @state = z.state {
+      @trip
+      checkIns
+    }
 
   share: =>
     @$travelMap.share()
 
   render: =>
-    # {} = @state.getValue()
+    {trip, checkIns} = @state.getValue()
 
     z '.z-trip-map', {
       ontouchstart: (e) -> e.stopPropagation()

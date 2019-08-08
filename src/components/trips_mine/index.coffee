@@ -23,5 +23,5 @@ module.exports = class TripsMine
         z @$createCustom,
           text: @model.l.get 'tripsMine.createCustom'
           onclick: =>
-            @router.go 'newTrip'
+            @router.go 'newTrip', {}, {ignoreHistory: true}
       z @$tripList

@@ -70,11 +70,12 @@ module.exports = class Trip
                 "url(#{imageUrl})"
           z '.name', trip?.name
           z '.stats',
-            @model.l.get 'tripCard.stats', {
-              replacements:
-                stops: trip?.overview?.stops
-                distance: FormatService.number trip?.overview?.distance or 0
-            }
+            if trip
+              @model.l.get 'tripCard.stats', {
+                replacements:
+                  stops: trip.overview?.stops
+                  distance: FormatService.number trip.overview?.distance or 0
+              }
           unless hasEditPermission
             z '.follow',
               z @$followButton, {
@@ -89,6 +90,7 @@ module.exports = class Trip
                   then @model.l.get 'general.following'
                   else @model.l.get 'general.follow'
                 onclick: =>
+                  @state.set isFollowLoading: true
                   (if isFollowing
                     @model.tripFollower.deleteByTripId trip.id
                   else
@@ -96,7 +98,7 @@ module.exports = class Trip
                   ).catch (err) ->
                     console.log err
                   .then =>
-                    @state.set isLoading: false
+                    @state.set isFollowLoading: false
               }
 
       z @$tabs,

@@ -88,7 +88,7 @@ module.exports = class NewTrip
         setTimeout =>
           @router.go 'trip', {
             id: trip.id
-          }
+          }, {reset: true}
         , 200
       .catch (err) =>
         console.log err

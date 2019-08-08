@@ -251,7 +251,7 @@ module.exports = class Conversation extends Base
         contextId: newConversation?.id
       }
       # server doesn't need to push us new updates
-      if prevConversation and prevConversation.id isnt newConversation.id
+      if prevConversation and prevConversation.id isnt newConversation?.id
         @model.conversationMessage.unsubscribeByConversationId prevConversation.id
 
       prevConversation = newConversation

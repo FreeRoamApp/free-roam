@@ -21,15 +21,17 @@
         height: 90px
         border-radius: 50%
         margin: 0 auto 16px auto
-        background: #000
+        background: getColor('$tertiary200')
         background-size: cover
 
       > .name
         font-h1()
+        force-height-when-empty()
         margin-bottom: 2px
 
       > .stats
         font-body2()
+        force-height-when-empty()
 
       > .follow
         margin-top: 12px

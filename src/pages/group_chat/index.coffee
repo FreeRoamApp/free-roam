@@ -53,10 +53,16 @@ module.exports = class GroupChatPage
         "group_#{conversations?[0]?.groupId}_lastConversationId"
 
       conversationId ?= @model.cookie.get(lastConversationIdCookie)
-      conversationId ?= _find(conversations, ({data, isDefault}) ->
-        isDefault or data?.name is 'general'
-      )?.id
-      conversationId ?= conversations?[0]?.id
+
+      if conversationId
+        conv = _find conversations, {id: conversationId}
+
+      unless conv
+        conv = _find(conversations, ({data, isDefault}) ->
+          isDefault or data?.name is 'general'
+        )
+        conv ?= conversations?[0]
+        conversationId = conv?.id
 
       # side effects
       if conversationId isnt currentConversationId
@@ -71,7 +77,7 @@ module.exports = class GroupChatPage
       currentConversationId = conversationId
 
       if conversationId
-        RxObservable.of _find conversations, {id: conversationId}
+        RxObservable.of conv
       else
         RxObservable.of null
     # i think this breaks switching groups (leaves getMessagesStream as prev val)

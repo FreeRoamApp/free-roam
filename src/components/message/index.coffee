@@ -54,8 +54,6 @@ module.exports = class Message
 
     {user, groupUser, time, card, id, clientId} = message
 
-    console.log 'cardinfo', cardInfo
-
     avatarSize = if windowSize.width > 840 \
                  then '40px'
                  else '40px'

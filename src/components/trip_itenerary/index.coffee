@@ -14,6 +14,7 @@ Base = require '../base'
 PlaceListItem = require '../place_list_item'
 Icon = require '../icon'
 CheckInTooltip = require '../check_in_tooltip'
+Spinner = require '../spinner'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
 MapService = require '../../services/map'
@@ -33,6 +34,8 @@ module.exports = class TripItenerary extends Base
       checkIns, @trip, (vals...) -> vals
     )
 
+    @$spinner = new Spinner()
+
     @state = z.state {
       me: @model.user.getMe()
       trip: @trip.map (trip) ->
@@ -41,6 +44,9 @@ module.exports = class TripItenerary extends Base
         tripLegs = _clone(_map trip?.route?.legs, (leg) ->
           _omit leg, ['shape']
         )
+        if _isEmpty checkIns
+          return false
+
         _map checkIns, (checkIn, i) =>
           if _isEmpty checkIn.attachments
             id = checkIn.id
@@ -72,13 +78,15 @@ module.exports = class TripItenerary extends Base
       z '.g-grid',
         z '.check-ins',
           [
-            if _isEmpty checkIns
+            if checkIns is false
               z '.placeholder',
                 # z '.icon'
                 z '.title', @model.l.get 'trip.placeHolderTitle'
                 z '.description', @model.l.get 'trip.placeHolderDescription'
-            else
+            else if checkIns
               z '.divider'
+            else
+              z @$spinner
             _map checkIns, (checkIn, i) =>
               {checkIn, routeInfo,  $directionsIcon, $place} = checkIn
 

@@ -194,9 +194,10 @@ module.exports = class Head
           if openGraph.url
             z 'meta', {property: 'og:url', content: "#{openGraph.url}"}
           z 'meta', {property: 'og:image', content: "#{openGraph.image}"}
-          z 'meta', {
-            property: 'og:description', content: "#{openGraph.description}"
-          }
+          if openGraph.description
+            z 'meta', {
+              property: 'og:description', content: "#{openGraph.description}"
+            }
           z 'meta', {property: 'og:site_name', content: "#{openGraph.siteName}"}
 
           # iOS

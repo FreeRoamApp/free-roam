@@ -32,8 +32,8 @@ module.exports = class Trip
   hasEditPermission: (trip, user) ->
     trip?.userId and trip?.userId is user?.id
 
-  deleteByRow: (options) =>
-    @auth.call "#{@namespace}.deleteByRow", options, {
+  deleteByRow: (row) =>
+    @auth.call "#{@namespace}.deleteByRow", {row}, {
       invalidateAll: true
     }
 

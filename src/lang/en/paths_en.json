@@ -9,6 +9,7 @@
   "groupAdminSettings": "/g/:groupId/admin/settings",
 
   "group": "/g/:groupId",
+  "groupApp": "/g/:groupId/app",
   "groupInfo": "/g/:groupId/info",
   "groupChat": "/g/:groupId/chat",
   "groupChatConversation": "/g/:groupId/chat/:conversationId",

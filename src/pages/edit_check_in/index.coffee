@@ -63,5 +63,6 @@ module.exports = class EditCheckInPage
                   @model.checkIn.deleteByRow checkIn
                   .then =>
                     @router.back()
+                    @router.back()
       }
       @$newCheckIn
