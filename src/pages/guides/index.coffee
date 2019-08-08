@@ -50,5 +50,4 @@ module.exports = class GuidesPage
         ]
       @$guides
 
-      if @model.experiment.get('guides') is 'visible'
-        @$bottomBar
+      @$bottomBar

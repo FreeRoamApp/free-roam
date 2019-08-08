@@ -57,13 +57,12 @@ module.exports = class BottomBar
         text: @model.l.get 'general.places'
         isDefault: true
       }
-      if @model.experiment.get('guides') is 'visible'
-        {
-          $icon: new Icon()
-          icon: 'guides'
-          route: @router.get 'guides'
-          text: @model.l.get 'guidesPage.title'
-        }
+      {
+        $icon: new Icon()
+        icon: 'guides'
+        route: @router.get 'guides'
+        text: @model.l.get 'guidesPage.title'
+      }
       {
         $icon: new Icon()
         icon: 'home'
