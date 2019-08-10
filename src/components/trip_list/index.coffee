@@ -36,11 +36,16 @@ module.exports = class TripList extends Base
     {me, $trips} = @state.getValue()
 
     z '.z-trip-list',
-      z '.g-grid',
-        z '.g-cols',
-          if not $trips?
-            @$spinner
-          else
+      if not $trips?
+        @$spinner
+      else if $trips is false
+        z '.placeholder',
+          z '.icon'
+          z '.title', @model.l.get 'tripList.placeHolderTitle'
+          z '.description', @model.l.get 'tripList.placeHolderDescription'
+      else
+        z '.g-grid',
+          z '.g-cols',
             _map $trips, ($trip) ->
               z '.g-col.g-xs-12.g-md-6',
                 z '.trip', $trip

@@ -82,7 +82,7 @@ module.exports = class TripItinerary extends Base
           [
             if checkIns is false
               z '.placeholder',
-                # z '.icon'
+                z '.icon'
                 z '.title', @model.l.get 'trip.placeHolderTitle'
                 z '.description', @model.l.get 'trip.placeHolderDescription'
             else if checkIns

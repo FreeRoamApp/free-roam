@@ -576,6 +576,8 @@
   "trips.futureName": "Future",
   "trips.futureDescription": "Plan out where you'll be going next",
   "tripCard.stats": "{stops} stops, {distance} miles",
+  "tripList.placeHolderTitle": "You aren't following any trips",
+  "tripList.placeHolderDescription": "To follow someone's trip, check our their trip page and tap the \"follow\" button",
   "tripsMine.createCustom": "Create custom trip",
   "uploadImagesOverlay.captionHintText": "Enter a caption...",
   "uploadImagesOverlay.tagHintText": "Ex. #roadcondition",
