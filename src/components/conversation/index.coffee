@@ -43,6 +43,7 @@ FIVE_MINUTES_MS = 60 * 5 * 1000
 SCROLL_MESSAGE_LOAD_COUNT = 20
 DELAY_BETWEEN_LOAD_MORE_MS = 250
 
+
 module.exports = class Conversation extends Base
   constructor: (options) ->
     {@model, @router, @error, @conversation, isActive,
@@ -268,7 +269,9 @@ module.exports = class Conversation extends Base
     @disposable.unsubscribe()
 
     @isPaused.next false
-    @iScrollContainer?.destroy()
+    if @iScrollContainer
+      @iScrollContainer.destroy()
+      window.removeEventListener 'longTap', @_selectMessage
 
     @$$messages?.removeEventListener 'scroll', @debouncedScrollListener
     @$$loadingSpinner?.style.display = 'block'
@@ -302,15 +305,45 @@ module.exports = class Conversation extends Base
     #
     # @model.conversationMessage.resetClientChangesStream conversation?.id
 
+  _selectMessage: (e) ->
+    $el = e.target
+    # console.log $el.tagName
+    # if $el.tagName is 'A'
+    #   $el = e.target.parentNode
+    # console.log $el
+    if $el.tagName in ['A', 'P']
+      oldContentEditable = $el.contentEditable
+      oldReadOnly = $el.readOnly
+      range = document.createRange()
+      $el.contentEditable = true
+      $el.readOnly = false
+      range.selectNodeContents $el
+      s = window.getSelection()
+      s.removeAllRanges()
+      s.addRange range
+      $el.setSelectionRange? 0, 999999
+      # A big number, to cover anything that could be inside the element.
+      $el.contentEditable = oldContentEditable
+      $el.readOnly = oldReadOnly
+      # document.execCommand 'copy'
+
   initIScroll: =>
+    window.removeEventListener 'longTap', @_selectMessage
+    window.addEventListener 'longTap', @_selectMessage
+
     @iScrollContainer = new IScroll @$$messages, {
       scrollX: false
       scrollY: true
       # eventPassthrough: true
+
+      # this fixes text-selection, but scrolls weird (like 50% speed)
+      # preventDefaultException:
+      #   tagName: /^(INPUT|TEXTAREA|BUTTON|SELECT|P)$/
+
       click: true
       tap: true
       bounce: false
-      deceleration: 0.0006
+      deceleration: 0.0005
       useTransition: false
       isReversed: true
     }

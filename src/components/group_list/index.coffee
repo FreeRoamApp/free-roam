@@ -39,10 +39,10 @@ module.exports = class GroupList
             @router.link z 'a.group', {
               href: route
               className: z.classKebab {
-                isLight: group?.slug is 'nomadcollab' # FIXME: rm hardcode
+                isLight: group?.slug in ['nomadcollab', 'goodvibetribe'] # FIXME: rm hardcode
               }
               style:
                 backgroundImage:
-                  "url(#{config.CDN_URL}/groups/#{group?.slug}.jpg)"
+                  "url(#{config.CDN_URL}/groups/#{group?.slug}.jpg?1)" # FIXME rm ?1
             },
               z '.name', group.name or @model.l.get 'general.anonymous'

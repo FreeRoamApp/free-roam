@@ -8,7 +8,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceListItem
-  constructor: ({@model, @router, place, action}) ->
+  constructor: ({@model, @router, place, name, action}) ->
     if place?.type
       El = if place.type is 'campground' \
            then PlaceListCampground
@@ -16,7 +16,7 @@ module.exports = class PlaceListItem
            then PlaceListAmenity
            else PlaceListCoordinate
 
-      @$el = new El {@model, @router, place, action}
+      @$el = new El {@model, @router, place, name, action}
     else
       @state = z.state {
         $el: place.map (place) =>
@@ -26,7 +26,7 @@ module.exports = class PlaceListItem
                then PlaceListAmenity
                else PlaceListCoordinate
 
-          new El {@model, @router, place, action}
+          new El {@model, @router, place, name, action}
       }
 
   render: =>

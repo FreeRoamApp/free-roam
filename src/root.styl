@@ -36,7 +36,10 @@ body
   // the frame to fit the page.
   // position absolute here messes up some older android devices
   &.is-ios
-    position: absolute
+    // absolute causes rubberbanding, specifically for conversations on iOS
+    // where it uses iScroll with preventDefault: false
+    // (for text-selection to work)
+    position: fixed
     width: 100%
     height: 100%
     top: 0

@@ -33,30 +33,22 @@ module.exports = class TripPage
 
   getMeta: =>
     @trip.map (trip) =>
+      console.log 'trip', trip
       cacheBust = new Date(trip?.lastUpdateTime).getTime()
       {
-        title: @getTitle()
-        description:  @model.l.get 'tripPage.description'
+        title: @model.l.get 'tripPage.title', {
+          replacements:
+            name: trip?.name
+        }
+        description:  @model.l.get 'tripPage.description', {
+          replacements:
+            name: trip?.name
+            username: @model.user.getDisplayName trip?.user
+        }
         openGraph:
           image: @model.image.getSrcByPrefix trip?.imagePrefix, {
             size: 'large', cacheBust
           }
-      }
-
-  getTitle: =>
-    {me, trip} = @state.getValue()
-
-    isMe = me?.id and me?.id is trip?.userId
-
-    if isMe
-      @model.l.get 'tripPage.myTitle', {
-        replacements:
-          name: trip?.name
-      }
-    else
-      @model.l.get 'tripPage.title', {
-        replacements:
-          name: @model.user.getDisplayName trip?.user
       }
 
   render: =>

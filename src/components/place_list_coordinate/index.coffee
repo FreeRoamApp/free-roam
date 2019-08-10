@@ -6,8 +6,8 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class PlaceListItem
-  constructor: ({@model, @router, @place, @action}) ->
+module.exports = class PlaceListCoordinate
+  constructor: ({@model, @router, @place, @name, @action}) ->
     @defaultImages = [
       "#{config.CDN_URL}/places/empty_campground.svg"
       "#{config.CDN_URL}/places/empty_campground_green.svg"
@@ -18,6 +18,7 @@ module.exports = class PlaceListItem
     @state = z.state
       me: @model.user.getMe()
       place: @place
+      name: @name
 
   getThumbnailUrl: (place) =>
     lastChar = place?.id?.substr(place?.id?.length - 1, 1) or 'a'
@@ -26,9 +27,10 @@ module.exports = class PlaceListItem
     ]
 
   render: =>
-    {me, place} = @state.getValue()
+    {me, place, name} = @state.getValue()
 
     place ?= @place
+    name ?= @name
 
     thumbnailSrc = @getThumbnailUrl place
 
@@ -38,7 +40,7 @@ module.exports = class PlaceListItem
           backgroundImage: "url(#{thumbnailSrc})"
       z '.info',
         z '.name',
-          place?.name
+          name or place?.name
         if place?.address?.administrativeArea
           z '.location',
             if place?.address?.locality

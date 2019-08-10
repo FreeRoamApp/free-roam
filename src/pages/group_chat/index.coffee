@@ -165,10 +165,13 @@ module.exports = class GroupChatPage
     # @mountDisposable?.unsubscribe()
 
   getMeta: =>
-    {
-      title: @model.l.get 'groupChatPage.title'
-      description: @model.l.get 'groupChatPage.description'
-    }
+    @group.map (group) =>
+      {
+        title: @model.l.get 'groupChatPage.title', {
+          replacements: {name: group?.name or ''}
+        }
+        description: @model.l.get 'groupChatPage.description'
+      }
 
   render: =>
     {group, me, conversation, isChannelDrawerOpen, breakpoint

@@ -28,7 +28,7 @@ if window?
 # TODO: dialog after sharing asking people to leave reviews, give them list of ones they can add
 ###
 
-module.exports = class TripItenerary extends Base
+module.exports = class TripItinerary extends Base
   constructor: ({@model, @router, @trip, checkIns}) ->
     checkInsAndTrip = RxObservable.combineLatest(
       checkIns, @trip, (vals...) -> vals
@@ -57,7 +57,7 @@ module.exports = class TripItenerary extends Base
             checkIn
             routeInfo: tripLegs?[i - 1]
             $place: new PlaceListItem {
-              @model, @router, place: checkIn.place
+              @model, @router, place: checkIn.place, name: checkIn.name
             }
             $directionsIcon: new Icon()
           }
@@ -74,7 +74,9 @@ module.exports = class TripItenerary extends Base
   render: =>
     {me, checkIns, trip} = @state.getValue()
 
-    z '.z-trip-itenerary',
+    hasEditPermission = @model.trip.hasEditPermission trip, me
+
+    z '.z-trip-itinerary',
       z '.g-grid',
         z '.check-ins',
           [
@@ -139,7 +141,7 @@ module.exports = class TripItenerary extends Base
                     z $place
           ]
 
-        if not _isEmpty checkIns
+        if hasEditPermission and not _isEmpty checkIns
           z '.privacy', {
             onclick: =>
               @model.trip.upsert {

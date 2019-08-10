@@ -7,7 +7,7 @@ Fab = require '../fab'
 Icon = require '../icon'
 SecondaryButton = require '../secondary_button'
 Tabs = require '../tabs'
-TripItenerary = require '../trip_itenerary'
+TripItinerary = require '../trip_itinerary'
 TripMap = require '../trip_map'
 FormatService = require '../../services/format'
 config = require '../../config'
@@ -29,7 +29,7 @@ module.exports = class Trip
     )
 
     @$tripMap = new TripMap {@model, @router, @trip, checkIns}
-    @$tripItenerary = new TripItenerary {@model, @router, @trip, checkIns}
+    @$tripItinerary = new TripItinerary {@model, @router, @trip, checkIns}
     @$tabs = new Tabs {@model}
 
     @$followButton = new SecondaryButton()
@@ -105,8 +105,8 @@ module.exports = class Trip
         isBarFixed: false
         tabs: [
           {
-            $menuText: @model.l.get 'trip.itenerary'
-            $el: @$tripItenerary
+            $menuText: @model.l.get 'trip.itinerary'
+            $el: @$tripItinerary
           }
           {
             $menuText: @model.l.get 'trip.map'

@@ -13,7 +13,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceListCampground
-  constructor: ({@model, @router, @place, @action}) ->
+  constructor: ({@model, @router, @place, @name, @action}) ->
     @$actionButton = new SecondaryButton()
     @$rating = new Rating {
       value: if @place?.map then @place else RxObservable.of @place?.rating
@@ -29,6 +29,7 @@ module.exports = class PlaceListCampground
     @state = z.state
       me: @model.user.getMe()
       place: @place
+      name: @name
       isActionLoading: false
 
   getThumbnailUrl: (place) =>
@@ -53,9 +54,10 @@ module.exports = class PlaceListCampground
     }
 
   render: ({hideRating} = {}) =>
-    {me, isActionLoading, place} = @state.getValue()
+    {me, isActionLoading, place, name} = @state.getValue()
 
     place ?= @place
+    name ?= @name
 
     thumbnailSrc = @getThumbnailUrl place
     hasInfoButton = @action is 'info' and place?.type in [
@@ -68,7 +70,7 @@ module.exports = class PlaceListCampground
           backgroundImage: "url(#{thumbnailSrc})"
       z '.info',
         z '.name',
-          place?.name
+          name or place?.name
         if place?.distance
           z '.caption',
             @model.l.get 'placeList.distance', {

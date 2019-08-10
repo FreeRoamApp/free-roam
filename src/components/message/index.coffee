@@ -62,16 +62,10 @@ module.exports = class Message
       unless @isTextareaFocused?.getValue()
         openProfileDialogFn id, user, groupUser, @group
 
-    oncontextmenu = =>
-      openProfileDialogFn id, user, groupUser, @group
-
     z '.z-message', {
       # re-use elements in v-dom. doesn't seem to work with prepending more
       key: "message-#{id or clientId}"
       className: z.classKebab {isGrouped, isMe, isMeMentioned}
-      oncontextmenu: (e) ->
-        e?.preventDefault()
-        oncontextmenu?()
     },
       z '.avatar', {
         onclick

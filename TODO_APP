@@ -1,17 +1,28 @@
 TODOS:
 
+- Product guide onboarding
+
 - always perform sanitize private on user, except when specified?
 
+- on campground page (or tooltip?), show the user's distance/time to that campground
+
+- Fix "admin" for groups (creatorId)
+
+- Activities
+  - Start with hikes? (trailhead) specialized model for hikes
+  - Museums (activites_other)
+  - Swimming? (activities_other)
+
 - Trips
-  - find places along route
-  x following trip doesn't add to followed trips until app is background -> foreground (invalidated exoid cache)
-  - delete trip
-  - back after creating new trip shouldn't go to create trip page
   - "from" in trip card
   - trip following empty state
   - privacy to new/edit trip page
   - make new checkin page prettier
   - past checkins grayed out
+  x back after creating new trip shouldn't go to create trip page
+  x delete trip
+  x find places along route
+  x following trip doesn't add to followed trips until app is background -> foreground (invalidated exoid cache)
   x base trip default image
   x default images / upload
   x auto-create past/future trips for new accounts?
