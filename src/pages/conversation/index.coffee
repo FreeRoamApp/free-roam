@@ -47,7 +47,7 @@ module.exports = class ConversationPage
           color: colors.$header500Icon
           fallbackPath: @router.get 'social'
         }
-        isFullWidth: true
+        # isFullWidth: true
       }
       z '.g-grid',
         @$conversation

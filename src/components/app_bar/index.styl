@@ -19,27 +19,24 @@
     background-size: 84px auto
     padding: 0 16px
 
-    > .wrapper
+    > .top
       width: 100%
+      height: 56px
+      display: flex
+      align-items: center
 
-      > .top
-        width: 100%
-        height: 56px
-        display: flex
-        align-items: center
+      > .top-left-button
+        margin-right: 24px
 
-        > .top-left-button
-          margin-right: 24px
+      > .top-right-button
+        margin-left: auto
 
-        > .top-right-button
-          margin-left: auto
-
-        > .title
-          font-h2()
-          white-space: nowrap
-          text-overflow: ellipsis
-          overflow: hidden
-          padding-right: 8px
+      > .title
+        font-h2()
+        white-space: nowrap
+        text-overflow: ellipsis
+        overflow: hidden
+        padding-right: 8px
 
 
   @media (min-width: $breakPointMedium)

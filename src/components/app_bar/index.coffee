@@ -25,24 +25,19 @@ module.exports = class AppBar
         style:
           backgroundColor: bgColor
       },
-        z '.wrapper', {
-          className: z.classKebab {
-            gGrid: not isFullWidth
-          }
-        },
-          z '.top.g-grid',
-            if $topLeftButton
-              z '.top-left-button', {
-                style:
-                  color: color
-              },
-                $topLeftButton
-            z 'h1.title', {
-              style:
-                color: color
-            }, title
-            z '.top-right-button', {
+        z '.top.g-grid.overflow-visible',
+          if $topLeftButton
+            z '.top-left-button', {
               style:
                 color: color
             },
-              $topRightButton
+              $topLeftButton
+          z 'h1.title', {
+            style:
+              color: color
+          }, title
+          z '.top-right-button', {
+            style:
+              color: color
+          },
+            $topRightButton
