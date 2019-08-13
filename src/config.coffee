@@ -130,6 +130,10 @@ isomorphic =
   IMGUR_ID_REGEX: /https?:\/\/(?:i\.)?imgur\.com(?:\/a)?\/(.*?)(?:[\.#\/].*|$)/i
   MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN
 
+  RIG_TYPES: ['tent', 'car', 'van', 'motorhome', 'travelTrailer', 'fifthWheel']
+  EXPERIENCE_TYPES: ['none', 'little', 'some', 'lots']
+  HOOKUP_PREFERENCES: ['none', 'some', 'all']
+
 # Server only
 # All keys must have values at run-time (value may be null)
 PORT = serverEnv.FREE_ROAM_PORT or 3000

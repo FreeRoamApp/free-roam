@@ -74,7 +74,7 @@ module.exports = class TravelMap
       shareInfo: @trip.map (trip) =>
         {
           text: @model.l.get 'trip.shareText'
-          url: "#{config.HOST}/trip/#{trip.id}"
+          url: "https://#{config.HOST}/trip/#{trip.id}"
         }
     }
 

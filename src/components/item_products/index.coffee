@@ -34,8 +34,8 @@ module.exports = class ItemProducts
               # $saveIcon: new Icon()
             }
 
-  openAmazon: ({partner, product}) =>
-    ga? 'send', 'event', 'amazon', partner?.amazonAffiliateCode, product.slug
+  openAmazon: ({partner, product, item}) =>
+    ga? 'send', 'event', 'amazon', item?.slug, product.slug
     affiliateCode = partner?.amazonAffiliateCode or 'freeroamfound-20'
 
     @model.portal.call 'browser.openWindow', {
@@ -55,7 +55,7 @@ module.exports = class ItemProducts
             _map products, ({product, $buyButton, $videoIcon}) =>
               z '.g-col.g-xs-12.g-md-6',
                 z '.product', {
-                  onclick: => @openAmazon {partner, product}
+                  onclick: => @openAmazon {partner, product, item}
                 },
                   z '.content',
                     z '.image',

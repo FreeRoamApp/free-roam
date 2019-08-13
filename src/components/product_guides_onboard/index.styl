@@ -1,0 +1,84 @@
+@require '../../vars'
+
+.z-product-guides-onboard
+  flex1()
+  display: flex
+  background: getColor('$tertiary0')
+
+  > .intro
+    flex1()
+    display: flex
+    padding: 16px
+    flex-direction: column
+    text-align: center
+
+    > .title
+      font-h1()
+      margin-top: auto
+      color: getColor('$primary500')
+
+    > .icon
+      width: 100px
+      height: 112px
+      background-image: url($cdnUrl + '/guides/guides_onboarding_icon.svg')
+      background-size: 100%
+      margin: 24px auto
+
+    > .description
+      font-h2()
+      margin-bottom: auto
+
+    > .actions
+      > .action
+        margin-top: 16px
+
+
+
+.z-product-guides-onboard_step
+  width: 100%
+  box-sizing: border-box
+  padding: 0 16px
+
+  > .title
+    font-h1()
+    text-align: center
+    margin: 16px 0 32px 0
+
+  > .buttons
+    max-width: 410px
+
+    > .g-cols > .g-col
+      > .button
+        font-h1()
+        cursor: pointer
+        height: 110px
+        max-width: 200px
+        box-sizing: border-box
+        display: flex
+        align-items: center
+        justify-content: center
+        padding: 24px
+        background: getColor('$secondary200')
+        color: getColor('$secondary200Text')
+        text-align: center
+        border-radius: 4px
+
+        &.is-selected
+          background: getColor('$secondary500')
+          color: getColor('$secondary500Text')
+
+  > .rig-types
+
+    > .rig-type
+      font-h2()
+      cursor: pointer
+      color: getColor('$secondary500')
+      border: 2px solid getColor('$secondary500')
+      border-radius: 4px
+      padding: 12px 24px
+      text-align: center
+      margin-bottom: 24px
+
+      &.is-selected
+        background: getColor('$secondary500')
+        color: getColor('$secondary500Text')

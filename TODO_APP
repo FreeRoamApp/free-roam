@@ -1,6 +1,11 @@
 TODOS:
 
+- check-in empty date dec 31
+
 - Product guide onboarding
+  x transform existing rigTypes into subset (boxtruck -> motorhome)
+  x experience and hookupPreference filters
+  x give all products ids?
 
 - always perform sanitize private on user, except when specified?
 

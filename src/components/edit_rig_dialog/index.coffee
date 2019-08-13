@@ -72,15 +72,13 @@ module.exports = class EditRigDialog
                   {value: 'travelTrailer', text: @model.l.get 'rigs.travelTrailer'}
                   {value: 'fifthWheel', text: @model.l.get 'rigs.fifthWheel'}
                   {value: 'van', text: @model.l.get 'rigs.van'}
-                  {value: 'classAMotorhome', text: @model.l.get 'rigs.classAMotorhome'}
-                  {value: 'classBMotorhome', text: @model.l.get 'rigs.classBMotorhome'}
-                  {value: 'classCMotorhome', text: @model.l.get 'rigs.classCMotorhome'}
-                  {value: 'bus', text: @model.l.get 'rigs.bus'}
-                  {value: 'truckCamper', text: @model.l.get 'rigs.truckCamper'}
+                  {value: 'motorhome', text: @model.l.get 'rigs.motorhome'}
+                  # {value: 'bus', text: @model.l.get 'rigs.bus'}
+                  # {value: 'truckCamper', text: @model.l.get 'rigs.truckCamper'}
                   {value: 'tent', text: @model.l.get 'rigs.tent'}
                   {value: 'car', text: @model.l.get 'rigs.car'}
-                  {value: 'boxTruck', text: @model.l.get 'rigs.boxTruck'}
-                  {value: 'motorcycle', text: @model.l.get 'rigs.motorcycle'}
+                  # {value: 'boxTruck', text: @model.l.get 'rigs.boxTruck'}
+                  # {value: 'motorcycle', text: @model.l.get 'rigs.motorcycle'}
                 ]
             z '.block',
               # z 'label.label', @model.l.get 'editRigDialog.length'

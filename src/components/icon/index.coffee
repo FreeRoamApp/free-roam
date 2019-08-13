@@ -2,6 +2,7 @@ z = require 'zorium'
 
 icons = require './icons'
 Ripple = require '../ripple'
+colors = require '../../colors'
 
 if window?
   require './index.styl'
@@ -25,7 +26,9 @@ module.exports = class Icon
     z "#{tag}.z-icon", {
       className: z.classKebab {
         isAlignedTop, isAlignedLeft, isAlignedRight,
-        isAlignedBottom, isTouchTarget, isClickable, hasRipple
+        isAlignedBottom, isTouchTarget, isClickable
+        hasRippleWhite: hasRipple and color isnt colors.$header500Icon
+        hasRippleHeader: hasRipple and color is colors.$header500Icon
       }
       attributes:
         if hasRipple then tabindex: 0 else {}

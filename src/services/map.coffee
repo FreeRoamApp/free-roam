@@ -36,7 +36,8 @@ class MapService
     else
       return Promise.resolve localStorage?.geolocationEnabled
 
-  getLocation: ({model} = {}) ->
+  getLocation: ({model, timeout} = {}) ->
+    timeout ?= 10000
     get = =>
       new Promise (resolve, reject) =>
         if navigator?
@@ -45,7 +46,7 @@ class MapService
             lat = Math.round(10000 * pos.coords.latitude) / 10000
             lon = Math.round(10000 * pos.coords.longitude) / 10000
             resolve {lat, lon}
-          , reject, {enableHighAccuracy: true, timeout: 10000}
+          , reject, {enableHighAccuracy: true, timeout: timeout}
         else
           resolve null
 
@@ -84,21 +85,40 @@ class MapService
     target = '_system'
     baseUrl = 'https://google.com/maps/dir/?api=1'
     destination = place?.location?.lat + ',' + place?.location?.lon
-    onLocation = ({coords}) =>
-      origin = coords?.latitude + ',' + coords?.longitude
-      url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
-      model.portal.call 'browser.openWindow', {url, target}
+
+    isIos = Environment.isIos()
+
     onError = =>
-      url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
+      if isIos
+        url = "#{baseUrl}&destination=#{destination}"
+      else
+        url = "#{baseUrl}&origin=My+Location&destination=#{destination}"
       model.portal.call 'browser.openWindow', {url, target}
+
     # FIXME takes like a minute to load?
-    # if Environment.isNativeApp 'freeroam'
-    #   console.log 'getttt2' # FIXME FIXME: use fn here
-    #   navigator.geolocation.getCurrentPosition onLocation, onError
-    # else
-    console.log 'err'
-      # just use the "my location" version, to avoid popup blocker
-    onError()
+    if Environment.isNativeApp 'freeroam'
+      (if isIos
+        # for some reason hasLocationPermission check not working on ios
+        Promise.resolve true
+      else
+        @hasLocationPermission {model}
+      ).then (hasLocationPermission) =>
+        if hasLocationPermission
+          @getLocation {model, timeout: 5000}
+          .catch (err) ->
+            console.log 'caught', err
+            onError()
+          .then ({lat, lon} = {}) ->
+            if lat and lon
+              origin = lat + ',' + lon
+              url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
+              model.portal.call 'browser.openWindow', {url, target}
+        else
+          onError()
+    else
+      console.log 'call onError'
+        # just use the "my location" version, to avoid popup blocker
+      onError()
 
   getAmenityFilters: ({model}) ->
     [

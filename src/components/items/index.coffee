@@ -56,7 +56,10 @@ module.exports = class Items extends Base
                 backgroundImage:
                   "url(#{config.CDN_URL}/guides/#{snakeSlug}.jpg)"
             z '.name', filterInfo?.name
-            z '.description', filterInfo?.description
+            z '.description',
+              filterInfo?.description
+              .replace /{home}/g, 'RV'
+              .replace /{Home}/g, 'RV'
         z '.g-cols',
           _map items, ({item, $chevronIcon}) =>
               visibleProducts = _take(item.productSlugs, MAX_PRODUCTS)

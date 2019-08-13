@@ -109,8 +109,8 @@ module.exports = class Profile extends Base
         {
           text: @model.l.get 'trip.shareText'
           url: if user.username \
-               then "#{config.HOST}/user/#{user.username}"
-               else "#{config.HOST}/user/id/#{user.id}"
+               then "https://#{config.HOST}/user/#{user.username}"
+               else "https://#{config.HOST}/user/id/#{user.id}"
         }
     }
 

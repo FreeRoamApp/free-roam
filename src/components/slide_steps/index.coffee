@@ -20,7 +20,7 @@ module.exports = class SlideSteps
     @state = z.state
       selectedIndex: @selectedIndex
 
-  render: ({onSkip, onDone, steps}) =>
+  render: ({onSkip, onDone, steps, doneText}) =>
     {selectedIndex} = @state.getValue()
 
     z '.p-slide-steps',
@@ -75,4 +75,4 @@ module.exports = class SlideSteps
           z '.text', {
             onclick: onDone
           },
-            @model.l.get 'general.gotIt'
+            doneText or @model.l.get 'general.gotIt'
