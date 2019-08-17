@@ -40,7 +40,6 @@ module.exports = class PlaceInfoWeather
 
         months = _map monthsRaw, (month, abbr) ->
           barHeight = (month.tmax - month.tmin) / trange
-          console.log tmax - month.tmax
           marginTop = (tmax - month.tmax) / trange
           {
             month
@@ -90,10 +89,6 @@ module.exports = class PlaceInfoWeather
           },
             @model.l.get "placeInfoWeather.#{tab}"
       if currentTab is 'avg'
-        z 'img.graph', {
-          src:
-            "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?2"
-        }
         z '.averages',
           z '.months', {
             ontouchstart: (e) ->

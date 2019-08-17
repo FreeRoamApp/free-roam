@@ -6,6 +6,7 @@ _isEmpty = require 'lodash/isEmpty'
 
 UserList = require '../user_list'
 Icon = require '../icon'
+Environment = require '../../services/environment'
 colors = require '../../colors'
 
 if window?
@@ -14,7 +15,7 @@ if window?
 SEARCH_DEBOUNCE = 300
 
 module.exports = class FindFriends
-  constructor: ({@model, router}) ->
+  constructor: ({@model, @router}) ->
 
     @value = new RxBehaviorSubject ''
 
@@ -34,7 +35,7 @@ module.exports = class FindFriends
     @$clear = new Icon()
 
     @$userList = new UserList {
-      @model, router, users
+      @model, @router, users
     }
 
     @state = z.state
@@ -42,7 +43,8 @@ module.exports = class FindFriends
       users: users
 
   afterMount: (@$$el) =>
-    @$$el.querySelector('.input').focus()
+    unless Environment.isIos()
+      @$$el.querySelector('.input').focus()
 
   clear: =>
     @value.next ''
@@ -84,4 +86,14 @@ module.exports = class FindFriends
           oninput: z.ev (e, $$el) =>
             @value.next $$el.value
       z '.results',
-        z @$userList
+        z @$userList, {
+          onclick: (user) =>
+            if user.username
+              @router.goOverlay 'profile', {
+                username: user.username
+              }
+            else
+              @router.goOverlay 'profileById', {
+                id: user.id
+              }
+        }

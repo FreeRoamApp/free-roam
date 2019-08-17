@@ -28,9 +28,17 @@ class RouterService
     @requests = null
     @onBackFn = null
 
-  goPath: (path, {ignoreHistory, reset, keepPreserved} = {}) =>
-    unless keepPreserved
+  goPath: (path, {ignoreHistory, reset, keepPreserved, keepOverlay} = {}) =>
+    if @preservedRequest and not keepPreserved
+      @model.overlay.close()
       @removeOverlay()
+
+    unless keepOverlay
+      @model.overlay.close() # if any are open...
+
+    if Environment.isIos()
+      document.activeElement.blur()
+
     unless ignoreHistory
       @history.push(path or window?.location.pathname)
 
@@ -45,7 +53,6 @@ class RouterService
       @router.go path
 
   go: (routeKey, replacements, options = {}) =>
-    @model.overlay.close() # if any are open...
     path = @get routeKey, replacements
     if options.qs
       @goPath "#{path}?#{qs.stringify options.qs}", options
@@ -78,7 +85,9 @@ class RouterService
 
     @requests.take(1).subscribe (request) =>
       @preservedRequest = request
-      @go routeKey, replacements, _defaults({keepPreserved: true}, options)
+      @go routeKey, replacements, _defaults(
+        {keepPreserved: true, keepOverlay: true}, options
+      )
 
   setRequests: (@requests) => null
 
@@ -98,11 +107,12 @@ class RouterService
       }
 
   back: ({fromNative, fallbackPath} = {}) =>
-    @removeOverlay()
-
-    overlays = @model.overlay.get()
-    unless _isEmpty overlays
-      return @model.overlay.close()
+    if @preservedRequest
+      @removeOverlay()
+    else
+      overlays = @model.overlay.get()
+      unless _isEmpty overlays
+        @model.overlay.close()
 
     if @onBackFn
       fn = @onBackFn()
