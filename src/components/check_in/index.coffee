@@ -6,6 +6,7 @@ FormattedText = require '../formatted_text'
 PlaceListItem = require '../place_list_item'
 PrimaryButton = require '../primary_button'
 DateService = require '../../services/date'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 

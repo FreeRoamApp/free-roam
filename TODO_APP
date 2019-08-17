@@ -2,6 +2,13 @@ TODOS:
 
 - check-in empty date dec 31
 
+
+- New campgrounds / RV parks
+  - RV park filter / icon?
+  - New avg weather that doesn't require SVG
+    - Get rid of avg weather image generation
+  - Pull in USFS/BLM info when upserting
+
 - Product guide onboarding
   x transform existing rigTypes into subset (boxtruck -> motorhome)
   x experience and hookupPreference filters

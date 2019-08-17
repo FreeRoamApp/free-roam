@@ -4,6 +4,9 @@ _filter = require 'lodash/filter'
 _chunk = require 'lodash/chunk'
 _startCase = require 'lodash/startCase'
 _defaults = require 'lodash/defaults'
+_minBy = require 'lodash/minBy'
+_maxBy = require 'lodash/maxBy'
+_values = require 'lodash/values'
 
 Icon = require '../icon'
 FormatService = require '../../services/format'
@@ -13,10 +16,41 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+AVG_CHART_HEIGHT_PX = 200
+
 module.exports = class PlaceInfoWeather
   constructor: ({@model, @router, place}) ->
     @state = z.state
       place: place
+      averages: place.map (place) ->
+        monthsRaw = place?.weather?.months
+        monthsValues = _values monthsRaw
+
+        tmin = _minBy(monthsValues, (month) ->
+          month.tmin
+        )?.tmin
+        tmax = _maxBy(monthsValues, (month) ->
+          month.tmax
+        )?.tmax
+        # maxTrange = _maxBy(monthsValues, (month) ->
+        #   month.tmax - month.tmin
+        # )
+        # maxTrange = maxTrange.tmax - maxTrange.tmin
+        trange = tmax - tmin
+
+        months = _map monthsRaw, (month, abbr) ->
+          barHeight = (month.tmax - month.tmin) / trange
+          console.log tmax - month.tmax
+          marginTop = (tmax - month.tmax) / trange
+          {
+            month
+            barHeight
+            marginTop
+            abbr
+            $precipIcon: new Icon()
+          }
+
+        {months, tmin, tmax, trange}
       forecastDaily: place.map (place) ->
         days = place?.forecast?.daily
         today = new Date()
@@ -40,7 +74,7 @@ module.exports = class PlaceInfoWeather
       currentTab: 'avg'
 
   render: =>
-    {place, forecastDaily, currentTab} = @state.getValue()
+    {place, averages, forecastDaily, currentTab} = @state.getValue()
 
     tabs = ['avg', 'forecast']
 
@@ -60,6 +94,31 @@ module.exports = class PlaceInfoWeather
           src:
             "#{config.USER_CDN_URL}/weather/#{place?.type}_#{place?.id}.svg?2"
         }
+        z '.averages',
+          z '.months', {
+            ontouchstart: (e) ->
+              e.stopPropagation()
+          },
+            _map averages?.months, ({month, barHeight, marginTop, abbr, $precipIcon}) ->
+              z '.month',
+                z '.name', abbr
+                z '.precip',
+                  z '.icon',
+                    z $precipIcon,
+                      icon: 'water'
+                      size: '16px'
+                      color: colors.$precipBlue
+                      isTouchTarget: false
+                  z '.text', "#{month.precip}\""
+                z '.bar-wrapper', {
+                  style:
+                    height: "#{Math.floor(AVG_CHART_HEIGHT_PX * barHeight)}px"
+                    marginTop: "#{Math.floor(AVG_CHART_HEIGHT_PX * marginTop)}px"
+                },
+                  z '.high', "#{month.tmax}°"
+                  z '.bar'
+                  z '.low', "#{month.tmin}°"
+
       else
         z '.forecast',
           z '.days', {

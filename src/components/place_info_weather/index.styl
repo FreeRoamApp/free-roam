@@ -27,6 +27,51 @@
   > .graph
     width: 100%
 
+  > .averages
+    > .months
+      display: flex
+      overflow-x: auto
+      -webkit-overflow-scrolling: touch
+      padding-bottom: 30px
+
+      > .month
+        width: 60px
+        text-align: center
+        flex-shrink: 0
+
+        > .name
+          font-title()
+          text-transform: capitalize
+          margin-bottom: 8px
+
+        > .precip
+          display: flex
+          padding-bottom: 32px
+
+        > .bar-wrapper
+          box-sizing: border-box
+          position: relative
+
+          > .bar
+            flex1()
+            background: getColor('$precipBlue')
+            width: 20px
+            height: 100%
+            border-radius: 10px
+            margin: 0 auto
+
+          > .high, > .low
+            position: absolute
+            width: 100%
+
+          > .high
+            top: -24px
+
+          > .low
+            bottom: -24px
+
+
+
   > .forecast
     > .days
       display: flex
