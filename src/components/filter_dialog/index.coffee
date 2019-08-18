@@ -103,7 +103,7 @@ module.exports = class FilterDialog
           (vals...) -> vals
         ).map ([carrier, signal, isLte]) ->
           {carrier, signal, isLte}
-      when 'list', 'booleanArraySubTypes'
+      when 'list', 'fieldList', 'booleanArraySubTypes'
         list = @filter.items
 
         @checkboxes = _map list, ({key, label}) =>
@@ -229,7 +229,7 @@ module.exports = class FilterDialog
                 hintText:
                   @model.l.get 'filterDialog.inches'
               }
-      when 'list', 'booleanArraySubTypes'
+      when 'list', 'fieldList', 'booleanArraySubTypes'
         $title = @filter?.name
         $content =
           z '.content',

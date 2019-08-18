@@ -1,5 +1,4 @@
 Environment = require '../services/environment'
-
 SemverService = require '../services/semver'
 config = require '../config'
 
@@ -52,8 +51,7 @@ class PushService
           sourceType ?= if Environment.isAndroid() \
                         then 'android'
                         else 'ios-fcm'
-          language = model.l.getLanguageStr()
-          model.pushToken.upsert {token, sourceType, language, deviceId}
+          model.pushToken.upsert {token, sourceType, deviceId}
           model.cookie.set 'hasPushToken', 1, {ttlMs: ONE_DAY_MS}
 
         model.pushToken.setCurrentPushToken token

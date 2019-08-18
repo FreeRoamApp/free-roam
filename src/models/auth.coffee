@@ -7,6 +7,7 @@ require 'rxjs/add/operator/switchMap'
 require 'rxjs/add/operator/take'
 require 'rxjs/add/operator/publishReplay'
 
+Environment = require '../services/environment'
 config = require '../config'
 
 module.exports = class Auth
@@ -61,7 +62,10 @@ module.exports = class Auth
       @portal.call 'app.getDeviceId'
       .catch -> null
       .then (deviceId) =>
-        @call 'pushTokens.upsert', {token: pushToken, deviceId}
+        sourceType = if Environment.isAndroid() \
+                     then 'android'
+                     else 'ios-fcm'
+        @call 'pushTokens.upsert', {token: pushToken, sourceType, deviceId}
       .catch -> null
 
   login: ({username, password} = {}) =>

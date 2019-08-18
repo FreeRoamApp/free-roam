@@ -120,6 +120,8 @@ module.exports = class PlaceInfo extends Base
       100
     )
 
+    console.log place
+
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
     z '.z-place-info', {

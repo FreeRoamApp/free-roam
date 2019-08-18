@@ -2,17 +2,22 @@ TODOS:
 
 - check-in empty date dec 31
 
+- Speed up closing / hitting back on place page (to main map)
+
+- Manually delete my push token and see if it's fixed within a day (cookie to set push token is 24 hours)
+
 
 - New campgrounds / RV parks
   - RV park filter / icon?
   x New avg weather that doesn't require SVG
     x Get rid of avg weather image generation
   x Pull in USFS/BLM info when upserting
-  - If State Park / National Park in name, classify as such
-    - Do in poi_combined.coffee to pick up the ones we replace too
-    - Add in state as well?
+  x If State Park / National Park in name, classify as such
+    x Do in poi_combined.coffee to pick up the ones we replace too
+    x Add in state as well?
   x If not state park / national park / county park / regional park / etc... and not in USFS/BLM boundaries, mark private
-  - Handle dupes (existing ones) properly. Test w/ TX state parks?
+  x Make all? current campgrounds public
+  x Handle dupes (existing ones) properly. Test w/ TX state parks?
 
 - Product guide onboarding
   x transform existing rigTypes into subset (boxtruck -> motorhome)

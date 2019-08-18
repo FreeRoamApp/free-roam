@@ -242,6 +242,15 @@ class MapService
         name: model.l.get 'general.hookups'
       }
       {
+        field: 'subType'
+        type: 'fieldList'
+        items: [
+          {key: 'public', label: model.l.get 'placeInfo.landTypePublic'}
+          {key: 'private', label: model.l.get 'placeInfo.landTypePrivate'}
+        ]
+        name: model.l.get 'placeInfo.landType'
+      }
+      {
         field: 'maxLength'
         key: 'minLength'
         type: 'minIntCustom'
@@ -621,6 +630,13 @@ class MapService
               must: _filter _map filter.value, (value, key) ->
                 if value
                   match: "#{key}": value
+          }
+        when 'fieldList'
+          {
+            bool:
+              should: _filter _map filter.value, (value, key) ->
+                if value
+                  match: "#{field}": key
           }
         when 'cellSignal'
           carrier = filter.value.carrier
