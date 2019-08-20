@@ -25,6 +25,8 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+# https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-s-fuel+dbad49(-121.783189,43.215686)/-121.783189,43.215686,17,0.00,0.00/320x320@2x?access_token=pk.eyJ1IjoiYXVzdGluaGFsbG9jayIsImEiOiJjam50azRkM3EwdW11M3Bwa3JhZmpwd25yIn0.s77eqcPCfwJ3NnPX7UvMpg
+
 module.exports = class PlaceInfo extends Base
   constructor: ({@model, @router, @place}) ->
     @seasons =  [
@@ -120,15 +122,12 @@ module.exports = class PlaceInfo extends Base
       100
     )
 
-    console.log place
-
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
     z '.z-place-info', {
       className: z.classKebab {isLoading, @isImageLoaded}
     },
       if place?.attachmentsPreview?.count
-        console.log 'place', @getCoverUrl place
         src = @getCoverUrl place
         z '.cover', {
           style:
@@ -268,6 +267,16 @@ module.exports = class PlaceInfo extends Base
               desktop: 2
               tablet: 2
             $elements: _filter [
+              if place?.type is 'amenity' and place.amenities?.indexOf('gas') isnt -1
+                z '.section',
+                  z 'img.image',
+                    src: 'https://api.mapbox.com/styles/v1/mapbox/' +
+                        'satellite-v9/static/pin-s-fuel+dbad49' +
+                        "(#{place.location.lon},#{place.location.lat})/" +
+                        "#{place.location.lon},#{place.location.lat},17,0.00," +
+                        '0.00/320x320@2x?access_token=' +
+                        "#{config.MAPBOX_ACCESS_TOKEN}"
+
               unless _isEmpty cellCarriers
                 z '.section',
                   z '.title', @model.l.get 'campground.cellSignal'

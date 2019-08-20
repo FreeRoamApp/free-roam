@@ -10,9 +10,6 @@ DateService = require './date'
 colors = require '../colors'
 config = require '../config'
 
-MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
-          'oct', 'nov', 'dec']
-
 class MapService
   hasLocationPermission: ({model} = {}) ->
     unless navigator?
@@ -669,7 +666,7 @@ class MapService
                   "#{filter.value.operator}": parseFloat(filter.value.number)
             }
           else
-            month = MONTHS[filter.value.month]
+            month = config.MONTHS[filter.value.month]
             {
               range:
                 "#{field}.months.#{month}.#{filter.value.metric}":

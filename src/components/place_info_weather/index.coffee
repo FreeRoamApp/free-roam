@@ -38,7 +38,8 @@ module.exports = class PlaceInfoWeather
         # maxTrange = maxTrange.tmax - maxTrange.tmin
         trange = tmax - tmin
 
-        months = _map monthsRaw, (month, abbr) ->
+        months = _map config.MONTHS, (abbr) ->
+          month = monthsRaw[abbr]
           barHeight = (month.tmax - month.tmin) / trange
           marginTop = (tmax - month.tmax) / trange
           {

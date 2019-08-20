@@ -134,6 +134,9 @@ isomorphic =
   EXPERIENCE_TYPES: ['none', 'little', 'some', 'lots']
   HOOKUP_PREFERENCES: ['none', 'some', 'all']
 
+  MONTHS: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
+            'oct', 'nov', 'dec']
+
 # Server only
 # All keys must have values at run-time (value may be null)
 PORT = serverEnv.FREE_ROAM_PORT or 3000
