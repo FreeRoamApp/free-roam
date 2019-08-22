@@ -21,13 +21,16 @@ module.exports = class PlacesPage
       route.params.type is 'shell'
     type = requests.map ({route}) ->
       _camelCase route.params.type
+    .publishReplay(1).refCount()
     subType = requests.map ({route}) ->
       _camelCase route.params.subType
+    .publishReplay(1).refCount()
     trip = requests.switchMap ({req}) =>
       if req.query.tripId
         @model.trip.getById req.query.tripId
       else
         RxObservable.of null
+    .publishReplay(1).refCount()
 
     mapBoundsStreams = new RxReplaySubject 1
     mapBoundsStreams.next requests.switchMap ({route}) =>

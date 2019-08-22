@@ -10,8 +10,10 @@ module.exports = class PlaceBase
     @auth.stream "#{@namespace}.getBySlug", {slug}
 
   # socket.io compresses responses, so a 50kb response is more like 10kb
-  search: ({query, tripId, sort, limit, includeId}) =>
-    @auth.stream "#{@namespace}.search", {query, tripId, sort, limit, includeId}
+  search: ({query, tripId, tripRouteId, sort, limit, includeId}) =>
+    @auth.stream "#{@namespace}.search", {
+      query, tripId, tripRouteId, sort, limit, includeId
+    }
 
   # socket.io compresses responses, so a 50kb response is more like 10kb
   searchNearby: ({location, limit}) =>

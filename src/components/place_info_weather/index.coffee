@@ -23,7 +23,10 @@ module.exports = class PlaceInfoWeather
     @state = z.state
       place: place
       averages: place.map (place) ->
-        monthsRaw = place?.weather?.months
+        unless place?.weather?.months
+          return
+
+        monthsRaw = place.weather.months
         monthsValues = _values monthsRaw
 
         tmin = _minBy(monthsValues, (month) ->

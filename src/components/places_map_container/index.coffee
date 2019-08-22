@@ -11,6 +11,7 @@ _some = require 'lodash/some'
 _sumBy = require 'lodash/sumBy'
 _isEmpty = require 'lodash/isEmpty'
 _uniq = require 'lodash/uniq'
+_values = require 'lodash/values'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
@@ -18,16 +19,16 @@ require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 
 Checkbox = require '../checkbox'
-CoordinateSheet = require '../coordinate_sheet'
+PlaceSheet = require '../place_sheet'
 LayerSettingsOverlay = require '../layer_settings_overlay'
 Map = require '../map'
-PlaceTooltip = require '../place_tooltip'
 PlacesFilterBar = require '../places_filter_bar'
 PlacesSearch = require '../places_search'
 Fab = require '../fab'
 TooltipPositioner = require '../tooltip_positioner'
 Icon = require '../icon'
 MapService = require '../../services/map'
+TripService = require '../../services/trip'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -36,8 +37,8 @@ if window?
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, isShell, @trip, @dataTypes, showScale, mapBoundsStreams,
-      @persistentCookiePrefix, @addPlacesStreams,
+    {@model, @router, isShell, @trip, @tripRoute, @dataTypes, showScale,
+      mapBoundsStreams, @persistentCookiePrefix, @addPlacesStreams,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
       @initialFilters, initialCenter, center, initialZoom, zoom,
       searchQuery, @isSearchHidden} = options
@@ -76,24 +77,34 @@ module.exports = class PlacesMapContainer
     @dataTypesStream = @getDataTypesStreams @dataTypes
 
     @isTripFilterEnabled = new RxBehaviorSubject Boolean @trip
-    route = @trip?.map (trip) ->
-      trip?.route
+    if @trip
+      tripAndTripRoute = RxObservable.combineLatest(
+        @trip
+        @tripRoute or RxObservable.of null
+        (vals...) -> vals
+      )
+      routes = tripAndTripRoute?.map ([trip, tripRoute]) ->
+        TripService.getRouteGeoJson trip, tripRoute
 
-    @filterTypesStream = @getFilterTypesStream().publishReplay(1).refCount()
+    @filterTypesStream = @getFilterTypesStream()
     placesStream = @getPlacesStream()
     placesWithCounts = RxObservable.combineLatest(
-      @addPlacesStreams.switch(), placesStream, (vals...) -> vals
-    ).map ([addPlaces, {places, visible, total}]) ->
-      if places
-        places = places.concat addPlaces # addPlaces should "under" places on map
-      else
-        places = addPlaces
+      @addPlacesStreams.switch(), placesStream, @trip, (vals...) -> vals
+    ).map ([addPlaces, {places, visible, total}, trip]) ->
+      console.log 'map, reduce the count of this!!'
+      places ?= []
+      places = places.concat addPlaces # addPlaces should "under" places on map
+      places = places.concat _map trip?.destinations, ({lat, lon}) ->
+        {location: {lat, lon}}
+      places = places.concat _map _flatten(_values(trip?.stops)), ({lat, lon}) ->
+        {location: {lat, lon}}
 
       {places, visible, total}
     .share() # otherwise map setsData twice (subscribe called twice)
 
     places = placesWithCounts
-            .map ({places}) -> places
+            .map ({places}) ->
+              places
     counts = placesWithCounts.map ({visible, total}) -> {visible, total}
 
     placesAndIsLegendVisible = RxObservable.combineLatest(
@@ -132,18 +143,17 @@ module.exports = class PlacesMapContainer
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
       @coordinate, defaultOpacity, initialCenter, center, initialZoom,  zoom,
-      initialLayers, route
+      initialLayers, routes
       beforeMapClickFn: =>
         {isLayersPickerVisible} = @state.getValue()
         # if layers picker is visible, cancel the normal map click
         # but still allow clicking on places
         Boolean not isLayersPickerVisible
     }
-    @$placeTooltip = new PlaceTooltip {
-      @model, @router, @place, position: @placePosition, @mapSize
-    }
-    @$coordinateSheet = new CoordinateSheet {
-      @model, @router, @coordinate, @addOptionalLayer, @layersVisible
+    @$placeSheet = new PlaceSheet {
+      @model, @router, @place, @trip, @tripRoute
+
+      @coordinate, @addOptionalLayer, @layersVisible
       @addLayerById, @removeLayerById
     }
     @$placesSearch = new PlacesSearch {
@@ -177,6 +187,7 @@ module.exports = class PlacesMapContainer
       isLegendVisible: @isLegendVisible
       isFilterTypesVisible: @isFilterTypesVisible
       layersVisible: @layersVisible
+      tripRoute: @tripRoute
 
   afterMount: =>
     @disposable = @currentMapBounds.subscribe ({zoom, center} = {}) =>
@@ -244,18 +255,15 @@ module.exports = class PlacesMapContainer
       dataTypesWithValue
 
   getFilterTypesStream: =>
-    persistentCookie = "#{@persistentCookiePrefix}_savedFilters"
-    savedFilters = try
-      JSON.parse @model.cookie.get persistentCookie
-    catch
-      {}
-    # TODO: can we only map over visible dataTypes?
-    filters = _flatten _map @dataTypes, ({dataType, filters}) =>
-      _map filters, (filter) =>
-        valueStreams = new RxReplaySubject 1
-        # TODO: more efficient way to do this?
-        # can we move the map outside of the _maps above?
-        valueStreams.next @initialFilters.map (initialFilters) ->
+    @initialFilters.switchMap (initialFilters) =>
+      persistentCookie = "#{@persistentCookiePrefix}_savedFilters"
+      savedFilters = try
+        JSON.parse @model.cookie.get persistentCookie
+      catch
+        {}
+      # TODO: can we only map over visible dataTypes?
+      filters = _flatten _map @dataTypes, ({dataType, filters}) =>
+        _map filters, (filter) =>
           if filter.type is 'booleanArray'
             savedValueKey = "#{dataType}.#{filter.field}.#{filter.arrayValue}"
           else
@@ -266,33 +274,37 @@ module.exports = class PlacesMapContainer
           else
             initialValue = savedFilters[savedValueKey]
 
-          if initialValue? then initialValue else filter.defaultValue
+          valueStreams = new RxReplaySubject 1
+          valueStreams.next RxObservable.of(
+            if initialValue? then initialValue else filter.defaultValue
+          )
 
-        _defaults {dataType, valueStreams}, filter
+          _defaults {dataType, valueStreams}, filter
 
-    if _isEmpty filters
-      return RxObservable.of {}
+      if _isEmpty filters
+        # return RxObservable.of {}
+        return RxObservable.never()
 
-    RxObservable.combineLatest(
-      _map filters, ({valueStreams}) -> valueStreams.switch()
-      (vals...) -> vals
-    )
-    .map (values) =>
-      filtersWithValue = _zipWith filters, values, (filter, value) ->
-        _defaults {value}, filter
+      RxObservable.combineLatest(
+        _map filters, ({valueStreams}) -> valueStreams.switch()
+        (vals...) -> vals
+      )
+      .map (values) =>
+        filtersWithValue = _zipWith filters, values, (filter, value) ->
+          _defaults {value}, filter
 
-      # set cookie to persist filters
-      savedFilters = _reduce filtersWithValue, (obj, filter) ->
-        {dataType, field, value, type, arrayValue} = filter
-        if value? and type is 'booleanArray'
-          obj["#{dataType}.#{field}.#{arrayValue}"] = value
-        else if value?
-          obj["#{dataType}.#{field}"] = value
-        obj
-      , {}
-      @model.cookie.set persistentCookie, JSON.stringify savedFilters
+        # set cookie to persist filters
+        savedFilters = _reduce filtersWithValue, (obj, filter) ->
+          {dataType, field, value, type, arrayValue} = filter
+          if value? and type is 'booleanArray'
+            obj["#{dataType}.#{field}.#{arrayValue}"] = value
+          else if value?
+            obj["#{dataType}.#{field}"] = value
+          obj
+        , {}
+        @model.cookie.set persistentCookie, JSON.stringify savedFilters
 
-      _groupBy filtersWithValue, 'dataType'
+        _groupBy filtersWithValue, 'dataType'
 
   getPlacesStream: =>
     unless window?
@@ -300,13 +312,15 @@ module.exports = class PlacesMapContainer
 
     streamValues = RxObservable.combineLatest(
       @filterTypesStream, @currentMapBounds, @dataTypesStream
-      @sort, @limit, @isTripFilterEnabled, @trip or RxObservable.of null
+      @sort, @limit, @isTripFilterEnabled
+      @trip or RxObservable.of null
+      @tripRoute or RxObservable.of null
       (vals...) -> vals
     )
     streamValues.switchMap (response) =>
       [
         filterTypes, currentMapBounds, dataTypes, sort, limit,
-        isTripFilterEnabled, trip
+        isTripFilterEnabled, trip, tripRoute
       ] = response
 
       boundsTooSmall = not currentMapBounds or Math.abs(
@@ -330,6 +344,7 @@ module.exports = class PlacesMapContainer
           limit: limit
           sort: sort
           tripId: if isTripFilterEnabled then trip?.id
+          tripRouteId: if isTripFilterEnabled then tripRoute?.id
           query:
             bool:
               filter: queryFilter
@@ -394,7 +409,9 @@ module.exports = class PlacesMapContainer
   render: =>
     {isShell, filterTypes, dataTypes, currentDataType, place, layersVisible,
       counts, visibleDataTypes, isFilterTypesVisible, isLegendVisible, icons,
-      isLayersPickerVisible} = @state.getValue()
+      isLayersPickerVisible, tripRoute} = @state.getValue()
+
+    console.log 'rrrooouttteee', tripRoute
 
     isCountsBarVisbile = counts?.visible < counts?.total
 
@@ -425,8 +442,7 @@ module.exports = class PlacesMapContainer
 
         z '.map',
           z @$map
-          z @$placeTooltip
-          z @$coordinateSheet
+          z @$placeSheet
 
           z '.legend-fab', {
             onclick: =>

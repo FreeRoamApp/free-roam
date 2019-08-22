@@ -4,6 +4,7 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _findIndex = require 'lodash/findIndex'
+_find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _forEach = require 'lodash/forEach'
 _orderBy = require 'lodash/orderBy'
@@ -22,14 +23,13 @@ module.exports = class Map
 
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
-      @place, @coordinate, @placePosition, @mapSize, @initialZoom, @zoom,
-      @initialCenter, @initialBounds, @route, @fill, @initialLayers, @center,
+      @place, @placePosition, @mapSize, @initialZoom, @zoom,
+      @initialCenter, @initialBounds, @routes, @fill, @initialLayers, @center,
       @defaultOpacity, @onclick, @preserveDrawingBuffer, @onContentReady,
       @hideLabels, @hideControls, @usePlaceNumbers,
       @beforeMapClickFn} = options
 
     @place ?= new RxBehaviorSubject null
-    @coordinate ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
 
     @initialZoom ?= 4
@@ -127,12 +127,19 @@ module.exports = class Map
       @map.touchZoomRotate.disableRotation()
 
   addPlacesLayer: =>
+    @map.addSource 'place', {
+      type: 'geojson'
+      data:
+        type: 'FeatureCollection'
+        features: []
+    }
     @map.addSource 'places', {
       type: 'geojson'
       data:
         type: 'FeatureCollection'
         features: []
     }
+
     if @usePlaceNumbers
       @map.addLayer {
         id: 'places'
@@ -196,15 +203,41 @@ module.exports = class Map
           'icon-opacity': ['get', 'iconOpacity']
       }
 
+      @map.addLayer {
+        id: 'place-focal'
+        type: 'circle'
+        source: 'place'
+        paint:
+          'circle-radius': 20
+          'circle-color': ['get', 'color']
+          'circle-opacity': 0.3
+          'circle-stroke-width': 2
+          'circle-stroke-color': ['get', 'color']
+          'circle-translate': [0, -10]
+      }
+
+      @map.addLayer {
+        id: 'place'
+        type: 'symbol'
+        source: 'place'
+        layout:
+          'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+
+          # this gets rid of fade in
+          'icon-allow-overlap': true
+          'icon-ignore-placement': true
+
+          'icon-size': 1
+          'icon-anchor': 'bottom'
+      }
+
+
   addRouteLayers: =>
     @map.addSource 'route', {
       type: 'geojson'
       data:
-        type: 'Feature'
-        properties: {}
-        geometry:
-          type: 'LineString'
-          coordinates: []
+        type: 'FeatureCollection'
+        features: []
     }
     @map.addLayer {
       id: 'route'
@@ -214,7 +247,7 @@ module.exports = class Map
         'line-join': 'round'
         'line-cap': 'round'
       paint:
-        'line-color': colors.getRawColor(colors.$primary500)
+        'line-color': ['get', 'color']
         'line-width': 2
     }
     @map.addLayer {
@@ -266,9 +299,9 @@ module.exports = class Map
           @addFillLayer()
           @subscribeToFill()
 
-        if @route
+        if @routes
           @addRouteLayers()
-          @subscribeToRoute()
+          @subscribeToRoutes()
 
         @addPlacesLayer()
 
@@ -329,10 +362,10 @@ module.exports = class Map
           if @place.getValue()
             return @place.next null
 
-          coordinateValue = @coordinate.getValue()
+          placeValue = @place.getValue()
 
-          if coordinateValue
-            @coordinate.next null # already open, close
+          if placeValue
+            @place.next null # already open, close
 
           # don't 'click' on double-tap zoom
           if @clickTimeout
@@ -347,12 +380,12 @@ module.exports = class Map
 
             # @place.next null
 
-            unless coordinateValue
-              @coordinate.next null # reset the tooltip for things like elevation
+            unless placeValue
+              @place.next null # reset the tooltip for things like elevation
               latRounded = Math.round(e.lngLat.lat * 10000) / 10000
               lonRounded = Math.round(e.lngLat.lng * 10000) / 10000
 
-              @coordinate.next {
+              @place.next {
                 name: "#{latRounded}, #{lonRounded}"
                 type: 'coordinate'
                 position: e.point
@@ -371,18 +404,22 @@ module.exports = class Map
           if e.features[0].properties.type is 'coordinate'
             return
 
-          @coordinate.next null
+          @place.next null
 
           coordinates = e.features[0].geometry.coordinates.slice()
           name = e.features[0].properties.name
           number = e.features[0].properties.number
           description = e.features[0].properties.description
+          icon = e.features[0].properties.icon
           id = e.features[0].properties.id
           slug = e.features[0].properties.slug
           type = e.features[0].properties.type
           rating = if e.features[0].properties.rating is 'null' \
                    then 0
                    else e.features[0].properties.rating
+          ratingCount = if e.features[0].properties.ratingCount is 'null' \
+                        then 0
+                        else e.features[0].properties.ratingCount
           thumbnailPrefix = e.features[0].properties.thumbnailPrefix
           # Ensure that if the map is zoomed out such that multiple
           # copies of the feature are visible, the popup appears
@@ -398,9 +435,12 @@ module.exports = class Map
             name: name
             description: description
             rating: rating
+            ratingCount: ratingCount
             thumbnailPrefix: thumbnailPrefix
             position: position
             location: coordinates
+            icon: icon
+            color: colors["$amenity#{icon}"]
           }
         @map.on 'click', 'places', onclick
         @map.on 'click', 'places-text', onclick
@@ -420,7 +460,7 @@ module.exports = class Map
   beforeUnmount: =>
     console.log 'rm subscription'
     @disposable?.unsubscribe()
-    @routeDisposable?.unsubscribe()
+    @routesDisposable?.unsubscribe()
     @fillDisposable?.unsubscribe()
     @mapBoundsStreamsDisposable?.unsubscribe()
     @centerDisposable?.unsubscribe()
@@ -481,19 +521,21 @@ module.exports = class Map
       if zoom
         @map.setZoom zoom
 
-  subscribeToRoute: =>
+  subscribeToRoutes: =>
     console.log 'create subscription'
-    @routeDisposable = @route.subscribe (route) =>
-      unless route?.legs
-        return
-      geojson = _flatten _map route.legs, ({shape}) ->
-        MapService.decodePolyline shape
+    @routesDisposable = @routes.subscribe (routes) =>
+
       @map.getSource('route')?.setData {
-        type: 'Feature'
-        properties: {}
-        geometry:
-          type: 'LineString'
-          coordinates: geojson
+        type: 'FeatureCollection'
+        features: _map routes, ({geojson, color}) ->
+          {
+            type: 'Feature'
+            properties:
+              color: color
+            geometry:
+              type: 'LineString'
+              coordinates: geojson
+          }
       }
 
   subscribeToFill: =>
@@ -502,26 +544,46 @@ module.exports = class Map
 
   subscribeToPlaces: =>
     console.log 'create subscription'
-    placesAndCoordinate = RxObservable.combineLatest(
-      @places, @coordinate, (vals...) -> vals
+    placesAndPlace = RxObservable.combineLatest(
+      @places, @place, (vals...) -> vals
     )
-    @disposable = placesAndCoordinate.subscribe ([places, coordinate]) =>
-      if coordinate
+    @disposable = placesAndPlace.subscribe ([places, place]) =>
+      if place?.type is 'coordinate'
         baseArr = [
           {
             type: 'Feature'
             properties:
-              name: coordinate.name
+              name: place.name
               icon: 'drop_pin'
               iconOpacity: @defaultOpacity
               type: 'coordinate'
             geometry:
               type: 'Point'
-              coordinates: coordinate.location
+              coordinates: place.location
           }
         ]
       else
         baseArr = []
+
+      @map.getSource('place')?.setData {
+        type: 'FeatureCollection'
+        features: _filter [
+          if place and place.type isnt 'coordinate'
+            {
+              type: 'Feature'
+              properties:
+                icon: place.icon or 'default'
+                color: place.color
+              geometry:
+                type: 'Point'
+                coordinates: place.location
+                # coordinates: [ # reverse of typical lat, lon
+                #   place.location.lon
+                #   place.location.lat
+                # ]
+            }
+        ]
+      }
 
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'

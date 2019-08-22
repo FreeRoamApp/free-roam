@@ -12,7 +12,9 @@ if window?
   require './index.styl'
 
 module.exports = class TripsPage
-  constructor: ({@model, @router, requests, serverData, group}) ->
+  @hasBottomBar: true
+
+  constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     @selectedIndex = new RxBehaviorSubject 0
 
     @$appBar = new AppBar {@model}
@@ -54,3 +56,4 @@ module.exports = class TripsPage
           }
         ]
       @$trips
+      @$bottomBar

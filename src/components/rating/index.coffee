@@ -40,10 +40,11 @@ module.exports = class Rating
       @value.next value
     @onRate? value
 
-  render: ({size} = {}) =>
+  render: ({size, color} = {}) =>
     {rating, starIcons} = @state.getValue()
 
     size ?= '20px'
+    color ?= colors.$amber500
 
     z '.z-rating', {
       style:
@@ -55,5 +56,5 @@ module.exports = class Rating
             icon: icon
             size: size
             isTouchTarget: false
-            color: colors.$amber500
+            color: color
             onclick: if @isInteractive then (=> @setRating i + 1) else null

@@ -43,7 +43,7 @@
         display: flex
         align-items: flex-start
         cursor: pointer
-        height: 122px
+        min-height: 122px
         position: relative
 
         > .dot
@@ -67,17 +67,31 @@
             > .date
               font-caption1()
 
-            > .travel-time
-              font-caption3()
-              margin-left: auto
-              display: flex
-              align-items: center
-
-              > .icon
-                margin-right: 6px
-
           > .place-list-item
             margin-top: 8px
+
+          > .route
+            > .header
+              display: flex
+
+              > .en-route
+                display: flex
+
+              > .travel-time
+                font-caption3()
+                margin-left: auto
+                display: flex
+                align-items: center
+
+                > .icon
+                  margin-right: 6px
+
+            > .content
+              display: none
+
+              &.is-visible
+                display: block
+
 
         > .actions
           margin-left: auto

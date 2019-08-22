@@ -1,10 +1,28 @@
 TODOS:
 
+- Trip routing
+  - checkIn default time is now
+  - route should have time, distance, polyline
+
+- Fix random trips that are getting created when checking in from place page?
+
+- Better trips
+  - Add stop overlay/page
+    - Probably should be a normal page?
+  - Replace place_tooltip with coordinate_sheet (place_sheet)
+  - Get rid of placePosition (was for placeTooltip)
+    - Or is it needed to move map if tapping on bottom?
+  - have place subject in map use {lat, lon} instead of [lon, lat]
+  - focus circle needs to go below current icon, but above all other icons
+    - Should probably have two layers for 'place', one uses normal icon
+  - changing route deletes stops
+
 - check-in empty date dec 31
 
-- Speed up closing / hitting back on place page (to main map)
+x Speed up closing / hitting back on place page (to main map)
 
 - Manually delete my push token and see if it's fixed within a day (cookie to set push token is 24 hours)
+
 
 
 - New campgrounds / RV parks
@@ -19,7 +37,7 @@ TODOS:
   x Make all? current campgrounds public
   x Handle dupes (existing ones) properly. Test w/ TX state parks?
 
-- Product guide onboarding
+x Product guide onboarding
   x transform existing rigTypes into subset (boxtruck -> motorhome)
   x experience and hookupPreference filters
   x give all products ids?

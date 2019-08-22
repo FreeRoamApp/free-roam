@@ -32,28 +32,28 @@ if window?
 ###
 
 module.exports = class TripMap
-  constructor: ({@model, @router, @trip, checkIns}) ->
+  constructor: ({@model, @router, @trip, destinations}) ->
     @$travelMap = new TravelMap {
-      @model, @router, @trip, checkIns
+      @model, @router, @trip, destinations
     }
 
     @state = z.state {
       @trip
-      checkIns
+      destinations
     }
 
   share: =>
     @$travelMap.share()
 
   render: =>
-    {trip, checkIns} = @state.getValue()
+    {trip, destinations} = @state.getValue()
 
     z '.z-trip-map', {
       ontouchstart: (e) -> e.stopPropagation()
       onmousedown: (e) -> e.stopPropagation()
     },
       z @$travelMap
-      if checkIns?.length > 1
+      if destinations?.length > 1
         z '.places-along-route', {
           onclick: =>
             @router.go 'home', null, {

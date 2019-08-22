@@ -26,8 +26,18 @@ module.exports = class Trip
   getStats: ({checkIns}) =>
     @auth.stream "#{@namespace}.getStats", {checkIns}, {ignoreCache: true}
 
+  getRouteStopsByTripIdAndRouteIds: (tripId, routeIds) =>
+    @auth.stream "#{@namespace}.getRouteStopsByTripIdAndRouteIds", {
+      tripId, routeIds
+    }
+
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
+
+  upsertStopByIdAndRouteId: (id, routeId, checkIn) ->
+    @auth.call "#{@namespace}.upsertStopByIdAndRouteId", {
+      id, routeId, checkIn
+    }, {invalidateAll: true}
 
   hasEditPermission: (trip, user) ->
     trip?.userId and trip?.userId is user?.id

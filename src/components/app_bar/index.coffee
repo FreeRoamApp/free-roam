@@ -13,10 +13,17 @@ module.exports = class AppBar
 
   render: (options) ->
     {$topLeftButton, $topRightButton, title, bgColor, color, isFlat, isPrimary
-      isFullWidth} = options
+      isSecondary, isFullWidth} = options
 
-    color ?= if isPrimary then colors.$primary500Text else colors.$header500Text
-    bgColor ?= if isPrimary then colors.$primary500 else colors.$header500
+    if isPrimary
+      color ?= colors.$primary500Text
+      bgColor ?= colors.$primary500
+    else if isSecondary
+      color ?= colors.$secondary500Text
+      bgColor ?= colors.$secondary500
+    else
+      color ?= colors.$header500Text
+      bgColor ?= colors.$header500
 
     z 'header.z-app-bar', {
       className: z.classKebab {isFlat}

@@ -19,8 +19,8 @@ module.exports = class Trip
   constructor: ({@model, @router, @trip}) ->
     @$fab = new Fab()
 
-    checkIns = @trip.map (trip) ->
-      trip?.checkIns
+    destinations = @trip.map (trip) ->
+      trip?.destinationsInfo
 
     me = @model.user.getMe()
 
@@ -28,8 +28,8 @@ module.exports = class Trip
       @trip, me, (vals...) -> vals
     )
 
-    @$tripMap = new TripMap {@model, @router, @trip, checkIns}
-    @$tripItinerary = new TripItinerary {@model, @router, @trip, checkIns}
+    @$tripMap = new TripMap {@model, @router, @trip, destinations}
+    @$tripItinerary = new TripItinerary {@model, @router, @trip, destinations}
     @$tabs = new Tabs {@model}
 
     @$followButton = new SecondaryButton()

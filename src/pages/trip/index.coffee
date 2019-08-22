@@ -11,8 +11,6 @@ if window?
   require './index.styl'
 
 module.exports = class TripPage
-  hideDrawer: true
-
   constructor: ({@model, @router, requests, serverData, group}) ->
     @trip = requests.switchMap ({route}) =>
       if route.params.id
@@ -33,7 +31,6 @@ module.exports = class TripPage
 
   getMeta: =>
     @trip.map (trip) =>
-      console.log 'trip', trip
       cacheBust = new Date(trip?.lastUpdateTime).getTime()
       {
         title: @model.l.get 'tripPage.title', {

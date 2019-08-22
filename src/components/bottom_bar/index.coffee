@@ -71,9 +71,9 @@ module.exports = class BottomBar
       }
       {
         $icon: new Icon()
-        icon: 'profile'
-        route: @router.get 'profileMe'
-        text: @model.l.get 'general.profile'
+        icon: 'road'
+        route: @router.get 'trips'
+        text: @model.l.get 'general.trips'
       }
       {
         $icon: new Icon()

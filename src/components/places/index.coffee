@@ -19,9 +19,7 @@ if window?
 module.exports = class Places
   constructor: (options) ->
     {@model, @router, isShell, type, subType,
-      trip, mapBoundsStreams, searchQuery} = options
-
-    @$addIcon = new Icon()
+      trip, tripRoute, mapBoundsStreams, searchQuery} = options
 
     @currentDataType = new RxReplaySubject 1
     if type
@@ -29,16 +27,19 @@ module.exports = class Places
     else
       @currentDataType.next RxObservable.of 'campground'
 
-    typeAndSubType = RxObservable.combineLatest type, subType, (vals...) -> vals
+    if type and subType
+      typeAndSubType = RxObservable.combineLatest(
+        type, subType, (vals...) -> vals
+      )
 
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router, isShell, trip
+      @model, @router, isShell, trip, tripRoute
       persistentCookiePrefix: 'home'
       searchQuery
       mapBoundsStreams
       currentDataType: @currentDataType
       initialDataType: type # from url
-      initialFilters: typeAndSubType.map ([type, subType]) ->
+      initialFilters: typeAndSubType?.map ([type, subType]) ->
         if subType
           if type is 'amenity'
             {"#{type}.amenities.#{_camelCase subType}": true}

@@ -12,18 +12,19 @@ Map = require '../map'
 ShareMapDialog = require '../share_map_dialog'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
+TripService = require '../../services/trip'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
 module.exports = class TravelMap
-  constructor: ({@model, @router, @trip, checkIns, onclick, prepScreenshot}) ->
-    checkIns ?= @trip.map (trip) ->
-      trip?.checkIns
+  constructor: ({@model, @router, @trip, destinations, onclick, prepScreenshot}) ->
+    destinations ?= @trip.map (trip) ->
+      trip?.destinations
     # .publishReplay(1).refCount()
-    route = @trip.map (trip) ->
-      trip?.route
+    routes = @trip.map (trip) ->
+      TripService.getRouteGeoJson trip
     stats = @trip.map (trip) ->
       trip?.stats
 
@@ -39,18 +40,19 @@ module.exports = class TravelMap
       }
 
     mapBoundsStreams = new RxReplaySubject 1
-    mapBoundsStreams.next(
-      @trip.map (trip) =>
-        unless trip
-          return RxObservable.of {}
-        trip.route.bounds
-    )
+    # FIXME FIXME
+    # mapBoundsStreams.next(
+    #   @trip.map (trip) =>
+    #     unless trip
+    #       return RxObservable.of {}
+    #     trip.route.bounds
+    # )
 
     @mapSize = new RxBehaviorSubject null
     mapOptions = {
       @model, @router
-      places: checkIns.map (checkIns) -> _map checkIns, 'place'
-      route: route
+      places: destinations.map (destinations) -> _map destinations, 'place'
+      routes: routes
       fill: filledStates
       usePlaceNumbers: true
       mapBoundsStreams: mapBoundsStreams
@@ -80,8 +82,8 @@ module.exports = class TravelMap
 
     @state = z.state {
       prepScreenshot
-      routeStats: route.map (route) ->
-        {time: route?.time, distance: route?.distance}
+      # routeStats: routes.map (routes) ->
+      #   {time: route?.time, distance: route?.distance}
     }
 
   resetValueStreams: =>
