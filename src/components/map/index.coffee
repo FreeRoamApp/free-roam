@@ -8,6 +8,7 @@ _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _forEach = require 'lodash/forEach'
 _orderBy = require 'lodash/orderBy'
+_range = require 'lodash/range'
 
 tile = require './tilejson'
 Spinner = require '../spinner'
@@ -23,7 +24,7 @@ module.exports = class Map
 
   constructor: (options) ->
     {@model, @router, @places, @showScale, @mapBoundsStreams, @currentMapBounds
-      @place, @placePosition, @mapSize, @initialZoom, @zoom,
+      @place, @placePosition, @mapSize, @initialZoom, @zoom, @donut
       @initialCenter, @initialBounds, @routes, @fill, @initialLayers, @center,
       @defaultOpacity, @onclick, @preserveDrawingBuffer, @onContentReady,
       @hideLabels, @hideControls, @usePlaceNumbers,
@@ -107,10 +108,10 @@ module.exports = class Map
     @$$mapEl = $$el.querySelector('.map')
 
     @model.additionalScript.add(
-      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.0.0.css"
+      'css', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.3.0b1.css"
     )
     @model.additionalScript.add(
-      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.0.0.js"
+      'js', "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.3.0b1.js"
     )
     .then =>
       console.log '%cNEW MAPBOX MAP', 'color: red'
@@ -126,7 +127,7 @@ module.exports = class Map
       @map.dragRotate.disable()
       @map.touchZoomRotate.disableRotation()
 
-  addPlacesLayer: =>
+  addPlacesSources: =>
     @map.addSource 'place', {
       type: 'geojson'
       data:
@@ -140,96 +141,116 @@ module.exports = class Map
         features: []
     }
 
-    if @usePlaceNumbers
-      @map.addLayer {
-        id: 'places'
-        type: 'symbol'
-        source: 'places'
-        layout:
-          'icon-image': 'empty'
-          'icon-allow-overlap': true
-          'icon-ignore-placement': true
-          'icon-size': 1
-          'icon-anchor': 'bottom'
-          'text-field': '{number}'
-          'text-anchor': 'bottom'
-          'text-size': 9
-          'text-font': ['Open Sans Bold'] # must exist in tilejson
+  addPlacesLayers: =>
+    # two separate layers because mapbox is kind of buggy with all in one
+    # layer. main problem is icon-allow-overlap: false gets rid of the
+    # nice fading in and out. once fixed, try having in same layer again?
+    # https://github.com/mapbox/mapbox-gl-js/issues/6052
+    @map.addLayer {
+      id: 'places-text'
+      type: 'symbol'
+      source: 'places'
+      minzoom: 8
+      layout:
+        'text-field': '{name}'
 
-        paint:
-          'text-translate': [0, -9]
-          'text-color': '#ffffff'
-      }
-    else
-      # two separate layers because mapbox is kind of buggy with all in one
-      # layer. main problem is icon-allow-overlap: false gets rid of the
-      # nice fading in and out. once fixed, try having in same layer again?
-      # https://github.com/mapbox/mapbox-gl-js/issues/6052
-      @map.addLayer {
-        id: 'places-text'
-        type: 'symbol'
-        source: 'places'
-        minzoom: 8
-        layout:
-          'text-field': '{name}'
+        'text-ignore-placement': false
+        'text-allow-overlap': false
+        'text-anchor': 'bottom-left'
+        'text-font': ['Open Sans Regular'] # must exist in tilejson
+        'text-size': 12
+      paint:
+        'text-opacity': ['get', 'iconOpacity']
+        'text-translate': [12, -4]
+        'text-halo-color': 'rgba(255, 255, 255, 1)'
+        'text-halo-width': 2
+    }
+    @map.addLayer {
+      id: 'places'
+      type: 'symbol'
+      source: 'places'
+      layout:
+        'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
 
-          'text-ignore-placement': false
-          'text-allow-overlap': false
-          'text-anchor': 'bottom-left'
-          'text-font': ['Open Sans Regular'] # must exist in tilejson
-          'text-size': 12
-        paint:
-          'text-opacity': ['get', 'iconOpacity']
-          'text-translate': [12, -4]
-          'text-halo-color': 'rgba(255, 255, 255, 1)'
-          'text-halo-width': 2
-      }
-      @map.addLayer {
-        id: 'places'
-        type: 'symbol'
-        source: 'places'
-        layout:
-          'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+        # one of these needs to be on or all icons won't show.
+        # if icon-allow-overlap is true, fading in/out doesn't work
+        # 'icon-allow-overlap': true
+        'icon-ignore-placement': true
 
-          # one of these needs to be on or all icons won't show.
-          # if icon-allow-overlap is true, fading in/out doesn't work
-          # 'icon-allow-overlap': true
-          'icon-ignore-placement': true
+        'icon-size': ['get', 'size']
+        'icon-anchor': ['get', 'anchor']
 
-          'icon-size': 1
-          'icon-anchor': 'bottom'
+        # don't need this since we ca ncontrol where in array
+        # places go (at end so they're on top)
+        # 'symbol-sort-key': ['get', 'number']
+        'symbol-z-order': 'source'
+        'text-field': '{number}'
+        'text-anchor': ['get', 'anchor']
+        'text-size': 14
+        'text-font': ['Open Sans Bold'] # must exist in tilejson
+        'text-allow-overlap': true
+        'text-ignore-placement': true
+      paint:
+        # 'text-translate': [0, -9]
+        'text-color': '#ffffff'
+        'icon-opacity': ['get', 'iconOpacity']
+    }
 
-        paint:
-          'icon-opacity': ['get', 'iconOpacity']
-      }
+    @map.addLayer {
+      id: 'place-focal'
+      type: 'circle'
+      source: 'place'
+      paint:
+        'circle-radius': 20
+        'circle-color': ['get', 'color']
+        'circle-opacity': 0.3
+        'circle-stroke-width': 2
+        'circle-stroke-color': ['get', 'color']
+        'circle-translate': [0, -10]
+        # 'circle-anchor': ['get', 'anchor']
+      filter:
+        ['has', 'color']
+    }
 
-      @map.addLayer {
-        id: 'place-focal'
-        type: 'circle'
-        source: 'place'
-        paint:
-          'circle-radius': 20
-          'circle-color': ['get', 'color']
-          'circle-opacity': 0.3
-          'circle-stroke-width': 2
-          'circle-stroke-color': ['get', 'color']
-          'circle-translate': [0, -10]
-      }
 
-      @map.addLayer {
-        id: 'place'
-        type: 'symbol'
-        source: 'place'
-        layout:
-          'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+    @map.addLayer {
+      id: 'place'
+      type: 'symbol'
+      source: 'place'
+      layout:
+        'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
 
-          # this gets rid of fade in
-          'icon-allow-overlap': true
-          'icon-ignore-placement': true
+        # this gets rid of fade in
+        'icon-allow-overlap': true
+        'icon-ignore-placement': true
 
-          'icon-size': 1
-          'icon-anchor': 'bottom'
-      }
+        'icon-size': ['get', 'size']
+        'icon-anchor': ['get', 'anchor']
+
+        'text-field': '{number}'
+        'text-anchor': ['get', 'anchor']
+        'text-size': 14
+        'text-font': ['Open Sans Bold'] # must exist in tilejson
+        'text-allow-overlap': true
+        'text-ignore-placement': true
+      paint:
+        'text-color': '#ffffff'
+      # filter:
+      #   ['has', 'color']
+    }
+
+  addDotsLayer: =>
+    @map.addLayer {
+      id: 'places-dots'
+      type: 'circle'
+      source: 'places'
+      paint:
+        'circle-radius': 6
+        'circle-color': colors.$black
+        'circle-opacity': 0.8
+      filter:
+        ['has', 'hasDot']
+    }
 
 
   addRouteLayers: =>
@@ -248,19 +269,38 @@ module.exports = class Map
         'line-cap': 'round'
       paint:
         'line-color': ['get', 'color']
-        'line-width': 2
+        'line-width': 4
+    }
+    # @map.addLayer {
+    #   id: 'route-direction'
+    #   type: 'symbol'
+    #   source: 'route'
+    #   layout:
+    #     'symbol-placement': 'line'
+    #     'symbol-spacing': 100
+    #     'icon-allow-overlap': true
+    #     'icon-image': 'arrow'
+    #     'icon-size': 1
+    #     visibility: 'visible'
+    # }
+
+  addDonutLayer: =>
+    @map.addSource 'donut', {
+      type: 'geojson'
+      data:
+        type: 'FeatureCollection'
+        features: []
     }
     @map.addLayer {
-      id: 'route-direction'
-      type: 'symbol'
-      source: 'route'
-      layout:
-        'symbol-placement': 'line'
-        'symbol-spacing': 100
-        'icon-allow-overlap': true
-        'icon-image': 'arrow'
-        'icon-size': 1
-        visibility: 'visible'
+      id: 'donut'
+      type: 'fill'
+      source: 'donut'
+      paint:
+        'fill-color': 'blue'
+        'fill-opacity': 0.6
+        # 'line-width': 10
+        # 'line-color': 'red'
+
     }
 
   # TODO: might be better to just handle this in calling component (trip),
@@ -299,11 +339,19 @@ module.exports = class Map
           @addFillLayer()
           @subscribeToFill()
 
+        @addPlacesSources()
+
         if @routes
           @addRouteLayers()
           @subscribeToRoutes()
 
-        @addPlacesLayer()
+          @addDotsLayer()
+
+        @addPlacesLayers()
+
+        if @donut
+          @addDonutLayer()
+          @subscribeToDonut()
 
         @addSavedLayers()
 
@@ -345,6 +393,9 @@ module.exports = class Map
 
       if @onclick
         @map.on 'click', @onclick
+        # @map.on 'click', 'places-numbers', (e) =>
+        #   e.originalEvent.stopPropagation()
+        #   @onclick e
         @map.on 'click', 'places', (e) =>
           e.originalEvent.stopPropagation()
           @onclick e
@@ -388,8 +439,9 @@ module.exports = class Map
               @place.next {
                 name: "#{latRounded}, #{lonRounded}"
                 type: 'coordinate'
+                icon: 'drop_pin'
                 position: e.point
-                location: [e.lngLat.lng, e.lngLat.lat]
+                location: {lat: e.lngLat.lat, lon: e.lngLat.lng}
                 features:
                   _filter @map.queryRenderedFeatures(e.point), (feature) ->
                     feature.source in [
@@ -407,20 +459,13 @@ module.exports = class Map
           @place.next null
 
           coordinates = e.features[0].geometry.coordinates.slice()
-          name = e.features[0].properties.name
-          number = e.features[0].properties.number
-          description = e.features[0].properties.description
           icon = e.features[0].properties.icon
-          id = e.features[0].properties.id
-          slug = e.features[0].properties.slug
-          type = e.features[0].properties.type
           rating = if e.features[0].properties.rating is 'null' \
                    then 0
                    else e.features[0].properties.rating
           ratingCount = if e.features[0].properties.ratingCount is 'null' \
                         then 0
                         else e.features[0].properties.ratingCount
-          thumbnailPrefix = e.features[0].properties.thumbnailPrefix
           # Ensure that if the map is zoomed out such that multiple
           # copies of the feature are visible, the popup appears
           # over the copy being pointed to.
@@ -429,19 +474,23 @@ module.exports = class Map
           position = @map.project coordinates
           @placePosition.next position
           @place.next {
-            id: id
-            slug: slug
-            type: type
-            name: name
-            description: description
+            id: e.features[0].properties.id
+            slug: e.features[0].properties.slug
+            type: e.features[0].properties.type
+            name: e.features[0].properties.name
+            number: e.features[0].properties.number
+            description: e.features[0].properties.description
             rating: rating
             ratingCount: ratingCount
-            thumbnailPrefix: thumbnailPrefix
+            thumbnailPrefix: e.features[0].properties.thumbnailPrefix
             position: position
-            location: coordinates
-            icon: icon
+            location: {lat: coordinates[1], lon: coordinates[0]}
+            icon: e.features[0].properties.selectedIcon or icon
+            size: e.features[0].properties.size or 1
+            anchor: e.features[0].properties.anchor or 'bottom'
             color: colors["$amenity#{icon}"]
           }
+        # @map.on 'click', 'places-numbers', onclick
         @map.on 'click', 'places', onclick
         @map.on 'click', 'places-text', onclick
 
@@ -525,6 +574,8 @@ module.exports = class Map
     console.log 'create subscription'
     @routesDisposable = @routes.subscribe (routes) =>
 
+      console.log 'routes', routes
+
       @map.getSource('route')?.setData {
         type: 'FeatureCollection'
         features: _map routes, ({geojson, color}) ->
@@ -538,6 +589,15 @@ module.exports = class Map
           }
       }
 
+  subscribeToDonut: =>
+    console.log 'sub to donut'
+    @donutDisposable = @donut.subscribe (donut) =>
+      console.log 'got donut', donut
+      data = if donut \
+             then @getDonutGeojson donut.location, donut.min, donut.max
+             else null
+      @map.getSource('donut')?.setData data
+
   subscribeToFill: =>
     @fillDisposable = @fill.subscribe (fill) =>
       @map.getSource('fill')?.setData fill
@@ -548,51 +608,38 @@ module.exports = class Map
       @places, @place, (vals...) -> vals
     )
     @disposable = placesAndPlace.subscribe ([places, place]) =>
-      if place?.type is 'coordinate'
-        baseArr = [
-          {
-            type: 'Feature'
-            properties:
-              name: place.name
-              icon: 'drop_pin'
-              iconOpacity: @defaultOpacity
-              type: 'coordinate'
-            geometry:
-              type: 'Point'
-              coordinates: place.location
-          }
-        ]
-      else
-        baseArr = []
-
       @map.getSource('place')?.setData {
         type: 'FeatureCollection'
         features: _filter [
-          if place and place.type isnt 'coordinate'
+          if place
             {
               type: 'Feature'
               properties:
-                icon: place.icon or 'default'
+                icon: place.selectedIcon or place.icon or 'default'
+                anchor: place.anchor
+                number: place.number
+                size: place.size
                 color: place.color
               geometry:
                 type: 'Point'
-                coordinates: place.location
-                # coordinates: [ # reverse of typical lat, lon
-                #   place.location.lon
-                #   place.location.lat
-                # ]
+                coordinates: [ # reverse of typical lat, lon
+                  place.location.lon
+                  place.location.lat
+                ]
             }
         ]
       }
 
       @map.getSource('places')?.setData {
         type: 'FeatureCollection'
-        features: baseArr.concat _map places, (place, i) =>
+        features: _map places, (place, i) =>
           {
             type: 'Feature'
             properties:
               name: place.name
-              number: "#{i + 1}"
+              number: place.number
+              size: place.size or 1
+              anchor: place.anchor or 'bottom'
               id: place.id
               slug: place.slug
               rating: place.rating
@@ -600,7 +647,9 @@ module.exports = class Map
               thumbnailPrefix: place.thumbnailPrefix
               type: place.type
               icon: place.icon or 'default'
+              selectedIcon: place.selectedIcon
               iconOpacity: place.iconOpacity or @defaultOpacity
+              hasDot: place.hasDot
             geometry:
               type: 'Point'
               coordinates: [ # reverse of typical lat, lon
@@ -609,6 +658,41 @@ module.exports = class Map
               ]
           }
       }
+
+  getDonutGeojson: (center, minRadiusMi, maxRadiusMi, pointsCount = 64) ->
+    # https://stackoverflow.com/a/39006388
+    minDistanceX = minRadiusMi / (69.171 * Math.cos(center.lat * Math.PI / 180))
+    minDistanceY = minRadiusMi / 68.707
+    maxDistanceX = maxRadiusMi / (69.171 * Math.cos(center.lat * Math.PI / 180))
+    maxDistanceY = maxRadiusMi / 68.707
+    inner = _map _range(pointsCount), (point, i) ->
+      theta = i / pointsCount * 2 * Math.PI
+      x = minDistanceX * Math.cos(theta)
+      y = minDistanceY * Math.sin(theta)
+      [
+        center.lon + x
+        center.lat + y
+      ]
+    outer = _map _range(pointsCount), (point, i) ->
+      theta = i / pointsCount * 2 * Math.PI
+      x = maxDistanceX * Math.cos(theta)
+      y = maxDistanceY * Math.sin(theta)
+      [
+        center.lon + x
+        center.lat + y
+      ]
+
+    {
+      type: 'FeatureCollection'
+      features: [
+        {
+          type: 'Feature'
+          geometry:
+            type: 'MultiPolygon'
+            coordinates: [[ outer, inner ]]
+        }
+      ]
+    }
 
   # update tooltip pos
   onMapMove: =>

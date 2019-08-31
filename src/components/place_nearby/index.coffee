@@ -11,6 +11,7 @@ _filter = require 'lodash/filter'
 _minBy = require 'lodash/minBy'
 _maxBy = require 'lodash/maxBy'
 _uniqBy = require 'lodash/uniqBy'
+_orderBy = require 'lodash/orderBy'
 
 Fab = require '../fab'
 Icon = require '../icon'
@@ -88,11 +89,14 @@ module.exports = class PlaceNearby
           dataType: 'amenity'
           filters: @getAmenityFilters()
           defaultValue: true
+          getIconFn: MapService.amenityIconGetFn
         }
         {
           dataType: 'cellTower'
           filters: @getCellTowerFilters()
           isCheckedValueStreams: @isCellTowersCheckedStreams
+          getIconFn: (filters) ->
+            (cellTower) -> cellTower.carrier
         }
       ]
     }

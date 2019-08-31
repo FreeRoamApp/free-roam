@@ -71,10 +71,13 @@
             margin-top: 8px
 
           > .route
+            margin-top: 8px
+
             > .header
               display: flex
 
               > .en-route
+                font-body2()
                 display: flex
 
               > .travel-time
@@ -87,10 +90,25 @@
                   margin-right: 6px
 
             > .content
+              padding: 16px 0
               display: none
 
               &.is-visible
                 display: block
+
+              > .stops
+                > .stop
+                  padding: 16px 0
+                  position: relative
+
+                  > .delete
+                    position: absolute
+                    top: 8px
+                    right: 0
+
+
+              > .actions
+                display: inline-block
 
 
         > .actions

@@ -1,8 +1,10 @@
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _groupBy = require 'lodash/groupBy'
+_orderBy = require 'lodash/orderBy'
 _some = require 'lodash/some'
 _startCase = require 'lodash/startCase'
+_snakeCase = require 'lodash/snakeCase'
 _uniq = require 'lodash/uniq'
 
 Environment = require './environment'
@@ -709,6 +711,47 @@ class MapService
             lon: @formatLongitude currentMapBounds._ne.lng
     }
     filter
+
+  getIconByPlace: (place) =>
+    switch place.type
+      when 'overnight'
+        @overnightIconGetFn(null) place
+      when 'amenity'
+        @amenityIconGetFn(null) place
+      when 'hazard'
+        @hazardIconGetFn(null) place
+      when 'coordinate'
+        'empty'
+      else
+        @campgroundIconGetFn(null) place
+
+  campgroundIconGetFn: (filters) ->
+    (campground) ->
+      if campground?.prices?.all?.mode is 0 and campground?.ratingCount > 0
+      then 'free'
+      else if campground?.prices?.all?.mode is 0
+      then 'free_reviewless'
+      else if campground?.ratingCount > 0
+      then 'paid'
+      else 'paid_reviewless'
+
+  overnightIconGetFn: (filters) ->
+    (overnight) ->
+      if overnight.subType in ['walmart', 'restArea', 'casino', 'truckStop', 'crackerBarrel', 'cabelas'] \
+      then _snakeCase overnight.subType
+      else 'default'
+
+  amenityIconGetFn: (filters) ->
+    filterValues = _map _filter(filters, 'value'), 'arrayValue'
+    (amenity) ->
+      _orderBy(amenity.amenities, (amenity) ->
+        filterValues.indexOf(amenity) isnt -1 and
+          config.AMENITY_ICON_ORDER.indexOf(amenity)
+      , ['desc'])[0]
+
+  hazardIconGetFn: (filters) ->
+    (hazard) ->
+      _snakeCase hazard.subType
 
   formatLatitude: (lat) ->
     lat = Math.round(1000 * lat) / 1000

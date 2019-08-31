@@ -50,7 +50,7 @@
 
   "partners": "/partners",
   "places": "/places",
-  "placesShell": "/places/shell",
+  "placesShell": "/places/cache-shell",
   "policies": "/policies",
   "privacy": "/privacy",
   "preservation": "/respect-the-land",

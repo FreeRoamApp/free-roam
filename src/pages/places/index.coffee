@@ -18,7 +18,7 @@ module.exports = class PlacesPage
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     isShell = requests.map ({route}) ->
-      route.params.type is 'shell'
+      route.params.type is 'cache-shell'
     type = requests.map ({route}) ->
       _camelCase route.params.type
     .publishReplay(1).refCount()

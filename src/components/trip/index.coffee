@@ -120,7 +120,6 @@ module.exports = class Trip
             isPrimary: true
             icon: 'add'
             onclick: =>
-              @router.go 'newCheckIn', {
-                tripType: trip.type
-                tripId: trip.id
+              @router.go 'editTripAddDestination', {
+                id: trip.id
               }

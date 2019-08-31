@@ -13,7 +13,7 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceListAmenity
-  constructor: ({@model, @router, @place}) ->
+  constructor: ({@model, @router, @place, @action}) ->
     @$detailsButton = new FlatButton()
     @$directionsButton = new FlatButton()
     @$deleteIcon = new Icon()
@@ -89,26 +89,27 @@ module.exports = class PlaceListAmenity
 
                 z '.name', amenity
 
-        z '.actions',
-          if @place?.sourceType isnt 'coordinate'
+        if @action is 'info'
+          z '.actions',
+            if @place?.sourceType isnt 'coordinate'
+              z '.action',
+                z @$detailsButton,
+                  # icon: 'info'
+                  text: @model.l.get 'general.info'
+                  colors:
+                    cText: colors.$primary500
+                  onclick: =>
+                    @router.goPlace @place
             z '.action',
-              z @$detailsButton,
-                # icon: 'info'
-                text: @model.l.get 'general.info'
+              z @$directionsButton,
+                text: @model.l.get 'general.directions'
+                # icon: 'directions'
                 colors:
                   cText: colors.$primary500
                 onclick: =>
-                  @router.goPlace @place
-          z '.action',
-            z @$directionsButton,
-              text: @model.l.get 'general.directions'
-              # icon: 'directions'
-              colors:
-                cText: colors.$primary500
-              onclick: =>
-                MapService.getDirections @place, {@model}
-          # z '.action',
-          #   z $deleteIcon,
-          #     icon: 'delete'
-          #     isTouchTarget: false
-          #     onclick: =>
+                  MapService.getDirections @place, {@model}
+            # z '.action',
+            #   z $deleteIcon,
+            #     icon: 'delete'
+            #     isTouchTarget: false
+            #     onclick: =>

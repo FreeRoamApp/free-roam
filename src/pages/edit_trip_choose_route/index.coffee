@@ -4,18 +4,17 @@ RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
 _find = require 'lodash/find'
-_last = require 'lodash/last'
 
 AppBar = require '../../components/app_bar'
 Icon = require '../../components/icon'
-Places = require '../../components/places'
+EditTripChooseRoute = require '../../components/edit_trip_choose_route'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class EditTripAddStopPage
+module.exports = class EditTripChooseRoutePage
   hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
@@ -49,18 +48,8 @@ module.exports = class EditTripAddStopPage
     @$closeIcon = new Icon()
     @$settingsIcon = new Icon()
 
-    @$places = new Places {
+    @$editTripChooseRoute = new EditTripChooseRoute {
       @model, @router, trip, tripRoute
-      donut: trip.map (trip) ->
-        isVisible = trip?.settings?.donut?.isVisible
-        console.log 'TRIPPPP', trip
-        if isVisible
-          console.log 'visible'
-          {
-            location: _last trip.destinations
-            min: trip.settings.donut.min
-            max: trip.settings.donut.max
-          }
     }
 
     @state = z.state
@@ -69,7 +58,7 @@ module.exports = class EditTripAddStopPage
 
   getMeta: =>
     {
-      title: @model.l.get 'editTripAddStopPage.stopTitle'
+      title: @model.l.get 'editTripChooseRoutePage.stopTitle'
     }
 
   render: =>
@@ -79,8 +68,8 @@ module.exports = class EditTripAddStopPage
       z @$appBar, {
         title:
           if routeId
-          then @model.l.get 'editTripAddStopPage.stopTitle'
-          else @model.l.get 'editTripAddStopPage.destinationTitle'
+          then @model.l.get 'editTripChooseRoutePage.stopTitle'
+          else @model.l.get 'editTripChooseRoutePage.destinationTitle'
         isSecondary: true
         $topLeftButton: z @$closeIcon, {
           icon: 'close'
@@ -97,5 +86,5 @@ module.exports = class EditTripAddStopPage
             }
         }
       }
-      @$places
+      @$editTripChooseRoute
       @$bottomBar

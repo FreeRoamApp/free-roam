@@ -290,6 +290,8 @@ colors = _defaults {
   '$red50026': 'rgba(244, 67, 54, 0.26)'
   '$yellow50026': 'rgba(233, 217, 130, 0.26)'
 
+  '$grey500': materialColors.$grey500
+
   '$precipBlue': '#84bce0'
 
   '$amenitygroceries': '#549a4a'

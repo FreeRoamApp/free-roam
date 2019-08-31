@@ -26,7 +26,7 @@ module.exports = class NewCheckInLocation
         (if place.type is 'coordinate' or not place.type
           @model.coordinate.upsert {
             name: place.name
-            location: "#{place.location.lat}, #{place.location.lon}"
+            location: place.location
           }, {invalidateAll: false}
         else
           Promise.resolve {id: place.id}

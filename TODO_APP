@@ -1,21 +1,51 @@
 TODOS:
 
-- Trip routing
-  - checkIn default time is now
-  - route should have time, distance, polyline
+figure out why https://freeroam.app/campground/fr-9350-campground is 404
+  - Needs elasticsearch slug changed to fr-9350-campground-drew-canyon-trailhead
 
-- Fix random trips that are getting created when checking in from place page?
+- Check that place changeSlug changes elasticsearch slug too
+  - Go through all elasticsearch campgrounds, find ones where corresponding scylla doesn't exist, update slug
 
-- Better trips
-  - Add stop overlay/page
-    - Probably should be a normal page?
-  - Replace place_tooltip with coordinate_sheet (place_sheet)
-  - Get rid of placePosition (was for placeTooltip)
-    - Or is it needed to move map if tapping on bottom?
-  - have place subject in map use {lat, lon} instead of [lon, lat]
-  - focus circle needs to go below current icon, but above all other icons
-    - Should probably have two layers for 'place', one uses normal icon
-  - changing route deletes stops
+Testing
+  - Delete check-in destination, make sure all trips are updated
+  - Delete check-in stop, ^^
+
+- Migrate checkInIds -> destinations, privacy -> settings.privacy
+
+x Avoid low clearances when routing
+- Use rig info (instead of any low clearance)
+
+- Cache determineStopIndexAndDetourTimeByTripRoute (called in placeSheet, and when adding stop)
+
+- checkIn default time is now
+- Trip settings (truck stop, rig height)
+- Elevation chart
+
+
+- Edit checkin time and see if it reorders
+  - Update trips any time checkin is upserted
+
+- Place page add to trip, select trip
+- Use placePosition to move map if tapping on area that'll get covered by place sheet
+- changing route should warn / delete stops
+x route should have time, distance, polyline
+x Fix random trips that are getting created when checking in from place page?
+x Coordinate marker icon for stops
+x Add stop overlay/page
+  x Probably should be a normal page?
+x Replace place_tooltip with coordinate_sheet (place_sheet)
+x focus circle needs to go below current icon, but above all other icons
+  x Should probably have two layers for 'place', one uses normal icon
+x have place subject in map use {lat, lon} instead of [lon, lat]
+x Place sheet mileage/min from last stop
+x Add destination numbers to map
+x Somehow differentiate existing stops from potential ones to select???
+x Icon should be determined client-side instead of on model
+
+
+
+
+- warning message for rig length
 
 - check-in empty date dec 31
 
@@ -24,6 +54,7 @@ x Speed up closing / hitting back on place page (to main map)
 - Manually delete my push token and see if it's fixed within a day (cookie to set push token is 24 hours)
 
 
+- Add Place instead of add campsite when tapping on coordinates on map
 
 - New campgrounds / RV parks
   - RV park filter / icon?

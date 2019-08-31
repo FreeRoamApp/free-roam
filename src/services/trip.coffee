@@ -1,3 +1,5 @@
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/never'
 _flatten = require 'lodash/flatten'
 _find = require 'lodash/find'
 _map = require 'lodash/map'
@@ -13,10 +15,15 @@ class TripService
     allGeojson = _flatten _map trip.routes, (route) ->
       _flatten _map route.legs, ({route}) ->
         MapService.decodePolyline route.shape
-    routes.push {
-      geojson: allGeojson, color: colors.getRawColor(colors.$primary500)
-    }
+
     highlightedRoute = _find trip.routes, {id: tripRoute?.id}
+
+    routes.push {
+      geojson: allGeojson
+      color: if highlightedRoute \
+             then colors.getRawColor(colors.$grey500)
+             else colors.getRawColor(colors.$secondary500)
+    }
     if highlightedRoute
       highlightedGeojson = _flatten _map highlightedRoute?.legs, ({route}) ->
         MapService.decodePolyline route.shape

@@ -137,6 +137,12 @@ isomorphic =
   MONTHS: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep',
             'oct', 'nov', 'dec']
 
+  # low to high
+  AMENITY_ICON_ORDER: [
+    'gas', 'trash', 'recycle', 'npwater', 'propane', 'groceries', 'water', 'dump'
+  ]
+
+
 # Server only
 # All keys must have values at run-time (value may be null)
 PORT = serverEnv.FREE_ROAM_PORT or 3000

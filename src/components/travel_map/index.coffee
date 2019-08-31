@@ -19,11 +19,14 @@ if window?
   require './index.styl'
 
 module.exports = class TravelMap
-  constructor: ({@model, @router, @trip, destinations, onclick, prepScreenshot}) ->
+  constructor: (options) ->
+    {@model, @router, @trip, destinations, routes,
+      onclick, prepScreenshot} = options
+
     destinations ?= @trip.map (trip) ->
       trip?.destinations
     # .publishReplay(1).refCount()
-    routes = @trip.map (trip) ->
+    routes ?= @trip.map (trip) ->
       TripService.getRouteGeoJson trip
     stats = @trip.map (trip) ->
       trip?.stats
@@ -51,7 +54,8 @@ module.exports = class TravelMap
     @mapSize = new RxBehaviorSubject null
     mapOptions = {
       @model, @router
-      places: destinations.map (destinations) -> _map destinations, 'place'
+      places: destinations.map (destinations) ->
+        _filter _map destinations, 'place'
       routes: routes
       fill: filledStates
       usePlaceNumbers: true

@@ -31,12 +31,27 @@ module.exports = class Trip
       tripId, routeIds
     }
 
+  getRoutesByTripIdAndRouteId: (tripId, routeId) =>
+    @auth.stream "#{@namespace}.getRoutesByTripIdAndRouteId", {
+      tripId, routeId
+    }
+
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
 
   upsertStopByIdAndRouteId: (id, routeId, checkIn) ->
     @auth.call "#{@namespace}.upsertStopByIdAndRouteId", {
       id, routeId, checkIn
+    }, {invalidateAll: true}
+
+  upsertDestinationById: (id, checkIn) ->
+    @auth.call "#{@namespace}.upsertDestinationById", {
+      id, checkIn
+    }, {invalidateAll: true}
+
+  deleteStopByIdAndRouteId: (id, routeId) ->
+    @auth.call "#{@namespace}.deleteStopByIdAndRouteId", {
+      id, routeId
     }, {invalidateAll: true}
 
   hasEditPermission: (trip, user) ->

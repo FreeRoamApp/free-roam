@@ -27,7 +27,7 @@ module.exports = class PlacePage extends BasePage
       group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
-      if route.params.slug is 'shell'
+      if route.params.slug is 'cache-shell'
         RxObservable.of null
       else
         @placeModel.getBySlug route.params.slug

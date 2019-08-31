@@ -34,7 +34,7 @@ module.exports = class PlaceSheet
       value: @place.map (place) -> place?.rating
     }
 
-    buttonsData = RxObservable.combineLatest(
+    sheetData = RxObservable.combineLatest(
       @place or RxObservable.of null
       @trip or RxObservable.of null
       @tripRoute or RxObservable.of null
@@ -45,7 +45,29 @@ module.exports = class PlaceSheet
       @trip
       isLoadingButtons: []
       isLoadedButtons: []
-      buttons: buttonsData.map ([place, trip, tripRoute]) =>
+      info: sheetData.switchMap ([place, trip, tripRoute]) =>
+        if place?.type
+          # @model.geocoder.getCoordinateInfoFromLocation place.location
+          @model.placeBase.getSheetInfo {
+            place, tripId: trip?.id, tripRouteId: tripRoute?.id
+          }
+          .map (info) =>
+            _defaults {
+              localMaps: _map info?.localMaps, (localMap) =>
+                isSelectedStreams = new RxReplaySubject 1
+                isSelectedStreams.next @layersVisible.map (layersVisible) ->
+                  layersVisible.indexOf(localMap.slug) isnt -1
+                {
+                  localMap
+                  isSelectedStreams
+                  $toggle: new Toggle {
+                    isSelectedStreams
+                  }
+                }
+            }, info
+        else
+          RxObservable.of false
+      buttons: sheetData.map ([place, trip, tripRoute]) =>
         _filter [
           if tripRoute?.id
             {
@@ -55,18 +77,26 @@ module.exports = class PlaceSheet
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
-                null
-                @model.checkIn.upsert {
-                  name: place.name
-                  sourceType: place.type
-                  sourceId: place.id
-                  status: 'planned'
-                  setUserLocation: false
-                }
+                @saveCheckIn()
                 .then (checkIn) =>
                   @model.trip.upsertStopByIdAndRouteId(
                     trip?.id
                     tripRoute?.id
+                    checkIn
+                  )
+            }
+          else if trip?.id
+            {
+              $icon: new Icon()
+              icon: 'add'
+              text: @model.l.get 'placeSheet.addToTrip'
+              loadingText: @model.l.get 'general.saving'
+              loadedText: @model.l.get 'general.saved'
+              onclick: =>
+                @saveCheckIn()
+                .then (checkIn) =>
+                  @model.trip.upsertDestinationById(
+                    trip?.id
                     checkIn
                   )
             }
@@ -89,7 +119,7 @@ module.exports = class PlaceSheet
               text: @model.l.get 'general.save'
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
-              onclick: @saveCoordinate
+              onclick: @saveCheckIn
             }
           if place?.type isnt 'coordinate' or not _isEmpty place?.features
             {
@@ -121,56 +151,40 @@ module.exports = class PlaceSheet
                 Promise.resolve null
             }
         ]
-      info: @place.switchMap (place) =>
-        if place?.type is 'coordinate'
-          @model.geocoder.getCoordinateInfoFromLocation place.location
-          .map (info) =>
-            _defaults {
-              localMaps: _map info?.localMaps, (localMap) =>
-                isSelectedStreams = new RxReplaySubject 1
-                isSelectedStreams.next @layersVisible.map (layersVisible) ->
-                  layersVisible.indexOf(localMap.slug) isnt -1
-                {
-                  localMap
-                  isSelectedStreams
-                  $toggle: new Toggle {
-                    isSelectedStreams
-                  }
-                }
-            }, info
-        else
-          RxObservable.of false
-
-      isSaving: false
-      isSaved: false
     }
 
   beforeUnmount: =>
     @state.set isLoadedButtons: [], isLoadingButtons: []
 
-  saveCoordinate: =>
+  saveCheckIn: =>
     {place} = @state.getValue()
 
-    @state.set isSaving: true
-    name = prompt 'Enter a name'
-    @model.coordinate.upsert {
-      name: name
-      location: "#{place.location[1]}, #{place.location[0]}"
-    }, {invalidateAll: false}
-    .then ({id}) =>
+    if place.type is 'coordinate'
+      name = prompt 'Enter a name'
+      @model.coordinate.upsert {
+        name: name
+        location: place.location
+      }, {invalidateAll: false}
+      .then ({id}) =>
+        @model.checkIn.upsert {
+          sourceType: 'coordinate'
+          sourceId: id
+          status: 'planned'
+        }
+    else
       @model.checkIn.upsert {
-        sourceType: 'coordinate'
-        sourceId: id
+        name: place.name
+        sourceType: place.type
+        sourceId: place.id
         status: 'planned'
+        setUserLocation: false
       }
-    .then =>
-      @state.set isSaving: false, isSaved: true
 
   render: ({isVisible} = {}) =>
     {place, trip, buttons, info,
       isLoadingButtons, isLoadedButtons, elevation} = @state.getValue()
 
-    console.log 'sheet place', place, trip
+    console.log 'sheet place', info
 
     isVisible ?= Boolean place
 
@@ -207,6 +221,23 @@ module.exports = class PlaceSheet
               z '.elevation',
                 @model.l.get 'coordinateTooltip.elevation', {replacements: {elevation}}
 
+            if info?.addStopInfo
+              z '.add-stop-info',
+                z '.from-last-stop',
+                  @model.l.get 'placeSheet.fromLastStop', {
+                    replacements:
+                      time: Math.round(info.addStopInfo.fromLastStop.time / 60)
+                      distance: Math.round(
+                        10 * info.addStopInfo.fromLastStop.distance
+                      ) / 10
+                  }
+                if info.addStopInfo.detourTime?
+                  z '.detour',
+                    @model.l.get 'placeSheet.detour', {
+                      replacements:
+                        time: Math.round(info.addStopInfo.detourTime / 60)
+                    }
+
           z '.right',
             if place?.type and not (place?.type in ['hazard', 'blm', 'usfs'])
               [
@@ -238,6 +269,9 @@ module.exports = class PlaceSheet
                 button.onclick e
                 .then =>
                   @state.set isLoadingButtons: [], isLoadedButtons: [i]
+                  setTimeout =>
+                    @state.set isLoadedButtons: []
+                  , 1000
             },
               z '.icon',
                 z button.$icon,

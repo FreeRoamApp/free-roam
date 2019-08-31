@@ -2,8 +2,12 @@ z = require 'zorium'
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
-_startCase = require 'lodash/startCase'
 _camelCase = require 'lodash/camelCase'
+_startCase = require 'lodash/startCase'
+_snakeCase = require 'lodash/snakeCase'
+_orderBy = require 'lodash/orderBy'
+_map = require 'lodash/map'
+_filter = require 'lodash/filter'
 
 Icon = require '../icon'
 ClearanceWarningDialog = require '../clearance_warning_dialog'
@@ -18,7 +22,7 @@ if window?
 
 module.exports = class Places
   constructor: (options) ->
-    {@model, @router, isShell, type, subType,
+    {@model, @router, isShell, type, subType, donut,
       trip, tripRoute, mapBoundsStreams, searchQuery} = options
 
     @currentDataType = new RxReplaySubject 1
@@ -37,6 +41,7 @@ module.exports = class Places
       persistentCookiePrefix: 'home'
       searchQuery
       mapBoundsStreams
+      donut: donut
       currentDataType: @currentDataType
       initialDataType: type # from url
       initialFilters: typeAndSubType?.map ([type, subType]) ->
@@ -50,10 +55,12 @@ module.exports = class Places
           dataType: 'campground'
           filters: MapService.getCampgroundFilters {@model}
           defaultValue: true
+          getIconFn: MapService.campgroundIconGetFn
         }
         {
           dataType: 'overnight'
           filters: MapService.getOvernightFilters {@model}
+          getIconFn: MapService.overnightIconGetFn
           onclick: =>
             unless @model.cookie.get('hasSeenOvernightWarning')
               @model.cookie.set 'hasSeenOvernightWarning', '1'
@@ -62,10 +69,12 @@ module.exports = class Places
         {
           dataType: 'amenity'
           filters: MapService.getAmenityFilters {@model}
+          getIconFn: MapService.amenityIconGetFn
         }
         {
           dataType: 'hazard'
           filters: MapService.getHazardFilters {@model}
+          getIconFn: MapService.hazardIconGetFn
           onclick: =>
             unless @model.cookie.get('hasSeenLowClearanceWarning')
               @model.cookie.set 'hasSeenLowClearanceWarning', '1'

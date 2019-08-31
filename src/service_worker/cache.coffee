@@ -21,25 +21,25 @@ module.exports = class Cache
       html: {
         version: '|HASH|'
         files: [
-          '/shell'
-          '/places/shell'
-          '/campground/shell'
+          '/cache-shell'
+          '/places/cache-shell'
+          '/campground/cache-shell'
         ]
       }
       sprites: {
         version: 3 # bump when changing
         files: [
-          'https://fdn.uno/d/images/maps/sprite_2019_07_13.json'
-          'https://fdn.uno/d/images/maps/sprite_2019_07_13.png'
-          'https://fdn.uno/d/images/maps/sprite_2019_07_13@2x.json'
-          'https://fdn.uno/d/images/maps/sprite_2019_07_13@2x.png'
+          'https://fdn.uno/d/images/maps/sprite_2019_08_24.json'
+          'https://fdn.uno/d/images/maps/sprite_2019_08_24.png'
+          'https://fdn.uno/d/images/maps/sprite_2019_08_24@2x.json'
+          'https://fdn.uno/d/images/maps/sprite_2019_08_24@2x.png'
         ]
       }
       mapbox: {
         version: 3 # bump when changing
         files: [
-          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.2.0.css"
-          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.2.0.js"
+          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.3.0b1.css"
+          "#{config.SCRIPTS_CDN_URL}/mapbox-gl-1.3.0b1.js"
         ]
       }
 
@@ -105,18 +105,18 @@ module.exports = class Cache
     # console.log 'fetch'
     # console.log event.request.url
     if event.request.url.match /\/campground\/[a-zA-Z0-9-_]/
-      request = 'https://freeroam.app/campground/shell'
-      # request = 'https://staging.freeroam.app/campground/shell'
-      # request = 'http://localhost:50340/campground/shell'
+      request = 'https://freeroam.app/campground/cache-shell'
+      # request = 'https://staging.freeroam.app/campground/cache-shell'
+      # request = 'http://localhost:50340/campground/cache-shell'
     else if event.request.url.match /(:\/\/freeroam.app|localhost:50340)(\/?$|\/places)/i
-      request = 'https://freeroam.app/places/shell'
-      # request = 'https://staging.freeroam.app/campground/shell'
-      # request = 'http://localhost:50340/campground/shell'
+      request = 'https://freeroam.app/places/cache-shell'
+      # request = 'https://staging.freeroam.app/campground/cache-shell'
+      # request = 'http://localhost:50340/campground/cache-shell'
     # any other path that isn't a static file
     else if event.request.url.match /(:\/\/freeroam.app|localhost:50340)([^\.]*)$/i
-      request = 'https://freeroam.app/shell'
-      # request = 'https://staging.freeroam.app/shell'
-      # request = 'http://localhost:50340/shell'
+      request = 'https://freeroam.app/cache-shell'
+      # request = 'https://staging.freeroam.app/cache-shell'
+      # request = 'http://localhost:50340/cache-shell'
 
     event.respondWith(
       @getCacheMatch request

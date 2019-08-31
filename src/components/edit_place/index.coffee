@@ -96,13 +96,13 @@ module.exports = class EditPlace
     @priceValueStreams.next @place.map (place) ->
       place.prices?.all?.mode or 0
 
-    @initialInfoFields.subType.valueStreams.next @place.map (place) ->
+    @initialInfoFields.subType?.valueStreams.next @place.map (place) ->
       place.subType or ''
-    @initialInfoFields.agency.valueStreams.next @place.map (place) ->
+    @initialInfoFields.agency?.valueStreams.next @place.map (place) ->
       place.agencySlug or ''
-    @initialInfoFields.region.valueStreams.next @place.map (place) ->
+    @initialInfoFields.region?.valueStreams.next @place.map (place) ->
       place.regionSlug or ''
-    @initialInfoFields.office.valueStreams.next @place.map (place) ->
+    @initialInfoFields.office?.valueStreams.next @place.map (place) ->
       place.officeSlug or ''
 
   render: =>

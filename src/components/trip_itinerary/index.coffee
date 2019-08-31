@@ -76,6 +76,7 @@ module.exports = class TripItinerary extends Base
             stopCacheKey = "stop-#{stop.id}"
             {
               stop
+              $deleteIcon: new Icon()
               $place: @getCached$ stopCacheKey, PlaceListItem, {
                 @model, @router, place: stop.place, name: stop.name
               }
@@ -160,8 +161,9 @@ module.exports = class TripItinerary extends Base
                     z $place
 
                   if routeInfo
-                    hasVisibleStops = true or not _isEmpty stopsInfo
-                    # TODO: dynamically load stops when expanding
+                    hasVisibleStops =
+                      visibleRouteIds.indexOf(routeInfo.id) isnt -1
+
                     z '.route',
                       z '.header',
                         z '.en-route', {
@@ -185,13 +187,17 @@ module.exports = class TripItinerary extends Base
                               isTouchTarget: false
                               color: colors.$bgText54
                         z '.travel-time', {
-                          # onclick: (e) =>
-                          #   e.stopPropagation()
-                          #   MapService.getDirectionsBetweenPlaces(
-                          #     previousDestination.place
-                          #     destination.place
-                          #     {@model}
-                          #   )
+                          onclick: (e) =>
+                            e.stopPropagation()
+                            @router.go 'editTripChooseRoute', {
+                              id: trip?.id
+                              routeId: routeInfo?.id
+                            }
+                            # MapService.getDirectionsBetweenPlaces(
+                            #   previousDestination.place
+                            #   destination.place
+                            #   {@model}
+                            # )
                         },
                           z '.icon',
                             z $routeIcon,
@@ -206,15 +212,33 @@ module.exports = class TripItinerary extends Base
                           z.classKebab {isVisible: hasVisibleStops}
                       },
                         z '.stops',
-                          _map stopsInfo, ({stop, $place}) ->
-                            z $place
-                        z $addStopButton,
-                          text: @model.l.get 'tripItinerary.addStop'
-                          onclick: =>
-                            @router.go 'editTripAddStop', {
-                              id: trip?.id
-                              routeId: routeInfo?.id
-                            }
+                          _map stopsInfo, ({stop, $place, $deleteIcon}) =>
+                            z '.stop', {
+                              onclick: =>
+                                @router.goOverlay 'checkIn', {
+                                  id: stop.id
+                                }
+                            },
+                              z $place
+                              z '.delete',
+                                z $deleteIcon,
+                                  icon: 'delete'
+                                  color: colors.$bgText54
+                                  onclick: (e) =>
+                                    e?.stopPropagation()
+                                    if confirm @model.l.get 'general.confirm'
+                                      @model.trip.deleteStopByIdAndRouteId(
+
+                                      )
+                        z '.actions',
+                          z $addStopButton,
+                            text: @model.l.get 'tripItinerary.addStop'
+                            isFullWidth: false
+                            onclick: =>
+                              @router.go 'editTripAddStop', {
+                                id: trip?.id
+                                routeId: routeInfo?.id
+                              }
 
           ]
 

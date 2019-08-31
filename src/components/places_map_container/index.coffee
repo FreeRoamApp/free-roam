@@ -40,7 +40,7 @@ module.exports = class PlacesMapContainer
     {@model, @router, isShell, @trip, @tripRoute, @dataTypes, showScale,
       mapBoundsStreams, @persistentCookiePrefix, @addPlacesStreams,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
-      @initialFilters, initialCenter, center, initialZoom, zoom,
+      @initialFilters, initialCenter, center, initialZoom, zoom, donut,
       searchQuery, @isSearchHidden} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
@@ -85,19 +85,48 @@ module.exports = class PlacesMapContainer
       )
       routes = tripAndTripRoute?.map ([trip, tripRoute]) ->
         TripService.getRouteGeoJson trip, tripRoute
+      tripPlacesStream = tripAndTripRoute.switchMap ([trip, tripRoute]) =>
+        console.log trip
+        (if tripRoute?.id
+          @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, [tripRoute.id]
+        else
+          RxObservable.of null
+        ).map (stops) ->
+          places = _filter _map _flatten(_values(stops)), ({place}, i) ->
+            console.log 'place', place
+            if place
+              _defaults {
+                hasDot: true
+                icon: MapService.getIconByPlace place
+              }, place
+          places = places.concat _map trip?.destinations, ({lat, lon, id}, i) ->
+            isGray = tripRoute and not (id in [
+              tripRoute?.startCheckInId, tripRoute?.endCheckInId
+            ])
+            {
+              location: {lat, lon}
+              number: i
+              icon: if isGray \
+                    then 'planned_gray'
+                    else 'planned'
+              selectedIcon: 'planned_selected'
+              anchor: 'center'
+            }
+          places
+    else
+      tripPlacesStream = RxObservable.of null
 
     @filterTypesStream = @getFilterTypesStream()
     placesStream = @getPlacesStream()
     placesWithCounts = RxObservable.combineLatest(
-      @addPlacesStreams.switch(), placesStream, @trip, (vals...) -> vals
-    ).map ([addPlaces, {places, visible, total}, trip]) ->
-      console.log 'map, reduce the count of this!!'
+      @addPlacesStreams.switch()
+      placesStream
+      tripPlacesStream
+      (vals...) -> vals
+    ).map ([addPlaces, {places, visible, total}, tripPlaces]) ->
       places ?= []
       places = places.concat addPlaces # addPlaces should "under" places on map
-      places = places.concat _map trip?.destinations, ({lat, lon}) ->
-        {location: {lat, lon}}
-      places = places.concat _map _flatten(_values(trip?.stops)), ({lat, lon}) ->
-        {location: {lat, lon}}
+      places = places.concat tripPlaces
 
       {places, visible, total}
     .share() # otherwise map setsData twice (subscribe called twice)
@@ -143,7 +172,7 @@ module.exports = class PlacesMapContainer
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
       @coordinate, defaultOpacity, initialCenter, center, initialZoom,  zoom,
-      initialLayers, routes
+      initialLayers, routes, donut
       beforeMapClickFn: =>
         {isLayersPickerVisible} = @state.getValue()
         # if layers picker is visible, cancel the normal map click
@@ -212,7 +241,8 @@ module.exports = class PlacesMapContainer
       savedDataTypes = {}
 
     dataTypes = _map dataTypes, (options) =>
-      {dataType, onclick, filters, defaultValue, isCheckedValueStreams} = options
+      {dataType, onclick, filters, defaultValue,
+        getIconFn, isCheckedValueStreams} = options
       savedValue = savedDataTypes[dataType]
       isCheckedValueStreams ?= new RxReplaySubject 1
       isCheckedValueStreams.next @initialDataType.map (initialDataType) ->
@@ -223,6 +253,7 @@ module.exports = class PlacesMapContainer
         dataType: dataType
         filters: filters
         onclick: onclick
+        getIconFn: getIconFn
         isCheckedValueStreams: isCheckedValueStreams
         $checkbox: new Checkbox {valueStreams: isCheckedValueStreams}
       }
@@ -255,7 +286,9 @@ module.exports = class PlacesMapContainer
       dataTypesWithValue
 
   getFilterTypesStream: =>
+    console.log 'get stream'
     @initialFilters.switchMap (initialFilters) =>
+      console.log 'm1'
       persistentCookie = "#{@persistentCookiePrefix}_savedFilters"
       savedFilters = try
         JSON.parse @model.cookie.get persistentCookie
@@ -282,8 +315,7 @@ module.exports = class PlacesMapContainer
           _defaults {dataType, valueStreams}, filter
 
       if _isEmpty filters
-        # return RxObservable.of {}
-        return RxObservable.never()
+        return RxObservable.of {}
 
       RxObservable.combineLatest(
         _map filters, ({valueStreams}) -> valueStreams.switch()
@@ -305,6 +337,10 @@ module.exports = class PlacesMapContainer
         @model.cookie.set persistentCookie, JSON.stringify savedFilters
 
         _groupBy filtersWithValue, 'dataType'
+
+    # for whatever reason, required for stream to update, unless the
+    # initialFilters switchMap is removed
+    .publishReplay(1).refCount()
 
   getPlacesStream: =>
     unless window?
@@ -332,7 +368,7 @@ module.exports = class PlacesMapContainer
         # RxObservable.never keeps what's there
         return RxObservable.never()
 
-      RxObservable.combineLatest.apply null, _map dataTypes, ({dataType, isChecked}) =>
+      RxObservable.combineLatest.apply null, _map dataTypes, ({dataType, isChecked, getIconFn}) =>
         unless isChecked
           return RxObservable.of []
         filters = filterTypes[dataType]
@@ -349,6 +385,15 @@ module.exports = class PlacesMapContainer
             bool:
               filter: queryFilter
         }
+        .map (response) ->
+          # TODO: is there a more efficient way to do this?
+          # so we're not mapping over places too much?
+          iconFn = getIconFn? filters
+          response.places = _map response.places, (place) ->
+            place.icon = iconFn? place
+            place
+          response
+
       .map (responses) ->
         # visible = _sumBy responses, ({places}) -> places?.length
         total = _sumBy responses, 'total'
@@ -410,8 +455,6 @@ module.exports = class PlacesMapContainer
     {isShell, filterTypes, dataTypes, currentDataType, place, layersVisible,
       counts, visibleDataTypes, isFilterTypesVisible, isLegendVisible, icons,
       isLayersPickerVisible, tripRoute} = @state.getValue()
-
-    console.log 'rrrooouttteee', tripRoute
 
     isCountsBarVisbile = counts?.visible < counts?.total
 

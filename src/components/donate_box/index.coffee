@@ -26,11 +26,12 @@ module.exports = class Donate
       subscriptionInterval: @subscriptionInterval
       step: 'amount' # amount, card, thanks
       isLoading: false
+      isError: false
     }
 
   render: =>
     {me, subscriptionInterval, selectedAmount, amount, step,
-      isLoading} = @state.getValue()
+      isLoading, isError} = @state.getValue()
 
     amountLines = [
       {
@@ -145,6 +146,9 @@ module.exports = class Donate
                                 else 'donate.donateAmount'
 
                 [
+                  # TODO: handle this better...
+                  if isError
+                    z '.error', @model.l.get 'donate.error'
                   z '.stripe-form',
                     @$stripeForm
                   z '.donate-button',
@@ -157,6 +161,8 @@ module.exports = class Donate
                             replacements: {amount}
                           }
                       onclick: =>
+                        if isLoading
+                          return
                         @state.set {isLoading: true}
                         @model.user.requestLoginIfGuest me
                         .then =>
@@ -164,6 +170,6 @@ module.exports = class Donate
                           .then =>
                             @state.set {isLoading: false, step: 'thanks'}
                           .catch =>
-                            @state.set {isLoading: false}
+                            @state.set {isLoading: false, isError: true}
                 ]
           ]

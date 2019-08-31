@@ -50,3 +50,6 @@ module.exports = class PlaceBase
       @l.get 'general.unknown'
     else
       '...'
+
+  getSheetInfo: (options) ->
+    @auth.stream "#{@namespace}.getSheetInfo", options

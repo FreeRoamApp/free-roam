@@ -15,8 +15,5 @@ module.exports = class Geocoder
   getBoundingFromLocation: (location) ->
     @auth.call "#{@namespace}.getBoundingFromLocation", {location}
 
-  getCoordinateInfoFromLocation: (location) ->
-    @auth.stream "#{@namespace}.getCoordinateInfoFromLocation", {location}
-
   getFeaturesFromLocation: (location, {file} = {}) ->
     @auth.stream "#{@namespace}.getFeaturesFromLocation", {location, file}
