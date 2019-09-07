@@ -17,7 +17,7 @@ if window?
   require './index.styl'
 
 module.exports = class Place
-  constructor: ({@model, @router, place, @tab}) ->
+  constructor: ({@model, @router, place, @tab, trip}) ->
     me = @model.user.getMe()
 
     @selectedIndex = new RxBehaviorSubject 0
@@ -26,7 +26,7 @@ module.exports = class Place
     @$addIcon = new Icon()
     @$tabs = new Tabs {@model, @selectedIndex}
 
-    @$placeInfo = new PlaceInfo {@model, @router, place}
+    @$placeInfo = new PlaceInfo {@model, @router, place, trip}
     @$reviews = new PlaceReviews {@model, @router, place}
     @$nearby = new PlaceNearby {
       @model, @router, place

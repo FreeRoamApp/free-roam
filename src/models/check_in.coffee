@@ -20,14 +20,14 @@ module.exports = class CheckIn
       additionalDataStream: additionalDataStream # stream in results after promise finishes
     }
     .then (response) =>
-      invalidateTripMap = (trip) =>
-        @auth.exoid.invalidate 'trips.getByUserIdAndType', {
-          userId: trip.userId, type: 'past'
-        }
+      # invalidateTripMap = (trip) =>
+      #   @auth.exoid.invalidate 'trips.getByUserIdAndType', {
+      #     userId: trip.userId, type: 'past'
+      #   }
 
       additionalDataStream.switch().subscribe (response) ->
         @unsubscribe() #
-        invalidateTripMap response.updatedTrip
+        # invalidateTripMap response.updatedTrip
       response
 
   deleteByRow: (row) =>

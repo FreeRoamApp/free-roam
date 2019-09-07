@@ -14,12 +14,6 @@ module.exports = class Trip
   getAllFollowingByUserId: (userId) =>
     @auth.stream "#{@namespace}.getAllFollowingByUserId", {userId}
 
-  getByType: (type) =>
-    @auth.stream "#{@namespace}.getByType", {type}
-
-  getByUserIdAndType: (userId, type) =>
-    @auth.stream "#{@namespace}.getByUserIdAndType", {userId, type}, {isErrorable: true}
-
   getRoute: ({checkIns}) =>
     @auth.stream "#{@namespace}.getRoute", {checkIns}, {ignoreCache: true}
 
@@ -49,9 +43,14 @@ module.exports = class Trip
       id, checkIn
     }, {invalidateAll: true}
 
-  deleteStopByIdAndRouteId: (id, routeId) ->
+  deleteStopByIdAndRouteId: (id, routeId, stopId) ->
     @auth.call "#{@namespace}.deleteStopByIdAndRouteId", {
-      id, routeId
+      id, routeId, stopId
+    }, {invalidateAll: true}
+
+  deleteDestinationById: (id, destinationId) ->
+    @auth.call "#{@namespace}.deleteDestinationById", {
+      id, destinationId
     }, {invalidateAll: true}
 
   hasEditPermission: (trip, user) ->

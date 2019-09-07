@@ -43,7 +43,7 @@ module.exports = class EditTripPage
         style: 'primary'
         $topLeftButton: z @$buttonBack
         $topRightButton:
-          if trip?.id and trip.type is 'custom'
+          if trip?.id
             z @$deleteIcon,
               icon: 'delete'
               color: colors.$header500Icon

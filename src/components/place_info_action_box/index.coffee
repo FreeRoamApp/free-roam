@@ -7,6 +7,7 @@ _filter = require 'lodash/filter'
 
 Icon = require '../icon'
 TooltipPositioner = require '../tooltip_positioner'
+NewCheckIn = require '../new_check_in'
 MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
@@ -15,10 +16,10 @@ if window?
   require './index.styl'
 
 module.exports = class PlaceInfoActionBox
-  constructor: ({@model, @router, @place}) ->
+  constructor: ({@model, @router, @place, @trip}) ->
     @$directionsIcon = new Icon()
     @$shareIcon = new Icon()
-    @$checkInIcon = new Icon()
+    @$addToTripIcon = new Icon()
     @$saveIcon = new Icon()
     # @$saveTooltip = new TooltipPositioner {
     #   @model
@@ -57,44 +58,49 @@ module.exports = class PlaceInfoActionBox
   beforeUnmount: =>
     @resetValueStreams()
 
-  checkIn: (status) =>
-    {place, checkIns} = @state.getValue()
+  addToTrip: =>
+    @model.overlay.open new NewCheckIn {
+      @model, @router, @place, @trip, isOverlay: true
+    }
 
-    ga? 'send', 'event', 'placeInfo', 'checkIn', status
-
-    @state.set "#{status}Saving": true
-    checkIn = _find checkIns, {status}
-    if checkIn
-      @model.checkIn.deleteByRow {
-        id: checkIn.id
-      }
-      .then (checkIn) =>
-        @state.set "#{status}Saving": false
-        @checkInsStreams.next RxObservable.of _filter checkIns, (checkIn) ->
-          checkIn.status isnt status
-    else
-      @model.checkIn.upsert {
-        name: place.name
-        sourceType: place.type
-        sourceId: place.id
-        status: status
-        setUserLocation: status is 'visited'
-      }
-      .then (checkIn) =>
-        @state.set "#{status}Saving": false
-        @checkInsStreams.next RxObservable.of checkIns.concat checkIn
-        @model.statusBar.open {
-          text: @model.l.get "placeInfo.#{status}Saved"
-          type: 'snack'
-          timeMs: 5000
-          action:
-            text: @model.l.get 'placeInfo.viewTrip'
-            onclick: =>
-              @router.go 'tripByType', {
-                type: if status is 'visited' then 'past' else 'future'
-              }
-              @model.statusBar.close()
-        }
+  # checkIn: (status) =>
+  #   {place, checkIns} = @state.getValue()
+  #
+  #   ga? 'send', 'event', 'placeInfo', 'checkIn', status
+  #
+  #   @state.set "#{status}Saving": true
+  #   checkIn = _find checkIns, {status}
+  #   if checkIn
+  #     @model.checkIn.deleteByRow {
+  #       id: checkIn.id
+  #     }
+  #     .then (checkIn) =>
+  #       @state.set "#{status}Saving": false
+  #       @checkInsStreams.next RxObservable.of _filter checkIns, (checkIn) ->
+  #         checkIn.status isnt status
+  #   else
+  #     @model.checkIn.upsert {
+  #       name: place.name
+  #       sourceType: place.type
+  #       sourceId: place.id
+  #       status: status
+  #       setUserLocation: status is 'visited'
+  #     }
+  #     .then (checkIn) =>
+  #       @state.set "#{status}Saving": false
+  #       @checkInsStreams.next RxObservable.of checkIns.concat checkIn
+  #       @model.statusBar.open {
+  #         text: @model.l.get "placeInfo.#{status}Saved"
+  #         type: 'snack'
+  #         timeMs: 5000
+  #         action:
+  #           text: @model.l.get 'placeInfo.viewTrip'
+  #           onclick: =>
+  #             @router.go 'tripByType', {
+  #               type: if status is 'visited' then 'past' else 'future'
+  #             }
+  #             @model.statusBar.close()
+  #       }
 
   render: =>
     {place, visitedCheckIn, plannedCheckIn, checkIns, visitedSaving,
@@ -134,15 +140,15 @@ module.exports = class PlaceInfoActionBox
           [
             z '.action', {
               onclick: =>
-                @checkIn 'visited'
+                @addToTrip()
             },
               z '.icon', {
                 className: z.classKebab {
                   isFilled: visitedCheckIn
                 }
               },
-                z @$checkInIcon,
-                  icon: 'location'
+                z @$addToTripIcon,
+                  icon: 'add'
                   isTouchTarget: false
                   color: if visitedCheckIn \
                          then colors.$primary500Text
@@ -150,28 +156,28 @@ module.exports = class PlaceInfoActionBox
               z '.text',
                 if visitedSaving then @model.l.get 'general.saving'
                 else if visitedCheckIn then @model.l.get 'placeInfo.checkedIn'
-                else @model.l.get 'placeInfo.checkIn'
+                else @model.l.get 'placeInfo.addToTrip'
           ]
-        z '.action', {
-          onclick: => @checkIn 'planned'
-        },
-          z '.icon', {
-            className: z.classKebab {
-              isFilled: plannedCheckIn
-            }
-          },
-            z @$saveIcon,
-              icon: 'star'
-              isTouchTarget: false
-              color: if plannedCheckIn \
-                     then colors.$primary500Text
-                     else colors.$primary500
-          z '.text',
-            if plannedSaving then @model.l.get 'general.saving'
-            else if plannedCheckIn then @model.l.get 'general.saved'
-            else @model.l.get 'general.save'
-
-          # A/B test with this on yielded ~10% increase in check-ins and
-          # not statistical downside (other than for some reason less
-          # trip events) but still not sure if it's worth hit
-          # z @$saveTooltip
+        # z '.action', {
+        #   onclick: => @checkIn 'planned'
+        # },
+        #   z '.icon', {
+        #     className: z.classKebab {
+        #       isFilled: plannedCheckIn
+        #     }
+        #   },
+        #     z @$saveIcon,
+        #       icon: 'star'
+        #       isTouchTarget: false
+        #       color: if plannedCheckIn \
+        #              then colors.$primary500Text
+        #              else colors.$primary500
+        #   z '.text',
+        #     if plannedSaving then @model.l.get 'general.saving'
+        #     else if plannedCheckIn then @model.l.get 'general.saved'
+        #     else @model.l.get 'general.save'
+        #
+        #   # A/B test with this on yielded ~10% increase in check-ins and
+        #   # not statistical downside (other than for some reason less
+        #   # trip events) but still not sure if it's worth hit
+        #   # z @$saveTooltip

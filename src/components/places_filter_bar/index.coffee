@@ -13,11 +13,11 @@ if window?
 module.exports = class PlacesFilterBar
   constructor: (options) ->
     {@model, @isFilterTypesVisible, @currentDataType,
-      trip, @isTripFilterEnabled} = options
+      tripRoute, @isTripFilterEnabled} = options
 
     @state = z.state {
       @isFilterTypesVisible
-      trip
+      tripRoute
       @isTripFilterEnabled
     }
 
@@ -27,7 +27,7 @@ module.exports = class PlacesFilterBar
     }
 
   render: ({dataTypes, currentDataType, filterTypes, visibleDataTypes}) =>
-    {isFilterTypesVisible, trip, isTripFilterEnabled} = @state.getValue()
+    {isFilterTypesVisible, tripRoute, isTripFilterEnabled} = @state.getValue()
 
     z '.z-places-filter-bar', {
       className: z.classKebab {
@@ -45,7 +45,7 @@ module.exports = class PlacesFilterBar
         z '.filters', {
           className: z.classKebab {"#{currentDataType}": true}
         },
-          if trip
+          if tripRoute
             z '.filter', {
               className: z.classKebab {
                 hasValue: isTripFilterEnabled

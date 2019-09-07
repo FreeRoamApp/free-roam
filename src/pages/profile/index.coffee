@@ -26,9 +26,9 @@ module.exports = class ProfilePage extends BasePage
         @model.user.getMe {embed: ['data']}
 
     trip = user.switchMap (user) =>
-      if user
-        @model.trip.getByUserIdAndType user.id, 'past'
-      else
+      # if user
+      #   @model.trip.getByUserIdAndType user.id, 'past'
+      # else
         RxObservable.of null
 
     @userAndTrip = RxObservable.combineLatest(user, trip, (vals...) -> vals)

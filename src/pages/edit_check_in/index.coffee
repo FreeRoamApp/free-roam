@@ -25,8 +25,6 @@ module.exports = class EditCheckInPage
     trip = requests.switchMap ({route}) =>
       if route.params.tripId
         @model.trip.getById route.params.tripId
-      else if route.params.tripType
-        @model.trip.getByType route.params.tripType
       else
         RxObservable.of null
 

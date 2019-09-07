@@ -19,17 +19,14 @@ module.exports = class PlacesPage
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
     isShell = requests.map ({route}) ->
       route.params.type is 'cache-shell'
-    type = requests.map ({route}) ->
-      _camelCase route.params.type
+    types = requests.map ({route}) ->
+      if route.params.type
+        [_camelCase route.params.type]
+      else
+        null
     .publishReplay(1).refCount()
     subType = requests.map ({route}) ->
       _camelCase route.params.subType
-    .publishReplay(1).refCount()
-    trip = requests.switchMap ({req}) =>
-      if req.query.tripId
-        @model.trip.getById req.query.tripId
-      else
-        RxObservable.of null
     .publishReplay(1).refCount()
 
     mapBoundsStreams = new RxReplaySubject 1
@@ -51,7 +48,7 @@ module.exports = class PlacesPage
 
 
     @$places = new Places {
-      @model, @router, isShell, type, subType, trip, mapBoundsStreams
+      @model, @router, isShell, types, subType, mapBoundsStreams
       searchQuery
     }
 

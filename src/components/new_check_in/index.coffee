@@ -9,7 +9,8 @@ require 'rxjs/add/operator/map'
 _find = require 'lodash/find'
 _filter = require 'lodash/filter'
 
-NewCheckInLocation = require '../new_check_in_location'
+ActionBar = require '../action_bar'
+NewCheckInChooseTrip = require '../new_check_in_choose_trip'
 NewCheckInInfo = require '../new_check_in_info'
 StepBar = require '../step_bar'
 DateService = require '../../services/date'
@@ -20,12 +21,20 @@ if window?
   require './index.styl'
 
 STEPS =
-  checkInLocation: 0
+  chooseTrip: 0
   checkInInfo: 1
 
 module.exports = class NewCheckIn
-  constructor: ({@model, @router, @checkIn, trip, @step}) ->
+  constructor: (options) ->
+    {@model, @router, @checkIn, @trip, @place, @step, @isOverlay
+    skipChooseTrip} = options
+
+    @checkIn ?= RxObservable.of null
+    @trip ?= RxObservable.of null
+
     @fields =
+      tripId:
+        valueStreams: new RxReplaySubject 1
       source:
         valueStreams: new RxReplaySubject 1
       name:
@@ -43,18 +52,29 @@ module.exports = class NewCheckIn
       attachments:
         valueStreams: new RxReplaySubject 1
 
+    @checkInAndTrip = RxObservable.combineLatest(
+      @checkIn, @trip, (vals...) -> vals
+    )
+
+    @checkInAndPlace = RxObservable.combineLatest(
+      @checkIn, @place, (vals...) -> vals
+    )
+
     @resetValueStreams()
+
+    @$actionBar = new ActionBar {@model}
 
     @step ?= new RxBehaviorSubject 0
     @initialStepValue = @step.getValue()
     @$stepBar = new StepBar {@model, @step}
 
     @$steps = _filter [
-      new NewCheckInLocation {
-        @model, @router, @fields, @step, @checkIn
-      }
+      unless skipChooseTrip
+        new NewCheckInChooseTrip {
+          @model, @router, @fields, @trip
+        }
       new NewCheckInInfo {
-        @model, @router, fields: @fields
+        @model, @router, @fields
         uploadFn: (args...) =>
           @checkInModel.uploadImage.apply(
             @checkInModel.uploadImage
@@ -66,8 +86,10 @@ module.exports = class NewCheckIn
     @state = z.state {
       @step
       me: @model.user.getMe()
-      trip
+      @trip
       @checkIn
+      @place
+      tripIdValue: @fields.tripId.valueStreams.switch()
       sourceValue: @fields.source.valueStreams.switch()
       attachmentsValue: @fields.attachments.valueStreams.switch()
       nameValue: @fields.name.valueStreams.switch()
@@ -83,8 +105,10 @@ module.exports = class NewCheckIn
 
   resetValueStreams: =>
     today = DateService.format new Date(), 'yyyy-mm-dd'
-    @fields.name.valueStreams.next @checkIn.map (checkIn) ->
-      checkIn?.name or ''
+    @fields.tripId.valueStreams.next @checkInAndTrip.map ([checkIn, trip]) ->
+      checkIn?.tripIds[0] or trip?.id or null
+    @fields.name.valueStreams.next @checkInAndPlace.map ([checkIn, place]) ->
+      checkIn?.name or place?.name or ''
     @fields.startTime.valueStreams.next @checkIn.map (checkIn) ->
       if checkIn?.startTime
         DateService.format new Date(checkIn?.startTime), 'yyyy-mm-dd'
@@ -99,15 +123,15 @@ module.exports = class NewCheckIn
       checkIn?.attachments or []
     @fields.notes.valueStreams.next @checkIn.map (checkIn) ->
       checkIn?.notes or ''
-    @fields.source.valueStreams.next @checkIn.map (checkIn) ->
+    @fields.source.valueStreams.next @checkInAndPlace.map ([checkIn, place]) ->
       if checkIn
         {sourceId: checkIn.sourceId, sourceType: checkIn.sourceType}
       else
-        {}
+        {sourceId: place.id, sourceType: place.type}
 
   upsert: =>
-    {checkIn, trip, attachmentsValue, nameValue, sourceValue, notesValue,
-      startTimeValue, endTimeValue} = @state.getValue()
+    {checkIn, trip, tripIdValue, attachmentsValue, nameValue, sourceValue,
+      place, notesValue, startTimeValue, endTimeValue} = @state.getValue()
 
     @state.set isLoading: true
 
@@ -118,29 +142,42 @@ module.exports = class NewCheckIn
 
     attachments = _filter attachmentsValue, ({isUploading}) -> not isUploading
     if isReady
-      @model.checkIn.upsert {
-        tripIds: checkIn?.tripIds or [trip.id]
-        setUserLocation: trip?.type is 'past'
-        id: checkIn?.id
-        attachments: attachments
-        sourceId: sourceValue?.sourceId
-        sourceType: sourceValue?.sourceType
-        name: nameValue
-        notes: notesValue
-        startTime: DateService.getLocalDateFromStr startTimeValue
-        endTime: DateService.getLocalDateFromStr endTimeValue
-      }
+      tripId = tripIdValue or trip?.id
+
+      (if sourceValue?.sourceType is 'coordinate' and not sourceValue?.sourceId
+        @model.coordinate.upsert {
+          name: nameValue
+          location: place.location
+        }, {invalidateAll: false}
+      else
+        Promise.resolve {id: sourceValue.sourceId}
+      ).then ({id}) =>
+        @model.checkIn.upsert {
+          tripIds: if tripId then [tripId] else checkIn?.tripIds
+          setUserLocation: false # trip?.type is 'past'
+          id: checkIn?.id
+          attachments: attachments
+          sourceId: id
+          sourceType: sourceValue?.sourceType
+          name: nameValue
+          notes: notesValue
+          startTime: DateService.getLocalDateFromStr startTimeValue
+          endTime: DateService.getLocalDateFromStr endTimeValue
+        }
       .then (newCheckIn) =>
         @state.set isLoading: false
         @resetValueStreams()
         # TODO: not sure why timeout is necessary
         # w/o, map reloads
-        setTimeout =>
-          @router.back()
-          # @router.go 'tripByType', {
-          #   type: trip.type
-          # }, {reset: true}
-        , 0
+        if @isOverlay
+          @model.overlay.close()
+        else
+          setTimeout =>
+            @router.back()
+            # @router.go 'tripByType', {
+            #   type: trip.type
+            # }, {reset: true}
+          , 0
       .catch (err) =>
         console.log 'upload err', err
         @state.set isLoading: false
@@ -148,14 +185,33 @@ module.exports = class NewCheckIn
   render: =>
     {step, isLoading, checkIn, attachmentsValue, trip} = @state.getValue()
 
-    z '.z-new-check-in',
+    console.log 'trip', trip
+
+    z '.z-new-check-in', {
+      className: z.classKebab {@isOverlay}
+    },
+      z @$actionBar, {
+        isSecondary: true
+        isSaving: isLoading
+        cancel:
+          text: @model.l.get 'general.discard'
+          onclick: =>
+            @router.back()
+        save:
+          if @$steps.length is 1
+            {
+              text: @model.l.get 'general.done'
+              onclick: @upsert
+            }
+      }
       z @$steps[step]
 
-      z @$stepBar, {
-        isLoading: isLoading
-        steps: @$steps.length
-        isStepCompleted: @$steps[step]?.isCompleted?()
-        save:
-          icon: 'arrow-right'
-          onclick: @upsert
-      }
+      if @$steps.length > 1
+        z @$stepBar, {
+          isLoading: isLoading
+          steps: @$steps.length
+          isStepCompleted: @$steps[step]?.isCompleted?()
+          save:
+            icon: 'arrow-right'
+            onclick: @upsert
+        }

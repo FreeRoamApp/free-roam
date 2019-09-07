@@ -24,4 +24,7 @@ module.exports = class TripsMine
           text: @model.l.get 'tripsMine.createCustom'
           onclick: =>
             @router.go 'newTrip', {}, {ignoreHistory: true}
-      z @$tripList
+      z @$tripList,
+        emptyIcon: 'trip_mine_empty'
+        emptyTitle: @model.l.get 'tripsMine.emptyTitle'
+        emptyDescription: @model.l.get 'tripsMine.emptyDescription'

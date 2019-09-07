@@ -72,7 +72,7 @@ module.exports = class TripItinerary extends Base
           routeInfo?.distance = _sumBy routeInfo?.legs, ({route}) ->
             route.distance
 
-          stopsInfo = _map stops?[routeInfo?.id], (stop) =>
+          stopsInfo = _map stops?[routeInfo?.routeId], (stop) =>
             stopCacheKey = "stop-#{stop.id}"
             {
               stop
@@ -92,7 +92,7 @@ module.exports = class TripItinerary extends Base
             }
             $chevronIcon: new Icon()
             $routeIcon: new Icon()
-            $chooseRouteButton: new PrimaryButton()
+            $navigateButton: new PrimaryButton()
             $addStopButton: new PrimaryButton()
           }
     }
@@ -126,7 +126,7 @@ module.exports = class TripItinerary extends Base
               z @$spinner
             _map destinations, (destination, i) =>
               {destination, stopsInfo, routeInfo, $chevronIcon, $routeIcon,
-                $place, $chooseRouteButton, $addStopButton} = destination
+                $place, $navigateButton, $addStopButton} = destination
 
               location = @model.checkIn.getLocation destination
 
@@ -162,7 +162,7 @@ module.exports = class TripItinerary extends Base
 
                   if routeInfo
                     hasVisibleStops =
-                      visibleRouteIds.indexOf(routeInfo.id) isnt -1
+                      visibleRouteIds.indexOf(routeInfo.routeId) isnt -1
 
                     z '.route',
                       z '.header',
@@ -171,11 +171,11 @@ module.exports = class TripItinerary extends Base
                             if hasVisibleStops
                               @visibleRouteIds.next(
                                 _filter visibleRouteIds, (routeId) ->
-                                  routeId isnt routeInfo.id
+                                  routeId isnt routeInfo.routeId
                               )
                             else
                               @visibleRouteIds.next(
-                                _uniq visibleRouteIds.concat [routeInfo.id]
+                                _uniq visibleRouteIds.concat [routeInfo.routeId]
                               )
                         },
                           z '.text', @model.l.get 'tripItinerary.enRoute'
@@ -189,9 +189,9 @@ module.exports = class TripItinerary extends Base
                         z '.travel-time', {
                           onclick: (e) =>
                             e.stopPropagation()
-                            @router.go 'editTripChooseRoute', {
+                            @router.go 'editTripNavigate', {
                               id: trip?.id
-                              routeId: routeInfo?.id
+                              routeId: routeInfo?.routeId
                             }
                             # MapService.getDirectionsBetweenPlaces(
                             #   previousDestination.place
@@ -228,17 +228,28 @@ module.exports = class TripItinerary extends Base
                                     e?.stopPropagation()
                                     if confirm @model.l.get 'general.confirm'
                                       @model.trip.deleteStopByIdAndRouteId(
-
+                                        trip.id
+                                        routeInfo.routeId
+                                        stop.id
                                       )
                         z '.actions',
-                          z $addStopButton,
-                            text: @model.l.get 'tripItinerary.addStop'
-                            isFullWidth: false
-                            onclick: =>
-                              @router.go 'editTripAddStop', {
-                                id: trip?.id
-                                routeId: routeInfo?.id
-                              }
+                          z '.action',
+                            z $navigateButton,
+                              text: @model.l.get 'tripItinerary.navigate'
+                              isOutline: true
+                              onclick: =>
+                                @router.go 'editTripNavigate', {
+                                  id: trip?.id
+                                  routeId: routeInfo?.routeId
+                                }
+                          z '.action',
+                            z $addStopButton,
+                              text: @model.l.get 'tripItinerary.addStop'
+                              onclick: =>
+                                @router.go 'editTripAddStop', {
+                                  id: trip?.id
+                                  routeId: routeInfo?.routeId
+                                }
 
           ]
 

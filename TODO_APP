@@ -6,28 +6,67 @@ figure out why https://freeroam.app/campground/fr-9350-campground is 404
 - Check that place changeSlug changes elasticsearch slug too
   - Go through all elasticsearch campgrounds, find ones where corresponding scylla doesn't exist, update slug
 
+- For canadian campgrounds, show candian carriers when reviewing
+
 Testing
   - Delete check-in destination, make sure all trips are updated
   - Delete check-in stop, ^^
+  - Edit checkin time and see if it reorders
+    - Update trips any time checkin is upserted
 
-- Migrate checkInIds -> destinations, privacy -> settings.privacy
+- Store stats on trips table (distance, time)
+x Static height for elevation chart?? Way too big on desktop
+x Place sheet thumbnail
+x Get rid of ratings for coordinate
+x Make hazards isDisabled
+x Rating count is 0
+x Properly reduce amount of points sent to generate elevation chart?
+- text overlap icons
+  - https://github.com/mapbox/mapbox-gl-js/issues/4064
 
-x Avoid low clearances when routing
-- Use rig info (instead of any low clearance)
+- Testing ^^
 
-- Cache determineStopIndexAndDetourTimeByTripRoute (called in placeSheet, and when adding stop)
-
-- checkIn default time is now
-- Trip settings (truck stop, rig height)
-- Elevation chart
-
-
-- Edit checkin time and see if it reorders
-  - Update trips any time checkin is upserted
-
-- Place page add to trip, select trip
+- Native navigation
+  - First check that we can pass in waypoints properly
+  - https://docs.mapbox.com/android/navigation/overview/#navigation-ui-sdk
+  - https://github.com/mapbox/mapbox-navigation-ios
+  - Can maybe base off of https://www.npmjs.com/package/cordova-plugin-mapbox
 - Use placePosition to move map if tapping on area that'll get covered by place sheet
 - changing route should warn / delete stops
+- add rest stops
+
+
+x Navigate -> choose route
+x Choose route info (elevation, distance, time)
+x Recreate trips_by_userId (use trips_by_id to populate)
+x Migrate checkInIds -> destinations/routes, privacy -> settings.privacy
+x Delete trip_routes_by_tripId when they're no longer used from buildRoutes
+x See if "Save" still works? (placeSheet)
+x Trips empty state
+x Figure out why it doesn't update without refresh sometimes
+x Remove from route (stop and destination)
+x Add stop, default to everything showing
+x Use rig height setting (instead of any low clearance)
+x Cache determineStopIndexAndDetourTimeByTripRoute (called in placeSheet, and when adding stop)
+x Pass trip into place / placeInfo, green app bar
+x Order number for trip routes
+x Add to trip step 1 optional (from place sheet), have default selected trip from place page
+x Tapping on destination # should do something in place sheet
+x Routes to their own table
+x Resume to new destination after adding one (close overlay, don't route)
+x don't snap back to route after mapBoundsStreams is updated (switching tabs and back, etc..)
+x Add destination additional info (dates, notes, cost per night)
+x Get rid of "Along route" for new destination
+x Add to trip from place page
+x checkIn default time is now
+x Zoom in on
+x Avoid low clearances when routing
+
+
+x Trip settings (truck stop, rig height)
+x Elevation chart
+
+
 x route should have time, distance, polyline
 x Fix random trips that are getting created when checking in from place page?
 x Coordinate marker icon for stops

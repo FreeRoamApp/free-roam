@@ -31,6 +31,7 @@ module.exports = class Map
       @beforeMapClickFn} = options
 
     @place ?= new RxBehaviorSubject null
+    @placePosition ?= new RxBehaviorSubject null
     @defaultOpacity ?= 1
 
     @initialZoom ?= 4
@@ -296,7 +297,7 @@ module.exports = class Map
       type: 'fill'
       source: 'donut'
       paint:
-        'fill-color': 'blue'
+        'fill-color': 'rgba(0, 255, 0, 0.3)'
         'fill-opacity': 0.6
         # 'line-width': 10
         # 'line-color': 'red'
@@ -453,8 +454,8 @@ module.exports = class Map
         onclick = (e) =>
           e.originalEvent.isPropagationStopped = true
 
-          if e.features[0].properties.type is 'coordinate'
-            return
+          # if e.features[0].properties.type is 'coordinate'
+          #   return
 
           @place.next null
 
@@ -479,16 +480,17 @@ module.exports = class Map
             type: e.features[0].properties.type
             name: e.features[0].properties.name
             number: e.features[0].properties.number
+            checkInId: e.features[0].properties.checkInId
             description: e.features[0].properties.description
             rating: rating
             ratingCount: ratingCount
-            thumbnailPrefix: e.features[0].properties.thumbnailPrefix
+            hasAttachments: e.features[0].properties.hasAttachments
             position: position
             location: {lat: coordinates[1], lon: coordinates[0]}
             icon: e.features[0].properties.selectedIcon or icon
             size: e.features[0].properties.size or 1
             anchor: e.features[0].properties.anchor or 'bottom'
-            color: colors["$amenity#{icon}"]
+            color: colors["$icon#{icon}"]
           }
         # @map.on 'click', 'places-numbers', onclick
         @map.on 'click', 'places', onclick
@@ -511,6 +513,7 @@ module.exports = class Map
     @disposable?.unsubscribe()
     @routesDisposable?.unsubscribe()
     @fillDisposable?.unsubscribe()
+    @donutDisposable?.unsubscribe()
     @mapBoundsStreamsDisposable?.unsubscribe()
     @centerDisposable?.unsubscribe()
     @zoomDisposable?.unsubscribe()
@@ -573,9 +576,6 @@ module.exports = class Map
   subscribeToRoutes: =>
     console.log 'create subscription'
     @routesDisposable = @routes.subscribe (routes) =>
-
-      console.log 'routes', routes
-
       @map.getSource('route')?.setData {
         type: 'FeatureCollection'
         features: _map routes, ({geojson, color}) ->
@@ -590,10 +590,8 @@ module.exports = class Map
       }
 
   subscribeToDonut: =>
-    console.log 'sub to donut'
     @donutDisposable = @donut.subscribe (donut) =>
-      console.log 'got donut', donut
-      data = if donut \
+      data = if donut?.location \
              then @getDonutGeojson donut.location, donut.min, donut.max
              else null
       @map.getSource('donut')?.setData data
@@ -643,10 +641,12 @@ module.exports = class Map
               id: place.id
               slug: place.slug
               rating: place.rating
+              ratingCount: place.ratingCount
               description: place.description
-              thumbnailPrefix: place.thumbnailPrefix
+              hasAttachments: place.hasAttachments
               type: place.type
               icon: place.icon or 'default'
+              checkInId: place.checkInId
               selectedIcon: place.selectedIcon
               iconOpacity: place.iconOpacity or @defaultOpacity
               hasDot: place.hasDot

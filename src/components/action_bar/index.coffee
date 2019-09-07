@@ -15,7 +15,7 @@ module.exports = class ActionBar
     @$cancelIcon = new Icon()
     @$saveIcon = new Icon()
 
-  render: ({title, cancel, save, isSaving}) =>
+  render: ({title, cancel, save, isSaving, isPrimary, isSecondary}) =>
     cancel = _defaults cancel, {
       icon: 'close'
       text: @model.l.get 'general.cancel'
@@ -24,29 +24,40 @@ module.exports = class ActionBar
     save = _defaults save, {
       icon: 'check'
       text: @model.l.get 'general.save'
-      onclick: -> null
+      # onclick: -> null
     }
 
+    if isPrimary
+      color = colors.$primary500Text
+      bgColor = colors.$primary500
+    else if isSecondary
+      color = colors.$secondary500Text
+      bgColor = colors.$secondary500
+    else
+      color = colors.$header500Icon
+      bgColor = colors.$header500
 
     z '.z-action-bar',
       z @$appBar, {
         title: title
-        style: 'primary'
+        isPrimary
+        isSecondary
         $topLeftButton:
           z @$cancelIcon,
             icon: cancel.icon
-            color: colors.$header500Icon
+            color: color
             hasRipple: true
             onclick: (e) ->
               e?.stopPropagation()
               cancel.onclick e
         $topRightButton:
-          z @$saveIcon,
-            icon: if isSaving then 'ellipsis' else save.icon
-            color: colors.$header500Icon
-            hasRipple: true
-            onclick: (e) ->
-              e?.stopPropagation()
-              save.onclick e
+          if save?.onclick
+            z @$saveIcon,
+              icon: if isSaving then 'ellipsis' else save.icon
+              color: color
+              hasRipple: true
+              onclick: (e) ->
+                e?.stopPropagation()
+                save.onclick e
         isFlat: true
       }

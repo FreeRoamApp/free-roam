@@ -74,7 +74,6 @@ module.exports = class NewTrip
       @fields.name.errorSubject.next null
 
       @model.trip.upsert {
-        type: trip?.type or 'custom'
         id: trip?.id
         name: nameValue
         thumbnailPrefix: if imageIndex isnt 5

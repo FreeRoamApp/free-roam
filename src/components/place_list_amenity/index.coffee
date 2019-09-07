@@ -74,7 +74,7 @@ module.exports = class PlaceListAmenity
               z @$rating
           z '.amenities',
             _map @amenities, ({amenity, $icon}) ->
-              color = colors["$amenity#{amenity}"] or colors.$black
+              color = colors["$icon#{amenity}"] or colors.$black
               z '.amenity', {
                 style:
                   border: "1px solid #{color}"

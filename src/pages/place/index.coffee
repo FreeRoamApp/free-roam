@@ -23,8 +23,7 @@ module.exports = class PlacePage extends BasePage
   hideDrawer: true
 
   constructor: (options) ->
-    {@model, @router, requests, serverData,
-      group} = options
+    {@model, @router, requests, serverData, group} = options
 
     @place = @clearOnUnmount requests.switchMap ({route}) =>
       if route.params.slug is 'cache-shell'
@@ -32,18 +31,27 @@ module.exports = class PlacePage extends BasePage
       else
         @placeModel.getBySlug route.params.slug
 
+    tripId = requests.map ({req}) =>
+      req.query.tripId
+    trip = tripId.switchMap (tripId) =>
+      if tripId
+        @model.trip.getById tripId
+      else
+        RxObservable.of null
+
     tab = requests.map ({route}) ->
       route.params.tab
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}
-    @$place = new @Place {@model, @router, @place, tab}
+    @$place = new @Place {@model, @router, @place, tab, trip}
     @$editIcon = new Icon()
     @$deleteIcon = new Icon()
 
     @state = z.state
       me: @model.user.getMe()
       place: @place
+      tripId: tripId
 
   getMeta: =>
     @place.map (place) =>
@@ -70,15 +78,17 @@ module.exports = class PlacePage extends BasePage
       @model.overlay.open new RequestRating {@model}
 
   render: =>
-    {me, place} = @state.getValue()
+    {me, place, tripId} = @state.getValue()
 
     z '.p-place',
       z @$appBar, {
         title: place?.name
         isFlat: true
-        style: 'primary'
+        isSecondary: Boolean tripId
         $topLeftButton: z @$buttonBack, {
-          color: colors.$header500Icon
+          color: if tripId \
+                 then colors.$secondary500Text
+                 else colors.$header500Icon
         }
         $topRightButton:
           if me?.username in ['austin', 'big_boxtruck', 'roadpickle', 'rachel']

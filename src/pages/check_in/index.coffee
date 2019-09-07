@@ -27,6 +27,7 @@ module.exports = class CheckInPage
     @$buttonBack = new ButtonBack {@model, @router}
     @$checkIn = new CheckIn {@model, @router, checkIn}
     @$editIcon = new Icon()
+    @$deleteIcon = new Icon()
 
     @state = z.state {
       checkIn: checkIn.map (checkIn) ->
@@ -60,13 +61,24 @@ module.exports = class CheckInPage
         }
         $topRightButton:
           if checkIn?.id and hasEditPermission
-            z @$editIcon,
-              icon: 'edit'
-              color: colors.$primary500Text
-              hasRipple: true
-              onclick: =>
-                @router.go 'editCheckIn', {
-                  id: checkIn.id
-                }
+            z '.p-new-check-in_top-right',
+              z @$editIcon,
+                icon: 'edit'
+                color: colors.$primary500Text
+                hasRipple: true
+                onclick: =>
+                  @router.go 'editCheckIn', {
+                    id: checkIn.id
+                  }
+
+              z @$deleteIcon,
+                icon: 'delete'
+                color: colors.$header500Icon
+                hasRipple: true
+                onclick: =>
+                  if confirm @model.l.get 'general.confirm'
+                    @model.checkIn.deleteByRow checkIn
+                    .then =>
+                      @router.back()
       }
       @$checkIn

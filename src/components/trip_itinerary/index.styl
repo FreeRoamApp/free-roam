@@ -108,7 +108,14 @@
 
 
               > .actions
-                display: inline-block
+                display: flex
+
+                > .action
+                  flex: 1
+                  margin-right: 16px
+
+                  &:last-child
+                    margin-right: 0
 
 
         > .actions

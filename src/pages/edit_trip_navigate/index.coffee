@@ -7,14 +7,14 @@ _find = require 'lodash/find'
 
 AppBar = require '../../components/app_bar'
 Icon = require '../../components/icon'
-EditTripChooseRoute = require '../../components/edit_trip_choose_route'
+EditTripNavigate = require '../../components/edit_trip_navigate'
 colors = require '../../colors'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class EditTripChooseRoutePage
+module.exports = class EditTripNavigatePage
   hideDrawer: true
 
   constructor: ({@model, @router, requests, serverData, group, @$bottomBar}) ->
@@ -30,8 +30,9 @@ module.exports = class EditTripChooseRoutePage
     tripAndRouteId = RxObservable.combineLatest(
       trip, routeId, (vals...) -> vals
     )
+    # TODO: don't grab all routes from server, just the one
     tripRoute = tripAndRouteId.map ([trip, routeId]) ->
-      _find trip.routes, {id: routeId}
+      _find trip.routes, {routeId}
 
     # mapBoundsStreams = new RxReplaySubject 1
     # mapBoundsStreams.next requests.switchMap ({route}) =>
@@ -48,7 +49,7 @@ module.exports = class EditTripChooseRoutePage
     @$closeIcon = new Icon()
     @$settingsIcon = new Icon()
 
-    @$editTripChooseRoute = new EditTripChooseRoute {
+    @$editTripNavigate = new EditTripNavigate {
       @model, @router, trip, tripRoute
     }
 
@@ -58,18 +59,15 @@ module.exports = class EditTripChooseRoutePage
 
   getMeta: =>
     {
-      title: @model.l.get 'editTripChooseRoutePage.stopTitle'
+      title: @model.l.get 'editTripNavigatePage.stopTitle'
     }
 
   render: =>
     {trip, routeId} = @state.getValue()
 
-    z '.p-edit-trip-add-stop',
+    z '.p-edit-trip-navigate',
       z @$appBar, {
-        title:
-          if routeId
-          then @model.l.get 'editTripChooseRoutePage.stopTitle'
-          else @model.l.get 'editTripChooseRoutePage.destinationTitle'
+        title: @model.l.get 'editTripNavigatePage.title'
         isSecondary: true
         $topLeftButton: z @$closeIcon, {
           icon: 'close'
@@ -86,5 +84,5 @@ module.exports = class EditTripChooseRoutePage
             }
         }
       }
-      @$editTripChooseRoute
+      @$editTripNavigate
       @$bottomBar

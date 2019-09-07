@@ -18,4 +18,7 @@ module.exports = class TripsFollowing
     {} = @state.getValue()
 
     z '.z-trips-following',
-      z @$tripList
+      z @$tripList,
+        emptyIcon: 'trip_following_empty'
+        emptyTitle: @model.l.get 'tripsFollowing.emptyTitle'
+        emptyDescription: @model.l.get 'tripsFollowing.emptyDescription'

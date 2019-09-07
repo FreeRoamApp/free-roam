@@ -16,7 +16,7 @@ class TripService
       _flatten _map route.legs, ({route}) ->
         MapService.decodePolyline route.shape
 
-    highlightedRoute = _find trip.routes, {id: tripRoute?.id}
+    highlightedRoute = _find trip.routes, {routeId: tripRoute?.routeId}
 
     routes.push {
       geojson: allGeojson

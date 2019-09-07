@@ -2,8 +2,7 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _maxBy = require 'lodash/maxBy'
 _minBy = require 'lodash/minBy'
-RxObservable = require('rxjs/Observable').Observable
-require 'rxjs/add/observable/of'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 colors = require '../../colors'
 
@@ -11,24 +10,41 @@ if window?
   require './index.styl'
 
 module.exports = class ElevationChart
-  constructor: ({routes, size}) ->
-    size ?= RxObservable.of {width: 320}
+  constructor: ({@model, routes}) ->
+    @size = new RxBehaviorSubject null
 
     @state = z.state {
       routes
-      size: size.map (size) ->
-        console.log 'size', size
-        size.width ?= 320
-        size.height ?= size.width * 0.3
-        size.padding ?= size.width * 0.02
-        size
+      @size
     }
+
+  afterMount: (@$$el) =>
+    @subscribeToResize()
+
+  beforeUnmount: =>
+    @resizeSubscription?.unsubscribe()
+
+  # TODO: maybe move this to base component since it's used in a few places?
+  subscribeToResize: =>
+    setTimeout =>
+      checkIsReady = =>
+        if @$$el and @$$el.offsetWidth
+          @resizeSubscription = @model.window.getSize().subscribe =>
+            setTimeout =>
+              @size?.next {
+                width: @$$el.offsetWidth
+                height: @$$el.offsetHeight
+                padding: 16
+              }
+            , 0
+        else
+          setTimeout checkIsReady, 100
+      checkIsReady()
+    , 0 # give time for re-render...
 
   getPoints: (route) =>
     {size} = @state.getValue()
     {width, height, padding} = size or {}
-
-    console.log width, height, padding
 
     elevations = route?.elevations
     minRange = _minBy(elevations, ([range, elevation]) -> range)?[0]
@@ -36,11 +52,13 @@ module.exports = class ElevationChart
 
     minElevation = _minBy(elevations, ([range, elevation]) -> elevation)?[1]
     maxElevation = _maxBy(elevations, ([range, elevation]) -> elevation)?[1]
+    rangeElevation = maxElevation - minElevation
 
     _map elevations, ([range, elevation], i) =>
+      height - (padding + ((elevation - minElevation) / rangeElevation) * (height - padding * 2))
       [
-        width - (padding + (range / maxRange) * (width - padding * 2))
-        padding + (elevation / maxElevation) * (height - padding * 2)
+        (padding + (range / maxRange) * (width - padding * 2))
+        height - (padding + ((elevation - minElevation) / rangeElevation) * (height - padding * 2))
       ]
 
   render: ({heightRatio}) =>
@@ -48,14 +66,16 @@ module.exports = class ElevationChart
 
     {width, height, padding} = size or {}
 
-    points = @getPoints routes?[0]
+    mainRoute = routes?[0]
+
+    points = @getPoints mainRoute
     alternativePoints = @getPoints routes?[1]
 
     z '.z-elevation-chart', {
       key: 'elevation-chart'
-      style:
-        width: "#{width}px"
-        height: "#{height}px"
+      # style:
+        # width: "#{width}px"
+        # height: "#{height}px"
     },
       z 'svg', {
         key: 'elevation-chart'
@@ -66,6 +86,26 @@ module.exports = class ElevationChart
           width: "#{width}px"
           height: "#{height}px"
       },
+        z 'text', {
+          namespace: 'http://www.w3.org/2000/svg'
+          attributes:
+            x: width - padding
+            y: padding
+            'text-anchor': 'end'
+        },
+          "#{mainRoute?.elevationStats.max} "
+          @model.l.get 'editTripSettings.feetAbbr'
+
+        z 'text', {
+          namespace: 'http://www.w3.org/2000/svg'
+          attributes:
+            x: width - padding
+            y: height - padding
+            'text-anchor': 'end'
+        },
+          "#{mainRoute?.elevationStats.min} "
+          @model.l.get 'editTripSettings.feetAbbr'
+
         z 'polyline', {
           namespace: 'http://www.w3.org/2000/svg'
           attributes:

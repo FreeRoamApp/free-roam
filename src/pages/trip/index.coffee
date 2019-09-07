@@ -15,8 +15,6 @@ module.exports = class TripPage
     @trip = requests.switchMap ({route}) =>
       if route.params.id
         @model.trip.getById route.params.id
-      else
-        @model.trip.getByType route.params.type
 
     @$appBar = new AppBar {@model}
     @$buttonBack = new ButtonBack {@model, @router}

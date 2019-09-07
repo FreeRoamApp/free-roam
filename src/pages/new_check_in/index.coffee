@@ -2,8 +2,6 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 
-AppBar = require '../../components/app_bar'
-ButtonBack = require '../../components/button_back'
 NewCheckIn = require '../../components/new_check_in'
 Icon = require '../../components/icon'
 colors = require '../../colors'
@@ -24,15 +22,10 @@ module.exports = class NewCheckInPage
     trip = requests.switchMap ({route}) =>
       if route.params.tripId
         @model.trip.getById route.params.tripId
-      else if route.params.tripType
-        @model.trip.getByType route.params.tripType
       else
         RxObservable.of null
 
-    @$appBar = new AppBar {@model}
-    @$buttonBack = new ButtonBack {@model, @router}
     @$newCheckIn = new NewCheckIn {@model, @router, checkIn, trip}
-    @$deleteIcon = new Icon()
 
     @state = z.state {checkIn}
 
@@ -45,20 +38,4 @@ module.exports = class NewCheckInPage
     {checkIn} = @state.getValue()
 
     z '.p-new-check-in',
-      z @$appBar, {
-        title: @model.l.get 'newCheckInPage.title'
-        style: 'primary'
-        $topLeftButton: z @$buttonBack
-        $topRightButton:
-          if checkIn?.id
-            z @$deleteIcon,
-              icon: 'delete'
-              color: colors.$header500Icon
-              hasRipple: true
-              onclick: =>
-                if confirm @model.l.get 'general.confirm'
-                  @model.checkIn.deleteByRow checkIn
-                  .then =>
-                    @router.back()
-      }
       @$newCheckIn

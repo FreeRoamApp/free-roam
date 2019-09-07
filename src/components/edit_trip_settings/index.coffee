@@ -25,14 +25,39 @@ module.exports = class EditTripSettings
 
     me = @model.user.getMe()
 
-    @rigHeightValueStreams = new RxReplaySubject 1
-    @rigHeightValueStreams.next (trip?.map (trip) ->
-      trip.settings?.rigHeight) or RxObservable.of 0
-    @rigHeightError = new RxBehaviorSubject null
+    @rigHeightFeetValueStreams = new RxReplaySubject 1
+    @rigHeightFeetValueStreams.next (trip?.map (trip) ->
+      trip.settings?.rigHeightInches ?= 13.5 * 12
+      Math.floor(trip.settings?.rigHeightInches / 12)) or RxObservable.of 0
+    @rigHeightFeetError = new RxBehaviorSubject null
 
-    @$rigHeightInput = new PrimaryInput
-      valueStreams: @rigHeightValueStreams
-      error: @rigHeightError
+    @$rigHeightFeetInput = new PrimaryInput
+      valueStreams: @rigHeightFeetValueStreams
+      error: @rigHeightFeetError
+
+    @rigHeightInchesValueStreams = new RxReplaySubject 1
+    @rigHeightInchesValueStreams.next (trip?.map (trip) ->
+      trip.settings?.rigHeightInches ?= 13.5 * 12
+      trip.settings?.rigHeightInches % 12) or RxObservable.of 0
+
+    @rigHeightInchesError = new RxBehaviorSubject null
+
+    @$rigHeightInchesInput = new PrimaryInput
+      valueStreams: @rigHeightInchesValueStreams
+      error: @rigHeightInchesError
+
+    # feetValue = new RxBehaviorSubject @filter.value?.feet or '14'
+    # @$feetInput = new PrimaryInput {value: feetValue}
+    #
+    # inchesValue = new RxBehaviorSubject @filter.value?.inches or '6'
+    # @$inchesInput = new PrimaryInput {value: inchesValue}
+    #
+    # filterValue = RxObservable.combineLatest(
+    #   feetValue
+    #   inchesValue
+    #   (vals...) -> vals
+    # ).map ([feet, inches]) ->
+    #   {feet, inches}
 
     @donutIsVisibleValueStreams = new RxReplaySubject 1
     @donutIsVisibleValueStreams.next (trip?.map (trip) ->
@@ -73,17 +98,20 @@ module.exports = class EditTripSettings
       donutMin: @donutMinValueStreams.switch()
       donutMax: @donutMaxValueStreams.switch()
       donutIsVisible: @donutIsVisibleValueStreams.switch()
-      rigHeight: @rigHeightValueStreams.switch()
+      rigHeightFeet: @rigHeightFeetValueStreams.switch()
+      rigHeightInches: @rigHeightInchesValueStreams.switch()
       isPrivate: @isPrivateValueStreams.switch()
 
   save: =>
-    {trip, donutMin, donutMax, donutIsVisible, rigHeight,
+    {trip, donutMin, donutMax, donutIsVisible, rigHeightFeet, rigHeightInches
       isPrivate, isSaving} = @state.getValue()
 
     if isSaving
       return
 
     @state.set isSaving: true
+
+    rigHeightInches = (rigHeightFeet * 12) + rigHeightInches
 
     @model.trip.upsert {
       id: trip.id
@@ -92,7 +120,7 @@ module.exports = class EditTripSettings
           min: donutMin
           max: donutMax
           isVisible: donutIsVisible
-        rigHeight: rigHeight
+        rigHeightInches: rigHeightInches
         privacy: if isPrivate then 'private' else 'public'
     }
     .then =>
@@ -120,6 +148,17 @@ module.exports = class EditTripSettings
             z '.content',
               z '.description',
                 @model.l.get 'editTripSettings.rigHeightDescription'
+            z '.extras',
+              z '.short-input',
+                z @$rigHeightFeetInput,
+                  hintText: @model.l.get 'editTripSettings.rigHeightFeet'
+                  type: 'number'
+              z '.dash', @model.l.get 'editTripSettings.feetAbbr'
+              z '.short-input',
+                z @$rigHeightInchesInput,
+                  hintText: @model.l.get 'editTripSettings.rigHeightInches'
+                  type: 'number'
+              z '.dash', @model.l.get 'editTripSettings.inchesAbbr'
 
           z '.field',
             z '.title', @model.l.get 'editTripSettings.mapDonut'

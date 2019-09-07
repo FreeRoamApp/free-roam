@@ -28,7 +28,7 @@ if window?
 # https://api.mapbox.com/styles/v1/mapbox/satellite-v9/static/pin-s-fuel+dbad49(-121.783189,43.215686)/-121.783189,43.215686,17,0.00,0.00/320x320@2x?access_token=pk.eyJ1IjoiYXVzdGluaGFsbG9jayIsImEiOiJjam50azRkM3EwdW11M3Bwa3JhZmpwd25yIn0.s77eqcPCfwJ3NnPX7UvMpg
 
 module.exports = class PlaceInfo extends Base
-  constructor: ({@model, @router, @place}) ->
+  constructor: ({@model, @router, @place, @trip}) ->
     @seasons =  [
       {key: 'spring', text: @model.l.get 'seasons.spring'}
       {key: 'summer', text: @model.l.get 'seasons.summer'}
@@ -36,7 +36,7 @@ module.exports = class PlaceInfo extends Base
       {key: 'winter', text: @model.l.get 'seasons.winter'}
     ]
     @$warningIcon = new Icon()
-    @$actionBox = new ActionBox {@model, @router, @place}
+    @$actionBox = new ActionBox {@model, @router, @place, @trip}
     @$contact = new Contact {@model, @router, @place}
     @$placeInfoWeather = new Weather {@model, @router, @place}
     @$detailsButton = new PrimaryButton()
@@ -229,7 +229,7 @@ module.exports = class PlaceInfo extends Base
                   icon: amenity
                   isTouchTarget: false
                   size: '16px'
-                  color: colors["$amenity#{amenity}"]
+                  color: colors["$icon#{amenity}"]
 
               z '.name', @model.l.get "amenities.#{amenity}"
 

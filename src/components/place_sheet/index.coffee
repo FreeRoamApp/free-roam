@@ -14,6 +14,7 @@ Icon = require '../icon'
 Rating = require '../rating'
 Toggle = require '../toggle'
 CoordinateInfoDialog = require '../coordinate_info_dialog'
+NewCheckIn = require '../new_check_in'
 MapService = require '../../services/map'
 colors = require '../../colors'
 
@@ -49,7 +50,7 @@ module.exports = class PlaceSheet
         if place?.type
           # @model.geocoder.getCoordinateInfoFromLocation place.location
           @model.placeBase.getSheetInfo {
-            place, tripId: trip?.id, tripRouteId: tripRoute?.id
+            place, tripId: trip?.id, tripRouteId: tripRoute?.routeId
           }
           .map (info) =>
             _defaults {
@@ -69,7 +70,7 @@ module.exports = class PlaceSheet
           RxObservable.of false
       buttons: sheetData.map ([place, trip, tripRoute]) =>
         _filter [
-          if tripRoute?.id
+          if tripRoute?.routeId
             {
               $icon: new Icon()
               icon: 'add'
@@ -81,9 +82,19 @@ module.exports = class PlaceSheet
                 .then (checkIn) =>
                   @model.trip.upsertStopByIdAndRouteId(
                     trip?.id
-                    tripRoute?.id
+                    tripRoute?.routeId
                     checkIn
                   )
+            }
+          else if trip?.id and place?.number
+            {
+              $icon: new Icon()
+              icon: 'subtract-circle'
+              text: @model.l.get 'placeSheet.removeFromTrip'
+              loadingText: @model.l.get 'general.saving'
+              loadedText: @model.l.get 'general.saved'
+              onclick: =>
+                @model.trip.deleteDestinationById trip.id, place.checkInId
             }
           else if trip?.id
             {
@@ -93,12 +104,11 @@ module.exports = class PlaceSheet
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
-                @saveCheckIn()
-                .then (checkIn) =>
-                  @model.trip.upsertDestinationById(
-                    trip?.id
-                    checkIn
-                  )
+                @model.overlay.open new NewCheckIn {
+                  @model, @router, @place, isOverlay: true
+                  trip: RxObservable.of(trip), skipChooseTrip: true
+                }
+                Promise.resolve true
             }
           if place?.type is 'coordinate'
             {
@@ -121,7 +131,8 @@ module.exports = class PlaceSheet
               loadedText: @model.l.get 'general.saved'
               onclick: @saveCheckIn
             }
-          if place?.type isnt 'coordinate' or not _isEmpty place?.features
+          if place?.type in ['campground', 'overnight', 'amenity'] or
+              not _isEmpty place?.features
             {
               $icon: new Icon()
               icon: 'info'
@@ -133,7 +144,8 @@ module.exports = class PlaceSheet
                     @addLayerById, @removeLayerById, @layersVisible
                   }
                 else
-                  @router.goOverlay place.type, {slug: place.slug}
+                  options = if trip then {qs: {tripId: trip.id}} else null
+                  @router.goOverlay place.type, {slug: place.slug}, options
                 Promise.resolve null
             }
           if place?.type is 'coordinate'
@@ -184,11 +196,11 @@ module.exports = class PlaceSheet
     {place, trip, buttons, info,
       isLoadingButtons, isLoadedButtons, elevation} = @state.getValue()
 
-    console.log 'sheet place', info
-
     isVisible ?= Boolean place
 
-    {elevation, localMaps} = info or {}
+    console.log 'sheet', place
+
+    {elevation, localMaps, attachments} = info or {}
 
     if not elevation? or elevation is false
       elevation = '...'
@@ -197,11 +209,11 @@ module.exports = class PlaceSheet
       'campground', 'overnight', 'amenity'
     ])
 
-    z 'a.z-place-sheet', {
+    z '.z-place-sheet', {
       className: z.classKebab {isVisible}
-      href: @router.get place?.type, {slug: place?.slug}
       onclick: (e) =>
         e?.stopPropagation()
+        e?.preventDefault()
         if place?.type is 'hazard' and place?.subType is 'lowClearance'
           [lon, lat] = place.location
           @model.portal.call 'browser.openWindow', {
@@ -209,10 +221,21 @@ module.exports = class PlaceSheet
               "https://maps.google.com/maps?z=18&t=k&ll=#{lat},#{lon}"
           }
         else if not isDisabled
-          e?.preventDefault()
-          @router.goOverlay place.type, {slug: place.slug}
+          options = if trip then {qs: {tripId: trip.id}} else null
+          @router.goOverlay place.type, {slug: place.slug}, options
     },
       z '.sheet',
+        if place?.hasAttachments
+          z '.attachments',
+            _map attachments, (attachment) =>
+              src = @model.image.getSrcByPrefix attachment.prefix, {
+                size: 'small'
+              }
+              z '.attachment',
+                style:
+                  backgroundImage: "url(#{src})"
+                  width: "#{attachment.aspectRatio * 100}px"
+                  height: '100px'
         z '.content',
           z '.left',
             z '.title', place?.name
@@ -220,6 +243,10 @@ module.exports = class PlaceSheet
             if place?.type is 'coordinate'
               z '.elevation',
                 @model.l.get 'coordinateTooltip.elevation', {replacements: {elevation}}
+
+            if place?.type is 'hazard'
+              z '.description',
+                place?.description
 
             if info?.addStopInfo
               z '.add-stop-info',
@@ -239,7 +266,7 @@ module.exports = class PlaceSheet
                     }
 
           z '.right',
-            if place?.type and not (place?.type in ['hazard', 'blm', 'usfs'])
+            if place?.rating?
               [
                 z '.rating',
                   z @$rating, {size: '16px', color: colors.$secondary500}

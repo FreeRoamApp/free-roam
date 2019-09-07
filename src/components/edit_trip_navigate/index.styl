@@ -1,0 +1,44 @@
+@require '../../vars'
+
+.z-edit-trip-navigate
+  flex1()
+  display: flex
+  position: relative
+
+  > .routes
+    position: absolute
+    bottom: 8px
+    left: 8px
+    right: 8px
+    background: getColor('$tertiary0')
+    max-width: 400px
+
+    > .elevation
+      display: flex
+      align-items: center
+      padding: 16px 16px 0 16px
+
+      > .icon
+        margin-right: 4px
+
+      > .text
+        font-body2()
+        margin-right: 16px
+
+    > .distance-time
+      display: flex
+      padding: 0 16px
+
+      > .distance, > .time
+        display: flex
+        align-items: flex-end
+
+        > .number
+          font-h3()
+          margin-right: 4px
+
+      > .time
+        margin-left: 24px
+
+    > .actions
+      padding: 16px

@@ -53,18 +53,18 @@ module.exports = class Profile extends Base
     @$spinner = new Spinner()
 
     @pastTrip = user.switchMap (user) =>
-      if user
-        @model.trip.getByUserIdAndType user.id, 'past'
-        .catch (err) =>
-          err = try
-            JSON.parse err.message
-          catch
-            {}
-          if err.status is 401
-            RxObservable.of 'private'
-          else
-            throw err
-      else
+      # if user
+      #   @model.trip.getByUserIdAndType user.id, 'past'
+      #   .catch (err) =>
+      #     err = try
+      #       JSON.parse err.message
+      #     catch
+      #       {}
+      #     if err.status is 401
+      #       RxObservable.of 'private'
+      #     else
+      #       throw err
+      # else
         RxObservable.of null
 
     attachments = user.switchMap (user) =>
@@ -165,9 +165,7 @@ module.exports = class Profile extends Base
     tripImage = @getCoverUrl pastTrip
 
     isMe = user and user?.id is me?.id
-    pastTripPath = if isMe \
-          then @router.get 'tripByType', {type: 'past'}
-          else @router.get 'trip', {id: pastTrip?.id}
+    pastTripPath = @router.get 'trip', {id: pastTrip?.id}
 
     z '.z-profile', {
       className: z.classKebab {@isImageLoaded}

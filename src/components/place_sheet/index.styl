@@ -24,8 +24,23 @@
     max-width: 480px
     margin: 0 auto
 
+    > .attachments
+      white-space: nowrap
+      overflow-x: auto
+      overflow-y: hidden
+      height: 116px
+      padding: 12px 16px 0 16px
+
+      > .attachment
+        display: inline-block
+        width: 100px
+        height: 100px
+        margin-right: 8px
+        background-size: 100% auto
+        border-radius: 4px
+
     > .content
-      padding: 16px
+      padding: 16px 16px 0 16px
       display: flex
 
       > .left

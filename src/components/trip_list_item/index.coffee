@@ -27,10 +27,12 @@ module.exports = class TripListItem
         DateService.format endTime, 'MMM D'
     }, trip
 
+    @$selectedIcon = new Icon()
+
     @state = z.state
       me: me
 
-  render: =>
+  render: ({onclick, isSelected} = {}) =>
     {me} = @state.getValue()
 
     trip = @trip
@@ -42,12 +44,16 @@ module.exports = class TripListItem
     else
       imageUrl = null
 
-    @router.link z 'a.z-trip-list-item', {
-      href:
-        if trip?.id
-          @router.get 'trip', {id: trip?.id}
+    href = @router.get 'trip', {id: trip?.id}
+
+    z 'a.z-trip-list-item', {
+      href: href
+      onclick: (e) =>
+        e.preventDefault()
+        if onclick
+          onclick trip
         else
-          @router.get 'tripByType', {type: trip?.type}
+          @router.goPath href
     },
       z '.g-grid',
         z '.image',
@@ -68,3 +74,9 @@ module.exports = class TripListItem
                   distance: FormatService.number trip?.overview?.distance or 0
                   stops: trip?.overview?.stops
               }
+        if isSelected
+          z '.selected',
+            z @$selectedIcon,
+              icon: 'check'
+              isTouchTarget: false
+              color: colors.$secondary500

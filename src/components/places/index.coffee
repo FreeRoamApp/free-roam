@@ -22,16 +22,17 @@ if window?
 
 module.exports = class Places
   constructor: (options) ->
-    {@model, @router, isShell, type, subType, donut,
+    {@model, @router, isShell, types, subType, donut,
       trip, tripRoute, mapBoundsStreams, searchQuery} = options
 
     @currentDataType = new RxReplaySubject 1
-    if type
+    type = types.map (types) -> types?[0]
+    if types
       @currentDataType.next type
     else
       @currentDataType.next RxObservable.of 'campground'
 
-    if type and subType
+    if types and subType
       typeAndSubType = RxObservable.combineLatest(
         type, subType, (vals...) -> vals
       )
@@ -43,7 +44,7 @@ module.exports = class Places
       mapBoundsStreams
       donut: donut
       currentDataType: @currentDataType
-      initialDataType: type # from url
+      initialDataTypes: types # from url
       initialFilters: typeAndSubType?.map ([type, subType]) ->
         if subType
           if type is 'amenity'

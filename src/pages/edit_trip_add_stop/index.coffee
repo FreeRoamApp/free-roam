@@ -26,36 +26,38 @@ module.exports = class EditTripAddStopPage
         RxObservable.of null
 
     routeId = requests.map ({route}) =>
-      route.params.routeId
+      route.params.routeId or null
 
     tripAndRouteId = RxObservable.combineLatest(
       trip, routeId, (vals...) -> vals
     )
     tripRoute = tripAndRouteId.map ([trip, routeId]) ->
-      _find trip.routes, {id: routeId}
+      _find trip.routes, {routeId}
 
-    # mapBoundsStreams = new RxReplaySubject 1
-    # mapBoundsStreams.next requests.switchMap ({route}) =>
-    #   region = {
-    #     country: route.params.country
-    #     state: route.params.state
-    #     city: route.params.city
-    #   }
-    #   unless route.params.country
-    #     return RxObservable.of undefined
-    #   @model.geocoder.getBoundingFromRegion region
+    tripAndTripRoute = RxObservable.combineLatest(
+      trip, tripRoute, (vals...) -> vals
+    )
+
+    mapBoundsStreams = new RxReplaySubject 1
+    # take(1) so it doesn't update any time exoid is cleared
+    mapBoundsStreams.next tripAndTripRoute.take(1).map ([trip, tripRoute]) =>
+      tripRoute?.bounds or trip.bounds
+
 
     @$appBar = new AppBar {@model}
     @$closeIcon = new Icon()
     @$settingsIcon = new Icon()
 
     @$places = new Places {
-      @model, @router, trip, tripRoute
-      donut: trip.map (trip) ->
+      @model, @router, trip, tripRoute, mapBoundsStreams
+      types: routeId.map (routeId) ->
+        if routeId
+          ['campground', 'overnight', 'amenity', 'hazard']
+        else
+          ['campground', 'overnight']
+      donut: tripAndRouteId.map ([trip, routeId]) ->
         isVisible = trip?.settings?.donut?.isVisible
-        console.log 'TRIPPPP', trip
-        if isVisible
-          console.log 'visible'
+        if isVisible and not routeId # don't show for add stop
           {
             location: _last trip.destinations
             min: trip.settings.donut.min

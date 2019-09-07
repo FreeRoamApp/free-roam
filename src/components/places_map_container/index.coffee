@@ -39,7 +39,7 @@ module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, isShell, @trip, @tripRoute, @dataTypes, showScale,
       mapBoundsStreams, @persistentCookiePrefix, @addPlacesStreams,
-      @limit, @sort, defaultOpacity, @currentDataType, @initialDataType,
+      @limit, @sort, defaultOpacity, @currentDataType, @initialDataTypes,
       @initialFilters, initialCenter, center, initialZoom, zoom, donut,
       searchQuery, @isSearchHidden} = options
 
@@ -51,7 +51,7 @@ module.exports = class PlacesMapContainer
     unless @currentDataType
       @currentDataType = new RxReplaySubject 1
       @currentDataType.next RxObservable.of @dataTypes[0].dataType
-    @initialDataType ?= new RxBehaviorSubject null
+    @initialDataTypes ?= new RxBehaviorSubject null
     @initialFilters ?= new RxBehaviorSubject null
 
     @persistentCookiePrefix ?= 'default'
@@ -86,32 +86,35 @@ module.exports = class PlacesMapContainer
       routes = tripAndTripRoute?.map ([trip, tripRoute]) ->
         TripService.getRouteGeoJson trip, tripRoute
       tripPlacesStream = tripAndTripRoute.switchMap ([trip, tripRoute]) =>
-        console.log trip
-        (if tripRoute?.id
-          @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, [tripRoute.id]
+        (if tripRoute?.routeId
+          @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, [
+            tripRoute.routeId
+          ]
         else
           RxObservable.of null
         ).map (stops) ->
           places = _filter _map _flatten(_values(stops)), ({place}, i) ->
-            console.log 'place', place
             if place
               _defaults {
                 hasDot: true
                 icon: MapService.getIconByPlace place
               }, place
-          places = places.concat _map trip?.destinations, ({lat, lon, id}, i) ->
+          places = places.concat _map trip?.destinationsInfo, ({place, id}, i) ->
             isGray = tripRoute and not (id in [
               tripRoute?.startCheckInId, tripRoute?.endCheckInId
             ])
-            {
-              location: {lat, lon}
-              number: i
+            console.log 'PLACE', place
+            _defaults {
+              # location: place.location # {lat, lon}
+              number: i + 1
+              checkInId: id
               icon: if isGray \
                     then 'planned_gray'
                     else 'planned'
               selectedIcon: 'planned_selected'
               anchor: 'center'
-            }
+            }, place
+          console.log 'places', places
           places
     else
       tripPlacesStream = RxObservable.of null
@@ -125,8 +128,8 @@ module.exports = class PlacesMapContainer
       (vals...) -> vals
     ).map ([addPlaces, {places, visible, total}, tripPlaces]) ->
       places ?= []
-      places = places.concat addPlaces # addPlaces should "under" places on map
-      places = places.concat tripPlaces
+      places = places.concat (addPlaces or []) # addPlaces should "under" places on map
+      places = places.concat (tripPlaces or [])
 
       {places, visible, total}
     .share() # otherwise map setsData twice (subscribe called twice)
@@ -197,7 +200,7 @@ module.exports = class PlacesMapContainer
     }
     @$placesFilterBar = new PlacesFilterBar {
       @model, @isFilterTypesVisible, @currentDataType
-      @trip, @isTripFilterEnabled
+      @tripRoute, @isTripFilterEnabled
     }
 
     @state = z.state
@@ -245,8 +248,8 @@ module.exports = class PlacesMapContainer
         getIconFn, isCheckedValueStreams} = options
       savedValue = savedDataTypes[dataType]
       isCheckedValueStreams ?= new RxReplaySubject 1
-      isCheckedValueStreams.next @initialDataType.map (initialDataType) ->
-        if initialDataType then dataType is initialDataType
+      isCheckedValueStreams.next @initialDataTypes.map (initialDataTypes) ->
+        if initialDataTypes then initialDataTypes.indexOf(dataType) isnt -1
         else if savedValue? then savedValue
         else defaultValue
       {
@@ -286,9 +289,7 @@ module.exports = class PlacesMapContainer
       dataTypesWithValue
 
   getFilterTypesStream: =>
-    console.log 'get stream'
     @initialFilters.switchMap (initialFilters) =>
-      console.log 'm1'
       persistentCookie = "#{@persistentCookiePrefix}_savedFilters"
       savedFilters = try
         JSON.parse @model.cookie.get persistentCookie
@@ -380,7 +381,7 @@ module.exports = class PlacesMapContainer
           limit: limit
           sort: sort
           tripId: if isTripFilterEnabled then trip?.id
-          tripRouteId: if isTripFilterEnabled then tripRoute?.id
+          tripRouteId: if isTripFilterEnabled then tripRoute?.routeId
           query:
             bool:
               filter: queryFilter

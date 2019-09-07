@@ -24,7 +24,7 @@ module.exports = class TravelMap
       onclick, prepScreenshot} = options
 
     destinations ?= @trip.map (trip) ->
-      trip?.destinations
+      trip?.destinationsInfo
     # .publishReplay(1).refCount()
     routes ?= @trip.map (trip) ->
       TripService.getRouteGeoJson trip
@@ -43,19 +43,24 @@ module.exports = class TravelMap
       }
 
     mapBoundsStreams = new RxReplaySubject 1
-    # FIXME FIXME
-    # mapBoundsStreams.next(
-    #   @trip.map (trip) =>
-    #     unless trip
-    #       return RxObservable.of {}
-    #     trip.route.bounds
-    # )
+    mapBoundsStreams.next(
+      @trip.map (trip) =>
+        unless trip
+          return RxObservable.of {}
+        trip.bounds
+    )
 
     @mapSize = new RxBehaviorSubject null
     mapOptions = {
       @model, @router
       places: destinations.map (destinations) ->
-        _filter _map destinations, 'place'
+        console.log 'des', destinations
+        _filter _map destinations, ({place}, i) ->
+          _defaults {
+            number: i + 1
+            icon: 'planned'
+            anchor: 'center'
+          }, place
       routes: routes
       fill: filledStates
       usePlaceNumbers: true
