@@ -10,6 +10,7 @@ _filter = require 'lodash/filter'
 _defaults = require 'lodash/defaults'
 _isEmpty = require 'lodash/isEmpty'
 _omit = require 'lodash/omit'
+_reduce = require 'lodash/reduce'
 _sumBy = require 'lodash/sumBy'
 _uniq = require 'lodash/uniq'
 
@@ -41,8 +42,14 @@ module.exports = class TripItinerary extends Base
     stops = tripAndVisibleRouteIds.switchMap ([trip, routeIds]) =>
       if trip?.id and not _isEmpty routeIds
         @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, routeIds
+        .map (stops) ->
+          # make sure even if no stops for routeId, return false (for spinner)
+          _reduce routeIds, (obj, routeId) ->
+              obj[routeId] = stops?[routeId] or false
+              obj
+          , {}
       else
-        RxObservable.of null
+        RxObservable.of false
 
     destinationsAndTripAndStops = RxObservable.combineLatest(
       destinations, @trip, stops, (vals...) -> vals
@@ -72,15 +79,18 @@ module.exports = class TripItinerary extends Base
           routeInfo?.distance = _sumBy routeInfo?.legs, ({route}) ->
             route.distance
 
-          stopsInfo = _map stops?[routeInfo?.routeId], (stop) =>
-            stopCacheKey = "stop-#{stop.id}"
-            {
-              stop
-              $deleteIcon: new Icon()
-              $place: @getCached$ stopCacheKey, PlaceListItem, {
-                @model, @router, place: stop.place, name: stop.name
+          if stops?[routeInfo?.routeId]?
+            stopsInfo = _map stops?[routeInfo?.routeId], (stop) =>
+              stopCacheKey = "stop-#{stop.id}"
+              {
+                stop
+                $deleteIcon: new Icon()
+                $place: @getCached$ stopCacheKey, PlaceListItem, {
+                  @model, @router, place: stop.place, name: stop.name
+                }
               }
-            }
+          else
+            stopsInfo = null
 
           destinationCacheKey = "destination-#{destination.id}"
           {
@@ -94,6 +104,7 @@ module.exports = class TripItinerary extends Base
             $routeIcon: new Icon()
             $navigateButton: new PrimaryButton()
             $addStopButton: new PrimaryButton()
+            $spinner: new Spinner()
           }
     }
 
@@ -107,7 +118,6 @@ module.exports = class TripItinerary extends Base
 
   render: =>
     {me, destinations, trip, visibleRouteIds} = @state.getValue()
-
 
     hasEditPermission = @model.trip.hasEditPermission trip, me
 
@@ -126,7 +136,7 @@ module.exports = class TripItinerary extends Base
               z @$spinner
             _map destinations, (destination, i) =>
               {destination, stopsInfo, routeInfo, $chevronIcon, $routeIcon,
-                $place, $navigateButton, $addStopButton} = destination
+                $place, $navigateButton, $addStopButton, $spinner} = destination
 
               location = @model.checkIn.getLocation destination
 
@@ -166,7 +176,7 @@ module.exports = class TripItinerary extends Base
 
                     z '.route',
                       z '.header',
-                        z '.en-route', {
+                        z '.plan-route', {
                           onclick: =>
                             if hasVisibleStops
                               @visibleRouteIds.next(
@@ -178,7 +188,7 @@ module.exports = class TripItinerary extends Base
                                 _uniq visibleRouteIds.concat [routeInfo.routeId]
                               )
                         },
-                          z '.text', @model.l.get 'tripItinerary.enRoute'
+                          z '.text', @model.l.get 'tripItinerary.planThisRoute'
                           z '.icon',
                             z $chevronIcon,
                               icon: if hasVisibleStops \
@@ -211,56 +221,49 @@ module.exports = class TripItinerary extends Base
                         className:
                           z.classKebab {isVisible: hasVisibleStops}
                       },
-                        z '.stops',
-                          _map stopsInfo, ({stop, $place, $deleteIcon}) =>
-                            z '.stop', {
-                              onclick: =>
-                                @router.goOverlay 'checkIn', {
-                                  id: stop.id
-                                }
-                            },
-                              z $place
-                              z '.delete',
-                                z $deleteIcon,
-                                  icon: 'delete'
-                                  color: colors.$bgText54
-                                  onclick: (e) =>
-                                    e?.stopPropagation()
-                                    if confirm @model.l.get 'general.confirm'
-                                      @model.trip.deleteStopByIdAndRouteId(
-                                        trip.id
-                                        routeInfo.routeId
-                                        stop.id
-                                      )
-                        z '.actions',
-                          z '.action',
-                            z $navigateButton,
-                              text: @model.l.get 'tripItinerary.navigate'
-                              isOutline: true
-                              onclick: =>
-                                @router.go 'editTripNavigate', {
-                                  id: trip?.id
-                                  routeId: routeInfo?.routeId
-                                }
-                          z '.action',
-                            z $addStopButton,
-                              text: @model.l.get 'tripItinerary.addStop'
-                              onclick: =>
-                                @router.go 'editTripAddStop', {
-                                  id: trip?.id
-                                  routeId: routeInfo?.routeId
-                                }
+                        unless stopsInfo?
+                          z $spinner
+                        else
+                          [
+                            z '.stops',
+                              _map stopsInfo, ({stop, $place, $deleteIcon}) =>
+                                z '.stop', {
+                                  onclick: =>
+                                    @router.goOverlay 'checkIn', {
+                                      id: stop.id
+                                    }
+                                },
+                                  z $place
+                                  z '.delete',
+                                    z $deleteIcon,
+                                      icon: 'delete'
+                                      color: colors.$bgText54
+                                      onclick: (e) =>
+                                        e?.stopPropagation()
+                                        if confirm @model.l.get 'general.confirm'
+                                          @model.trip.deleteStopByIdAndRouteId(
+                                            trip.id
+                                            routeInfo.routeId
+                                            stop.id
+                                          )
+                            z '.actions',
+                              z '.action',
+                                z $navigateButton,
+                                  text: @model.l.get 'tripItinerary.navigate'
+                                  isOutline: true
+                                  onclick: =>
+                                    @router.go 'editTripNavigate', {
+                                      id: trip?.id
+                                      routeId: routeInfo?.routeId
+                                    }
+                              z '.action',
+                                z $addStopButton,
+                                  text: @model.l.get 'tripItinerary.addStop'
+                                  onclick: =>
+                                    @router.go 'editTripAddStop', {
+                                      id: trip?.id
+                                      routeId: routeInfo?.routeId
+                                    }
+                          ]
 
           ]
-
-        if hasEditPermission and not _isEmpty destinations
-          z '.privacy', {
-            onclick: =>
-              @model.trip.upsert {
-                id: trip.id
-                privacy: if trip?.privacy is 'private' \
-                         then 'public'
-                         else 'private'
-              }
-          },
-            "#{@model.l.get 'general.privacy'}: #{trip?.privacy or 'public'}"

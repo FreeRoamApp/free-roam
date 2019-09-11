@@ -2,40 +2,59 @@ TODOS:
 
 figure out why https://freeroam.app/campground/fr-9350-campground is 404
   - Needs elasticsearch slug changed to fr-9350-campground-drew-canyon-trailhead
-
 - Check that place changeSlug changes elasticsearch slug too
   - Go through all elasticsearch campgrounds, find ones where corresponding scylla doesn't exist, update slug
+- 5558a670-b9f5-11e9-90c6-197c21a0d754 amenity has no slug
 
 - For canadian campgrounds, show candian carriers when reviewing
 
-Testing
-  - Delete check-in destination, make sure all trips are updated
-  - Delete check-in stop, ^^
-  - Edit checkin time and see if it reorders
-    - Update trips any time checkin is upserted
+- fix share trip image
+- add rest stops
+- filter by affiliation
 
-- Store stats on trips table (distance, time)
+- ridb booking api
+
+- fix too many searching campgrounds on first load
+
+- Better empty state for when adding to trip from place page
+- Delete stops when deleting destination/route
+
+- text overlap icons
+  - https://github.com/mapbox/mapbox-gl-js/issues/4064
+
+- Use placePosition to move map if tapping on area that'll get covered by place sheet
+- changing route should warn / delete stops
+- Native navigation
+  - First check that we can pass in waypoints properly
+  - https://docs.mapbox.com/android/navigation/overview/#navigation-ui-sdk
+  - https://docs.mapbox.com/android/api/mapbox-java/libjava-services/3.0.1/com/mapbox/api/directions/v5/models/DirectionsRoute.html#fromJson-java.lang.String-
+    - geojson directions route
+    - https://github.com/mapbox/mapbox-navigation-android/blob/master/app/src/main/assets/directions-route.json
+    - Probably will have to do a directions API request with sample of waypoints to get it to work
+      - Manually building the geojson doesn't seem possible https://github.com/mapbox/mapbox-navigation-android/issues/1932
+      - Think we'd need https://github.com/valhalla/valhalla/issues/1302
+  - https://github.com/mapbox/mapbox-navigation-ios
+  - Can maybe base off of https://www.npmjs.com/package/cordova-plugin-mapbox
+
+
+x Delete check-in destination, make sure all trips are updated
+x Delete check-in stop, ^^
+x Edit checkin time and see if it reorders
+  x Update trips any time checkin is upserted
+x Make place sheet a link so it can be opened in new tab
+  x Make sure copy coordinate still works
+x Fix places nearby style
+x "Plan this route" instead of en route
+x Fix offline mode (places don't show?)
+  x Need to store the fetched places differently, I think, since the coordinate reqs are too specific
+x Fix push notifications
+x Store stats on trips table (distance, time)
 x Static height for elevation chart?? Way too big on desktop
 x Place sheet thumbnail
 x Get rid of ratings for coordinate
 x Make hazards isDisabled
 x Rating count is 0
 x Properly reduce amount of points sent to generate elevation chart?
-- text overlap icons
-  - https://github.com/mapbox/mapbox-gl-js/issues/4064
-
-- Testing ^^
-
-- Native navigation
-  - First check that we can pass in waypoints properly
-  - https://docs.mapbox.com/android/navigation/overview/#navigation-ui-sdk
-  - https://github.com/mapbox/mapbox-navigation-ios
-  - Can maybe base off of https://www.npmjs.com/package/cordova-plugin-mapbox
-- Use placePosition to move map if tapping on area that'll get covered by place sheet
-- changing route should warn / delete stops
-- add rest stops
-
-
 x Navigate -> choose route
 x Choose route info (elevation, distance, time)
 x Recreate trips_by_userId (use trips_by_id to populate)

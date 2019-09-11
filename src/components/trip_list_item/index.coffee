@@ -71,7 +71,7 @@ module.exports = class TripListItem
             z '.stats',
               @model.l.get 'tripCard.stats', {
                 replacements:
-                  distance: FormatService.number trip?.overview?.distance or 0
+                  distance: FormatService.number trip?.stats?.distance or 0
                   stops: trip?.overview?.stops
               }
         if isSelected

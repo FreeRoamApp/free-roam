@@ -123,6 +123,13 @@ module.exports = class NavDrawer
             iconName: 'chat-bubble'
             hasNotification: hasUnreadMessages
           }
+          {
+            path: @router.get 'trips'
+            title: @model.l.get 'tripsPage.title'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'road'
+          }
           # {
           #   path: @model.group.getPath group, 'groupForum', {@router}
           #   title: @model.l.get 'general.forum'
@@ -130,6 +137,13 @@ module.exports = class NavDrawer
           #   $ripple: new Ripple()
           #   iconName: 'rss'
           # }
+          {
+            path: @router.get 'guides'
+            title: @model.l.get 'guidesPage.title'
+            $icon: new Icon()
+            $ripple: new Ripple()
+            iconName: 'guides'
+          }
           {
             path: @router.get 'profileMe'
             title: @model.l.get 'general.profile'
@@ -167,18 +181,11 @@ module.exports = class NavDrawer
             iconName: 'info'
           }
           {
-            path: @router.get 'guides'
-            title: @model.l.get 'guidesPage.title'
+            path: @router.get 'donate'
+            title: @model.l.get 'drawer.donate'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'guides'
-          }
-          {
-            path: @router.get 'trips'
-            title: @model.l.get 'tripsPage.title'
-            $icon: new Icon()
-            $ripple: new Ripple()
-            iconName: 'road'
+            iconName: 'donate'
           }
           # {
           #   path: @router.get 'backpack'

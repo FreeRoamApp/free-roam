@@ -159,18 +159,21 @@ module.exports = class Model
 
     @auth = new Auth {@exoid, @cookie, pushToken, @l, userAgent, @portal}
 
+    @statusBar = new StatusBar {}
+    @offlineData = new OfflineData {@exoid, @portal, @statusBar, @l}
+
     @additionalScript = new AdditionalScript()
     @agency = new Agency {@auth}
-    @amenity = new Amenity {@auth}
+    @amenity = new Amenity {@auth, @l, @offlineData}
     @amenityAttachment = new AmenityAttachment {@auth}
     @amenityReview = new AmenityReview {@auth, @exoid, proxy}
     @ban = new Ban {@auth}
     @category = new Category {@auth}
-    @campground = new Campground {@auth}
+    @campground = new Campground {@auth, @l, @offlineData}
     @campgroundAttachment = new CampgroundAttachment {@auth}
     @campgroundReview = new CampgroundReview {@auth, @exoid, proxy}
     @comment = new Comment {@auth}
-    @cellTower = new CellTower {@auth}
+    @cellTower = new CellTower {@auth, @l, @offlineData}
     @checkIn = new CheckIn {@auth, proxy, @l}
     @connection = new Connection {@auth}
     @conversationMessage = new ConversationMessage {@auth, proxy, @exoid}
@@ -185,24 +188,23 @@ module.exports = class Model
     @groupAuditLog = new GroupAuditLog {@auth}
     @groupUser = new GroupUser {@auth}
     @groupRole = new GroupRole {@auth}
-    @hazard = new Hazard {@auth}
+    @hazard = new Hazard {@auth, @l, @offlineData}
     @image = new Image {@additionalScript}
     @item = new Item {@auth}
     @loginLink = new LoginLink {@auth}
     @localMap = new LocalMap {@auth}
     @notification = new Notification {@auth}
     @office = new Office {@auth}
-    @overnight = new Overnight {@auth}
+    @overnight = new Overnight {@auth, @l, @offlineData}
     @overnightAttachment = new OvernightAttachment {@auth}
     @overnightReview = new OvernightReview {@auth, @exoid, proxy}
     @payment = new Payment {@auth}
     @placeAttachment = new PlaceAttachmentBase {@auth}
-    @placeBase = new PlaceBase {@auth, @l}
+    @placeBase = new PlaceBase {@auth, @l, @offlineData}
     @placeReview = new PlaceReviewBase {@auth}
     @product = new Product {@auth}
     @pushToken = new PushToken {@auth, pushToken}
     @region = new Region {@auth}
-    @statusBar = new StatusBar {}
     @subscription = new Subscription {@auth}
     @thread = new Thread {@auth, @l, @group, @exoid, proxy}
     @transaction = new Transaction {@auth}
@@ -221,7 +223,6 @@ module.exports = class Model
     @earnAlert = new EarnAlert()
     @installOverlay = new InstallOverlay {@l, @overlay}
     @tooltip = new Tooltip()
-    @offlineData = new OfflineData {@exoid, @portal, @statusBar, @l}
     @portal?.setModels {
       @user, @pushToken, @l, @installOverlay, @overlay
     }

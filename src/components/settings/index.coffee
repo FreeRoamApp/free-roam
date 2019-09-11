@@ -64,5 +64,9 @@ module.exports = class Settings
                     cacheName: 'recorded'
                   }
                   delete localStorage.offlineCache
+                  delete localStorage['offlinePlaces.campgrounds']
+                  delete localStorage['offlinePlaces.overnights']
+                  delete localStorage['offlinePlaces.amenities']
+                  delete localStorage['offlinePlaces.hazards']
                 text: @model.l.get 'settings.clearOfflineData'
               }

@@ -132,6 +132,7 @@ module.exports = class Cache
           cache.match event.request
           .then (recordedCache) ->
             unless recordedCache
+              console.log 'throwing'
               throw err
             recordedCache
     )

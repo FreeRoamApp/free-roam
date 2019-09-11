@@ -744,10 +744,13 @@ class MapService
   amenityIconGetFn: (filters) ->
     filterValues = _map _filter(filters, 'value'), 'arrayValue'
     (amenity) ->
-      _orderBy(amenity.amenities, (amenity) ->
+      icon = _orderBy(amenity.amenities, (amenity) ->
         filterValues.indexOf(amenity) isnt -1 and
           config.AMENITY_ICON_ORDER.indexOf(amenity)
       , ['desc'])[0]
+      if icon is 'gym'
+        icon = 'shower' # TODO: add gym icon, rm
+      icon
 
   hazardIconGetFn: (filters) ->
     (hazard) ->

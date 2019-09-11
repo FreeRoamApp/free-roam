@@ -31,6 +31,7 @@ module.exports = class NewCheckIn
 
     @checkIn ?= RxObservable.of null
     @trip ?= RxObservable.of null
+    @place ?= RxObservable.of null
 
     @fields =
       tripId:
@@ -185,25 +186,24 @@ module.exports = class NewCheckIn
   render: =>
     {step, isLoading, checkIn, attachmentsValue, trip} = @state.getValue()
 
-    console.log 'trip', trip
-
     z '.z-new-check-in', {
       className: z.classKebab {@isOverlay}
     },
-      z @$actionBar, {
-        isSecondary: true
-        isSaving: isLoading
-        cancel:
-          text: @model.l.get 'general.discard'
-          onclick: =>
-            @router.back()
-        save:
-          if @$steps.length is 1
-            {
-              text: @model.l.get 'general.done'
-              onclick: @upsert
-            }
-      }
+      unless checkIn?.id
+        z @$actionBar, {
+          isSecondary: true
+          isSaving: isLoading
+          cancel:
+            text: @model.l.get 'general.discard'
+            onclick: =>
+              @router.back()
+          save:
+            if @$steps.length is 1
+              {
+                text: @model.l.get 'general.done'
+                onclick: @upsert
+              }
+        }
       z @$steps[step]
 
       if @$steps.length > 1

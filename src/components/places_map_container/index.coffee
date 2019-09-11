@@ -83,8 +83,10 @@ module.exports = class PlacesMapContainer
         @tripRoute or RxObservable.of null
         (vals...) -> vals
       )
+
       routes = tripAndTripRoute?.map ([trip, tripRoute]) ->
         TripService.getRouteGeoJson trip, tripRoute
+
       tripPlacesStream = tripAndTripRoute.switchMap ([trip, tripRoute]) =>
         (if tripRoute?.routeId
           @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, [
@@ -103,7 +105,6 @@ module.exports = class PlacesMapContainer
             isGray = tripRoute and not (id in [
               tripRoute?.startCheckInId, tripRoute?.endCheckInId
             ])
-            console.log 'PLACE', place
             _defaults {
               # location: place.location # {lat, lon}
               number: i + 1
@@ -114,7 +115,6 @@ module.exports = class PlacesMapContainer
               selectedIcon: 'planned_selected'
               anchor: 'center'
             }, place
-          console.log 'places', places
           places
     else
       tripPlacesStream = RxObservable.of null

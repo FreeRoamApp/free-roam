@@ -156,9 +156,9 @@ module.exports = class PlaceSheet
               onclick: =>
                 @router.go 'newCampground', {}, {
                   qs:
-                    location: Math.round(place.location[1] * 1000) / 1000 +
+                    location: Math.round(place.location.lat * 1000) / 1000 +
                               ',' +
-                              Math.round(place.location[0] * 1000) / 1000
+                              Math.round(place.location.lon * 1000) / 1000
                 }
                 Promise.resolve null
             }
@@ -198,8 +198,6 @@ module.exports = class PlaceSheet
 
     isVisible ?= Boolean place
 
-    console.log 'sheet', place
-
     {elevation, localMaps, attachments} = info or {}
 
     if not elevation? or elevation is false
@@ -209,8 +207,12 @@ module.exports = class PlaceSheet
       'campground', 'overnight', 'amenity'
     ])
 
-    z '.z-place-sheet', {
+    elType = if isDisabled then 'div' else 'a'
+
+    z "#{elType}.z-place-sheet", {
       className: z.classKebab {isVisible}
+      href: if not isDisabled
+        @router.get place?.type, {slug: place?.slug}
       onclick: (e) =>
         e?.stopPropagation()
         e?.preventDefault()
