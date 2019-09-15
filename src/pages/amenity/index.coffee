@@ -6,4 +6,5 @@ module.exports = class AmenityPage extends PlacePage
 
   constructor: ({@model}) ->
     @placeModel = @model.amenity
+    @title = @model.l.get 'amenityPage.title'
     super

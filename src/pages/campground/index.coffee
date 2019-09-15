@@ -6,4 +6,5 @@ module.exports = class CampgroundPage extends PlacePage
 
   constructor: ({@model}) ->
     @placeModel = @model.campground
+    @title = @model.l.get 'campgroundPage.title'
     super

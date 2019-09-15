@@ -8,6 +8,7 @@ _find = require 'lodash/find'
 _flatten = require 'lodash/flatten'
 _forEach = require 'lodash/forEach'
 _orderBy = require 'lodash/orderBy'
+_isEqual = require 'lodash/isEqual'
 _range = require 'lodash/range'
 
 tile = require './tilejson'
@@ -452,6 +453,8 @@ module.exports = class Map
           , 300
 
         onclick = (e) =>
+          if e.features[0].properties.type is 'searchQuery'
+            return
           e.originalEvent.isPropagationStopped = true
 
           # if e.features[0].properties.type is 'coordinate'
@@ -701,11 +704,15 @@ module.exports = class Map
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>
-    @currentMapBounds?.next {
+    mapBounds = {
       bounds: @map.getBounds()
       center: @map.getCenter()
       zoom: @map.getZoom()
     }
+    if @currentMapBounds and not _isEqual(
+        @currentMapBounds.getValue(), mapBounds
+    )
+      @currentMapBounds.next mapBounds
 
   render: =>
     {windowSize, isLoading} = @state.getValue()

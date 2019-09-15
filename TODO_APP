@@ -1,5 +1,15 @@
 TODOS:
 
+new place info page
+x fix masonry grid. current logic assumes all sections are same height, but column-count tries to match height per column
+
+- Google maps warning
+
+- look into offline mode issues some more. also localstorage has a quota...
+
+- on chrome mobile, during shell load, the bottom bar isn't at bottom
+
+
 figure out why https://freeroam.app/campground/fr-9350-campground is 404
   - Needs elasticsearch slug changed to fr-9350-campground-drew-canyon-trailhead
 - Check that place changeSlug changes elasticsearch slug too
@@ -12,12 +22,16 @@ figure out why https://freeroam.app/campground/fr-9350-campground is 404
 - add rest stops
 - filter by affiliation
 
-- ridb booking api
+- ridb booking api, rick
 
-- fix too many searching campgrounds on first load
+- Bugginess filter
+
+x fix too many searching campgrounds on first load
 
 - Better empty state for when adding to trip from place page
 - Delete stops when deleting destination/route
+
+- look into goose lake cell signal (shouldn't be 0)
 
 - text overlap icons
   - https://github.com/mapbox/mapbox-gl-js/issues/4064

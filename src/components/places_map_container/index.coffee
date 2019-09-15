@@ -190,11 +190,12 @@ module.exports = class PlacesMapContainer
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
-      onclick: ({location, bbox}) =>
+      onclick: ({location, bbox, text}) =>
         @addPlacesStreams.next RxObservable.of [{
           location: location
-          name: @model.l.get 'placesMapContainer.yourSearchQuery'
+          name: text or @model.l.get 'placesMapContainer.yourSearchQuery'
           icon: 'search'
+          type: 'coordinate'
         }]
         mapBoundsStreams.next RxObservable.of bbox
     }
@@ -376,6 +377,8 @@ module.exports = class PlacesMapContainer
         queryFilter = MapService.getESQueryFromFilters(
           filters, currentMapBounds?.bounds
         )
+
+        console.log queryFilter
 
         @model[dataType].search {
           limit: limit

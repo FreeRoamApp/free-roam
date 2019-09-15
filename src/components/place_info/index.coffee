@@ -2,6 +2,7 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 _filter = require 'lodash/filter'
+_kebabCase = require 'lodash/kebabCase'
 
 Base = require '../base'
 ActionBox = require '../place_info_action_box'
@@ -11,8 +12,7 @@ Icon = require '../icon'
 InfoLevel = require '../info_level'
 EmbeddedVideo = require '../embedded_video'
 MasonryGrid = require '../masonry_grid'
-PlaceInfoDetailsOverlay = require '../place_info_details_overlay'
-PrimaryButton = require '../primary_button'
+FormattedText = require '../formatted_text'
 Rating = require '../rating'
 Spinner = require '../spinner'
 UiCard = require '../ui_card'
@@ -39,8 +39,6 @@ module.exports = class PlaceInfo extends Base
     @$actionBox = new ActionBox {@model, @router, @place, @trip}
     @$contact = new Contact {@model, @router, @place}
     @$placeInfoWeather = new Weather {@model, @router, @place}
-    @$detailsButton = new PrimaryButton()
-    @$drivingInstructionsButton = new PrimaryButton()
     @$masonryGrid = new MasonryGrid {@model}
     @$crowdsInfoLevel = new InfoLevel {
       @model, @router, key: 'crowds'
@@ -70,6 +68,19 @@ module.exports = class PlaceInfo extends Base
     @$respectCard = new UiCard()
     @$walmartInfoCard = new WalmartInfoCard {@model, @place}
 
+    @$details = new FormattedText {
+      text: @place.map (place) ->
+        place?.details
+      imageWidth: 'auto'
+      isFullWidth: true
+      embedVideos: false
+      @model
+      @router
+      truncate:
+        maxLength: 250
+        height: 200
+    }
+
     @state = z.state
       season: @model.time.getCurrentSeason()
       windowSize: @model.window.getSize()
@@ -90,6 +101,12 @@ module.exports = class PlaceInfo extends Base
               carrier: carrier
               type: value.type
               $bars: new CellBars {value: value.signal, includeNoSignal: true}
+            }
+          features: _map place?.features, (val, feature) ->
+            {
+              feature: feature
+              icon: config.FEATURES_ICONS[feature] or _kebabCase feature
+              $icon: new Icon()
             }
         }
 
@@ -115,12 +132,14 @@ module.exports = class PlaceInfo extends Base
     {place, amenities, hasSeenRespectCard,
       season, windowSize} = @state.getValue()
 
-    {place, $videos, cellCarriers} = place or {}
+    {place, $videos, cellCarriers, features} = place or {}
 
     cellBarsWidthPx = Math.min(
       (windowSize.width - 32 - 48) / 4
       100
     )
+
+    console.log 'place', place
 
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
@@ -155,11 +174,21 @@ module.exports = class PlaceInfo extends Base
       z '.g-grid',
         z '.top-info',
           z '.left',
-            z '.location',
-              if place?.address?.locality
-                "#{place.address.locality}, #{place.address.administrativeArea}"
+            # z '.location',
+            #   if place?.address?.locality
+            #     "#{place.address.locality}, #{place.address.administrativeArea}"
             z '.rating',
-              z @$rating, {size: '20px'}
+              z @$rating, {size: '20px', color: colors.$secondary500}
+              z '.rating-text',
+                if place?.rating
+                  "#{place?.rating.toFixed(1)}"
+                z 'span.rating-count',
+                  ' ('
+                  @model.l.get 'place.reviewCount', {
+                    replacements:
+                      count: place?.ratingCount or 0
+                  }
+                  ')'
           if place?.type is 'campground'
             z '.right',
               z '.price',
@@ -173,11 +202,14 @@ module.exports = class PlaceInfo extends Base
                 else
                   "$ #{@model.l.get 'general.unknown'}"
 
+        z '.name',
+          place?.name
+
         z '.actions',
           z '.action',
-            z @$actionBox
-          z '.action',
             z @$contact
+          z '.action',
+            z @$actionBox
 
         if place?.type is 'campground' and not hasSeenRespectCard
           z '.card',
@@ -233,33 +265,6 @@ module.exports = class PlaceInfo extends Base
 
               z '.name', @model.l.get "amenities.#{amenity}"
 
-        if place?.details or place?.drivingInstructions
-          z '.buttons',
-            if place?.details
-              z '.button',
-                z @$detailsButton,
-                  text: @model.l.get 'place.details'
-                  onclick: =>
-                    $detailsOverlay = new PlaceInfoDetailsOverlay {
-                      @model, @router
-                      title: @model.l.get 'place.details'
-                      text: @place.map (place) -> place?.details
-                    }
-                    @model.overlay.open $detailsOverlay
-
-            if place?.drivingInstructions
-              z '.button',
-                z @$drivingInstructionsButton,
-                  isOutline: true
-                  text: @model.l.get 'campground.drivingInstructions'
-                  onclick: =>
-                    $detailsOverlay = new PlaceInfoDetailsOverlay {
-                      @model, @router
-                      title: @model.l.get 'campground.drivingInstructions'
-                      text: @place.map (place) -> place?.drivingInstructions
-                    }
-                    @model.overlay.open $detailsOverlay
-
         z '.masonry',
           z @$masonryGrid,
             columnCounts:
@@ -267,6 +272,11 @@ module.exports = class PlaceInfo extends Base
               desktop: 2
               tablet: 2
             $elements: _filter [
+              if place?.details
+                z '.section',
+                  z '.title', @model.l.get 'place.details'
+                  @$details
+
               if place?.type is 'amenity' and place.amenities?.indexOf('gas') isnt -1
                 z '.section',
                   z 'img.image',
@@ -278,23 +288,31 @@ module.exports = class PlaceInfo extends Base
                         "#{config.MAPBOX_ACCESS_TOKEN}"
 
               unless _isEmpty cellCarriers
+                [
+                  z '.section',
+                    z '.h2', @model.l.get 'placeInfo.logistics'
+
+                  z '.section',
+                    z '.title', @model.l.get 'campground.cellSignal'
+                    z '.carriers', {
+                      ontouchstart: (e) ->
+                        e.stopPropagation()
+                    },
+                      _map cellCarriers, ({$bars, carrier}) =>
+                        z '.carrier',
+                          z '.bars',
+                            z $bars, widthPx: cellBarsWidthPx
+                          z '.name', @model.l.get "carriers.#{carrier}"
+                ]
+
+              if place?.weather
                 z '.section',
-                  z '.title', @model.l.get 'campground.cellSignal'
-                  z '.carriers', {
-                    ontouchstart: (e) ->
-                      e.stopPropagation()
-                  },
-                    _map cellCarriers, ({$bars, carrier}) =>
-                      z '.carrier',
-                        z '.bars',
-                          z $bars, widthPx: cellBarsWidthPx
-                        z '.name', @model.l.get "carriers.#{carrier}"
+                  z @$placeInfoWeather
 
+              if place?.crowds?[season]?.value or place?.safety?.value
+                z '.section',
+                  z '.h2', @model.l.get 'placeInfo.seasonalScales'
 
-              # z '.section',
-
-                # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
-                # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
               if place?.crowds?[season] or place?.fullness?[season]
                 z '.section',
                   z '.seasons',
@@ -352,9 +370,23 @@ module.exports = class PlaceInfo extends Base
                     value: place?.roadDifficulty
                   }
 
-              if place?.weather
-                z '.section',
-                  z @$placeInfoWeather
+                # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
+                # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
+
+              z '.section',
+                z '.h2', @model.l.get 'placeInfo.features'
+                z '.features.g-grid',
+                  z '.g-cols',
+                    _map features, ({feature, icon, $icon}) =>
+                      z '.feature.g-col.g-xs-6.g-md-6',
+                        z '.icon',
+                          z $icon,
+                            icon: icon
+                            isTouchTarget: false
+                            size: '18px'
+                            color: colors.$bgText87
+                        @model.l.get "feature.#{feature}"
+
 
               unless _isEmpty $videos
                 z '.section',

@@ -50,6 +50,7 @@ module.exports = class EditTripAddStopPage
 
     @$places = new Places {
       @model, @router, trip, tripRoute, mapBoundsStreams
+      persistentCookiePrefix: 'trip'
       types: routeId.map (routeId) ->
         if routeId
           ['campground', 'overnight', 'amenity', 'hazard']

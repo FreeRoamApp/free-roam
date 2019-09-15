@@ -82,7 +82,7 @@ module.exports = class PlacePage extends BasePage
 
     z '.p-place',
       z @$appBar, {
-        title: place?.name
+        title: @title
         isFlat: true
         isSecondary: Boolean tripId
         $topLeftButton: z @$buttonBack, {

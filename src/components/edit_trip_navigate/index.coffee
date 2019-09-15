@@ -104,6 +104,8 @@ module.exports = class EditTripNavigate
             z @$googleMapsButton,
               text: @model.l.get 'editTripNavigate.openGoogleMaps'
               onclick: =>
+                # TODO: warning dialog
+                # TODO: route to stops
                 MapService.getDirectionsBetweenPlaces(
                   start.place
                   end.place

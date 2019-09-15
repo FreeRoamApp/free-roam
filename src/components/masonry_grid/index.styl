@@ -1,10 +1,13 @@
 @require '../../vars'
 
 .z-masonry-grid
-  column-count: 2
-  column-gap: 8px
+  // column-count: 2
+  // ^ assumes all sections are same height, but column-count tries to match height per column
+  // column-gap: 8px
+  display: flex
 
   > .column
-    display: inline-block
-    margin: 0 0 8px
-    width: 100%
+    flex1()
+
+    > .row
+      margin: 0 0 16px

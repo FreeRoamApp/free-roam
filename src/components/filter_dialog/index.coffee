@@ -103,7 +103,7 @@ module.exports = class FilterDialog
           (vals...) -> vals
         ).map ([carrier, signal, isLte]) ->
           {carrier, signal, isLte}
-      when 'list', 'fieldList', 'booleanArraySubTypes'
+      when 'list', 'fieldList', 'booleanArraySubTypes', 'listBooleanAnd', 'listBooleanOr'
         list = @filter.items
 
         @checkboxes = _map list, ({key, label}) =>
@@ -229,7 +229,7 @@ module.exports = class FilterDialog
                 hintText:
                   @model.l.get 'filterDialog.inches'
               }
-      when 'list', 'fieldList', 'booleanArraySubTypes'
+      when 'list', 'fieldList', 'booleanArraySubTypes', 'listBooleanAnd', 'listBooleanOr'
         $title = @filter?.name
         $content =
           z '.content',
@@ -363,7 +363,7 @@ module.exports = class FilterDialog
         $title: $title
         $content:
           z '.z-filter-dialog_dialog',
-            if @filter.field in ['rigLength', 'crowds', 'roadDifficulty', 'shade', 'safety', 'noise']
+            if @filter.field in ['rigLength', 'crowds', 'roadDifficulty', 'shade', 'safety', 'noise', 'features']
               z '.warning',
                 @model.l.get 'filterDialog.userInputWarning'
             $content

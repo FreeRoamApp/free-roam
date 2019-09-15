@@ -19,14 +19,14 @@
     opacity: 0
 
     > .see-more
-      font-caption1()
+      font-body1()
       position: absolute
       bottom: 16px
       right: 16px
-      padding: 4px 8px
+      padding: 8px 12px
       border-radius: 4px
-      background: getColor('$white70')
-      color: getColor('$black')
+      background: getColor('$black54')
+      color: getColor('$white')
 
   > .warning
     font-title()
@@ -58,16 +58,30 @@
 
     > .top-info
       display: flex
-      margin-bottom: 16px
+      margin-bottom: 4px
 
       > .left
-        > .location
-          font-body1()
-          margin-bottom: 4px
+        // > .location
+        //   font-body1()
+        //   margin-bottom: 4px
+
+        > .rating
+          display: flex
+
+          > .rating-text
+            font-body1()
+            margin-left: 8px
+
+            > .rating-count
+              font-body2()
 
       > .right
         margin-left: auto
         text-align: right
+
+    > .name
+      font-h1()
+      margin-bottom: 6px
 
     > .is-overnight-allowed
       padding: 16px
@@ -93,11 +107,6 @@
       > .name
         margin-left: 8px
 
-    > .driving-instructions, > .details
-      margin-bottom: 8px
-
-      > .title
-        font-title()
 
     > .buttons
       display: flex
@@ -116,11 +125,28 @@
     // TODO: move each section into own component, so we don't have to
     // do a broad selector like this (ie without >)
     .section
-      padding: 4px 16px
+      padding: 0 16px
+
+      > .title
+        font-title()
+
+      > .h2
+        font-h2()
+        margin-bottom: 4px
 
       > .image
         width: 100%
         margin-top: 16px
+
+      > .features
+        margin-top: 24px
+
+        > .g-cols > .feature
+          display: flex
+          align-items: center
+
+          > .icon
+            margin-right: 8px
 
       > .seasons
         display: flex
@@ -165,7 +191,7 @@
     > .g-grid
       > .actions
         display: flex
-        flex-direction: row-reverse
+        // flex-direction: row-reverse
 
         > .action
           flex1()

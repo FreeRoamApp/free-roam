@@ -28,7 +28,7 @@ module.exports = {
       "id": "background",
       "type": "background",
       "paint": {
-        "background-color": "hsl(47, 26%, 88%)"
+        "background-color": "#ebebeb"
       }
     },
     {
@@ -52,7 +52,7 @@ module.exports = {
         "visibility": "visible"
       },
       "paint": {
-        "fill-color": "hsl(47, 13%, 86%)",
+        "fill-color": "#dfdfdf",
         "fill-opacity": 0.7
       }
     },
@@ -67,7 +67,7 @@ module.exports = {
         "grass"
       ],
       "paint": {
-        "fill-color": "hsl(82, 46%, 72%)",
+        "fill-color": "#bde2ae",
         "fill-opacity": 0.45
       }
     },
@@ -77,7 +77,7 @@ module.exports = {
       "source": "openmaptiles",
       "source-layer": "park",
       "paint": {
-        "fill-color": "rgba(192, 216, 151, 0.53)",
+        "fill-color": "#bde2ae",
         "fill-opacity": 1
       }
     },
@@ -92,7 +92,7 @@ module.exports = {
         "wood"
       ],
       "paint": {
-        "fill-color": "hsl(82, 46%, 72%)",
+        "fill-color": "#bde2ae",
         "fill-opacity": {
           "base": 1,
           "stops": [
@@ -119,7 +119,7 @@ module.exports = {
         "Polygon"
       ],
       "paint": {
-        "fill-color": "hsl(205, 56%, 73%)"
+        "fill-color": "#aadaee"
       }
     },
     {
@@ -136,7 +136,7 @@ module.exports = {
         "visibility": "visible"
       },
       "paint": {
-        "fill-color": "hsl(47, 26%, 88%)",
+        "fill-color": "#ebebeb",
         "fill-opacity": 0.8
       }
     },
@@ -239,7 +239,7 @@ module.exports = {
         "LineString"
       ],
       "paint": {
-        "line-color": "hsl(205, 56%, 73%)",
+        "line-color": "#aadaee",
         "line-width": {
           "base": 1.4,
           "stops": [
@@ -262,16 +262,16 @@ module.exports = {
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-color": "rgba(222, 211, 190, 1)",
+        "fill-color": "#dddddd",
         "fill-outline-color": {
           "stops": [
             [
               15,
-              "rgba(212, 177, 146, 0)"
+              "rgba(200, 200, 200, 0)"
             ],
             [
               16,
-              "rgba(212, 177, 146, 0.5)"
+              "rgba(200, 200, 200, 0.5)"
             ]
           ]
         },
@@ -422,7 +422,7 @@ module.exports = {
         "line-join": "miter"
       },
       "paint": {
-        "line-color": "#efefef",
+        "line-color": "#ebebeb",
         "line-width": {
           "base": 1.55,
           "stops": [
@@ -722,13 +722,13 @@ module.exports = {
         "line-join": "round"
       },
       "paint": {
-        "line-color": "hsl(0, 0%, 100%)",
+        "line-color": "#fbe095",
         "line-width": {
-          "base": 1.4,
+          "base": 2.4,
           "stops": [
             [
               8,
-              1
+              2
             ],
             [
               16,
@@ -911,7 +911,7 @@ module.exports = {
         "line-join": "round"
       },
       "paint": {
-        "line-color": "#efefef",
+        "line-color": "#ebebeb",
         "line-width": {
           "base": 1.55,
           "stops": [
@@ -1419,10 +1419,10 @@ module.exports = {
         "text-anchor": "center"
       },
       "paint": {
-        "text-color": "hsl(0, 10%, 25%)",
+        "text-color": "hsl(0, 0%, 0%)",
         "text-halo-color": "hsl(0, 0%, 100%)",
         "text-halo-blur": 0,
-        "text-halo-width": 2
+        "text-halo-width": 1
       }
     },
     {
@@ -1469,10 +1469,10 @@ module.exports = {
         "text-anchor": "center"
       },
       "paint": {
-        "text-color": "hsl(0, 10%, 25%)",
+        "text-color": "hsl(0, 0%, 0%)",
         "text-halo-color": "hsl(0, 0%, 100%)",
         "text-halo-blur": 0,
-        "text-halo-width": 2
+        "text-halo-width": 1
       }
     },
     {

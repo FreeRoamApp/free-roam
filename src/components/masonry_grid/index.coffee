@@ -18,17 +18,22 @@ module.exports = class MasonryGrid
 
     columnCount = columnCounts[breakpoint or 'mobile'] or columnCounts['mobile']
     if columnCount is 1
-      $sortedElements = $elements
+      $columns = [$elements]
     else
-      $sortedElements = _flatten _map _range(columnCount), (columnIndex) ->
+      $columns = _map _range(columnCount), (columnIndex) ->
         _filter $elements, (element, i) ->
           i % columnCount is columnIndex
-
 
     z '.z-masonry-grid', {
       style:
         columnCount: columnCount
         webkitColumnCount: columnCount
     },
-      _map $sortedElements, ($el) ->
-        z '.column', $el
+      _map $columns, ($els) ->
+        z '.column', {
+          style:
+            width: "#{100 / columnCount}%"
+        },
+          _map $els, ($el) ->
+            z '.row',
+              $el

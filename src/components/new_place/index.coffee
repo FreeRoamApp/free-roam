@@ -78,9 +78,16 @@ module.exports = class NewPlace
         _zipObject _keys(@reviewExtraFields), vals
     )
 
+    reviewFeaturesFieldsValues = RxObservable.combineLatest(
+      _map @reviewFeaturesFields, ({valueStreams}) ->
+        valueStreams.switch()
+      (vals...) =>
+        _zipObject _keys(@reviewFeaturesFields), vals
+    )
+
     @resetValueStreams()
 
-    @$steps = [
+    @$steps = _filter [
       new @NewPlaceInitialInfo {
         @model, @router, fields: @initialInfoFields, @season
       }
@@ -88,6 +95,11 @@ module.exports = class NewPlace
         @model, @router, fields: @reviewExtraFields,
         fieldsValues: reviewExtraFieldsValues, @season
       }
+      if @NewReviewFeatures
+        new @NewReviewFeatures {
+          @model, @router, fields: @reviewFeaturesFields,
+          fieldsValues: reviewFeaturesFieldsValues
+        }
       new NewReviewCompose {
         @model, @router, fields: @reviewFields, @season
         uploadFn: (args...) =>
@@ -113,12 +125,14 @@ module.exports = class NewPlace
       bodyValue: @reviewFields.body.valueStreams.switch()
       attachmentsValue: @reviewFields.attachments.valueStreams.switch()
       ratingValue: @reviewFields.rating.valueStreams.switch()
+      featuresValue: @reviewFeaturesFields.features.valueStreams.switch()
       reviewExtraFieldsValues
     }
 
   upsert: =>
     {me, nameValue, detailsValue, locationValue, subTypeValue, agencyValue,
-      regionValue, officeValue, attachmentsValue} = @state.getValue()
+      regionValue, officeValue, attachmentsValue,
+      featuresValue} = @state.getValue()
 
     @state.set isLoading: true
 
@@ -138,6 +152,7 @@ module.exports = class NewPlace
           agencySlug: agencyValue
           regionSlug: regionValue
           officeSlug: officeValue
+          features: featuresValue
         }
         .then @upsertReview
         .catch (err) =>
@@ -301,7 +316,7 @@ module.exports = class NewPlace
 
       z @$stepBar, {
         isSaving: false
-        steps: 3
+        steps: @$steps.length
         isStepCompleted: @$steps[step]?.isCompleted?()
         isLoading: isLoading
         save:

@@ -3,10 +3,12 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 
 NewPlace = require '../new_place'
 CampgroundNewReviewExtras = require '../new_campground_review_extras'
+CampgroundNewReviewFeatures = require '../new_place_review_features'
 NewCampgroundInitialInfo = require '../new_campground_initial_info'
 
 module.exports = class NewCampground extends NewPlace
   NewReviewExtras: CampgroundNewReviewExtras
+  NewReviewFeatures: CampgroundNewReviewFeatures
   NewPlaceInitialInfo: NewCampgroundInitialInfo
   type: 'campground'
   placeWithTabPath: 'campgroundWithTab'
@@ -35,6 +37,9 @@ module.exports = class NewCampground extends NewPlace
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       office:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+      features:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
 
@@ -67,6 +72,11 @@ module.exports = class NewCampground extends NewPlace
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
       pricePaid:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
+
+    @reviewFeaturesFields =
+      features:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
 

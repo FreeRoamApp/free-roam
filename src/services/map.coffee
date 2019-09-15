@@ -230,15 +230,27 @@ class MapService
         name: model.l.get 'campground.distanceTo'
       }
       {
-        field: 'hookups'
-        type: 'list'
+        field: 'features'
+        type: 'listBooleanAnd'
         items: [
-          {key: 'hasFreshWater', label: model.l.get 'filterDialog.hasFreshWater'}
-          {key: 'hasSewage', label: model.l.get 'filterDialog.hasSewage'}
-          {key: 'has30Amp', label: model.l.get 'filterDialog.has30Amp'}
-          {key: 'has50Amp', label: model.l.get 'filterDialog.has50Amp'}
+          {key: 'waterHookup', label: model.l.get 'filterDialog.hasFreshWater'}
+          {key: 'sewerHookup', label: model.l.get 'filterDialog.hasSewage'}
+          {key: '30amp', label: model.l.get 'filterDialog.has30Amp'}
+          {key: '50amp', label: model.l.get 'filterDialog.has50Amp'}
         ]
         name: model.l.get 'general.hookups'
+      }
+      {
+        field: 'affiliations'
+        type: 'listBooleanOr'
+        items: [
+          {key: 'goodSam', label: model.l.get 'affiliation.goodSam'}
+          {
+            key: 'passportAmerica'
+            label: model.l.get 'affiliation.passportAmerica'
+          }
+        ]
+        name: model.l.get 'general.affiliations'
       }
       {
         field: 'subType'
@@ -629,6 +641,20 @@ class MapService
               must: _filter _map filter.value, (value, key) ->
                 if value
                   match: "#{key}": value
+          }
+        when 'listBooleanAnd'
+          {
+            bool:
+              must: _filter _map filter.value, (value, key) ->
+                if value
+                  match: "#{field}.#{key}": true
+          }
+        when 'listBooleanOr'
+          {
+            bool:
+              should: _filter _map filter.value, (value, key) ->
+                if value
+                  match: "#{field}.#{key}": true
           }
         when 'fieldList'
           {

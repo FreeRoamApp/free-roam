@@ -1,0 +1,31 @@
+@require '../../vars'
+
+.z-place-new-review-features
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  background: getColor('$tertiary0')
+  padding: 16px
+
+  > .g-grid
+    > .description
+      font-body2()
+      text-align: center
+      margin-bottom: 16px
+
+    > .features
+      text-align: center
+
+      > .feature
+        font-title()
+        color: getColor('$secondary500')
+        display: inline-block
+        padding: 8px 12px
+        border: 1px solid getColor('$secondary500')
+        border-radius: 18px
+        margin: 6px
+        cursor: pointer
+
+        &.is-selected
+          background: getColor('$secondary500')
+          color: getColor('$secondary500Text')

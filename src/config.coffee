@@ -130,6 +130,10 @@ isomorphic =
   IMGUR_ID_REGEX: /https?:\/\/(?:i\.)?imgur\.com(?:\/a)?\/(.*?)(?:[\.#\/].*|$)/i
   MAPBOX_ACCESS_TOKEN: process.env.MAPBOX_ACCESS_TOKEN
 
+  FEATURES_ICONS:
+    # if not specified, it's kebab-case
+    dumpStation: 'poop'
+
   RIG_TYPES: ['tent', 'car', 'van', 'motorhome', 'travelTrailer', 'fifthWheel']
   EXPERIENCE_TYPES: ['none', 'little', 'some', 'lots']
   HOOKUP_PREFERENCES: ['none', 'some', 'all']

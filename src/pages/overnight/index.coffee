@@ -6,4 +6,5 @@ module.exports = class OvernightPage extends PlacePage
 
   constructor: ({@model}) ->
     @placeModel = @model.overnight
+    @title = @model.l.get 'overnightPage.title'
     super

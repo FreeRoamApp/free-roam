@@ -22,8 +22,10 @@ if window?
 
 module.exports = class Places
   constructor: (options) ->
-    {@model, @router, isShell, types, subType, donut,
+    {@model, @router, isShell, types, subType, donut, persistentCookiePrefix
       trip, tripRoute, mapBoundsStreams, searchQuery} = options
+
+    persistentCookiePrefix ?= 'home'
 
     @currentDataType = new RxReplaySubject 1
     type = types.map (types) -> types?[0]
@@ -39,7 +41,7 @@ module.exports = class Places
 
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, isShell, trip, tripRoute
-      persistentCookiePrefix: 'home'
+      persistentCookiePrefix
       searchQuery
       mapBoundsStreams
       donut: donut
