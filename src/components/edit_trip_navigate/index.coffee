@@ -2,6 +2,7 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 _find = require 'lodash/find'
+_filter = require 'lodash/filter'
 _map = require 'lodash/map'
 
 ElevationChart = require '../elevation_chart'
@@ -55,6 +56,7 @@ module.exports = class EditTripNavigate
 
     @state = z.state {
       trip
+      tripRoute
       start: tripAndTripRoute.map ([trip, tripRoute]) ->
         _find trip.destinationsInfo, {id: tripRoute.startCheckInId}
       end: tripAndTripRoute.map ([trip, tripRoute]) ->
@@ -63,9 +65,14 @@ module.exports = class EditTripNavigate
     }
 
   render: =>
-    {start, end, routes} = @state.getValue()
+    {start, end, trip, tripRoute, routes} = @state.getValue()
 
     console.log 'routes', routes
+    stops = trip?.stops[tripRoute?.routeId]
+
+    places = _filter [start?.place].concat stops, [end?.place]
+
+    console.log 'places', places
 
     mainRoute = routes?[0]
 
@@ -109,8 +116,7 @@ module.exports = class EditTripNavigate
               onclick: =>
                 go = =>
                   MapService.getDirectionsBetweenPlaces(
-                    start.place
-                    end.place
+                    places
                     {@model}
                   )
                 if @model.cookie.get('hasSeenGoogleMapsWarning')

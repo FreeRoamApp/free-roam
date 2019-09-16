@@ -77,63 +77,64 @@ module.exports = class ElevationChart
         # width: "#{width}px"
         # height: "#{height}px"
     },
-      z 'svg', {
-        key: 'elevation-chart'
-        namespace: 'http://www.w3.org/2000/svg'
-        attributes:
-          'viewBox': "0 0 #{width} #{height}"
-        style:
-          width: "#{width}px"
-          height: "#{height}px"
-      },
-        z 'text', {
+      if width
+        z 'svg', {
+          key: 'elevation-chart'
           namespace: 'http://www.w3.org/2000/svg'
           attributes:
-            x: width - padding
-            y: padding
-            'text-anchor': 'end'
+            'viewBox': "0 0 #{width} #{height}"
+          style:
+            width: "#{width}px"
+            height: "#{height}px"
         },
-          "#{mainRoute?.elevationStats.max} "
-          @model.l.get 'editTripSettings.feetAbbr'
+          z 'text', {
+            namespace: 'http://www.w3.org/2000/svg'
+            attributes:
+              x: width - padding
+              y: padding
+              'text-anchor': 'end'
+          },
+            "#{mainRoute?.elevationStats.max} "
+            @model.l.get 'editTripSettings.feetAbbr'
 
-        z 'text', {
-          namespace: 'http://www.w3.org/2000/svg'
-          attributes:
-            x: width - padding
-            y: height - padding
-            'text-anchor': 'end'
-        },
-          "#{mainRoute?.elevationStats.min} "
-          @model.l.get 'editTripSettings.feetAbbr'
+          z 'text', {
+            namespace: 'http://www.w3.org/2000/svg'
+            attributes:
+              x: width - padding
+              y: height - padding
+              'text-anchor': 'end'
+          },
+            "#{mainRoute?.elevationStats.min} "
+            @model.l.get 'editTripSettings.feetAbbr'
 
-        z 'polyline', {
-          namespace: 'http://www.w3.org/2000/svg'
-          attributes:
-            fill: 'none'
-            stroke: colors.$secondary500
-            'stroke-width': 4
-            points: points.join ' '
-        }
-        # fill
-        z 'polyline', {
-          namespace: 'http://www.w3.org/2000/svg'
-          attributes:
-            fill: colors.$secondary500
-            stroke: 'none'
-            'fill-opacity': 0.12
-            points: points.concat [
-              [width - padding, height - padding]
-              [padding, height - padding]
-            ]
-            .join ' '
-        }
+          z 'polyline', {
+            namespace: 'http://www.w3.org/2000/svg'
+            attributes:
+              fill: 'none'
+              stroke: colors.$secondary500
+              'stroke-width': 4
+              points: points.join ' '
+          }
+          # fill
+          z 'polyline', {
+            namespace: 'http://www.w3.org/2000/svg'
+            attributes:
+              fill: colors.$secondary500
+              stroke: 'none'
+              'fill-opacity': 0.12
+              points: points.concat [
+                [width - padding, height - padding]
+                [padding, height - padding]
+              ]
+              .join ' '
+          }
 
-        z 'polyline', {
-          namespace: 'http://www.w3.org/2000/svg'
-          attributes:
-            fill: 'none'
-            stroke: colors.$grey500
-            'stroke-width': 4
-            'stroke-dasharray': '10,10'
-            points: alternativePoints.join ' '
-        }
+          z 'polyline', {
+            namespace: 'http://www.w3.org/2000/svg'
+            attributes:
+              fill: 'none'
+              stroke: colors.$grey500
+              'stroke-width': 4
+              'stroke-dasharray': '10,10'
+              points: alternativePoints.join ' '
+          }

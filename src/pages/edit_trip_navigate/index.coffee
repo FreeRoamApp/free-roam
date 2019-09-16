@@ -59,7 +59,7 @@ module.exports = class EditTripNavigatePage
 
   getMeta: =>
     {
-      title: @model.l.get 'editTripNavigatePage.stopTitle'
+      title: @model.l.get 'editTripNavigatePage.title'
     }
 
   render: =>

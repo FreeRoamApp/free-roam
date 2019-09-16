@@ -203,11 +203,6 @@ module.exports = class TripItinerary extends Base
                               id: trip?.id
                               routeId: routeInfo?.routeId
                             }
-                            # MapService.getDirectionsBetweenPlaces(
-                            #   previousDestination.place
-                            #   destination.place
-                            #   {@model}
-                            # )
                         },
                           z '.icon',
                             z $routeIcon,

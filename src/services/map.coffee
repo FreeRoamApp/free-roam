@@ -6,6 +6,7 @@ _some = require 'lodash/some'
 _startCase = require 'lodash/startCase'
 _snakeCase = require 'lodash/snakeCase'
 _uniq = require 'lodash/uniq'
+_last = require 'lodash/last'
 
 Environment = require './environment'
 DateService = require './date'
@@ -72,12 +73,21 @@ class MapService
     else
       get()
 
-  getDirectionsBetweenPlaces: (place1, place2, {model}) ->
+  getDirectionsBetweenPlaces: (places, {model}) ->
     target = '_system'
     baseUrl = 'https://google.com/maps/dir/?api=1'
-    origin = place1?.location?.lat + ',' + place1?.location?.lon
-    destination = place2?.location?.lat + ',' + place2?.location?.lon
+    origin = places[0].location?.lat + ',' + places[0].location?.lon
+    destination = _last(places).location?.lat + ',' + _last(places).location?.lon
+
+    places.shift()
+    places.pop()
+    waypoints = _map(places, (place) ->
+      "#{place.lat},#{place.lon}"
+    ).join '|'
+
     url = "#{baseUrl}&origin=#{origin}&destination=#{destination}"
+    if waypoints
+      url += "&waypoints=#{waypoints}"
     model.portal.call 'browser.openWindow', {url, target}
 
   getDirections: (place, {model}) ->
