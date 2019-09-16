@@ -1,5 +1,8 @@
 z = require 'zorium'
 _isEmpty = require 'lodash/isEmpty'
+_filter = require 'lodash/filter'
+_map = require 'lodash/map'
+_defaults = require 'lodash/defaults'
 
 PlaceList = require '../place_list'
 colors = require '../../colors'
@@ -10,9 +13,15 @@ if window?
 
 module.exports = class MyPlaces
   constructor: ({@model, @router}) ->
-    places = @model.checkIn.getAll {includeDetails: true}
+    checkIns = @model.checkIn.getAll {includeDetails: true}
+    places = checkIns.map (checkIns) ->
+      _filter _map checkIns, (checkIn) ->
+        if checkIn?.place
+          _defaults {
+            checkInId: checkIn.id, name: checkIn.name or checkIn.place.name
+          }, checkIn.place
     @$placeList = new PlaceList {
-      @model, @router, places, action: 'info'
+      @model, @router, places, action: 'openCheckIn'
     }
 
     @state = z.state {

@@ -139,8 +139,6 @@ module.exports = class PlaceInfo extends Base
       100
     )
 
-    console.log 'place', place
-
     # spinner as a class so the dom structure stays the same between loads
     isLoading = not place?.slug
     z '.z-place-info', {
@@ -373,19 +371,20 @@ module.exports = class PlaceInfo extends Base
                 # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
                 # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
 
-              z '.section',
-                z '.h2', @model.l.get 'placeInfo.features'
-                z '.features.g-grid',
-                  z '.g-cols',
-                    _map features, ({feature, icon, $icon}) =>
-                      z '.feature.g-col.g-xs-6.g-md-6',
-                        z '.icon',
-                          z $icon,
-                            icon: icon
-                            isTouchTarget: false
-                            size: '18px'
-                            color: colors.$bgText87
-                        @model.l.get "feature.#{feature}"
+              unless _isEmpty features
+                z '.section',
+                  z '.h2', @model.l.get 'placeInfo.features'
+                  z '.features.g-grid',
+                    z '.g-cols',
+                      _map features, ({feature, icon, $icon}) =>
+                        z '.feature.g-col.g-xs-6.g-md-6',
+                          z '.icon',
+                            z $icon,
+                              icon: icon
+                              isTouchTarget: false
+                              size: '18px'
+                              color: colors.$bgText87
+                          @model.l.get "feature.#{feature}"
 
 
               unless _isEmpty $videos

@@ -73,7 +73,7 @@ module.exports = class CheckInPage
 
               z @$deleteIcon,
                 icon: 'delete'
-                color: colors.$header500Icon
+                color: colors.$primary500Text
                 hasRipple: true
                 onclick: =>
                   if confirm @model.l.get 'general.confirm'

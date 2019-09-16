@@ -23,6 +23,7 @@ module.exports = class CheckIn
 
     @$infoButton = new PrimaryButton()
     @$directionsButton = new PrimaryButton()
+    @$addToTripButton = new PrimaryButton()
 
     @$attachmentsList = new AttachmentsList {
       @model, @router
@@ -68,6 +69,13 @@ module.exports = class CheckIn
                 MapService.getDirections(
                   checkIn.place, {@model}
                 )
+
+          # if checkIn?.type is 'coordinate'
+          #   z '.action',
+          #     z @$addToTripButton,
+          #       text: @model.l.get 'placeInfo.addToTrip'
+          #       onclick: =>
+          #         @model.trip.upsertDestinationById {id: tripId, checkIn}
 
         if checkIn?.notes
           [

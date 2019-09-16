@@ -20,11 +20,17 @@
         font-title()
         color: getColor('$secondary500')
         display: inline-block
+        text-align: center
         padding: 8px 12px
         border: 1px solid getColor('$secondary500')
         border-radius: 18px
         margin: 6px
         cursor: pointer
+
+        > .icon
+          display: inline-block
+          vertical-align: text-top
+          margin-right: 8px
 
         &.is-selected
           background: getColor('$secondary500')

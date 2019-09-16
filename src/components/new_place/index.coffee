@@ -125,7 +125,7 @@ module.exports = class NewPlace
       bodyValue: @reviewFields.body.valueStreams.switch()
       attachmentsValue: @reviewFields.attachments.valueStreams.switch()
       ratingValue: @reviewFields.rating.valueStreams.switch()
-      featuresValue: @reviewFeaturesFields.features.valueStreams.switch()
+      featuresValue: @reviewFeaturesFields?.features.valueStreams.switch()
       reviewExtraFieldsValues
     }
 

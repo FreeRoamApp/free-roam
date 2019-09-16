@@ -24,10 +24,13 @@ module.exports = class TripList extends Base
 
     @$spinner = new Spinner()
 
+    console.log 't1', trips
+
     @state = z.state
       me: me
       selectedTripId: @selectedTripIdStreams?.switch()
       $trips: trips.map (trips) =>
+        console.log 'trips', trips
         if _isEmpty trips
           return false
         _map trips, (trip) =>

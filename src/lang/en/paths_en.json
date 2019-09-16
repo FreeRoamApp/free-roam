@@ -98,6 +98,8 @@
   "profileFriendsById": "/user/id/:id/friends",
   "profileReviews": "/user/:username/reviews",
   "profileReviewsById": "/user/id/:id/reviews",
+  "profileTrips": "/user/:username/trips",
+  "profileTripsById": "/user/id/:id/trips",
 
   "roamWithCare": "/roam-with-care",
   "settings": "/settings",

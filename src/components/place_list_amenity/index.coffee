@@ -4,7 +4,7 @@ RxObservable = require('rxjs/Observable').Observable
 
 Icon = require '../icon'
 Rating = require '../rating'
-FlatButton = require '../flat_button'
+SecondaryButton = require '../secondary_button'
 MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
@@ -14,8 +14,7 @@ if window?
 
 module.exports = class PlaceListAmenity
   constructor: ({@model, @router, @place, @action}) ->
-    @$detailsButton = new FlatButton()
-    @$directionsButton = new FlatButton()
+    @$infoButton = new SecondaryButton()
     @$deleteIcon = new Icon()
     placeObs = if @place?.map then @place else RxObservable.of @place?.rating
     @$rating = new Rating {
@@ -89,27 +88,22 @@ module.exports = class PlaceListAmenity
 
                 z '.name', amenity
 
-        if @action is 'info'
+        if @action
           z '.actions',
             if @place?.sourceType isnt 'coordinate'
               z '.action',
-                z @$detailsButton,
-                  # icon: 'info'
-                  text: @model.l.get 'general.info'
-                  colors:
-                    cText: colors.$primary500
+                z @$infoButton,
+                  text: if @action is 'openCheckIn'
+                    @model.l.get 'general.info'
+                  else
+                    @model.l.get 'general.directions'
+                  isOutline: true
+                  heightPx: 28
                   onclick: =>
-                    @router.goPlace @place
-            z '.action',
-              z @$directionsButton,
-                text: @model.l.get 'general.directions'
-                # icon: 'directions'
-                colors:
-                  cText: colors.$primary500
-                onclick: =>
-                  MapService.getDirections @place, {@model}
-            # z '.action',
-            #   z $deleteIcon,
-            #     icon: 'delete'
-            #     isTouchTarget: false
-            #     onclick: =>
+                    if @action is 'openCheckIn'
+                      @router.goOverlay 'checkIn', {
+                        id: place.checkInId
+                      }
+                    else
+                      @router.goPlace place
+                      # MapService.getDirections place, {@model}

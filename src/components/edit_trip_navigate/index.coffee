@@ -8,6 +8,7 @@ ElevationChart = require '../elevation_chart'
 TravelMap = require '../travel_map'
 Icon = require '../icon'
 PrimaryButton = require '../primary_button'
+GoogleMapsWarningDialog = require '../google_maps_warning_dialog'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
 MapService = require '../../services/map'
@@ -64,6 +65,8 @@ module.exports = class EditTripNavigate
   render: =>
     {start, end, routes} = @state.getValue()
 
+    console.log 'routes', routes
+
     mainRoute = routes?[0]
 
     z '.z-edit-trip-navigate', {
@@ -104,10 +107,17 @@ module.exports = class EditTripNavigate
             z @$googleMapsButton,
               text: @model.l.get 'editTripNavigate.openGoogleMaps'
               onclick: =>
-                # TODO: warning dialog
-                # TODO: route to stops
-                MapService.getDirectionsBetweenPlaces(
-                  start.place
-                  end.place
-                  {@model}
-                )
+                go = =>
+                  MapService.getDirectionsBetweenPlaces(
+                    start.place
+                    end.place
+                    {@model}
+                  )
+                if @model.cookie.get('hasSeenGoogleMapsWarning')
+                  go()
+                else
+                  @model.cookie.set 'hasSeenGoogleMapsWarning', '1'
+                  @model.overlay.open new GoogleMapsWarningDialog({@model}), {
+                    onComplete: go
+                    onCancel: go
+                  }

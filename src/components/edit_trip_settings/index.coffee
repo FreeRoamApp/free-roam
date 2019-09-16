@@ -85,6 +85,22 @@ module.exports = class EditTripSettings
       valueStreams: @donutMaxValueStreams
       error: @donutMaxError
 
+    @avoidHighwaysValueStreams = new RxReplaySubject 1
+    @avoidHighwaysValueStreams.next (trip?.map (trip) ->
+      trip.settings.avoidHighways) or RxObservable.of null
+
+    @$avoidHighwaysToggle = new Toggle {
+      isSelectedStreams: @avoidHighwaysValueStreams
+    }
+
+    @useTruckRouteValueStreams = new RxReplaySubject 1
+    @useTruckRouteValueStreams.next (trip?.map (trip) ->
+      trip.settings.useTruckRoute) or RxObservable.of null
+
+    @$useTruckRouteToggle = new Toggle {
+      isSelectedStreams: @useTruckRouteValueStreams
+    }
+
     @isPrivateValueStreams = new RxReplaySubject 1
     @isPrivateValueStreams.next (trip?.map (trip) ->
       trip.settings.privacy is 'private') or RxObservable.of null
@@ -101,10 +117,12 @@ module.exports = class EditTripSettings
       rigHeightFeet: @rigHeightFeetValueStreams.switch()
       rigHeightInches: @rigHeightInchesValueStreams.switch()
       isPrivate: @isPrivateValueStreams.switch()
+      avoidHighways: @avoidHighwaysValueStreams.switch()
+      useTruckRoute: @useTruckRouteValueStreams.switch()
 
   save: =>
     {trip, donutMin, donutMax, donutIsVisible, rigHeightFeet, rigHeightInches
-      isPrivate, isSaving} = @state.getValue()
+      avoidHighways, useTruckRoute, isPrivate, isSaving} = @state.getValue()
 
     if isSaving
       return
@@ -122,6 +140,8 @@ module.exports = class EditTripSettings
           isVisible: donutIsVisible
         rigHeightInches: rigHeightInches
         privacy: if isPrivate then 'private' else 'public'
+        useTruckRoute: useTruckRoute
+        avoidHighways: avoidHighways
     }
     .then =>
       @state.set isSaving: false
@@ -179,6 +199,22 @@ module.exports = class EditTripSettings
                   hintText: @model.l.get 'editTripSettings.donutMax'
                   type: 'number'
                   isShort: true
+
+          z '.field',
+            z '.title', @model.l.get 'editTripSettings.avoidHighways'
+            z '.content',
+              z '.description',
+                @model.l.get 'editTripSettings.avoidHighwaysDescription'
+              z '.input',
+                z @$avoidHighwaysToggle
+
+          z '.field',
+            z '.title', @model.l.get 'editTripSettings.useTruckRoute'
+            z '.content',
+              z '.description',
+                @model.l.get 'editTripSettings.useTruckRouteDescription'
+              z '.input',
+                z @$useTruckRouteToggle
 
           z '.field',
             z '.title', @model.l.get 'editTripSettings.privacy'

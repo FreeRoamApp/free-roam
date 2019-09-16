@@ -2,8 +2,7 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 
-PlaceListAmenity = require '../place_list_amenity'
-PlaceListCampground = require '../place_list_campground'
+PlaceListItem = require '../place_list_item'
 MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
@@ -22,10 +21,7 @@ module.exports = class PlaceList
           if place.type isnt 'cellTower'
             {
               place
-              $el: if place.type is 'amenity'
-                new PlaceListAmenity {@model, @router, place}
-              else
-                new PlaceListCampground {@model, @router, place, action}
+              $el: new PlaceListItem {@model, @router, place, action}
             }
 
   render: ({hideRating} = {}) =>

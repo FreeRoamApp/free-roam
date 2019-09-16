@@ -1,5 +1,7 @@
 z = require 'zorium'
 
+SecondaryButton = require '../secondary_button'
+MapService = require '../../services/map'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -8,6 +10,8 @@ if window?
 
 module.exports = class PlaceListCoordinate
   constructor: ({@model, @router, @place, @name, @action}) ->
+    @$directionsButton = new SecondaryButton()
+    @$addToTripButton = new SecondaryButton()
     @defaultImages = [
       "#{config.CDN_URL}/places/empty_campground.svg"
       "#{config.CDN_URL}/places/empty_campground_green.svg"
@@ -46,3 +50,20 @@ module.exports = class PlaceListCoordinate
             if place?.address?.locality
               "#{place?.address?.locality}, "
             place?.address?.administrativeArea
+      if @action
+        z '.actions',
+          z '.action',
+            z @$directionsButton,
+              text: if @action is 'openCheckIn'
+                @model.l.get 'general.info'
+              else
+                @model.l.get 'general.directions'
+              isOutline: true
+              heightPx: 28
+              onclick: =>
+                if @action is 'openCheckIn'
+                  @router.goOverlay 'checkIn', {
+                    id: place.checkInId
+                  }
+                else
+                  MapService.getDirections place, {@model}

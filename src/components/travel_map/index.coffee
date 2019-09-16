@@ -44,10 +44,13 @@ module.exports = class TravelMap
 
     mapBoundsStreams = new RxReplaySubject 1
     mapBoundsStreams.next(
-      @trip.map (trip) =>
-        unless trip
-          return RxObservable.of {}
-        trip.bounds
+      if prepScreenshot
+        RxObservable.of {}
+      else
+        @trip.map (trip) =>
+          unless trip
+            return RxObservable.of {}
+          trip.bounds
     )
 
     @mapSize = new RxBehaviorSubject null

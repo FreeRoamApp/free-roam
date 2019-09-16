@@ -132,7 +132,7 @@ isomorphic =
 
   FEATURES_ICONS:
     # if not specified, it's kebab-case
-    dumpStation: 'poop'
+    dumpStation: 'dump'
 
   RIG_TYPES: ['tent', 'car', 'van', 'motorhome', 'travelTrailer', 'fifthWheel']
   EXPERIENCE_TYPES: ['none', 'little', 'some', 'lots']

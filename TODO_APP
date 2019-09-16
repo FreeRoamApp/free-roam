@@ -3,12 +3,25 @@ TODOS:
 new place info page
 x fix masonry grid. current logic assumes all sections are same height, but column-count tries to match height per column
 
-- Google maps warning
+x Google maps warning
+
+- better trip routing
+  - stops
+
+- iOS keyboard sometimes causing empty whitespace at bottom after shown/hid? jwoeler
 
 - look into offline mode issues some more. also localstorage has a quota...
 
 - on chrome mobile, during shell load, the bottom bar isn't at bottom
 
+- come up with better backup system
+
+- fix it showing closest landmark instead of city for city, state
+
+- new colors
+  - set a "primary" (eg 800)
+  - some colors are rgba version of others?
+    - hover is 4% 700, pressed is 16%, selected is 8%
 
 figure out why https://freeroam.app/campground/fr-9350-campground is 404
   - Needs elasticsearch slug changed to fr-9350-campground-drew-canyon-trailhead

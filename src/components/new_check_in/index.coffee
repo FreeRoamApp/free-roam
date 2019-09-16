@@ -107,7 +107,7 @@ module.exports = class NewCheckIn
   resetValueStreams: =>
     today = DateService.format new Date(), 'yyyy-mm-dd'
     @fields.tripId.valueStreams.next @checkInAndTrip.map ([checkIn, trip]) ->
-      checkIn?.tripIds[0] or trip?.id or null
+      checkIn?.tripIds?[0] or trip?.id or null
     @fields.name.valueStreams.next @checkInAndPlace.map ([checkIn, place]) ->
       checkIn?.name or place?.name or ''
     @fields.startTime.valueStreams.next @checkIn.map (checkIn) ->

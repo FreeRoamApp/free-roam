@@ -60,9 +60,7 @@ module.exports = class PlaceListCampground
     name ?= @name
 
     thumbnailSrc = @getThumbnailUrl place
-    hasInfoButton = @action is 'info' and place?.type in [
-      'campground', 'amenity'
-    ]
+    hasInfoButton = @action is 'info' and place?.type is 'campground'
 
     z '.z-place-list-campground',
       z '.thumbnail',
@@ -92,19 +90,21 @@ module.exports = class PlaceListCampground
             z @$actionButton,
               text: if isActionLoading \
                     then @model.l.get 'general.loading'
-                    else if hasInfoButton
+                    else if @action in ['info', 'openCheckIn']
                     then @model.l.get 'general.info'
-                    else if @action is 'info'
+                    else if @action is 'directions'
                     then @model.l.get 'general.directions'
                     else @model.l.get 'placeInfo.checkIn'
               isOutline: true
               heightPx: 28
               onclick: =>
-                if hasInfoButton
-                  @router.go place?.type, {
-                    slug: place?.slug
+                if @action is 'info'
+                  @router.goPlace place
+                else if @action is 'openCheckIn'
+                  @router.goOverlay 'checkIn', {
+                    id: place.checkInId
                   }
-                else if @action is 'info'
+                else if @action is 'directions'
                   MapService.getDirections place, {@model}
                 else
                   @state.set isActionLoading: true

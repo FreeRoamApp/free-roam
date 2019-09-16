@@ -32,7 +32,7 @@ module.exports = class EditTripNavigatePage
     )
     # TODO: don't grab all routes from server, just the one
     tripRoute = tripAndRouteId.map ([trip, routeId]) ->
-      _find trip.routes, {routeId}
+      _find trip?.routes, {routeId}
 
     # mapBoundsStreams = new RxReplaySubject 1
     # mapBoundsStreams.next requests.switchMap ({route}) =>

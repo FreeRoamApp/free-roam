@@ -2,7 +2,9 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
+_kebabCase = require 'lodash/kebabCase'
 
+Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -12,7 +14,7 @@ FEATURES = [
   'dumpStation'
   '30amp'
   '50amp'
-  'showers'
+  'shower'
   'ada'
   'trash'
   'picnicTable'
@@ -21,7 +23,6 @@ FEATURES = [
   'petsAllowed'
   'wifi'
   'firePit'
-  ''
   # 'firewood'
   # 'alcohol'
 
@@ -36,6 +37,8 @@ module.exports = class PlaceNewReviewFeatures
     me = @model.user.getMe()
 
     # TODO: features.valueStreams
+    @$icons = _map FEATURES, (feature) ->
+      new Icon()
 
     @state = z.state {
       me: @model.user.getMe()
@@ -58,7 +61,7 @@ module.exports = class PlaceNewReviewFeatures
       z '.g-grid',
         z '.description', @model.l.get 'newReviewFeatures.description'
         z '.features',
-          _map FEATURES, (feature) =>
+          _map FEATURES, (feature, i) =>
             isSelected = fieldsValues?.features and
               fieldsValues.features.indexOf(feature) isnt -1
 
@@ -72,4 +75,13 @@ module.exports = class PlaceNewReviewFeatures
                 else
                   features = (fieldsValues?.features or []).concat feature
                 @fields.features.valueStreams.next RxObservable.of features
-            }, @model.l.get "feature.#{feature}"
+            },
+              z '.icon',
+                z @$icons[i],
+                  icon: config.FEATURES_ICONS[feature] or _kebabCase feature
+                  isTouchTarget: false
+                  size: '16px'
+                  color: if isSelected \
+                         then colors.$secondary500Text
+                         else colors.$secondary500
+              @model.l.get "feature.#{feature}"
