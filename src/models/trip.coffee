@@ -28,9 +28,9 @@ module.exports = class Trip
       tripId, routeIds
     }
 
-  getRoutesByTripIdAndRouteId: (tripId, routeId) =>
+  getRoutesByTripIdAndRouteId: (tripId, routeId, {waypoints} = {}) =>
     @auth.stream "#{@namespace}.getRoutesByTripIdAndRouteId", {
-      tripId, routeId
+      tripId, routeId, waypoints
     }
 
   getStatesGeoJson: =>

@@ -5,6 +5,8 @@ x fix masonry grid. current logic assumes all sections are same height, but colu
 
 x Google maps warning
 
+- map always reverts to what cookie was when app initially opened, not latest
+
 - better trip routing
   - stops
 
@@ -16,7 +18,7 @@ x Google maps warning
 
 - come up with better backup system
 
-- fix it showing closest landmark instead of city for city, state
+x fix it showing closest landmark instead of city for city, state
 
 - new colors
   - set a "primary" (eg 800)
@@ -31,9 +33,12 @@ figure out why https://freeroam.app/campground/fr-9350-campground is 404
 
 - For canadian campgrounds, show candian carriers when reviewing
 
-- fix share trip image
-- add rest stops
-- filter by affiliation
+- might be able to export gpx that google maps can use for custom route???
+  - not sure it actually works, mapbox is probs better
+
+x fix share trip image
+x add rest stops
+x filter by affiliation
 
 - ridb booking api, rick
 
@@ -62,6 +67,7 @@ x fix too many searching campgrounds on first load
       - Think we'd need https://github.com/valhalla/valhalla/issues/1302
   - https://github.com/mapbox/mapbox-navigation-ios
   - Can maybe base off of https://www.npmjs.com/package/cordova-plugin-mapbox
+    - https://github.com/Telerik-Verified-Plugins/Mapbox
 
 
 x Delete check-in destination, make sure all trips are updated

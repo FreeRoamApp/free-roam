@@ -1,4 +1,6 @@
 z = require 'zorium'
+RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 _find = require 'lodash/find'
@@ -21,12 +23,21 @@ if window?
 
 module.exports = class EditTripNavigate
   constructor: ({@model, @router, trip, tripRoute}) ->
+    # for changing route
+    waypoints = new RxBehaviorSubject []
+
     tripAndTripRoute = RxObservable.combineLatest(
       trip, tripRoute, (vals...) -> vals
     )
+    tripAndTripRouteAndWaypoints = RxObservable.combineLatest(
+      trip, tripRoute, waypoints, (vals...) -> vals
+    )
 
-    routes = tripAndTripRoute.switchMap ([trip, tripRoute]) =>
-      @model.trip.getRoutesByTripIdAndRouteId trip.id, tripRoute.routeId
+    routes = tripAndTripRouteAndWaypoints.switchMap (obj) =>
+      [trip, tripRoute, wp] = obj
+      @model.trip.getRoutesByTripIdAndRouteId trip.id, tripRoute.routeId, {
+        waypoints: wp
+      }
 
     @$gainIcon = new Icon()
     @$lostIcon = new Icon()
@@ -40,8 +51,21 @@ module.exports = class EditTripNavigate
 
     @$googleMapsButton = new PrimaryButton()
 
+    mapBoundsStreams = new RxReplaySubject 1
+    mapBoundsStreams.next(
+      tripRoute.map (tripRoute) =>
+        unless tripRoute
+          return RxObservable.of {}
+        tripRoute.bounds
+    )
+
     @$travelMap = new TravelMap {
       @model, @router, trip
+      mapBoundsStreams
+      onclick: (e) =>
+        point = {lat: e.lngLat.lat, lon: e.lngLat.lng}
+        waypoints.next waypoints.getValue().concat [point]
+
       routes: routes.map (routes) ->
         _map routes, ({shape}, i) ->
           {
@@ -67,12 +91,9 @@ module.exports = class EditTripNavigate
   render: =>
     {start, end, trip, tripRoute, routes} = @state.getValue()
 
-    console.log 'routes', routes
     stops = trip?.stops[tripRoute?.routeId]
 
     places = _filter [start?.place].concat stops, [end?.place]
-
-    console.log 'places', places
 
     mainRoute = routes?[0]
 

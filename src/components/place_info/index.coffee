@@ -102,12 +102,13 @@ module.exports = class PlaceInfo extends Base
               type: value.type
               $bars: new CellBars {value: value.signal, includeNoSignal: true}
             }
-          features: _map place?.features, (val, feature) ->
-            {
-              feature: feature
-              icon: config.FEATURES_ICONS[feature] or _kebabCase feature
-              $icon: new Icon()
-            }
+          features: _filter _map place?.features, (val, feature) ->
+            if val
+              {
+                feature: feature
+                icon: config.FEATURES_ICONS[feature] or _kebabCase feature
+                $icon: new Icon()
+              }
         }
 
   afterMount: =>

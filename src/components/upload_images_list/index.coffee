@@ -10,7 +10,9 @@ _clone = require 'lodash/clone'
 Icon = require '../icon'
 UploadOverlay = require '../upload_overlay'
 UploadImagesPreview = require '../upload_images_preview'
+VideoAttachmentDialog = require '../video_attachment_dialog'
 colors = require '../../colors'
+config = require '../../config'
 
 if window?
   require './index.styl'
@@ -21,6 +23,7 @@ module.exports = class UploadImagesList
       requestTags, requestLocation} = options
 
     @$addImageIcon = new Icon()
+    @$addVideoIcon = new Icon()
 
     @attachmentsValueStreams ?= new RxReplaySubject 1
 
@@ -63,9 +66,12 @@ module.exports = class UploadImagesList
 
     @state = z.state
       attachments: @attachmentsValueStreams.switch()
+      $attachments: @attachmentsValueStreams.switch().map (attachments) ->
+        _map attachments, (attachment) ->
+          {attachment, $icon: new Icon()}
 
   render: ({onDone}) =>
-    {attachments} = @state.getValue()
+    {attachments, $attachments} = @state.getValue()
 
     z '.z-upload-images-list',
         z '.add-image',
@@ -97,8 +103,35 @@ module.exports = class UploadImagesList
                   @multiImageData.next multiImageData
                   @model.overlay.open @$uploadImagesPreview
             }
-        _map attachments, ({dataUrl, prefix, isUploading, progress}, i) =>
-          src = @model.image.getSrcByPrefix prefix, {size: 'small'}
+        z '.add-video', {
+          onclick: =>
+            @model.overlay.open new VideoAttachmentDialog {
+              @model, onSave: (url) =>
+                youtubeId = url.match(config.YOUTUBE_ID_REGEX)?[1]
+                if youtubeId
+                  {attachments} = @state.getValue()
+                  attachments.push {
+                    type: 'video'
+                    prefix: youtubeId
+                  }
+                  @attachmentsValueStreams.next RxObservable.of attachments
+            }
+        },
+          z '.icon',
+            z @$addVideoIcon,
+              icon: 'video-add'
+              isTouchTarget: false
+              size: '32px'
+              color: colors.$bgText54
+          z '.text',
+            @model.l.get 'general.add'
+
+        _map $attachments, ({attachment, $icon}, i) =>
+          {dataUrl, prefix, isUploading, progress, type} = attachment
+          if attachment.type is 'video'
+            src = "https://img.youtube.com/vi/#{attachment.prefix}/sddefault.jpg"
+          else
+            src = @model.image.getSrcByPrefix prefix, {size: 'small'}
           z '.attachment', {
             className: z.classKebab {isUploading}
             oncontextmenu: (e) =>
@@ -107,9 +140,16 @@ module.exports = class UploadImagesList
               newAttachments.splice i, 1
               @attachmentsValueStreams.next RxObservable.of newAttachments
           },
-            z '.image',
+            z '.image', {
               style:
                 backgroundImage: "url(#{dataUrl or src})"
+                backgroundColor: if type is 'video'
+                  colors.$secondary500
+            },
+              if type is 'video'
+                z $icon,
+                  icon: 'youtube'
+                  color: colors.$secondary500Text
             z '.progress',
               z '.bar', {
                 style:

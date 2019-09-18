@@ -21,7 +21,7 @@ if window?
 module.exports = class TravelMap
   constructor: (options) ->
     {@model, @router, @trip, destinations, routes,
-      onclick, prepScreenshot} = options
+      onclick, prepScreenshot, mapBoundsStreams} = options
 
     destinations ?= @trip.map (trip) ->
       trip?.destinationsInfo
@@ -42,22 +42,22 @@ module.exports = class TravelMap
           stats?.stateCounts?[id] > 0
       }
 
-    mapBoundsStreams = new RxReplaySubject 1
-    mapBoundsStreams.next(
-      if prepScreenshot
-        RxObservable.of {}
-      else
-        @trip.map (trip) =>
-          unless trip
-            return RxObservable.of {}
-          trip.bounds
-    )
+    unless mapBoundsStreams
+      mapBoundsStreams = new RxReplaySubject 1
+      mapBoundsStreams.next(
+        if prepScreenshot
+          RxObservable.of {}
+        else
+          @trip.map (trip) =>
+            unless trip
+              return RxObservable.of {}
+            trip.bounds
+      )
 
     @mapSize = new RxBehaviorSubject null
     mapOptions = {
       @model, @router
       places: destinations.map (destinations) ->
-        console.log 'des', destinations
         _filter _map destinations, ({place}, i) ->
           _defaults {
             number: i + 1

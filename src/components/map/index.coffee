@@ -129,6 +129,10 @@ module.exports = class Map
       @map.dragRotate.disable()
       @map.touchZoomRotate.disableRotation()
 
+  setInitialCenter: (@initialCenter) => null
+
+  setInitialZoom: (@initialZoom) => null
+
   addPlacesSources: =>
     @map.addSource 'place', {
       type: 'geojson'

@@ -48,7 +48,7 @@
           top: 0
           width: 100%
 
-    > .add-image
+    > .add-image, > .add-video
       background: getColor('$primary500')
       border-radius: 4px
       padding: 12px 16px
@@ -58,6 +58,13 @@
       position: relative
       display: inline-block
       vertical-align: top
+
+      &.add-video
+        background: getColor('$tertiary0')
+        margin-left: 8px
+
+        > .text
+          color: getColor('$bgText54')
 
       > .text
         text-align: center

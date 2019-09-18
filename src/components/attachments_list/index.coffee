@@ -1,6 +1,7 @@
 z = require 'zorium'
 _map = require 'lodash/map'
 
+Icon = require '../icon'
 ImageViewOverlay = require '../image_view_overlay'
 colors = require '../../colors'
 config = require '../../config'
@@ -21,9 +22,12 @@ module.exports = class AttachmentsList
       more: more
       attachments: attachments.map (attachments) ->
         if limit and attachments?.slice
-          attachments.slice 0, limit
+          attachments = attachments.slice 0, limit
         else
-          attachments
+          attachments = attachments
+
+        _map attachments, (attachment) ->
+          {attachment, $icon: new Icon()}
 
   afterMount: (@$$el) =>
     setTimeout =>
@@ -55,8 +59,11 @@ module.exports = class AttachmentsList
       }
 
     z '.z-attachments-list',
-      _map attachments, (attachment, i) =>
-        src = @model.image.getSrcByPrefix attachment.prefix, {size: 'small'}
+      _map attachments, ({attachment, $icon}, i) =>
+        if attachment.type is 'video'
+          src = "https://img.youtube.com/vi/#{attachment.prefix}/sddefault.jpg"
+        else
+          src = @model.image.getSrcByPrefix attachment.prefix, {size: 'small'}
         z '.attachment-wrapper', {
           style:
             width: "#{widthPx}px"
@@ -78,16 +85,29 @@ module.exports = class AttachmentsList
             z '.img',
               title: attachment.caption
               onclick: =>
-                @model.overlay.open new ImageViewOverlay {
-                  @model
-                  @router
-                  images: images
-                  imageIndex: i
-                  imageData:
-                    url: @model.image.getSrcByPrefix attachment.prefix, {
-                      size: 'large'
-                    }
-                    aspectRatio: attachment.aspectRatio
-                }
+                if attachment.type is 'video'
+                  @model.portal.call 'browser.openWindow', {
+                    url:
+                      "https://youtube.com/watch?v=#{attachment.prefix}"
+                  }
+
+                else
+                  @model.overlay.open new ImageViewOverlay {
+                    @model
+                    @router
+                    images: images
+                    imageIndex: i
+                    imageData:
+                      url: @model.image.getSrcByPrefix attachment.prefix, {
+                        size: 'large'
+                      }
+                      aspectRatio: attachment.aspectRatio
+                  }
               style:
                 backgroundImage: "url(#{src})"
+            if attachment.type is 'video'
+              z '.icon',
+                z $icon,
+                  icon: 'youtube'
+                  color: colors.$white
+                  size: '30px'

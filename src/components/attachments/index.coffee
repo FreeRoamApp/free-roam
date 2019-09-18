@@ -1,4 +1,5 @@
 z = require 'zorium'
+_filter = require 'lodash/filter'
 _map = require 'lodash/map'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
@@ -21,6 +22,7 @@ module.exports = class Attachments
       me: @model.user.getMe()
       more: more
       attachments: attachments.map (attachments) ->
+        attachments = _filter attachments, {type: 'image'}
         if limit and attachments
           attachments.slice 0, limit
         else

@@ -224,10 +224,14 @@ module.exports = class PlacesMapContainer
 
   afterMount: =>
     @disposable = @currentMapBounds.subscribe ({zoom, center} = {}) =>
-      zoomCookie = "#{@persistentCookiePrefix}_zoom"
-      @model.cookie.set zoomCookie, JSON.stringify zoom
-      centerCookie = "#{@persistentCookiePrefix}_center"
-      @model.cookie.set centerCookie, JSON.stringify center
+      if zoom
+        zoomCookie = "#{@persistentCookiePrefix}_zoom"
+        @model.cookie.set zoomCookie, JSON.stringify zoom
+        @$map.setInitialZoom zoom # for when map is re-opened
+      if center
+        centerCookie = "#{@persistentCookiePrefix}_center"
+        @model.cookie.set centerCookie, JSON.stringify center
+        @$map.setInitialCenter center # for when map is re-opened
 
   beforeUnmount: =>
     @disposable?.unsubscribe()

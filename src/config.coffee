@@ -143,7 +143,7 @@ isomorphic =
 
   # low to high
   AMENITY_ICON_ORDER: [
-    'gas', 'trash', 'recycle', 'npwater', 'propane', 'groceries', 'water', 'dump'
+    'gas', 'trash', 'recycle', 'npwater', 'propane', 'groceries', 'restArea', 'water', 'dump'
   ]
 
 

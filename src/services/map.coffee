@@ -149,6 +149,13 @@ class MapService
         field: 'amenities'
         type: 'booleanArray'
         isBoolean: true
+        arrayValue: 'restArea'
+        name: model.l.get 'overnight.restArea'
+      }
+      {
+        field: 'amenities'
+        type: 'booleanArray'
+        isBoolean: true
         arrayValue: 'groceries'
         name: model.l.get 'amenities.groceries'
       }
@@ -786,7 +793,7 @@ class MapService
       , ['desc'])[0]
       if icon is 'gym'
         icon = 'shower' # TODO: add gym icon, rm
-      icon
+      _snakeCase icon
 
   hazardIconGetFn: (filters) ->
     (hazard) ->
