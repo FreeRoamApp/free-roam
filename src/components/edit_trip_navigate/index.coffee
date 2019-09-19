@@ -7,9 +7,12 @@ _find = require 'lodash/find'
 _filter = require 'lodash/filter'
 _map = require 'lodash/map'
 
-ElevationChart = require '../elevation_chart'
 TravelMap = require '../travel_map'
+EditTripNavigateElevation = require '../edit_trip_navigate_elevation'
+EditTripNavigateSettings = require '../edit_trip_navigate_settings'
 Icon = require '../icon'
+Tabs = require '../tabs'
+SecondaryButton = require '../secondary_button'
 PrimaryButton = require '../primary_button'
 GoogleMapsWarningDialog = require '../google_maps_warning_dialog'
 DateService = require '../../services/date'
@@ -26,29 +29,39 @@ module.exports = class EditTripNavigate
     # for changing route
     waypoints = new RxBehaviorSubject []
 
+    avoidHighwaysStreams = new RxReplaySubject 1
+    avoidHighwaysStreams.next trip.map (trip) -> trip?.settings?.avoidHighways
+    useTruckRouteStreams = new RxReplaySubject 1
+    useTruckRouteStreams.next trip.map (trip) -> trip?.settings?.useTruckRoute
+    isEditable = new RxBehaviorSubject false
+
     tripAndTripRoute = RxObservable.combineLatest(
       trip, tripRoute, (vals...) -> vals
     )
-    tripAndTripRouteAndWaypoints = RxObservable.combineLatest(
-      trip, tripRoute, waypoints, (vals...) -> vals
+    tripAndTripRouteAndWaypointsAndSettings = RxObservable.combineLatest(
+      trip, tripRoute, waypoints, avoidHighwaysStreams.switch()
+      useTruckRouteStreams.switch(), isEditable, (vals...) -> vals
     )
 
-    routes = tripAndTripRouteAndWaypoints.switchMap (obj) =>
-      [trip, tripRoute, wp] = obj
-      @model.trip.getRoutesByTripIdAndRouteId trip.id, tripRoute.routeId, {
+    routes = tripAndTripRouteAndWaypointsAndSettings.switchMap (obj) =>
+      [trip, tripRoute, wp, avoidHighways, useTruckRoute, isEditable] = obj
+
+      @model.trip.getRoutesByIdAndRouteId trip.id, tripRoute.routeId, {
         waypoints: wp
+        avoidHighways, useTruckRoute, isEditable
       }
 
-    @$gainIcon = new Icon()
-    @$lostIcon = new Icon()
+    @$tabs = new Tabs {@model}
 
-    @$elevationChart = new ElevationChart {
-      @model
-      routes
-      size: @model.window.getSize().map ({width}) ->
-        {width}
+    @$editTripNavigateElevation = new EditTripNavigateElevation {
+      @model, routes
     }
 
+    @$editTripNavigateSettings = new EditTripNavigateSettings {
+      @model, avoidHighwaysStreams, useTruckRouteStreams, isEditable
+    }
+
+    @$saveRouteButton = new SecondaryButton()
     @$googleMapsButton = new PrimaryButton()
 
     mapBoundsStreams = new RxReplaySubject 1
@@ -59,15 +72,35 @@ module.exports = class EditTripNavigate
         tripRoute.bounds
     )
 
+    destinations = tripAndTripRouteAndWaypointsAndSettings.map (obj) ->
+      [trip, tripRoute, wp] = obj
+      trip?.destinationsInfo.concat _map wp, (point, i) ->
+        {place: {
+          name: "#{i}" # index used to remove when tapped again
+          location: point
+          number: ''
+          icon: 'drop_pin'
+        }}
+
     @$travelMap = new TravelMap {
-      @model, @router, trip
+      @model, @router, trip, destinations
       mapBoundsStreams
       onclick: (e) =>
-        point = {lat: e.lngLat.lat, lon: e.lngLat.lng}
-        waypoints.next waypoints.getValue().concat [point]
+        if e.originalEvent.isPropagationStopped
+          return
+        e.originalEvent.isPropagationStopped = true
+        {isEditable} = @state.getValue()
+        if isEditable
+          if e.features?[0]
+            wp = waypoints.getValue()
+            wp.splice wp.length - parseInt(e.features[0].name), 1
+            waypoints.next wp
+          else
+            point = {lat: e.lngLat.lat, lon: e.lngLat.lng}
+            waypoints.next waypoints.getValue().concat [point]
 
       routes: routes.map (routes) ->
-        _map routes, ({shape}, i) ->
+        routes = _map routes, ({shape}, i) ->
           {
             geojson: MapService.decodePolyline shape
             color:
@@ -75,12 +108,17 @@ module.exports = class EditTripNavigate
               then colors.getRawColor(colors.$secondary500)
               else colors.getRawColor(colors.$grey500)
           }
+        routes.reverse()
     }
 
 
     @state = z.state {
       trip
       tripRoute
+      isEditable
+      waypoints
+      avoidHighways: avoidHighwaysStreams.switch()
+      useTruckRoute: useTruckRouteStreams.switch()
       start: tripAndTripRoute.map ([trip, tripRoute]) ->
         _find trip.destinationsInfo, {id: tripRoute.startCheckInId}
       end: tripAndTripRoute.map ([trip, tripRoute]) ->
@@ -89,62 +127,80 @@ module.exports = class EditTripNavigate
     }
 
   render: =>
-    {start, end, trip, tripRoute, routes} = @state.getValue()
+    {start, end, isEditable, trip, tripRoute, routes,
+      avoidHighways, useTruckRoute, waypoints} = @state.getValue()
+
+    console.log avoidHighways, waypoints
 
     stops = trip?.stops[tripRoute?.routeId]
 
     places = _filter [start?.place].concat stops, [end?.place]
 
     mainRoute = routes?[0]
+    altRoute = routes?[1]
 
     z '.z-edit-trip-navigate', {
       ontouchstart: (e) -> e.stopPropagation()
       onmousedown: (e) -> e.stopPropagation()
     },
-      z @$travelMap
+      z '.map',
+        z @$travelMap
       z '.routes',
-        z '.elevation',
-          z '.icon',
-            z @$gainIcon,
-              icon: 'arrow-up'
-              isTouchTarget: false
-              color: colors.$secondary500
-          z '.text',
-            "#{mainRoute?.elevationStats.gained} "
-            @model.l.get 'abbr.imperial.foot'
-          z '.icon',
-            z @$lostIcon,
-              icon: 'arrow-down'
-              isTouchTarget: false
-              color: colors.$secondary500
-          z '.text',
-            "#{mainRoute?.elevationStats.lost} "
-            @model.l.get 'abbr.imperial.foot'
+        z @$tabs,
+          isBarFixed: false
+          tabs: [
+            {
+              $menuText: @model.l.get 'editTripNavigate.info'
+              $el: @$editTripNavigateElevation
+            }
+            {
+              $menuText: @model.l.get 'editTripNavigate.editRoute'
+              $el: @$editTripNavigateSettings
+            }
+          ]
 
-        @$elevationChart
-
-        z '.distance-time',
-          z '.distance',
-            z '.number', FormatService.number mainRoute?.distance
-            z '.metric', @model.l.get 'abbr.imperial.mile'
-          z '.time',
-            DateService.formatSeconds mainRoute?.time, 1
+        z '.stats',
+          z '.main',
+            z '.distance-time',
+              z '.distance',
+                z '.number', FormatService.number mainRoute?.distance
+                z '.metric', @model.l.get 'abbr.imperial.mile'
+              z '.time',
+                DateService.formatSeconds mainRoute?.time, 1
+          if altRoute
+            z '.alt',
+              z '.distance-time',
+                z '.distance',
+                  z '.number', FormatService.number altRoute?.distance
+                  z '.metric', @model.l.get 'abbr.imperial.mile'
+                z '.time',
+                  DateService.formatSeconds altRoute?.time, 1
 
         z '.actions',
           z '.actions',
-            z @$googleMapsButton,
-              text: @model.l.get 'editTripNavigate.openGoogleMaps'
-              onclick: =>
-                go = =>
-                  MapService.getDirectionsBetweenPlaces(
-                    places
-                    {@model}
+            if isEditable
+              z @$saveRouteButton,
+                text: @model.l.get 'editTripNavigate.saveRoute'
+                onclick: =>
+                  @model.trip.setRouteByIdAndRouteId(
+                    trip.id, tripRoute.routeId, {
+                      isEditable, avoidHighways, useTruckRoute, waypoints
+                    }
                   )
-                if @model.cookie.get('hasSeenGoogleMapsWarning')
-                  go()
-                else
-                  @model.cookie.set 'hasSeenGoogleMapsWarning', '1'
-                  @model.overlay.open new GoogleMapsWarningDialog({@model}), {
-                    onComplete: go
-                    onCancel: go
-                  }
+            else
+              z @$googleMapsButton,
+                text: @model.l.get 'editTripNavigate.openGoogleMaps'
+                onclick: =>
+                  go = =>
+                    MapService.getDirectionsBetweenPlaces(
+                      places
+                      {@model}
+                    )
+                  if @model.cookie.get('hasSeenGoogleMapsWarning')
+                    go()
+                  else
+                    @model.cookie.set 'hasSeenGoogleMapsWarning', '1'
+                    @model.overlay.open new GoogleMapsWarningDialog({@model}), {
+                      onComplete: go
+                      onCancel: go
+                    }

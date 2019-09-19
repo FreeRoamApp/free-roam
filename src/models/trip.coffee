@@ -28,13 +28,20 @@ module.exports = class Trip
       tripId, routeIds
     }
 
-  getRoutesByTripIdAndRouteId: (tripId, routeId, {waypoints} = {}) =>
-    @auth.stream "#{@namespace}.getRoutesByTripIdAndRouteId", {
-      tripId, routeId, waypoints
+  getRoutesByIdAndRouteId: (id, routeId, options = {}) =>
+    {waypoints, avoidHighways, useTruckRoute, isEditable} = options
+    @auth.stream "#{@namespace}.getRoutesByIdAndRouteId", {
+      id, routeId, waypoints, avoidHighways, useTruckRoute, isEditable
     }
 
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
+
+  setRouteByIdAndRouteId: (id, routeId, options) ->
+    {waypoints, avoidHighways, useTruckRoute, isEditable} = options
+    @auth.call "#{@namespace}.setRouteByIdAndRouteId", {
+      id, routeId, waypoints, avoidHighways, useTruckRoute, isEditable
+    }, {invalidateAll: true}
 
   upsertStopByIdAndRouteId: (id, routeId, checkIn) ->
     @auth.call "#{@namespace}.upsertStopByIdAndRouteId", {

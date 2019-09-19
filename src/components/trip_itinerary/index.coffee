@@ -142,7 +142,7 @@ module.exports = class TripItinerary extends Base
 
               previousDestination = destinations[i - 1]?.destination
 
-              z '.check-in.draggable', {
+              z '.check-in', {
                 # attributes:
                 #   if @onReorder then {draggable: 'true'} else {}
                 # dataset:

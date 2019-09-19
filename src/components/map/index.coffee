@@ -329,6 +329,7 @@ module.exports = class Map
         'fill-color': colors.getRawColor colors.$primary500
         'fill-opacity': 0.1
     }
+
   afterMount: ($$el) =>
     @state.set isLoading: true
     @initializeMap $$el
@@ -398,15 +399,12 @@ module.exports = class Map
         }
 
       if @onclick
-        @map.on 'click', @onclick
-        # @map.on 'click', 'places-numbers', (e) =>
-        #   e.originalEvent.stopPropagation()
-        #   @onclick e
         @map.on 'click', 'places', (e) =>
-          e.originalEvent.stopPropagation()
           @onclick e
         @map.on 'click', 'places-text', (e) =>
-          e.originalEvent.stopPropagation()
+          @onclick e
+        @map.on 'click', (e) =>
+          e.originalEvent.preventDefault()
           @onclick e
       else
         console.log 'listen ctx'
@@ -499,7 +497,6 @@ module.exports = class Map
             anchor: e.features[0].properties.anchor or 'bottom'
             color: colors["$icon#{icon}"]
           }
-        # @map.on 'click', 'places-numbers', onclick
         @map.on 'click', 'places', onclick
         @map.on 'click', 'places-text', onclick
 

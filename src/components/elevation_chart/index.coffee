@@ -2,6 +2,8 @@ z = require 'zorium'
 _map = require 'lodash/map'
 _maxBy = require 'lodash/maxBy'
 _minBy = require 'lodash/minBy'
+_max = require 'lodash/max'
+_min = require 'lodash/min'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 colors = require '../../colors'
@@ -42,17 +44,21 @@ module.exports = class ElevationChart
       checkIsReady()
     , 0 # give time for re-render...
 
-  getPoints: (route) =>
-    {size} = @state.getValue()
-    {width, height, padding} = size or {}
-
-    elevations = route?.elevations
+  getScale: (route1, route2) ->
+    elevations = (route1?.elevations or []).concat(route2?.elevations or [])
     minRange = _minBy(elevations, ([range, elevation]) -> range)?[0]
     maxRange = _maxBy(elevations, ([range, elevation]) -> range)?[0]
 
     minElevation = _minBy(elevations, ([range, elevation]) -> elevation)?[1]
     maxElevation = _maxBy(elevations, ([range, elevation]) -> elevation)?[1]
     rangeElevation = maxElevation - minElevation
+    {minRange, maxRange, minElevation, maxElevation, rangeElevation}
+
+  getPoints: (route, scale) =>
+    {size} = @state.getValue()
+    {width, height, padding} = size or {}
+    {minRange, maxRange, minElevation, maxElevation, rangeElevation} = scale
+    elevations = route?.elevations
 
     _map elevations, ([range, elevation], i) =>
       height - (padding + ((elevation - minElevation) / rangeElevation) * (height - padding * 2))
@@ -67,9 +73,15 @@ module.exports = class ElevationChart
     {width, height, padding} = size or {}
 
     mainRoute = routes?[0]
+    altRoute = routes?[1]
 
-    points = @getPoints mainRoute
-    alternativePoints = @getPoints routes?[1]
+    scale = @getScale mainRoute, routes?[1]
+
+    points = @getPoints mainRoute, scale
+    alternativePoints = @getPoints altRoute, scale
+
+    max = _max [mainRoute?.elevationStats.max, altRoute?.elevationStats.max]
+    min = _min [mainRoute?.elevationStats.min, altRoute?.elevationStats.min]
 
     z '.z-elevation-chart', {
       key: 'elevation-chart'
@@ -94,7 +106,7 @@ module.exports = class ElevationChart
               y: padding
               'text-anchor': 'end'
           },
-            "#{mainRoute?.elevationStats.max} "
+            "#{max} "
             @model.l.get 'editTripSettings.feetAbbr'
 
           z 'text', {
@@ -104,7 +116,7 @@ module.exports = class ElevationChart
               y: height - padding
               'text-anchor': 'end'
           },
-            "#{mainRoute?.elevationStats.min} "
+            "#{min} "
             @model.l.get 'editTripSettings.feetAbbr'
 
           z 'polyline', {
@@ -129,12 +141,13 @@ module.exports = class ElevationChart
               .join ' '
           }
 
-          z 'polyline', {
-            namespace: 'http://www.w3.org/2000/svg'
-            attributes:
-              fill: 'none'
-              stroke: colors.$grey500
-              'stroke-width': 4
-              'stroke-dasharray': '10,10'
-              points: alternativePoints.join ' '
-          }
+          if altRoute
+            z 'polyline', {
+              namespace: 'http://www.w3.org/2000/svg'
+              attributes:
+                fill: 'none'
+                stroke: colors.$grey500
+                'stroke-width': 4
+                'stroke-dasharray': '10,10'
+                points: alternativePoints.join ' '
+            }

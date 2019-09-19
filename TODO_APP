@@ -5,10 +5,20 @@ x fix masonry grid. current logic assumes all sections are same height, but colu
 
 x Google maps warning
 
-- map always reverts to what cookie was when app initially opened, not latest
+x map always reverts to what cookie was when app initially opened, not latest
 
-- better trip routing
-  - stops
+- Bugginess filter
+
+- save settings on trip_routes
+  - use settings for toggles on navigate
+
+- Delete stops when deleting destination/route
+
+x better trip routing
+  x stops
+
+- show average weather for time when at destination on trip
+- show calendar day for dates
 
 - iOS keyboard sometimes causing empty whitespace at bottom after shown/hid? jwoeler
 
@@ -42,12 +52,9 @@ x filter by affiliation
 
 - ridb booking api, rick
 
-- Bugginess filter
-
 x fix too many searching campgrounds on first load
 
 - Better empty state for when adding to trip from place page
-- Delete stops when deleting destination/route
 
 - look into goose lake cell signal (shouldn't be 0)
 

@@ -74,7 +74,7 @@ module.exports = class Trip
               @model.l.get 'tripCard.stats', {
                 replacements:
                   stops: trip.overview?.stops
-                  distance: FormatService.number trip.overview?.distance or 0
+                  distance: FormatService.number trip.stats?.distance or 0
               }
           unless hasEditPermission
             z '.follow',

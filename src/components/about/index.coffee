@@ -23,7 +23,7 @@ module.exports = class About
 
     @$irsButton = new SecondaryButton()
 
-    @$tabs = new Tabs {@model, @selectedIndex}
+    @$tabs = new Tabs {@model}
 
     @state = z.state
       windowSize: @model.window.getSize()

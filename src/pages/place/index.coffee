@@ -91,7 +91,7 @@ module.exports = class PlacePage extends BasePage
                  else colors.$header500Icon
         }
         $topRightButton:
-          if me?.username in ['austin', 'big_boxtruck', 'roadpickle', 'rachel']
+          if me?.karma >= 25
             z '.p-place_top-right',
               z @$editIcon,
                 icon: 'edit'
@@ -101,14 +101,15 @@ module.exports = class PlacePage extends BasePage
                   @router.go "edit#{_startCase(place.type)}", {
                     slug: place.slug
                   }
-              z @$deleteIcon,
-                icon: 'delete'
-                color: colors.$header500Icon
-                hasRipple: true
-                onclick: =>
-                  if confirm 'Are you sure?'
-                    @placeModel.deleteByRow place
-                    .then =>
-                      @router.go 'home'
+              if me?.username in ['austin', 'big_boxtruck', 'roadpickle', 'rachel']
+                z @$deleteIcon,
+                  icon: 'delete'
+                  color: colors.$header500Icon
+                  hasRipple: true
+                  onclick: =>
+                    if confirm 'Are you sure?'
+                      @placeModel.deleteByRow place
+                      .then =>
+                        @router.go 'home'
       }
       @$place

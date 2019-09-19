@@ -75,14 +75,14 @@ module.exports = class EditTripNavigatePage
           onclick: =>
             @router.back()
         }
-        $topRightButton: z @$settingsIcon, {
-          icon: 'settings'
-          color: colors.$secondary500Text
-          onclick: =>
-            @router.goOverlay 'editTripSettings', {
-              id: trip?.id
-            }
-        }
+        # $topRightButton: z @$settingsIcon, {
+        #   icon: 'settings'
+        #   color: colors.$secondary500Text
+        #   onclick: =>
+        #     @router.goOverlay 'editTripSettings', {
+        #       id: trip?.id
+        #     }
+        # }
       }
       @$editTripNavigate
       @$bottomBar

@@ -59,11 +59,11 @@ module.exports = class TravelMap
       @model, @router
       places: destinations.map (destinations) ->
         _filter _map destinations, ({place}, i) ->
-          _defaults {
+          _defaults place, {
             number: i + 1
             icon: 'planned'
             anchor: 'center'
-          }, place
+          }
       routes: routes
       fill: filledStates
       usePlaceNumbers: true
