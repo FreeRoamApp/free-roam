@@ -1,5 +1,25 @@
 TODOS:
 
+- trip routing
+  x don't allow add stop/destination when in editing mode
+  x have waypoints show on map
+    x combine addPlacesStreams and destinationsStreams
+  x ability to remove waypoint
+  x tap on route from add destination page to show route info
+  x combine routes from trip with routes from elevation stuff
+  x way to deselect route
+  x delete route
+    x delete stops on that routeId
+      n warning
+  x reset trip route when page is left
+  x adding stop should use route settings first, then trip settings
+    x should use the normal @buildRoutes with the proper settings
+    x change existing setRoute to ^^
+  - "remove stop" from map
+  - open in google maps button
+
+- Wifi / fast Wifi features
+
 new place info page
 x fix masonry grid. current logic assumes all sections are same height, but column-count tries to match height per column
 
@@ -7,7 +27,7 @@ x Google maps warning
 
 x map always reverts to what cookie was when app initially opened, not latest
 
-- Bugginess filter
+- Bugginess filter, kid-friendly (feature?)
 
 - save settings on trip_routes
   - use settings for toggles on navigate

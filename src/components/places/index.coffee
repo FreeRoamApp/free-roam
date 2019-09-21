@@ -7,7 +7,6 @@ _startCase = require 'lodash/startCase'
 _snakeCase = require 'lodash/snakeCase'
 _orderBy = require 'lodash/orderBy'
 _map = require 'lodash/map'
-_filter = require 'lodash/filter'
 
 Icon = require '../icon'
 ClearanceWarningDialog = require '../clearance_warning_dialog'
@@ -23,7 +22,8 @@ if window?
 module.exports = class Places
   constructor: (options) ->
     {@model, @router, isShell, types, subType, donut, persistentCookiePrefix
-      trip, tripRoute, mapBoundsStreams, searchQuery} = options
+      trip, tripRoute, isEditingRoute, editRouteWaypoints, destinations, routes,
+      selectedRoute, addPlacesStreams, mapBoundsStreams, searchQuery} = options
 
     persistentCookiePrefix ?= 'home'
 
@@ -40,10 +40,15 @@ module.exports = class Places
       )
 
     @$placesMapContainer = new PlacesMapContainer {
-      @model, @router, isShell, trip, tripRoute
+      @model, @router, isShell, trip, tripRoute, isEditingRoute
+      editRouteWaypoints
       persistentCookiePrefix
       searchQuery
       mapBoundsStreams
+      destinations
+      addPlacesStreams
+      routes
+      selectedRoute
       donut: donut
       currentDataType: @currentDataType
       initialDataTypes: types # from url

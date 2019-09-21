@@ -37,11 +37,12 @@ if window?
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, isShell, @trip, @tripRoute, @dataTypes, showScale,
+    {@model, @router, isShell, @trip, @tripRoute, isEditingRoute,
+      editRouteWaypoints, @dataTypes, showScale, destinations, @routes,
       mapBoundsStreams, @persistentCookiePrefix, @addPlacesStreams,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataTypes,
       @initialFilters, initialCenter, center, initialZoom, zoom, donut,
-      searchQuery, @isSearchHidden} = options
+      selectedRoute, searchQuery, @isSearchHidden} = options
 
     mapBoundsStreams ?= new RxReplaySubject 1
     @sort ?= new RxBehaviorSubject undefined
@@ -77,59 +78,16 @@ module.exports = class PlacesMapContainer
     @dataTypesStream = @getDataTypesStreams @dataTypes
 
     @isTripFilterEnabled = new RxBehaviorSubject Boolean @trip
-    if @trip
-      tripAndTripRoute = RxObservable.combineLatest(
-        @trip
-        @tripRoute or RxObservable.of null
-        (vals...) -> vals
-      )
-
-      routes = tripAndTripRoute?.map ([trip, tripRoute]) ->
-        TripService.getRouteGeoJson trip, tripRoute
-
-      tripPlacesStream = tripAndTripRoute.switchMap ([trip, tripRoute]) =>
-        (if tripRoute?.routeId
-          @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, [
-            tripRoute.routeId
-          ]
-        else
-          RxObservable.of null
-        ).map (stops) ->
-          places = _filter _map _flatten(_values(stops)), ({place}, i) ->
-            if place
-              _defaults {
-                hasDot: true
-                icon: MapService.getIconByPlace place
-              }, place
-          places = places.concat _map trip?.destinationsInfo, ({place, id}, i) ->
-            isGray = tripRoute and not (id in [
-              tripRoute?.startCheckInId, tripRoute?.endCheckInId
-            ])
-            _defaults {
-              # location: place.location # {lat, lon}
-              number: i + 1
-              checkInId: id
-              icon: if isGray \
-                    then 'planned_gray'
-                    else 'planned'
-              selectedIcon: 'planned_selected'
-              anchor: 'center'
-            }, place
-          places
-    else
-      tripPlacesStream = RxObservable.of null
 
     @filterTypesStream = @getFilterTypesStream()
     placesStream = @getPlacesStream()
     placesWithCounts = RxObservable.combineLatest(
       @addPlacesStreams.switch()
       placesStream
-      tripPlacesStream
       (vals...) -> vals
-    ).map ([addPlaces, {places, visible, total}, tripPlaces]) ->
+    ).map ([addPlaces, {places, visible, total}]) ->
       places ?= []
       places = places.concat (addPlaces or []) # addPlaces should "under" places on map
-      places = places.concat (tripPlaces or [])
 
       {places, visible, total}
     .share() # otherwise map setsData twice (subscribe called twice)
@@ -175,7 +133,7 @@ module.exports = class PlacesMapContainer
       @model, @router, places, @setFilterByField, showScale
       @place, @placePosition, @mapSize, mapBoundsStreams, @currentMapBounds
       @coordinate, defaultOpacity, initialCenter, center, initialZoom,  zoom,
-      initialLayers, routes, donut
+      initialLayers, @routes, selectedRoute, donut
       beforeMapClickFn: =>
         {isLayersPickerVisible} = @state.getValue()
         # if layers picker is visible, cancel the normal map click
@@ -183,9 +141,8 @@ module.exports = class PlacesMapContainer
         Boolean not isLayersPickerVisible
     }
     @$placeSheet = new PlaceSheet {
-      @model, @router, @place, @trip, @tripRoute
-
-      @coordinate, @addOptionalLayer, @layersVisible
+      @model, @router, @place, @trip, @tripRoute, isEditingRoute,
+      editRouteWaypoints, @coordinate, @addOptionalLayer, @layersVisible
       @addLayerById, @removeLayerById
     }
     @$placesSearch = new PlacesSearch {
@@ -357,12 +314,13 @@ module.exports = class PlacesMapContainer
       @sort, @limit, @isTripFilterEnabled
       @trip or RxObservable.of null
       @tripRoute or RxObservable.of null
+      (@routes?.map (routes) -> routes?[1]?.routeSlug) or RxObservable.of null
       (vals...) -> vals
     )
     streamValues.switchMap (response) =>
       [
         filterTypes, currentMapBounds, dataTypes, sort, limit,
-        isTripFilterEnabled, trip, tripRoute
+        isTripFilterEnabled, trip, tripRoute, tripAltRouteSlug
       ] = response
 
       boundsTooSmall = not currentMapBounds or Math.abs(
@@ -382,13 +340,12 @@ module.exports = class PlacesMapContainer
           filters, currentMapBounds?.bounds
         )
 
-        console.log queryFilter
-
         @model[dataType].search {
           limit: limit
           sort: sort
           tripId: if isTripFilterEnabled then trip?.id
           tripRouteId: if isTripFilterEnabled then tripRoute?.routeId
+          tripAltRouteSlug: tripAltRouteSlug
           query:
             bool:
               filter: queryFilter

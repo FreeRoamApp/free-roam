@@ -11,7 +11,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class EditTripNavigateElevation
+module.exports = class EditTripRouteInfoElevation
   constructor: ({@model, routes}) ->
     @$mainGainIcon = new Icon()
     @$mainLostIcon = new Icon()
@@ -35,7 +35,7 @@ module.exports = class EditTripNavigateElevation
     mainRoute = routes?[0]
     altRoute = routes?[1]
 
-    z '.z-edit-trip-navigate-elevation',
+    z '.z-edit-trip-route-info-elevation',
       z '.elevations',
         z '.main',
           z '.icon',

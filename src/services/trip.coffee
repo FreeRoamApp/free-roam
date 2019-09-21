@@ -11,25 +11,16 @@ class TripService
   getRouteGeoJson: (trip, tripRoute) ->
     unless trip
       return RxObservable.never()
-    routes = []
-    allGeojson = _flatten _map trip.routes, (route) ->
-      _flatten _map route.legs, ({route}) ->
-        MapService.decodePolyline route.shape
 
-    highlightedRoute = _find trip.routes, {routeId: tripRoute?.routeId}
-
-    routes.push {
-      geojson: allGeojson
-      color: if highlightedRoute \
-             then colors.getRawColor(colors.$grey500)
-             else colors.getRawColor(colors.$secondary500)
-    }
-    if highlightedRoute
-      highlightedGeojson = _flatten _map highlightedRoute?.legs, ({route}) ->
-        MapService.decodePolyline route.shape
-      routes.push {
-        geojson: highlightedGeojson
-        color: colors.getRawColor(colors.$secondary500)
+    routes = _map trip.routes, (route) ->
+      isHighlighted = not tripRoute or (route.routeId is tripRoute?.routeId)
+      {
+        routeId: route.routeId
+        color: if isHighlighted \
+               then colors.getRawColor(colors.$secondary500)
+               else colors.getRawColor(colors.$grey500)
+        geojson: _flatten _map route.legs, ({route}) ->
+          MapService.decodePolyline route.shape
       }
 
     routes

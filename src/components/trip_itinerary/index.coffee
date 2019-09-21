@@ -102,7 +102,7 @@ module.exports = class TripItinerary extends Base
             }
             $chevronIcon: new Icon()
             $routeIcon: new Icon()
-            $navigateButton: new PrimaryButton()
+            # $navigateButton: new PrimaryButton()
             $addStopButton: new PrimaryButton()
             $spinner: new Spinner()
           }
@@ -199,7 +199,7 @@ module.exports = class TripItinerary extends Base
                         z '.travel-time', {
                           onclick: (e) =>
                             e.stopPropagation()
-                            @router.go 'editTripNavigate', {
+                            @router.go 'editTripRouteInfo', {
                               id: trip?.id
                               routeId: routeInfo?.routeId
                             }
@@ -242,15 +242,15 @@ module.exports = class TripItinerary extends Base
                                             stop.id
                                           )
                             z '.actions',
-                              z '.action',
-                                z $navigateButton,
-                                  text: @model.l.get 'tripItinerary.navigate'
-                                  isOutline: true
-                                  onclick: =>
-                                    @router.go 'editTripNavigate', {
-                                      id: trip?.id
-                                      routeId: routeInfo?.routeId
-                                    }
+                              # z '.action',
+                              #   z $navigateButton,
+                              #     text: @model.l.get 'tripItinerary.navigate'
+                              #     isOutline: true
+                              #     onclick: =>
+                              #       @router.go 'editTripRouteInfo', {
+                              #         id: trip?.id
+                              #         routeId: routeInfo?.routeId
+                              #       }
                               z '.action',
                                 z $addStopButton,
                                   text: @model.l.get 'tripItinerary.addStop'

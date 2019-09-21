@@ -23,7 +23,8 @@ if window?
 
 module.exports = class PlaceSheet
   constructor: (options) ->
-    {@model, @router, @place, @trip, @tripRoute, @layersVisible,
+    {@model, @router, @place, trip, tripRoute, isEditingRoute,
+      editRouteWaypoints, @layersVisible,
       @addOptionalLayer, @addLayerById, @removeLayerById} = options
 
     @$directionsIcon = new Icon()
@@ -37,17 +38,19 @@ module.exports = class PlaceSheet
 
     sheetData = RxObservable.combineLatest(
       @place or RxObservable.of null
-      @trip or RxObservable.of null
-      @tripRoute or RxObservable.of null
+      trip or RxObservable.of null
+      tripRoute or RxObservable.of null
+      isEditingRoute or RxObservable.of null
     )
 
     @state = z.state {
       @place
-      @trip
+      trip
+      isEditingRoute
       isLoadingButtons: []
       isLoadedButtons: []
-      info: sheetData.switchMap ([place, trip, tripRoute]) =>
-        if place?.type
+      info: sheetData.switchMap ([place, trip, tripRoute, isEditingRoute]) =>
+        if place?.type and not isEditingRoute
           # @model.geocoder.getCoordinateInfoFromLocation place.location
           @model.placeBase.getSheetInfo {
             place, tripId: trip?.id, tripRouteId: tripRoute?.routeId
@@ -68,9 +71,38 @@ module.exports = class PlaceSheet
             }, info
         else
           RxObservable.of false
-      buttons: sheetData.map ([place, trip, tripRoute]) =>
+      buttons: sheetData.map ([place, trip, tripRoute, isEditingRoute]) =>
         _filter [
-          if tripRoute?.routeId
+          if isEditingRoute and place?.type is 'coordinate'
+            {
+              $icon: new Icon()
+              icon: 'add'
+              text: @model.l.get 'placeSheet.routeThroughHere'
+              loadingText: @model.l.get 'general.saving'
+              loadedText: @model.l.get 'general.saved'
+              onclick: =>
+                editRouteWaypoints.next(
+                  editRouteWaypoints.getValue().concat [place.location]
+                )
+                @place.next null
+                Promise.resolve null
+            }
+          else if isEditingRoute and place?.type is 'waypoint'
+            {
+              $icon: new Icon()
+              icon: 'add'
+              text: @model.l.get 'placeSheet.removeFromRoute'
+              loadingText: @model.l.get 'general.saving'
+              loadedText: @model.l.get 'general.saved'
+              onclick: =>
+                wp = editRouteWaypoints.getValue()
+                index = parseInt(place.name.match /\((.*)\)?[1]/)
+                wp.splice wp.length - index, 1
+                editRouteWaypoints.next wp
+                @place.next null
+                Promise.resolve null
+            }
+          else if tripRoute?.routeId
             {
               $icon: new Icon()
               icon: 'add'
@@ -105,7 +137,7 @@ module.exports = class PlaceSheet
               loadedText: @model.l.get 'general.saved'
               onclick: =>
                 @model.overlay.open new NewCheckIn {
-                  @model, @router, @place, isOverlay: true
+                  @model, @router, place, isOverlay: true
                   trip: RxObservable.of(trip), skipChooseTrip: true
                 }
                 Promise.resolve true
@@ -193,7 +225,7 @@ module.exports = class PlaceSheet
       }
 
   render: ({isVisible} = {}) =>
-    {place, trip, buttons, info,
+    {place, trip, buttons, info, isEditingRoute
       isLoadingButtons, isLoadedButtons, elevation} = @state.getValue()
 
     isVisible ?= Boolean place
@@ -242,7 +274,7 @@ module.exports = class PlaceSheet
           z '.left',
             z '.title', place?.name
 
-            if place?.type is 'coordinate'
+            if place?.type is 'coordinate' and not isEditingRoute
               z '.elevation',
                 @model.l.get 'coordinateTooltip.elevation', {replacements: {elevation}}
 

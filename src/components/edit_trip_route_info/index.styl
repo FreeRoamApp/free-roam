@@ -1,0 +1,78 @@
+@require '../../vars'
+
+.z-edit-trip-route-info
+  background: getColor('$tertiary0')
+
+  &.is-open
+    flex1()
+
+    > .header
+      background: getColor('$primary500')
+      color: getColor('$primary500Text')
+      padding: 4px 16px
+
+      > .close-icon
+        top: 4px
+
+  > .header
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 8px 16px
+    position: relative
+    cursor: pointer
+
+    > .close-icon
+      position: absolute
+      top: 8px
+      right: 16px
+
+    > .icon
+      margin-left: 8px
+
+  > .stats
+    display: flex
+    padding: 0 16px
+
+    > .main, > .alt
+      &.main
+        color: getColor('$secondary700')
+
+        > .distance-time
+          > .distance, > .time
+            > .number
+              color: getColor('$secondary700')
+
+      &.alt
+        color: getColor('$black54')
+        margin-left: auto
+
+        > .distance-time
+          > .distance, > .time
+            > .number
+              color: getColor('$black54')
+
+      > .distance-time
+        display: flex
+
+        > .distance, > .time
+          display: flex
+          align-items: flex-end
+
+          > .number
+            font-h3()
+            margin-right: 4px
+
+        > .time
+          margin-left: 24px
+
+  > .actions
+    padding: 16px
+
+  @media (min-width: $breakPointMedium)
+    position: absolute
+    z-index: 10
+    bottom: 8px
+    right: 8px
+    background: getColor('$tertiary0')
+    width: 400px

@@ -7,10 +7,10 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class EditTripNavigateElevation
+module.exports = class EditTripRouteInfoElevation
   constructor: (options) ->
     {@model, avoidHighwaysStreams, useTruckRouteStreams,
-      isEditable} = options
+      isEditingRoute} = options
 
     @$avoidHighwaysToggle = new Toggle
       isSelectedStreams: avoidHighwaysStreams
@@ -18,8 +18,8 @@ module.exports = class EditTripNavigateElevation
     @$useTruckRouteToggle = new Toggle
       isSelectedStreams: useTruckRouteStreams
 
-    @$isEditableToggle = new Toggle
-      isSelected: isEditable
+    @$isEditingRouteToggle = new Toggle
+      isSelected: isEditingRoute
 
     @state = z.state {
 
@@ -28,20 +28,20 @@ module.exports = class EditTripNavigateElevation
   render: =>
     {} = @state.getValue()
 
-    z '.z-edit-trip-navigate-settings',
+    z '.z-edit-trip-route-info-settings',
       z '.field',
-        z '.title', @model.l.get 'editTripNavigateSettings.isEditable'
+        z '.title', @model.l.get 'editTripRouteInfoSettings.isEditingRoute'
         z '.content',
           z '.description',
-            @model.l.get 'editTripNavigateSettings.isEditableDescription'
+            @model.l.get 'editTripRouteInfoSettings.isEditingRouteDescription'
           z '.input',
-            z @$isEditableToggle
+            z @$isEditingRouteToggle
 
       z '.field',
         z '.title', @model.l.get 'editTripSettings.avoidHighways'
         z '.content',
           z '.description',
-            @model.l.get 'editTripNavigateSettings.avoidHighwaysDescription'
+            @model.l.get 'editTripRouteInfoSettings.avoidHighwaysDescription'
           z '.input',
             z @$avoidHighwaysToggle
 
@@ -49,6 +49,6 @@ module.exports = class EditTripNavigateElevation
         z '.title', @model.l.get 'editTripSettings.useTruckRoute'
         z '.content',
           z '.description',
-            @model.l.get 'editTripNavigateSettings.useTruckRouteDescription'
+            @model.l.get 'editTripRouteInfoSettings.useTruckRouteDescription'
           z '.input',
             z @$useTruckRouteToggle

@@ -29,18 +29,18 @@ module.exports = class Trip
     }
 
   getRoutesByIdAndRouteId: (id, routeId, options = {}) =>
-    {waypoints, avoidHighways, useTruckRoute, isEditable} = options
+    {waypoints, avoidHighways, useTruckRoute, isEditingRoute} = options
     @auth.stream "#{@namespace}.getRoutesByIdAndRouteId", {
-      id, routeId, waypoints, avoidHighways, useTruckRoute, isEditable
+      id, routeId, waypoints, avoidHighways, useTruckRoute, isEditingRoute
     }
 
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
 
   setRouteByIdAndRouteId: (id, routeId, options) ->
-    {waypoints, avoidHighways, useTruckRoute, isEditable} = options
+    {waypoints, avoidHighways, useTruckRoute, isEditingRoute} = options
     @auth.call "#{@namespace}.setRouteByIdAndRouteId", {
-      id, routeId, waypoints, avoidHighways, useTruckRoute, isEditable
+      id, routeId, waypoints, avoidHighways, useTruckRoute, isEditingRoute
     }, {invalidateAll: true}
 
   upsertStopByIdAndRouteId: (id, routeId, checkIn) ->

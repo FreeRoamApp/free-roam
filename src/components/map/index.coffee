@@ -28,7 +28,7 @@ module.exports = class Map
       @place, @placePosition, @mapSize, @initialZoom, @zoom, @donut
       @initialCenter, @initialBounds, @routes, @fill, @initialLayers, @center,
       @defaultOpacity, @onclick, @preserveDrawingBuffer, @onContentReady,
-      @hideLabels, @hideControls, @usePlaceNumbers,
+      @hideLabels, @hideControls, @usePlaceNumbers, @selectedRoute
       @beforeMapClickFn} = options
 
     @place ?= new RxBehaviorSubject null
@@ -277,6 +277,17 @@ module.exports = class Map
         'line-color': ['get', 'color']
         'line-width': 4
     }
+    @map.addLayer {
+      id: 'route-click'
+      type: 'line'
+      source: 'route'
+      layout:
+        'line-join': 'round'
+        'line-cap': 'round'
+      paint:
+        'line-width': 20
+        'line-opacity': 0
+    }
     # @map.addLayer {
     #   id: 'route-direction'
     #   type: 'symbol'
@@ -455,7 +466,7 @@ module.exports = class Map
           , 300
 
         onclick = (e) =>
-          if e.features[0].properties.type is 'searchQuery'
+          if e.features[0].properties.type is 'searchQuery' or e.originalEvent.isPropagationStopped
             return
           e.originalEvent.isPropagationStopped = true
 
@@ -497,6 +508,7 @@ module.exports = class Map
             anchor: e.features[0].properties.anchor or 'bottom'
             color: colors["$icon#{icon}"]
           }
+        @map.on 'click', 'route-click', @onRouteClick
         @map.on 'click', 'places', onclick
         @map.on 'click', 'places-text', onclick
 
@@ -505,12 +517,19 @@ module.exports = class Map
         @map.getCanvas().style.cursor = 'pointer'
       @map.on 'mouseenter', 'places', onmouseenter
       @map.on 'mouseenter', 'places-text', onmouseenter
+      @map.on 'mouseenter', 'route-click', onmouseenter
 
       # Change it back to a pointer when it leaves.
       onmouseleave = =>
         @map.getCanvas().style.cursor = ''
       @map.on 'mouseleave', 'places', onmouseleave
       @map.on 'mouseleave', 'places-text', onmouseleave
+      @map.on 'mouseleave', 'route-click', onmouseleave
+
+  onRouteClick: (e) =>
+    if e.features?[0]?.properties?.routeId
+      e.originalEvent.isPropagationStopped = true
+      @selectedRoute?.next e.features?[0]?.properties?.routeId
 
   beforeUnmount: =>
     console.log 'rm subscription'
@@ -582,11 +601,14 @@ module.exports = class Map
     @routesDisposable = @routes.subscribe (routes) =>
       @map.getSource('route')?.setData {
         type: 'FeatureCollection'
-        features: _map routes, ({geojson, color}) ->
+        features: _map routes, ({routeId, routeSlug, geojson, color}) ->
+          console.log 'rrrrr', routeId
           {
             type: 'Feature'
             properties:
               color: color
+              routeId: routeId
+              routeSlug: routeSlug
             geometry:
               type: 'LineString'
               coordinates: geojson

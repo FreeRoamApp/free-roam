@@ -43,7 +43,6 @@
   "editTripSettings": "/edit-trip/:id/settings",
   "editTripAddStop": "/edit-trip/:id/add-stop/:routeId",
   "editTripAddDestination": "/edit-trip/:id/add-destination",
-  "editTripNavigate": "/edit-trip/:id/navigate/:routeId",
   "editAmenity": "/amenity/:slug/edit",
   "editAmenityReview": "/amenity/:slug/review/:reviewId/edit",
   "editCampground": "/campground/:slug/edit",

@@ -14,7 +14,7 @@ module.exports = class PlaceBase
     @auth.stream "#{@namespace}.getBySlug", {slug}
 
   # socket.io compresses responses, so a 50kb response is more like 10kb
-  search: ({query, tripId, tripRouteId, sort, limit, includeId}) =>
+  search: ({query, tripId, tripRouteId, tripAltRouteSlug, sort, limit, includeId}) =>
     # this isn't cached, so make sure it's not sending same req twice
     # probably best to keep log...
     console.log 'searching', @namespace
@@ -27,7 +27,7 @@ module.exports = class PlaceBase
         {total: 0, places: []}
     else
       @auth.stream "#{@namespace}.search", {
-        query, tripId, tripRouteId, sort, limit, includeId
+        query, tripId, tripRouteId, tripAltRouteSlug, sort, limit, includeId
       }, {ignoreCache: true}
       .do if @offlineData?.isRecording then @_saveOffline else (-> null)
 
