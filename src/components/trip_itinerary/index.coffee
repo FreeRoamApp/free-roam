@@ -18,6 +18,7 @@ Base = require '../base'
 PlaceListItem = require '../place_list_item'
 Icon = require '../icon'
 CheckInTooltip = require '../check_in_tooltip'
+NavigateSheet = require '../navigate_sheet'
 PrimaryButton = require '../primary_button'
 Spinner = require '../spinner'
 DateService = require '../../services/date'
@@ -102,7 +103,7 @@ module.exports = class TripItinerary extends Base
             }
             $chevronIcon: new Icon()
             $routeIcon: new Icon()
-            # $navigateButton: new PrimaryButton()
+            $navigateButton: new PrimaryButton()
             $addStopButton: new PrimaryButton()
             $spinner: new Spinner()
           }
@@ -197,12 +198,12 @@ module.exports = class TripItinerary extends Base
                               isTouchTarget: false
                               color: colors.$bgText54
                         z '.travel-time', {
-                          onclick: (e) =>
-                            e.stopPropagation()
-                            @router.go 'editTripRouteInfo', {
-                              id: trip?.id
-                              routeId: routeInfo?.routeId
-                            }
+                          # onclick: (e) =>
+                          #   e.stopPropagation()
+                          #   @router.go 'editTripRouteInfo', {
+                          #     id: trip?.id
+                          #     routeId: routeInfo?.routeId
+                          #   }
                         },
                           z '.icon',
                             z $routeIcon,
@@ -242,15 +243,17 @@ module.exports = class TripItinerary extends Base
                                             stop.id
                                           )
                             z '.actions',
-                              # z '.action',
-                              #   z $navigateButton,
-                              #     text: @model.l.get 'tripItinerary.navigate'
-                              #     isOutline: true
-                              #     onclick: =>
-                              #       @router.go 'editTripRouteInfo', {
-                              #         id: trip?.id
-                              #         routeId: routeInfo?.routeId
-                              #       }
+                              z '.action',
+                                z $navigateButton,
+                                  text: @model.l.get 'tripItinerary.navigate'
+                                  isOutline: true
+                                  onclick: =>
+                                    @model.overlay.open new NavigateSheet {
+                                      @model
+                                      @router
+                                      trip
+                                      tripRoute: routeInfo
+                                    }
                               z '.action',
                                 z $addStopButton,
                                   text: @model.l.get 'tripItinerary.addStop'

@@ -57,7 +57,7 @@ module.exports = class EditTripAddStopPage
 
     destinationsStreams = new RxReplaySubject 1
     isEditingRoute = new RxBehaviorSubject false
-    editRouteWaypoints = new RxBehaviorSubject []
+    @editRouteWaypoints = new RxBehaviorSubject []
 
     routeInfoRoutesStreams = new RxReplaySubject 1
     routes = RxObservable.combineLatest(
@@ -113,7 +113,7 @@ module.exports = class EditTripAddStopPage
       routesStreams: routeInfoRoutesStreams
       destinationsStreams: routeInfoDestinationsStreams
       isEditingRoute, @selectedRoute
-      waypoints: editRouteWaypoints
+      waypoints: @editRouteWaypoints
     }
 
     mapBoundsStreams = new RxReplaySubject 1
@@ -123,7 +123,7 @@ module.exports = class EditTripAddStopPage
 
     @$places = new Places {
       @model, @router, trip, tripRoute, mapBoundsStreams, isEditingRoute,
-      editRouteWaypoints, addPlacesStreams, @selectedRoute
+      @editRouteWaypoints, addPlacesStreams, @selectedRoute
       persistentCookiePrefix: 'trip'
       destinations: destinationsStreams.switch()
       routes: routes
@@ -153,6 +153,7 @@ module.exports = class EditTripAddStopPage
 
   beforeUnmount: =>
     @selectedRoute.next null
+    @editRouteWaypoints.next []
 
   getMeta: =>
     {

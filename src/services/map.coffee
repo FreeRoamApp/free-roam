@@ -1,3 +1,4 @@
+_clone = require 'lodash/clone'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _groupBy = require 'lodash/groupBy'
@@ -74,6 +75,7 @@ class MapService
       get()
 
   getDirectionsBetweenPlaces: (places, {model}) ->
+    places = _clone places
     target = '_system'
     baseUrl = 'https://google.com/maps/dir/?api=1'
     origin = places[0].location?.lat + ',' + places[0].location?.lon

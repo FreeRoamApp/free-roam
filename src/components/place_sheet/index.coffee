@@ -137,7 +137,7 @@ module.exports = class PlaceSheet
               loadedText: @model.l.get 'general.saved'
               onclick: =>
                 @model.overlay.open new NewCheckIn {
-                  @model, @router, place, isOverlay: true
+                  @model, @router, @place, isOverlay: true
                   trip: RxObservable.of(trip), skipChooseTrip: true
                 }
                 Promise.resolve true

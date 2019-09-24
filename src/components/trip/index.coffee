@@ -101,18 +101,7 @@ module.exports = class Trip
                     @state.set isFollowLoading: false
               }
 
-      z @$tabs,
-        isBarFixed: false
-        tabs: [
-          {
-            $menuText: @model.l.get 'trip.itinerary'
-            $el: @$tripItinerary
-          }
-          {
-            $menuText: @model.l.get 'trip.map'
-            $el: z @$tripMap
-          }
-        ]
+      @$tripItinerary
 
       if hasEditPermission
         z '.fab',

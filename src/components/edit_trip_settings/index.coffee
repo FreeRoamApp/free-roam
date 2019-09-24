@@ -61,7 +61,7 @@ module.exports = class EditTripSettings
 
     @donutIsVisibleValueStreams = new RxReplaySubject 1
     @donutIsVisibleValueStreams.next (trip?.map (trip) ->
-      trip.settings.donut.isVisible) or RxObservable.of null
+      trip.settings.donut?.isVisible) or RxObservable.of null
 
     @$donutIsVisibleToggle = new Toggle {
       isSelectedStreams: @donutIsVisibleValueStreams
@@ -69,6 +69,7 @@ module.exports = class EditTripSettings
 
     @donutMinValueStreams = new RxReplaySubject 1
     @donutMinValueStreams.next (trip?.map (trip) ->
+      console.log 'tarip', trip
       trip.settings?.donut?.min) or RxObservable.of 0
     @donutMinError = new RxBehaviorSubject null
 

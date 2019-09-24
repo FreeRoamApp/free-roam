@@ -15,6 +15,7 @@ Tabs = require '../tabs'
 SecondaryButton = require '../secondary_button'
 PrimaryButton = require '../primary_button'
 GoogleMapsWarningDialog = require '../google_maps_warning_dialog'
+NavigateSheet = require '../navigate_sheet'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
 MapService = require '../../services/map'
@@ -147,15 +148,15 @@ module.exports = class EditTripRouteInfo
               icon: if isOpen then 'chevron-down' else 'chevron-up'
               isTouchTarget: false
               color: if isOpen \
-                     then colors.$primary500Text
-                     else colors.$bgText54
+                     then colors.$bgText54
+                     else colors.$primary500Text
           z '.close-icon',
             z @$headerCloseIcon,
              icon: 'close'
              isTouchTarget: false
              color: if isOpen \
-                    then colors.$primary500Text
-                    else colors.$bgText54
+                    then colors.$bgText54
+                    else colors.$primary500Text
              onclick: (e) =>
                e?.stopPropagation()
                @selectedRoute.next null
@@ -216,19 +217,13 @@ module.exports = class EditTripRouteInfo
                         @state.set isSaving: false
                 else
                   z @$googleMapsButton,
-                    text: @model.l.get 'editTripRouteInfo.openGoogleMaps'
+                    text: @model.l.get 'tripItinerary.navigate'
                     onclick: =>
-                      go = =>
-                        MapService.getDirectionsBetweenPlaces(
-                          places
-                          {@model}
-                        )
-                      if @model.cookie.get('hasSeenGoogleMapsWarning')
-                        go()
-                      else
-                        @model.cookie.set 'hasSeenGoogleMapsWarning', '1'
-                        @model.overlay.open new GoogleMapsWarningDialog({@model}), {
-                          onComplete: go
-                          onCancel: go
-                        }
+                      @model.overlay.open new NavigateSheet {
+                        @model
+                        @router
+                        trip
+                        tripRoute
+                      }
+
           ]

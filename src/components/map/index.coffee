@@ -508,9 +508,9 @@ module.exports = class Map
             anchor: e.features[0].properties.anchor or 'bottom'
             color: colors["$icon#{icon}"]
           }
-        @map.on 'click', 'route-click', @onRouteClick
         @map.on 'click', 'places', onclick
         @map.on 'click', 'places-text', onclick
+        @map.on 'click', 'route-click', @onRouteClick
 
       # Change the cursor to a pointer when the mouse is over the places layer.
       onmouseenter = =>
@@ -527,6 +527,8 @@ module.exports = class Map
       @map.on 'mouseleave', 'route-click', onmouseleave
 
   onRouteClick: (e) =>
+    if e.originalEvent.isPropagationStopped
+      return
     if e.features?[0]?.properties?.routeId
       e.originalEvent.isPropagationStopped = true
       @selectedRoute?.next e.features?[0]?.properties?.routeId
@@ -602,7 +604,6 @@ module.exports = class Map
       @map.getSource('route')?.setData {
         type: 'FeatureCollection'
         features: _map routes, ({routeId, routeSlug, geojson, color}) ->
-          console.log 'rrrrr', routeId
           {
             type: 'Feature'
             properties:

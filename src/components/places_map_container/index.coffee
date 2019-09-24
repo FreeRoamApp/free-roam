@@ -314,7 +314,10 @@ module.exports = class PlacesMapContainer
       @sort, @limit, @isTripFilterEnabled
       @trip or RxObservable.of null
       @tripRoute or RxObservable.of null
-      (@routes?.map (routes) -> routes?[1]?.routeSlug) or RxObservable.of null
+      (
+        @routes?.map (routes) ->
+          _find(routes, ({routeSlug}) -> routeSlug)?.routeSlug
+      ) or RxObservable.of null
       (vals...) -> vals
     )
     streamValues.switchMap (response) =>

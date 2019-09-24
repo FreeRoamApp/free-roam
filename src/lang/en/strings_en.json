@@ -281,7 +281,6 @@
   "editTripRouteInfo.info": "Info",
   "editTripRouteInfo.editRoute": "Edit route",
   "editTripRouteInfo.saveRoute": "Use new route",
-  "editTripRouteInfo.openGoogleMaps": "Open in Google Maps",
   "editTripRouteInfoSettings.avoidHighwaysDescription": "Enable to have this route avoid highways",
   "editTripRouteInfoSettings.useTruckRouteDescription": "Enable to have this route use the truck route.",
   "editTripRouteInfoSettings.isEditingRoute": "Editing mode",

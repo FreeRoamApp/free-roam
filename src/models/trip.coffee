@@ -37,6 +37,11 @@ module.exports = class Trip
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
 
+  getMapboxDirectionsByIdAndRouteId: (id, routeId) =>
+    @auth.stream "#{@namespace}.getMapboxDirectionsByIdAndRouteId", {
+      id, routeId
+    }
+
   setRouteByIdAndRouteId: (id, routeId, options) ->
     {waypoints, avoidHighways, useTruckRoute, isEditingRoute} = options
     @auth.call "#{@namespace}.setRouteByIdAndRouteId", {

@@ -15,10 +15,27 @@ TODOS:
   x adding stop should use route settings first, then trip settings
     x should use the normal @buildRoutes with the proper settings
     x change existing setRoute to ^^
+  n open in google maps button
+  x alt routes not showing places along
+  x get rid of waypoints on unmount
+  x routeinfo loading
   - "remove stop" from map
-  - open in google maps button
+  x get rid of 'map' tab
+    - make + button more prominent
+  - small screen weird scrolling when route info is open
+  - x on route info doesn't work when on route stops page
+
+- call map.resize() when keyboard is hidden? if keyboard is opened before map loads, when keyboard is hidden, map doesn't resize to full
+
+- Vitruvianvan ios issues
+
+- data push notifications not working, firebase issue?
 
 - Wifi / fast Wifi features
+
+-  National Monuments, Department of Defense, Bureau of Reclamation, National Wildlife Refuges overlays
+
+- Prevent this error: left cannot be the same as right: -92.327 == -92.327 (do pre-check)
 
 new place info page
 x fix masonry grid. current logic assumes all sections are same height, but column-count tries to match height per column

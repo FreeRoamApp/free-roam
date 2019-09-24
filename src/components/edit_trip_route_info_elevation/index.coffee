@@ -5,6 +5,7 @@ require 'rxjs/add/observable/combineLatest'
 
 ElevationChart = require '../elevation_chart'
 Icon = require '../icon'
+Spinner = require '../spinner'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -17,6 +18,7 @@ module.exports = class EditTripRouteInfoElevation
     @$mainLostIcon = new Icon()
     @$altGainIcon = new Icon()
     @$altLostIcon = new Icon()
+    @$spinner = new Spinner()
 
     @$elevationChart = new ElevationChart {
       @model
@@ -36,42 +38,47 @@ module.exports = class EditTripRouteInfoElevation
     altRoute = routes?[1]
 
     z '.z-edit-trip-route-info-elevation',
-      z '.elevations',
-        z '.main',
-          z '.icon',
-            z @$mainGainIcon,
-              icon: 'arrow-up'
-              isTouchTarget: false
-              color: colors.$secondary500
-          z '.text',
-            "#{mainRoute?.elevationStats.gained} "
-            @model.l.get 'abbr.imperial.foot'
-          z '.icon',
-            z @$mainLostIcon,
-              icon: 'arrow-down'
-              isTouchTarget: false
-              color: colors.$secondary500
-          z '.text',
-            "#{mainRoute?.elevationStats.lost} "
-            @model.l.get 'abbr.imperial.foot'
+      if routes
+        [
+          z '.elevations',
+            z '.main',
+              z '.icon',
+                z @$mainGainIcon,
+                  icon: 'arrow-up'
+                  isTouchTarget: false
+                  color: colors.$secondary500
+              z '.text',
+                "#{mainRoute?.elevationStats.gained} "
+                @model.l.get 'abbr.imperial.foot'
+              z '.icon',
+                z @$mainLostIcon,
+                  icon: 'arrow-down'
+                  isTouchTarget: false
+                  color: colors.$secondary500
+              z '.text',
+                "#{mainRoute?.elevationStats.lost} "
+                @model.l.get 'abbr.imperial.foot'
 
-        if altRoute
-          z '.alt',
-            z '.icon',
-              z @$altGainIcon,
-                icon: 'arrow-up'
-                isTouchTarget: false
-                color: colors.$black54
-            z '.text',
-              "#{altRoute?.elevationStats.gained} "
-              @model.l.get 'abbr.imperial.foot'
-            z '.icon',
-              z @$altLostIcon,
-                icon: 'arrow-down'
-                isTouchTarget: false
-                color: colors.$black54
-            z '.text',
-              "#{altRoute?.elevationStats.lost} "
-              @model.l.get 'abbr.imperial.foot'
+            if altRoute
+              z '.alt',
+                z '.icon',
+                  z @$altGainIcon,
+                    icon: 'arrow-up'
+                    isTouchTarget: false
+                    color: colors.$black54
+                z '.text',
+                  "#{altRoute?.elevationStats.gained} "
+                  @model.l.get 'abbr.imperial.foot'
+                z '.icon',
+                  z @$altLostIcon,
+                    icon: 'arrow-down'
+                    isTouchTarget: false
+                    color: colors.$black54
+                z '.text',
+                  "#{altRoute?.elevationStats.lost} "
+                  @model.l.get 'abbr.imperial.foot'
 
-      @$elevationChart
+          @$elevationChart
+        ]
+      else
+        @$spinner
