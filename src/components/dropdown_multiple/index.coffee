@@ -18,29 +18,35 @@ module.exports = class DropdownMultiple
     @value ?= new RxBehaviorSubject null
     @error ?= new RxBehaviorSubject null
 
-    options = _map options, (option) ->
-      if option.isCheckedStreams
-        isCheckedStreams = option.isCheckedStreams
-      else
-        isCheckedStreams = new RxReplaySubject 1
-        isCheckedStreams.next RxObservable.of false
-      {
-        option
-        isCheckedStreams: isCheckedStreams
-        $checkbox: new Checkbox {valueStreams: isCheckedStreams}
-      }
+    unless options.switchMap
+      options = RxObservable.of options
 
-    value = RxObservable.combineLatest(
+    options = options.map (options) ->
+      options = _map options, (option) ->
+        if option.isCheckedStreams
+          isCheckedStreams = option.isCheckedStreams
+        else
+          isCheckedStreams = new RxReplaySubject 1
+          isCheckedStreams.next RxObservable.of false
+        {
+          option
+          isCheckedStreams: isCheckedStreams
+          $checkbox: new Checkbox {valueStreams: isCheckedStreams}
+        }
+
+    value = options.switchMap (options) ->
+      RxObservable.combineLatest(
         _map options, ({isCheckedStreams}) ->
           isCheckedStreams.switch()
-        (vals...) -> vals
+        (vals...) ->
+          vals
       )
-    .map (values) ->
-      _filter _map options, ({option}, i) ->
-        if values[i]
-          option
-        else
-          null
+      .map (values) ->
+        _filter _map options, ({option}, i) ->
+          if values[i]
+            option
+          else
+            null
 
     @valueStreams ?= new RxReplaySubject 1
     @valueStreams.next value

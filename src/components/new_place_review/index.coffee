@@ -82,7 +82,7 @@ module.exports = class NewPlaceReview
       }
       if @reviewExtraFields
         new @NewPlaceReviewExtras {
-          @model, @router, fields: @reviewExtraFields,
+          @model, @router, @parent, fields: @reviewExtraFields,
           fieldsValues: reviewExtraFieldsValues, @season
           isOptional: true
         }

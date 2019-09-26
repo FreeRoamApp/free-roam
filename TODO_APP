@@ -25,6 +25,12 @@ TODOS:
   - small screen weird scrolling when route info is open
   - x on route info doesn't work when on route stops page
 
+- RV-friendly gas stations
+
+x place revision history
+
+- donation dialog
+
 - call map.resize() when keyboard is hidden? if keyboard is opened before map loads, when keyboard is hidden, map doesn't resize to full
 
 - Vitruvianvan ios issues
@@ -78,7 +84,7 @@ figure out why https://freeroam.app/campground/fr-9350-campground is 404
   - Go through all elasticsearch campgrounds, find ones where corresponding scylla doesn't exist, update slug
 - 5558a670-b9f5-11e9-90c6-197c21a0d754 amenity has no slug
 
-- For canadian campgrounds, show candian carriers when reviewing
+x For canadian campgrounds, show candian carriers when reviewing
 
 - might be able to export gpx that google maps can use for custom route???
   - not sure it actually works, mapbox is probs better

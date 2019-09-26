@@ -12,6 +12,7 @@ require 'rxjs/add/operator/do'
 
 require './root.styl'
 
+DateService = require './services/date'
 RouterService = require './services/router'
 PushService = require './services/push'
 SemverService = require './services/semver'
@@ -201,6 +202,15 @@ init = ->
 
   model.portal.call 'app.onBack', ->
     router.back({fromNative: true})
+
+  lastVisitDate = model.cookie.get 'lastVisitDate'
+  currentDate = DateService.format new Date(), 'yyyy-mm-dd'
+  if lastVisitDate isnt currentDate
+    daysVisited = parseInt model.cookie.get 'daysVisited'
+    if isNaN daysVisited
+      daysVisited = 0
+    model.cookie.set 'lastVisitDate', currentDate
+    model.cookie.set 'daysVisited', daysVisited + 1
 
   # iOS scrolls past header
   # model.portal.call 'keyboard.disableScroll'

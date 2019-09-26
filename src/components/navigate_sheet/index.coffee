@@ -44,7 +44,6 @@ module.exports = class NavigateSheet
   render: =>
     {currentLoading, places} = @state.getValue()
 
-    console.log 'places', places
     isNative = Environment.isNativeApp 'freeroam'
     appVersion = isNative and Environment.getAppVersion(
       'freeroam'
@@ -59,7 +58,6 @@ module.exports = class NavigateSheet
           @model.trip.getMapboxDirectionsByIdAndRouteId(
             trip.id, tripRoute.routeId
           ).take(1).subscribe (directions) =>
-            console.log directions
             @model.portal.call 'mapbox.setup', {}
             .then =>
               @model.portal.call 'mapbox.navigate', {

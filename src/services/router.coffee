@@ -53,11 +53,8 @@ class RouterService
       @router.go path
 
   go: (routeKey, replacements, options = {}) =>
-    path = @get routeKey, replacements
-    if options.qs
-      @goPath "#{path}?#{qs.stringify options.qs}", options
-    else
-      @goPath path, options
+    path = @get routeKey, replacements, options
+    @goPath path, options
 
   getPlace: (place) =>
     @get place?.sourceType or place?.type, {slug: place?.slug}
@@ -65,10 +62,13 @@ class RouterService
   goPlace: (place) =>
     @goPath @getPlace place
 
-  get: (routeKey, replacements, {language} = {}) =>
-    route = @model.l.get routeKey, {file: 'paths', language}
+  get: (routeKey, replacements, options) =>
+    route = @model.l.get routeKey, {file: 'paths', language: options?.language}
     _forEach replacements, (value, key) ->
       route = route.replace ":#{key}", value
+    route
+    if options?.qs
+      route = "#{route}?#{qs.stringify options.qs}"
     route
 
   removeOverlay: =>

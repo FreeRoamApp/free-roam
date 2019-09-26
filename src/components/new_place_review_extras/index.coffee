@@ -26,11 +26,13 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class PlaceNewReviewExtras
+module.exports = class NewPlaceReviewExtras
   constructor: (options) ->
-    {@model, @router, @fields, @season, @isOptional, fieldsValues} = options
+    {@model, @router, @fields, @season, @isOptional,
+      @parent, fieldsValues} = options
     me = @model.user.getMe()
 
+    @parent ?= RxObservable.of null
     @$rigInfo = new RigInfo {@model, @router}
 
     if @fields.pricePaid
@@ -69,40 +71,32 @@ module.exports = class PlaceNewReviewExtras
     @fields.cellSignal.valueStreams.switch().take(1).subscribe (cellSignal) ->
       initialValue.next cellSignal
 
-    verizonStreams = new RxReplaySubject 1
-    verizonStreams.next initialValue.map (value) -> Boolean value?.verizon_lte
-    attStreams = new RxReplaySubject 1
-    attStreams.next initialValue.map (value) -> Boolean value?.att_lte
-    tmobileStreams = new RxReplaySubject 1
-    tmobileStreams.next initialValue.map (value) -> Boolean value?.tmobile_lte
-    sprintStreams = new RxReplaySubject 1
-    sprintStreams.next initialValue.map (value) -> Boolean value?.sprint_lte
+    carriers = @parent.map (parent) ->
+      # TODO: store country in address so we don't have to do this
+      isCanada = parent?.address?.administrativeArea in [
+        'AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU',
+        'ON', 'PE', 'QC', 'SK', 'YT'
+      ]
+
+      if isCanada
+        ['rogers', 'bell', 'telus']
+      else
+        ['verizon', 'att', 'tmobile', 'sprint']
 
     @$carrierDropdown = new DropdownMultiple {
       @model
       valueStreams: carriersValueStreams
-      options: [
-        {
-          value: 'verizon'
-          text: @model.l.get 'carriers.verizon'
-          isCheckedStreams: verizonStreams
-        }
-        {
-          value: 'att'
-          text: @model.l.get 'carriers.att'
-          isCheckedStreams: attStreams
-        }
-        {
-          value: 'tmobile'
-          text: @model.l.get 'carriers.tmobile'
-          isCheckedStreams: tmobileStreams
-        }
-        {
-          value: 'sprint'
-          text: @model.l.get 'carriers.sprint'
-          isCheckedStreams: sprintStreams
-        }
-      ]
+      options: carriers.map((carriers) =>
+        _map carriers, (carrier) =>
+          streams = new RxReplaySubject 1
+          streams.next initialValue.map (value) =>
+            Boolean value?["#{carrier}_lte"]
+          {
+            value: carrier
+            text: @model.l.get "carriers.#{carrier}"
+            isCheckedStreams: streams
+          }
+      ).publishReplay(1).refCount()
     }
 
     carriersAndInitialValue = RxObservable.combineLatest(

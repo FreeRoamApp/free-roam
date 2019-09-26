@@ -154,6 +154,7 @@ module.exports = class ImageViewOverlay
     image1 = images?[imageIndex]
     image2 = images?[nextIndex]
 
+
     dimensions0 = @getDimensions image0?.aspectRatio
     dimensions1 = @getDimensions image1?.aspectRatio
     dimensions2 = @getDimensions image2?.aspectRatio

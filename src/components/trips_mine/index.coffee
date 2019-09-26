@@ -37,7 +37,7 @@ module.exports = class TripsMine
               text: @model.l.get 'profile.watchVideo'
               onclick: =>
                 @model.portal.call 'browser.openWindow', {
-                  url: 'https://youtu.be/KNQRgnkRV5E'
+                  url: 'https://youtu.be/ZYFOXOlOtXQ'
                   target: '_system'
                 }
                 @state.set hasSeenInfoCard: true

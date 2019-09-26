@@ -13,6 +13,7 @@ _defaults = require 'lodash/defaults'
 Icon = require '../icon'
 Rating = require '../rating'
 Toggle = require '../toggle'
+AddPlaceDialog = require '../add_place_dialog'
 CoordinateInfoDialog = require '../coordinate_info_dialog'
 NewCheckIn = require '../new_check_in'
 MapService = require '../../services/map'
@@ -28,7 +29,7 @@ module.exports = class PlaceSheet
       @addOptionalLayer, @addLayerById, @removeLayerById} = options
 
     @$directionsIcon = new Icon()
-    @$addCampsiteIcon = new Icon()
+    @$addPlaceIcon = new Icon()
     @$saveIcon = new Icon()
     @$infoIcon = new Icon()
 
@@ -149,9 +150,7 @@ module.exports = class PlaceSheet
               text: @model.l.get 'general.directions'
               onclick: =>
                 MapService.getDirections {
-                  location:
-                    lat: place.location[1]
-                    lon: place.location[0]
+                  location: place.location
                 }, {@model}
             }
           if place?.type is 'coordinate'
@@ -184,13 +183,10 @@ module.exports = class PlaceSheet
             {
               $icon: new Icon()
               icon: 'add-circle'
-              text: @model.l.get 'coordinateTooltip.addCampsite'
+              text: @model.l.get 'coordinateTooltip.addPlace'
               onclick: =>
-                @router.go 'newCampground', {}, {
-                  qs:
-                    location: Math.round(place.location.lat * 1000) / 1000 +
-                              ',' +
-                              Math.round(place.location.lon * 1000) / 1000
+                @model.overlay.open new AddPlaceDialog {
+                  @model, @router, location: place.location
                 }
                 Promise.resolve null
             }

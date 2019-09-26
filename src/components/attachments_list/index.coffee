@@ -52,7 +52,7 @@ module.exports = class AttachmentsList
       widthPx = contentWidth / 4
       heightPx = contentWidth / 4 - PADDING * 2
 
-    images = _map attachments, (attachment) =>
+    images = _map attachments, ({attachment}) =>
       {
         url: @model.image.getSrcByPrefix attachment.prefix, {size: 'large'}
         aspectRatio: attachment.aspectRatio
