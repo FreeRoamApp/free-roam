@@ -85,6 +85,7 @@ module.exports = class CoordinatePicker
             id: place.sourceId
             type: place.sourceType or 'coordinate'
             location: place.location
+            anchor: 'bottom'
           }
     }
 
@@ -107,6 +108,7 @@ module.exports = class CoordinatePicker
             slug: e.features[0].properties.slug
             id: e.features[0].properties.id
             type: e.features[0].properties.type
+            anchor: 'bottom'
             location:
               lon: e.lngLat.lng
               lat: e.lngLat.lat
@@ -120,6 +122,7 @@ module.exports = class CoordinatePicker
             name: coordinatesStr
             slug: ''
             type: 'coordinate'
+            anchor: 'bottom'
             location:
               lon: e.lngLat.lng
               lat: e.lngLat.lat

@@ -80,6 +80,8 @@ module.exports = class PlacePage extends BasePage
   render: =>
     {me, place, tripId} = @state.getValue()
 
+    isCreator = me?.id and me?.id is place?.userId
+
     z '.p-place',
       z @$appBar, {
         title: @title
@@ -91,7 +93,7 @@ module.exports = class PlacePage extends BasePage
                  else colors.$header500Icon
         }
         $topRightButton:
-          if me?.karma >= 25 or me?.username in ['austin', 'rachel']
+          if me?.karma >= 25 or me?.username in ['austin', 'rachel'] or isCreator
             z '.p-place_top-right',
               z @$editIcon,
                 icon: 'edit'

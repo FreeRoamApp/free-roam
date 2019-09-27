@@ -466,7 +466,7 @@ module.exports = class Map
           , 300
 
         onclick = (e) =>
-          if e.features[0].properties.type is 'searchQuery' or e.originalEvent.isPropagationStopped
+          if e.features[0].properties.icon is 'search' or e.originalEvent.isPropagationStopped
             return
           e.originalEvent.isPropagationStopped = true
 

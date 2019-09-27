@@ -22,7 +22,8 @@ module.exports = class Attachments
       me: @model.user.getMe()
       more: more
       attachments: attachments.map (attachments) ->
-        attachments = _filter attachments, {type: 'image'}
+        # there are some images where type is empty instead of 'image'
+        attachments = _filter attachments, ({type}) -> type isnt 'video'
         if limit and attachments
           attachments.slice 0, limit
         else
