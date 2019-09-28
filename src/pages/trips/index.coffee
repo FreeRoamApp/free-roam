@@ -20,8 +20,8 @@ module.exports = class TripsPage
     @$appBar = new AppBar {@model}
     @$tabs = new Tabs {@model, @selectedIndex}
     @$buttonMenu = new ButtonMenu {@model, @router}
-    @$tripsMine = new TripsMine {@model, @router, @trips}
-    @$tripsFollowing = new TripsFollowing {@model, @router, @trips}
+    @$tripsMine = new TripsMine {@model, @router}
+    @$tripsFollowing = new TripsFollowing {@model, @router}
 
     # @state = z.state {
     # }

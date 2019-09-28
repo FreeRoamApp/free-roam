@@ -1,5 +1,7 @@
 z = require 'zorium'
-RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 
 Dialog = require '../dialog'
 Dropdown = require '../dropdown'
@@ -11,13 +13,11 @@ if window?
   require './index.styl'
 
 
-module.exports = class DuplicatePlaceDialog
-  constructor: ({@model, place}) ->
-    @typeValue = new RxBehaviorSubject 'campground'
-    @$typeDropdown = new Dropdown {value: @typeValue}
-
-    @slugValue = new RxBehaviorSubject ''
-    @$slugInput = new PrimaryInput {value: @slugValue}
+module.exports = class ChangePlaceTypeDialog
+  constructor: ({@model, @router, place}) ->
+    @typeValueStreams = new RxReplaySubject 1
+    @typeValueStreams.next RxObservable.of place?.type
+    @$typeDropdown = new Dropdown {valueStreams: @typeValueStreams}
 
     @$dialog = new Dialog {
       onLeave: =>
@@ -26,45 +26,53 @@ module.exports = class DuplicatePlaceDialog
 
     @state = z.state
       place: place
+      typeValue: @typeValueStreams.switch()
       isSaving: false
 
   save: =>
-    {place} = @state.getValue()
+    {place, typeValue} = @state.getValue()
     @state.set isSaving: true
 
-    @model.placeBase.dedupe {
+    @model.placeBase.changeType {
       sourceSlug: place.slug
       sourceType: place.type
-      destinationSlug: @slugValue.getValue()
-      destinationType: @typeValue.getValue()
+      destinationType: typeValue
     }
     .then =>
       # @model.overlay.close()
+      setTimeout =>
+        place.type = typeValue
+        @router.goPlace place
+      , 0
       @state.set isSaving: false
 
   render: =>
     {isSaving} = @state.getValue()
 
-    z '.z-duplicate-place-dialog',
+    z '.z-change-place-type-dialog',
       z @$dialog,
         isWide: true
         isVanilla: true
         $title: @model.l.get 'duplicatePlaceDialog.title'
         $content:
-          z '.z-duplicate-place-dialog_dialog',
+          z '.z-change-place-type-dialog_dialog',
             z '.block',
               z 'label.label', @model.l.get 'duplicatePlaceDialog.type'
               z @$typeDropdown,
                 options: [
-                  {value: 'campground', text: @model.l.get 'placeType.campground'}
-                  {value: 'amenity', text: @model.l.get 'placeType.amenity'}
-                  {value: 'overnight', text: @model.l.get 'placeType.overnight'}
+                  {
+                    value: 'campground'
+                    text: @model.l.get 'placeType.campground'
+                  }
+                  {
+                    value: 'amenity'
+                    text: @model.l.get 'placeType.amenity'
+                  }
+                  {
+                    value: 'overnight'
+                    text: @model.l.get 'placeType.overnight'
+                  }
                 ]
-            z '.block',
-              z 'label.label', @model.l.get 'duplicatePlaceDialog.slug'
-              z @$slugInput,
-                hintText: @model.l.get 'duplicatePlaceDialog.destinationSlug'
-                type: 'text'
         cancelButton:
           text: @model.l.get 'general.cancel'
           onclick: =>

@@ -59,6 +59,9 @@ module.exports = class PlaceBase
   dedupe: (options) =>
     @auth.call "#{@namespace}.dedupe", options, {invalidateAll: true}
 
+  changeType: (options) =>
+    @auth.call "#{@namespace}.changeType", options, {invalidateAll: true}
+
   deleteByRow: (row) =>
     @auth.call "#{@namespace}.deleteByRow", {row}, {invalidateAll: true}
 

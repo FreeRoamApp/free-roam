@@ -5,6 +5,7 @@ RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 PrimaryButton = require '../primary_button'
 PrimaryInput = require '../primary_input'
 SecondaryButton = require '../secondary_button'
+ChangePlaceTypeDialog = require '../change_place_type_dialog'
 DuplicatePlaceDialog = require '../duplicate_place_dialog'
 colors = require '../../colors'
 config = require '../../config'
@@ -17,6 +18,7 @@ module.exports = class EditPlace
     me = @model.user.getMe()
 
     @$duplicateButton = new SecondaryButton()
+    @$changeTypeButton = new SecondaryButton()
     @$saveButton = new PrimaryButton()
 
 
@@ -106,16 +108,26 @@ module.exports = class EditPlace
       place.officeSlug or ''
 
   render: =>
-    {place, isLoading} = @state.getValue()
+    {me, place, isLoading} = @state.getValue()
 
     z '.z-edit-place',
-      # z @$duplicateButton,
-      #   text: @model.l.get 'editPlace.markAsDupe'
-      #   onclick: =>
-      #     @model.overlay.open new DuplicatePlaceDialog {
-      #       @model, @router, place
-      #     }
       z '.g-grid',
+        if me?.username in ['austin', 'roadpickle', 'big_boxtruck', 'vanwldr']
+          z '.actions',
+            z @$duplicateButton,
+              text: @model.l.get 'editPlace.markAsDupe'
+              isOutline: true
+              onclick: =>
+                @model.overlay.open new DuplicatePlaceDialog {
+                  @model, @router, place
+                }
+            z @$changeTypeButton,
+              text: @model.l.get 'editPlace.changeType'
+              isOutline: true
+              onclick: =>
+                @model.overlay.open new ChangePlaceTypeDialog {
+                  @model, @router, place
+                }
         z @$initialInfo
 
         if place?.type is 'campground'
