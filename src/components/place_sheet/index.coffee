@@ -226,6 +226,8 @@ module.exports = class PlaceSheet
 
     isVisible ?= Boolean place
 
+    console.log 'place', place
+
     {elevation, localMaps, attachments} = info or {}
 
     if not elevation? or elevation is false

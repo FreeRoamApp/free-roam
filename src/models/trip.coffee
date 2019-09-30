@@ -37,9 +37,10 @@ module.exports = class Trip
   getStatesGeoJson: =>
     @auth.stream "#{@namespace}.getStatesGeoJson", {ignoreCache: true}
 
-  getMapboxDirectionsByIdAndRouteId: (id, routeId) =>
+  getMapboxDirectionsByIdAndRouteId: (id, routeId, {location} = {}) =>
+    console.log id, routeId, location
     @auth.stream "#{@namespace}.getMapboxDirectionsByIdAndRouteId", {
-      id, routeId
+      id, routeId, location
     }
 
   setRouteByIdAndRouteId: (id, routeId, options) ->

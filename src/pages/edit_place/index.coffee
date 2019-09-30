@@ -21,13 +21,13 @@ module.exports = class EditPlacePage
 
   getMeta: =>
     {
-      title: @model.l.get 'newReviewPage.title'
+      title: @model.l.get 'editPlacePage.title'
     }
 
   render: =>
     z '.p-edit-place-review',
       z @$appBar, {
-        title: @model.l.get 'editReviewPage.title'
+        title: @model.l.get 'editPlacePage.title'
         style: 'primary'
         $topLeftButton: z @$buttonBack
       }

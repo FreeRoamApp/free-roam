@@ -1,5 +1,18 @@
 TODOS:
 
+- turn by turn
+  x req location perm before opening
+  x limit 25
+  x reroute throttle
+  x don't let tap on button twice
+  - routing use current location (and find right spot on route to put at)
+  x fix crash when exiting nav, then renaving
+
+
+- add escapees affiliation
+  - https://member.escapees.com/benefits/discountparking/discountparkdirectory/
+
+
 - trip routing
   x don't allow add stop/destination when in editing mode
   x have waypoints show on map

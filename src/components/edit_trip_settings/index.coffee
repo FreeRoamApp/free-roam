@@ -69,7 +69,6 @@ module.exports = class EditTripSettings
 
     @donutMinValueStreams = new RxReplaySubject 1
     @donutMinValueStreams.next (trip?.map (trip) ->
-      console.log 'tarip', trip
       trip.settings?.donut?.min) or RxObservable.of 0
     @donutMinError = new RxBehaviorSubject null
 

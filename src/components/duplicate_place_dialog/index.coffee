@@ -12,7 +12,7 @@ if window?
 
 
 module.exports = class DuplicatePlaceDialog
-  constructor: ({@model, place}) ->
+  constructor: ({@model, @router, place}) ->
     @typeValue = new RxBehaviorSubject 'campground'
     @$typeDropdown = new Dropdown {value: @typeValue}
 
@@ -32,14 +32,22 @@ module.exports = class DuplicatePlaceDialog
     {place} = @state.getValue()
     @state.set isSaving: true
 
+    typeValue = @typeValue.getValue()
+    slugValue = @slugValue.getValue()
+
     @model.placeBase.dedupe {
       sourceSlug: place.slug
       sourceType: place.type
-      destinationSlug: @slugValue.getValue()
-      destinationType: @typeValue.getValue()
+      destinationSlug: slugValue
+      destinationType: typeValue
     }
     .then =>
       # @model.overlay.close()
+      setTimeout =>
+        place.type = typeValue
+        place.slug = slugValue
+        @router.goPlace place
+      , 0
       @state.set isSaving: false
 
   render: =>

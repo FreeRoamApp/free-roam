@@ -29,7 +29,7 @@ module.exports = class Portal
       @appResumeHandler = null
 
   PLATFORMS:
-    GAME_APP: 'game_app'
+    APP: 'app'
     WEB: 'web'
 
   setModels: (props) =>
@@ -126,7 +126,7 @@ module.exports = class Portal
     userAgent = navigator.userAgent
     switch
       when Environment.isNativeApp(gameKey, {userAgent})
-        @PLATFORMS.GAME_APP
+        @PLATFORMS.APP
       else
         @PLATFORMS.WEB
 

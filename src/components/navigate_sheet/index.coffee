@@ -2,6 +2,7 @@ z = require 'zorium'
 _filter = require 'lodash/filter'
 _find = require 'lodash/find'
 _map = require 'lodash/map'
+_throttle = require 'lodash/throttle'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
 require 'rxjs/add/observable/of'
@@ -17,6 +18,8 @@ config = require '../../config'
 
 if window?
   require './index.styl'
+
+THIRTY_SECONDS_MS = 30 * 1000
 
 module.exports = class NavigateSheet
   constructor: ({@model, @router, trip, tripRoute}) ->
@@ -41,6 +44,15 @@ module.exports = class NavigateSheet
       tripRoute: tripRoute
       currentLoading: null
 
+    @_reroute = _throttle ((tripId, routeId, location) =>
+      @model.trip.getMapboxDirectionsByIdAndRouteId(
+        tripId, routeId, {location}
+      ).take(1).subscribe (directions) =>
+        @model.portal.call 'mapbox.navigate', {
+          directions: JSON.stringify directions
+        }
+    ), THIRTY_SECONDS_MS
+
   render: =>
     {currentLoading, places} = @state.getValue()
 
@@ -53,17 +65,33 @@ module.exports = class NavigateSheet
       freeRoam:
         isVisible: isNative and SemverService.gte appVersion, '2.0.06'
         onclick: =>
+          {trip, tripRoute, currentLoading} = @state.getValue()
+          if currentLoading is 'freeRoam'
+            return
           @state.set currentLoading: 'freeRoam'
-          {trip, tripRoute} = @state.getValue()
-          @model.trip.getMapboxDirectionsByIdAndRouteId(
-            trip.id, tripRoute.routeId
-          ).take(1).subscribe (directions) =>
-            @model.portal.call 'mapbox.setup', {}
-            .then =>
-              @model.portal.call 'mapbox.navigate', {
-                directions: JSON.stringify directions
-              }
-              @state.set currentLoading: null
+          MapService.getLocation {@model}
+          .catch -> null
+          .then (location) =>
+            @model.trip.getMapboxDirectionsByIdAndRouteId(
+              trip.id, tripRoute.routeId, {location}
+            ).take(1).subscribe (directions) =>
+              Promise.all [
+                @model.portal.call 'mapbox.setup', {}
+                @model.portal.call 'mapbox.clearEventListeners'
+                .then =>
+                  @model.portal.call 'mapbox.onEvent', ({ev, data}) =>
+                    data = try
+                      JSON.parse data
+                    catch
+                      {}
+                    if ev is 'offRoute'
+                      @_reroute(trip.id, tripRoute.routeId, data)
+              ]
+              .then =>
+                @model.portal.call 'mapbox.navigate', {
+                  directions: JSON.stringify directions
+                }
+                @state.set currentLoading: null
         text: 'FreeRoam'
         # $icon: z @$facebookIcon,
         #   icon: 'facebook'
