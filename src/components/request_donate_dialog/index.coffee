@@ -8,23 +8,18 @@ if window?
   require './index.styl'
 
 module.exports = class RequestDonateDialog
-  constructor: ({@model}) ->
+  constructor: ({@model, @router}) ->
     @$dialog = new Dialog {
       onLeave: =>
         localStorage.hasSeenRequestDonate = '1'
         @model.overlay.close()
     }
 
-    @state = z.state {
-      isLoading: false
-    }
 
   afterMount: ->
     ga? 'send', 'event', 'requestDonateDialog', 'show'
 
   render: =>
-    {isLoading} = @state.getValue()
-
     z '.z-request-rating',
         z @$dialog,
           isVanilla: true
@@ -32,7 +27,7 @@ module.exports = class RequestDonateDialog
           $title: @model.l.get 'requestDonateDialog.title'
           $content: @model.l.get 'requestDonateDialog.text'
           cancelButton:
-            text: @model.l.get 'general.no'
+            text: @model.l.get 'general.noThanks'
             isShort: true
             colors:
               cText: colors.$bgText54
@@ -47,10 +42,5 @@ module.exports = class RequestDonateDialog
             onclick: =>
               ga? 'send', 'event', 'requestDonateDialog', 'rate'
               localStorage.hasSeenRequestDonate = '1'
-              @state.set isLoading: true
-              @model.portal.call 'app.rate'
-              .then =>
-                @state.set isLoading: false
-                @model.overlay.close()
-              .catch ->
-                @state.set isLoading: false
+              @model.overlay.close()
+              @router.go 'donate'

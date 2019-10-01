@@ -16,6 +16,7 @@ Toggle = require '../toggle'
 AddPlaceDialog = require '../add_place_dialog'
 CoordinateInfoDialog = require '../coordinate_info_dialog'
 NewCheckIn = require '../new_check_in'
+DateService = require '../../services/date'
 MapService = require '../../services/map'
 colors = require '../../colors'
 
@@ -73,6 +74,7 @@ module.exports = class PlaceSheet
         else
           RxObservable.of false
       buttons: sheetData.map ([place, trip, tripRoute, isEditingRoute]) =>
+        console.log 'place', place
         _filter [
           if isEditingRoute and place?.type is 'coordinate'
             {
@@ -102,6 +104,20 @@ module.exports = class PlaceSheet
                 editRouteWaypoints.next wp
                 @place.next null
                 Promise.resolve null
+            }
+          else if tripRoute?.routeId and place?.hasDot
+            {
+              $icon: new Icon()
+              icon: 'subtract-circle'
+              text: @model.l.get 'placeSheet.removeStop'
+              loadingText: @model.l.get 'general.saving'
+              loadedText: @model.l.get 'general.saved'
+              onclick: =>
+                @model.trip.deleteStopByIdAndRouteId(
+                  trip.id
+                  tripRoute.routeId
+                  place
+                )
             }
           else if tripRoute?.routeId
             {
@@ -226,8 +242,6 @@ module.exports = class PlaceSheet
 
     isVisible ?= Boolean place
 
-    console.log 'place', place
-
     {elevation, localMaps, attachments} = info or {}
 
     if not elevation? or elevation is false
@@ -285,16 +299,19 @@ module.exports = class PlaceSheet
                 z '.from-last-stop',
                   @model.l.get 'placeSheet.fromLastStop', {
                     replacements:
-                      time: Math.round(info.addStopInfo.fromLastStop.time / 60)
+                      time: DateService.formatSeconds info.addStopInfo.fromLastStop.time, 1
                       distance: Math.round(
                         10 * info.addStopInfo.fromLastStop.distance
                       ) / 10
                   }
-                if info.addStopInfo.detourTime?
+                if info.addStopInfo.detour?
                   z '.detour',
                     @model.l.get 'placeSheet.detour', {
                       replacements:
-                        time: Math.round(info.addStopInfo.detourTime / 60)
+                        time: DateService.formatSeconds info.addStopInfo.detour.time, 1
+                        distance: Math.round(
+                          10 * info.addStopInfo.detour.distance
+                        ) / 10
                     }
 
           z '.right',

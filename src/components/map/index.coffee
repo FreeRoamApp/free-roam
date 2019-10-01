@@ -496,6 +496,7 @@ module.exports = class Map
             type: e.features[0].properties.type
             name: e.features[0].properties.name
             number: e.features[0].properties.number
+            hasDot: e.features[0].properties.hasDot
             checkInId: e.features[0].properties.checkInId
             description: e.features[0].properties.description
             rating: rating

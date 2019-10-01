@@ -38,6 +38,9 @@ module.exports = class NavigateSheet
           places = _filter [start?.place].concat stops, [end?.place]
     )
 
+    @currentNavigationRouteId = null
+    @lastLocation = null
+
     @state = z.state
       places: places
       trip: trip
@@ -45,13 +48,27 @@ module.exports = class NavigateSheet
       currentLoading: null
 
     @_reroute = _throttle ((tripId, routeId, location) =>
-      @model.trip.getMapboxDirectionsByIdAndRouteId(
-        tripId, routeId, {location}
-      ).take(1).subscribe (directions) =>
-        @model.portal.call 'mapbox.navigate', {
-          directions: JSON.stringify directions
+      locationsSimilar = @_locationsSimilar location, @lastLocation
+      if @currentNavigationRouteId is routeId and not locationsSimilar
+        @lastLocation = location
+        @model.portal.call 'mapbox.showSnackBar', {
+          text: 'Rerouting...'
         }
-    ), THIRTY_SECONDS_MS
+        @model.trip.getMapboxDirectionsByIdAndRouteId(
+          tripId, routeId, {location}
+        ).take(1).subscribe (directions) =>
+          @model.portal.call 'mapbox.hideSnackBar'
+          @model.portal.call 'mapbox.navigate', {
+            directions: JSON.stringify directions
+          }
+    ), THIRTY_SECONDS_MS, {trailing: false}
+
+  _locationsSimilar: (location1, location2) ->
+    lat1 = Math.round(location1?.lat * 1000) / 1000
+    lat2 = Math.round(location2?.lat * 1000) / 1000
+    lon1 = Math.round(location1?.lon * 1000) / 1000
+    lon2 = Math.round(location2?.lon * 1000) / 1000
+    lat1 is lat2 and lon1 is lon2
 
   render: =>
     {currentLoading, places} = @state.getValue()
@@ -73,7 +90,9 @@ module.exports = class NavigateSheet
           .catch -> null
           .then (location) =>
             @model.trip.getMapboxDirectionsByIdAndRouteId(
-              trip.id, tripRoute.routeId, {location}
+              # don't use location here. ideally user is on route.
+              # if not, it'll update as off-route
+              trip.id, tripRoute.routeId#, {location}
             ).take(1).subscribe (directions) =>
               Promise.all [
                 @model.portal.call 'mapbox.setup', {}
@@ -85,7 +104,11 @@ module.exports = class NavigateSheet
                     catch
                       {}
                     if ev is 'offRoute'
+                      @currentNavigationRouteId = tripRoute.routeId
                       @_reroute(trip.id, tripRoute.routeId, data)
+                    else if ev in ['navigationCancel', 'navigationFinished']
+                      @lastLocation = null
+                      @currentNavigationRouteId = null
               ]
               .then =>
                 @model.portal.call 'mapbox.navigate', {

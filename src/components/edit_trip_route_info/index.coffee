@@ -115,6 +115,9 @@ module.exports = class EditTripRouteInfo
       routes: routes
     }
 
+  beforeUnmount: =>
+    @isEditingRoute.next false
+
   render: =>
     {start, end, isEditingRoute, trip, tripRoute, routes, isOpen, isSaving
       avoidHighways, useTruckRoute, waypoints} = @state.getValue()

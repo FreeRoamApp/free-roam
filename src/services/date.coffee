@@ -63,10 +63,7 @@ class DateService
       str = @l.get 'time.dayShorthand'
     return +parseFloat(seconds / divisor).toFixed(precision) + str
 
-  fromNow: (date) =>
-    unless date instanceof Date
-      date = new Date date
-    seconds = Math.abs (Date.now() - date.getTime()) / 1000
+  fromNowSeconds: (seconds) =>
     if isNaN seconds
       '...'
     else if seconds < 30
@@ -81,6 +78,12 @@ class DateService
       return parseInt(seconds / ONE_DAY_S) + @l.get 'time.dayShorthand'
     else
       return parseInt(seconds / ONE_WEEK_S) + @l.get 'time.weekShorthand'
+
+  fromNow: (date) =>
+    unless date instanceof Date
+      date = new Date date
+    seconds = Math.abs (Date.now() - date.getTime()) / 1000
+    @fromNowSeconds seconds
 
   setLocale: (locale) ->
     null

@@ -18,12 +18,14 @@ PushService = require './services/push'
 SemverService = require './services/semver'
 ServiceWorkerService = require './services/service_worker'
 App = require './app'
+RequestDonateDialog = require './components/request_donate_dialog'
 Model = require './models'
 Portal = require './models/portal'
 config = require './config'
 colors = require './colors'
 
 MAX_ERRORS_LOGGED = 5
+MIN_DAYS_FOR_DONATE_DIALOG = 5
 
 ###########
 # LOGGING #
@@ -205,12 +207,18 @@ init = ->
 
   lastVisitDate = model.cookie.get 'lastVisitDate'
   currentDate = DateService.format new Date(), 'yyyy-mm-dd'
+  daysVisited = parseInt model.cookie.get 'daysVisited'
   if lastVisitDate isnt currentDate
-    daysVisited = parseInt model.cookie.get 'daysVisited'
     if isNaN daysVisited
       daysVisited = 0
     model.cookie.set 'lastVisitDate', currentDate
-    model.cookie.set 'daysVisited', daysVisited + 1
+    daysVisited += 1
+    model.cookie.set 'daysVisited', daysVisited
+
+  if daysVisited >= MIN_DAYS_FOR_DONATE_DIALOG and
+      not localStorage.hasSeenRequestDonate
+    model.overlay.open new RequestDonateDialog {model, router}
+
 
   # iOS scrolls past header
   # model.portal.call 'keyboard.disableScroll'

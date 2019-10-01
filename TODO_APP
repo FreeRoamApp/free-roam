@@ -1,11 +1,28 @@
 TODOS:
 
-- turn by turn
+- Seem to only allow 1 reroute
+x Rerouting snack bar
+
+- freeroam navigation USE STOPS
+
+x figure out why detour time is sometimes funky (overlay long by a lot)
+  x think it's calculating w/ diff route
+  x waypoints should be settings (getRoutesByIdAndRouteId), not merged into locations
+
+- getRouteSettings() pass in trip, tripRoute, overrideSettings
+
+- donut shouldn't get set on route settings
+
+x "remove stop" from map
+
+- Ability to edit facilities
+
+x turn by turn
   x req location perm before opening
   x limit 25
   x reroute throttle
   x don't let tap on button twice
-  - routing use current location (and find right spot on route to put at)
+  x routing use current location (and find right spot on route to put at)
   x fix crash when exiting nav, then renaving
 
 
@@ -32,7 +49,6 @@ TODOS:
   x alt routes not showing places along
   x get rid of waypoints on unmount
   x routeinfo loading
-  - "remove stop" from map
   x get rid of 'map' tab
     - make + button more prominent
   - small screen weird scrolling when route info is open
