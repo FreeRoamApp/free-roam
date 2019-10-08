@@ -7,6 +7,7 @@ _isEmpty = require 'lodash/isEmpty'
 Icon = require '../icon'
 SecondaryButton = require '../secondary_button'
 Spinner = require '../spinner'
+Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -37,6 +38,11 @@ module.exports = class ItemProducts
   openAmazon: ({partner, product, item}) =>
     ga? 'send', 'event', 'amazon', item?.slug, product.slug
     affiliateCode = partner?.amazonAffiliateCode or 'freeroamfound-20'
+
+    # TODO: rm when ad grants disabled
+    isNativeApp = Environment.isNativeApp 'freeroam'
+    if affiliateCode is 'freeroamfound-20' and not isNativeApp
+      affiliateCode = null
 
     @model.portal.call 'browser.openWindow', {
       url: if affiliateCode \

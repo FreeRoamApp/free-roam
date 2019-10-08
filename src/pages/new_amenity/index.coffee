@@ -14,8 +14,10 @@ module.exports = class NewAmenityPage
       if center
         coordinates = center.split ','
         {lat: coordinates[0], lng: coordinates[1]}
+    location = requests.map ({req}) ->
+      req.query.location or ''
 
-    @$newAmenity = new NewAmenity {@model, @router, center}
+    @$newAmenity = new NewAmenity {@model, @router, center, location}
 
   getMeta: =>
     {

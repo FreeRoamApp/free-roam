@@ -28,6 +28,10 @@ module.exports = class EditProfileGeneral
       valueStreams: @fields.username.valueStreams
       error: @fields.username.errorSubject
 
+    @$emailInput = new PrimaryInput
+      valueStreams: @fields.email.valueStreams
+      error: @fields.email.errorSubject
+
     @$nameInput = new PrimaryInput
       valueStreams: @fields.name.valueStreams
       error: @fields.name.errorSubject
@@ -56,9 +60,11 @@ module.exports = class EditProfileGeneral
       me: me
       newPassword: @fields.newPassword.valueSubject
       passwordReset: passwordReset
+      isEmailVerificationSent: false
 
   render: =>
-    {me, newPassword, passwordReset, isSaving, isSaved} = @state.getValue()
+    {me, newPassword, passwordReset, isSaving, isSaved,
+      isEmailVerificationSent} = @state.getValue()
 
     z '.z-edit-profile-general',
       z '.g-grid',
@@ -74,6 +80,22 @@ module.exports = class EditProfileGeneral
             z @$usernameInput,
               hintText: @model.l.get 'general.username'
               isFullWidth: false
+
+        z '.section',
+          z '.input',
+            z @$emailInput,
+              hintText: @model.l.get 'general.email'
+              isFullWidth: false
+            if isEmailVerificationSent
+              z '.warning',
+                @model.l.get 'editProfile.verifyEmailSent'
+            else if me?.email and not me?.flags?.isEmailVerified
+              z '.warning', {
+                onclick: =>
+                  @state.set isEmailVerificationSent: true
+                  @model.user.resendVerficationEmail()
+              },
+                @model.l.get 'editProfile.verifyEmail'
 
         z '.section',
           z '.input',

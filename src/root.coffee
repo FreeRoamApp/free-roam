@@ -216,7 +216,8 @@ init = ->
     model.cookie.set 'daysVisited', daysVisited
 
   if daysVisited >= MIN_DAYS_FOR_DONATE_DIALOG and
-      not localStorage.hasSeenRequestDonate
+      not model.cookie.get('hasSeenRequestDonate') and
+      not localStorage.hasSeenRequestDonate # legacy
     model.overlay.open new RequestDonateDialog {model, router}
 
 

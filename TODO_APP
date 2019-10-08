@@ -1,9 +1,25 @@
 TODOS:
 
+- verify that everyone who clicked unsubscribe (analytics) got unsub'd
+
+- trip adding stops routes really weird and makes long route
+  - shows stop on route as 10 hour detour...
+    - think it has to do with saved waypoints and ordering
+  - route from bend to st george, stop at eddie's in burns
+
+- Ability to edit checkin dates from trip map
+
+- newsletter
+  - handle bounces
+  x unsub
+  x From "Austin"
+
 - Seem to only allow 1 reroute
 x Rerouting snack bar
 
 - freeroam navigation USE STOPS
+
+- review title optional? or default to campground name?
 
 x figure out why detour time is sometimes funky (overlay long by a lot)
   x think it's calculating w/ diff route
@@ -29,6 +45,7 @@ x turn by turn
 - add escapees affiliation
   - https://member.escapees.com/benefits/discountparking/discountparkdirectory/
 
+- ability to add multiple carriers to filter
 
 - trip routing
   x don't allow add stop/destination when in editing mode

@@ -109,6 +109,7 @@
   "trips": "/trips",
   "transactions": "/transactions",
   "travelMapScreenshot": "/travel-map-screenshot/:id",
+  "unsubscribeEmail": "/unsubscribe-email/:userId/:token",
   "verifyEmail": "/verify-email/:userId/:token",
   "home": "/",
   "404": "/*"

@@ -11,7 +11,7 @@ module.exports = class RequestDonateDialog
   constructor: ({@model, @router}) ->
     @$dialog = new Dialog {
       onLeave: =>
-        localStorage.hasSeenRequestDonate = '1'
+        @model.cookie.set 'hasSeenRequestDonate', '1'
         @model.overlay.close()
     }
 
@@ -32,7 +32,7 @@ module.exports = class RequestDonateDialog
             colors:
               cText: colors.$bgText54
             onclick: =>
-              localStorage.hasSeenRequestDonate = '1'
+              @model.cookie.set 'hasSeenRequestDonate', '1'
               @model.overlay.close()
           submitButton:
             text: @model.l.get 'requestDonateDialog.donate'
@@ -41,6 +41,6 @@ module.exports = class RequestDonateDialog
               cText: colors.$secondary500
             onclick: =>
               ga? 'send', 'event', 'requestDonateDialog', 'rate'
-              localStorage.hasSeenRequestDonate = '1'
+              @model.cookie.set 'hasSeenRequestDonate', '1'
               @model.overlay.close()
               @router.go 'donate'

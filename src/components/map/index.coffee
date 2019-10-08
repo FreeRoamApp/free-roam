@@ -403,6 +403,11 @@ module.exports = class Map
           trackUserLocation: true
         }), 'bottom-left'
 
+        if @model.window.getBreakpointVal() is 'desktop'
+          @map.addControl new mapboxgl.NavigationControl({
+            showCompass: false
+          }), 'bottom-right'
+
       if @showScale
         @map.addControl new mapboxgl.ScaleControl {
           maxWidth: 100

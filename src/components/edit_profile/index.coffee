@@ -33,6 +33,9 @@ module.exports = class EditProfile
       username:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+      email:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
       name:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
@@ -99,6 +102,7 @@ module.exports = class EditProfile
       isSaving: false
       isSaved: false
       username: @fields.username.valueStreams.switch()
+      email: @fields.email.valueStreams.switch()
       name: @fields.name.valueStreams.switch()
       instagram: @fields.instagram.valueStreams.switch()
       web: @fields.web.valueStreams.switch()
@@ -117,6 +121,9 @@ module.exports = class EditProfile
   resetValueStreams: =>
     @fields.username.valueStreams.next @me.map (me) ->
       me.username or ''
+
+    @fields.email.valueStreams.next @me.map (me) ->
+      me.email or ''
 
     @fields.name.valueStreams.next @me.map (me) ->
       me.name or ''
@@ -149,7 +156,7 @@ module.exports = class EditProfile
         ''
 
   save: =>
-    {avatarImage, username, name, instagram, web, youtube, facebook
+    {avatarImage, username, email, name, instagram, web, youtube, facebook
        newPassword, currentPassword, passwordReset, me, isSaving, group
       bio, occupation, home, startTime} = @state.getValue()
 
@@ -171,6 +178,9 @@ module.exports = class EditProfile
 
       if username and username isnt me?.username
         userDiff.username = username
+
+      if email and email isnt me?.email
+        userDiff.email = email
 
       if name and name isnt me?.name
         userDiff.name = name
@@ -218,6 +228,10 @@ module.exports = class EditProfile
         else if error.info?.field is 'avatarImage'
           @state.set avatarUploadError:
             @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+        else if error.info?.field is 'email'
+          @fields.email.errorSubject.next(
+            @model.l.get(error.info?.langKey) or @model.l.get 'general.error'
+          )
         else
           @fields.username.errorSubject.next(
             @model.l.get(error.info?.langKey) or @model.l.get 'general.error'

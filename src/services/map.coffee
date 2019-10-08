@@ -263,6 +263,7 @@ class MapService
         field: 'affiliations'
         type: 'listBooleanOr'
         items: [
+          {key: 'escapees', label: model.l.get 'affiliation.escapees'}
           {key: 'goodSam', label: model.l.get 'affiliation.goodSam'}
           {
             key: 'passportAmerica'

@@ -7,6 +7,7 @@ Icon = require '../icon'
 SearchInput = require '../search_input'
 Spinner = require '../spinner'
 UiCard = require '../ui_card'
+Environment = require '../../services/environment'
 colors = require '../../colors'
 config = require '../../config'
 
@@ -48,7 +49,11 @@ module.exports = class ProductGuides
           z '.info-card',
             z @$infoCard, {
               $title: @model.l.get 'productGuides.infoCardTitle'
-              $content: @model.l.get 'productGuides.infoCard'
+              $content:
+                if Environment.isNativeApp('freeroam')
+                  @model.l.get 'productGuides.infoCardNative'
+                else
+                  @model.l.get 'productGuides.infoCard'
               submit:
                 text: @model.l.get 'general.gotIt'
                 onclick: =>

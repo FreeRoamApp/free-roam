@@ -102,6 +102,7 @@ Pages =
   TosPage: require './pages/tos'
   TransactionsPage: require './pages/transactions'
   TripPage: require './pages/trip'
+  UnsubscribeEmailPage: require './pages/unsubscribe_email'
   VerifyEmailPage: require './pages/verify_email'
   FourOhFourPage: require './pages/404'
 
@@ -340,6 +341,7 @@ module.exports = class App
     route 'travelMapScreenshot', 'TravelMapScreenshotPage'
     route 'trip', 'TripPage'
     route 'trips', 'TripsPage'
+    route 'unsubscribeEmail', 'UnsubscribeEmailPage'
     route 'verifyEmail', 'VerifyEmailPage'
 
     route '404', 'FourOhFourPage'

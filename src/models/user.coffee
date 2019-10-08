@@ -30,8 +30,14 @@ module.exports = class User
   setPartner: (partner) =>
     @auth.call "#{@namespace}.setPartner", {partner}
 
+  unsubscribeEmail: ({userId, token}) =>
+    @auth.call "#{@namespace}.unsubscribeEmail", {userId, token}
+
   verifyEmail: ({userId, token}) =>
     @auth.call "#{@namespace}.verifyEmail", {userId, token}
+
+  resendVerficationEmail: =>
+    @auth.call "#{@namespace}.resendVerficationEmail", {}
 
   upsert: (userDiff, {file} = {}) =>
     if file

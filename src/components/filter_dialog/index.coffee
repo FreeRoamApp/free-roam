@@ -363,7 +363,7 @@ module.exports = class FilterDialog
         $title: $title
         $content:
           z '.z-filter-dialog_dialog',
-            if @filter.field in ['rigLength', 'crowds', 'roadDifficulty', 'shade', 'safety', 'noise', 'features']
+            if @filter.field in ['maxLength', 'crowds', 'roadDifficulty', 'shade', 'safety', 'noise', 'features']
               z '.warning',
                 @model.l.get 'filterDialog.userInputWarning'
             $content

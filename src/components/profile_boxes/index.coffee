@@ -16,7 +16,6 @@ module.exports = class ProfileActions
     @state = z.state {
       me: @model.user.getMe()
       user
-      hasSeenProfileCard: @model.cookie.get 'hasSeenProfileCard'
       pastTrip: @pastTrip.map (pastTrip) -> pastTrip or false
       reviewCount: user.switchMap (user) =>
         unless user
@@ -25,34 +24,13 @@ module.exports = class ProfileActions
     }
 
   render: =>
-    {me, user, hasSeenProfileCard, pastTrip,
+    {me, user, pastTrip,
       reviewCount} = @state.getValue()
 
     isMe = user and user?.id is me?.id
     pastTripPath = @router.get 'trip', {id: pastTrip?.id}
 
     z '.z-profile-boxes',
-      if isMe and not hasSeenProfileCard
-        z '.info-card',
-          z @$infoCard, {
-            $title: @model.l.get 'profile.infoCardTitle'
-            $content: @model.l.get 'profile.infoCard'
-            cancel:
-              text: @model.l.get 'general.noThanks'
-              onclick: =>
-                @state.set hasSeenProfileCard: true
-                @model.cookie.set 'hasSeenProfileCard', '1'
-            submit:
-              text: @model.l.get 'profile.watchVideo'
-              onclick: =>
-                @model.portal.call 'browser.openWindow', {
-                  url: 'https://youtu.be/Fsw0VbgfB2c'
-                  target: '_system'
-                }
-                @state.set hasSeenProfileCard: true
-                @model.cookie.set 'hasSeenProfileCard', '1'
-          }
-
       z '.g-grid',
         z '.g-cols',
           z '.g-col.g-xs-12.g-md-12',

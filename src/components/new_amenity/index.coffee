@@ -1,5 +1,8 @@
 z = require 'zorium'
+RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
+RxObservable = require('rxjs/Observable').Observable
+require 'rxjs/add/observable/of'
 _filter = require 'lodash/filter'
 _reduce = require 'lodash/reduce'
 _map = require 'lodash/map'
@@ -17,7 +20,7 @@ if window?
   require './index.styl'
 
 module.exports = class NewAmenity
-  constructor: ({@model, @router, center}) ->
+  constructor: ({@model, @router, center, location}) ->
     me = @model.user.getMe()
 
     @$actionBar = new ActionBar {@model}
@@ -28,10 +31,11 @@ module.exports = class NewAmenity
       value: @nameValue
       error: @nameError
 
-    @locationValue = new RxBehaviorSubject ''
+    @locationValueStreams = new RxReplaySubject 1
+    @locationValueStreams.next location
     @locationError = new RxBehaviorSubject null
     @$locationInput = new PrimaryInput
-      value: @locationValue
+      valueStreams: @locationValueStreams
       error: @locationError
 
     @$mapButton = new PrimaryButton()
@@ -64,10 +68,11 @@ module.exports = class NewAmenity
     @state = z.state {
       isLoading: false
       center: center
+      locationValue: @locationValueStreams.switch()
     }
 
   upsert: (e) =>
-    {isLoading} = @state.getValue()
+    {isLoading, locationValue} = @state.getValue()
     unless isLoading
       @state.set isLoading: true
 
@@ -86,7 +91,7 @@ module.exports = class NewAmenity
 
       @model.amenity.upsert {
         name: @nameValue.getValue()
-        location: @locationValue.getValue()
+        location: locationValue
         amenities: amenities
         prices: prices
       }
@@ -140,7 +145,7 @@ module.exports = class NewAmenity
               @model.overlay.open new CoordinatePickerOverlay {
                 @model, @router, center
                 onPick: (location) =>
-                  @locationValue.next(
+                  @locationValueStreams.next RxObservable.of (
                     "#{Math.round(location.location.lat * 10000) / 10000}, " +
                     "#{Math.round(location.location.lon * 10000) / 10000}"
                   )
