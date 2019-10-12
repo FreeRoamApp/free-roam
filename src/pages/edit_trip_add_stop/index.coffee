@@ -59,6 +59,8 @@ module.exports = class EditTripAddStopPage
     isEditingRoute = new RxBehaviorSubject false
     @editRouteWaypoints = new RxBehaviorSubject []
 
+    routeFocus = new RxBehaviorSubject null
+
     routeInfoRoutesStreams = new RxReplaySubject 1
     routes = RxObservable.combineLatest(
       tripAndTripRoute?.map ([trip, tripRoute]) ->
@@ -103,13 +105,14 @@ module.exports = class EditTripAddStopPage
           places
 
       routeInfoDestinationsStreams.switch()
+
+      routeFocus
       (vals...) ->
         _filter [].concat vals...
     )
 
-
     @$editTripRouteInfo = new EditTripRouteInfo {
-      @model, @router, trip, tripRoute, tripAndTripRoute
+      @model, @router, trip, tripRoute, tripAndTripRoute, routeFocus
       routesStreams: routeInfoRoutesStreams
       destinationsStreams: routeInfoDestinationsStreams
       isEditingRoute, @selectedRoute

@@ -78,7 +78,7 @@ module.exports = class ProductGuidesOnboard
           z '.actions',
             z '.action',
               z @$getStartedButton,
-                text: @model.l.get 'productGuidesOnboard.getStarted'
+                text: @model.l.get 'general.getStarted'
                 onclick: =>
                   ga? 'send', 'event', 'guideOnboard', 'start', 'click'
                   @state.set step: 'steps'

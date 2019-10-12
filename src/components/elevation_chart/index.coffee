@@ -4,15 +4,19 @@ _maxBy = require 'lodash/maxBy'
 _minBy = require 'lodash/minBy'
 _max = require 'lodash/max'
 _min = require 'lodash/min'
+_find = require 'lodash/find'
+_reduce = require 'lodash/reduce'
+geodist = require 'geodist'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
+MapService = require '../../services/map'
 colors = require '../../colors'
 
 if window?
   require './index.styl'
 
 module.exports = class ElevationChart
-  constructor: ({@model, routes}) ->
+  constructor: ({@model, routes, @routeFocus}) ->
     @size = new RxBehaviorSubject null
 
     @state = z.state {
@@ -48,11 +52,12 @@ module.exports = class ElevationChart
     elevations = (route1?.elevations or []).concat(route2?.elevations or [])
     minRange = _minBy(elevations, ([range, elevation]) -> range)?[0]
     maxRange = _maxBy(elevations, ([range, elevation]) -> range)?[0]
+    rangeRange = maxRange - minRange
 
     minElevation = _minBy(elevations, ([range, elevation]) -> elevation)?[1]
     maxElevation = _maxBy(elevations, ([range, elevation]) -> elevation)?[1]
     rangeElevation = maxElevation - minElevation
-    {minRange, maxRange, minElevation, maxElevation, rangeElevation}
+    {minRange, maxRange, rangeRange, minElevation, maxElevation, rangeElevation}
 
   getPoints: (route, scale) =>
     {size} = @state.getValue()
@@ -85,6 +90,39 @@ module.exports = class ElevationChart
 
     z '.z-elevation-chart', {
       key: 'elevation-chart'
+      onclick: (e) =>
+        percent = (e.offsetX - padding) / (width - padding * 2)
+        if percent >= 0 and percent <= 1
+          # geodist isn't super accurate for long distances...
+          # but we still use to get elevation
+          rawDistance = percent * scale.rangeRange # memters
+          dist = 0
+          routePoints = MapService.decodePolyline mainRoute.shape
+          # so we just go off of the percent complete through line
+          # this still is somewhat inaccurate...
+          # doesn't grab the exact right coordinates, just ballarpk
+          roughDistance = _reduce routePoints, (sum, point, i) ->
+            if routePoints[i - 1]
+              sum += geodist routePoints[i - 1], point, {unit: 'meters', exact: true}
+            sum
+          , 0
+          distance = percent * roughDistance
+          point = _find routePoints, (point, i) ->
+            if routePoints[i - 1]
+              dist += geodist routePoints[i - 1], point, {unit: 'meters', exact: true}
+            if dist > distance
+              dist = 0
+              return true
+            return false
+          elevation = _find(mainRoute.elevations, ([range, elevation]) ->
+            rawDistance <= range)?[1]
+          @routeFocus.next {
+            icon: 'search'
+            name: elevation or ''
+            location:
+              lat: point[1]
+              lon: point[0]
+          }
       # style:
         # width: "#{width}px"
         # height: "#{height}px"

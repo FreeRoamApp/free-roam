@@ -29,7 +29,7 @@ module.exports = class EditTripRouteInfo
   constructor: (options) ->
     {@model, @router, trip, tripRoute, tripAndTripRoute, waypoints
       routesStreams, destinationsStreams, @isEditingRoute,
-      @selectedRoute} = options
+      @selectedRoute, routeFocus} = options
     # for changing route
     waypoints ?= new RxBehaviorSubject []
 
@@ -84,7 +84,7 @@ module.exports = class EditTripRouteInfo
     @$tabs = new Tabs {@model}
 
     @$editTripRouteInfoElevation = new EditTripRouteInfoElevation {
-      @model, routes
+      @model, routes, routeFocus
     }
 
     @$editTripRouteInfoSettings = new EditTripRouteInfoSettings {

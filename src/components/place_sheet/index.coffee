@@ -8,6 +8,7 @@ _kebabCase = require 'lodash/kebabCase'
 _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
+_find = require 'lodash/find'
 _defaults = require 'lodash/defaults'
 
 Icon = require '../icon'
@@ -40,6 +41,7 @@ module.exports = class PlaceSheet
 
     sheetData = RxObservable.combineLatest(
       @place or RxObservable.of null
+      @model.checkIn.getAll()
       trip or RxObservable.of null
       tripRoute or RxObservable.of null
       isEditingRoute or RxObservable.of null
@@ -51,7 +53,7 @@ module.exports = class PlaceSheet
       isEditingRoute
       isLoadingButtons: []
       isLoadedButtons: []
-      info: sheetData.switchMap ([place, trip, tripRoute, isEditingRoute]) =>
+      info: sheetData.switchMap ([place, checkIns, trip, tripRoute, isEditingRoute]) =>
         if place?.type and not isEditingRoute
           # @model.geocoder.getCoordinateInfoFromLocation place.location
           @model.placeBase.getSheetInfo {
@@ -73,8 +75,11 @@ module.exports = class PlaceSheet
             }, info
         else
           RxObservable.of false
-      buttons: sheetData.map ([place, trip, tripRoute, isEditingRoute]) =>
-        console.log 'place', place
+      buttons: sheetData.map ([place, checkIns, trip, tripRoute, isEditingRoute]) =>
+        isSaved = place and checkIns and _find(checkIns, {
+          status: 'planned', sourceId: place.id
+        }) or false
+
         _filter [
           if isEditingRoute and place?.type is 'coordinate'
             {
@@ -159,6 +164,16 @@ module.exports = class PlaceSheet
                 }
                 Promise.resolve true
             }
+          if trip?.id and place?.number
+            {
+              $icon: new Icon()
+              icon: 'edit'
+              text: @model.l.get 'general.edit'
+              # loadingText: @model.l.get 'general.saving'
+              # loadedText: @model.l.get 'general.saved'
+              onclick: =>
+                @router.goOverlay 'editCheckIn', {id: place.checkInId}
+            }
           if place?.type is 'coordinate'
             {
               $icon: new Icon()
@@ -168,15 +183,6 @@ module.exports = class PlaceSheet
                 MapService.getDirections {
                   location: place.location
                 }, {@model}
-            }
-          if place?.type is 'coordinate'
-            {
-              $icon: new Icon()
-              icon: 'star'
-              text: @model.l.get 'general.save'
-              loadingText: @model.l.get 'general.saving'
-              loadedText: @model.l.get 'general.saved'
-              onclick: @saveCheckIn
             }
           if place?.type in ['campground', 'overnight', 'amenity'] or
               not _isEmpty place?.features
@@ -195,6 +201,21 @@ module.exports = class PlaceSheet
                   @router.goOverlay place.type, {slug: place.slug}, options
                 Promise.resolve null
             }
+          {
+            $icon: new Icon()
+            icon: 'star'
+            text: if isSaved
+              @model.l.get 'general.saved'
+            else
+              @model.l.get 'general.save'
+            loadingText: @model.l.get 'general.saving'
+            loadedText: @model.l.get 'general.saved'
+            onclick: =>
+              if isSaved
+                Promise.resolve null
+              else
+                @saveCheckIn()
+          }
           if place?.type is 'coordinate'
             {
               $icon: new Icon()
@@ -294,7 +315,7 @@ module.exports = class PlaceSheet
               z '.description',
                 place?.description
 
-            if info?.addStopInfo
+            if info?.addStopInfo and not place?.number?
               z '.add-stop-info',
                 z '.from-last-stop',
                   @model.l.get 'placeSheet.fromLastStop', {

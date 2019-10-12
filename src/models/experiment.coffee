@@ -21,9 +21,21 @@ module.exports = class Experiment
 
     ga? 'send', 'event', 'exp', "guidesOnboard:#{expGuidesOnboard}"
 
+    expTripsOnboard = @cookie.get 'exp:tripsOnboard'
+    unless expTripsOnboard
+      rand = Math.random()
+      expTripsOnboard = if rand > 0.5 \
+                         then 'visible'
+                         else 'control'
+      @cookie.set 'exp:tripsOnboard', expTripsOnboard
+
+    ga? 'send', 'event', 'exp', "tripsOnboard:#{expTripsOnboard}"
+
     @experiments =
       default: expDefault
-      guidesOnboard: expGuidesOnboard
+      guidesOnboard: expGuidesOnboard # seems to be doing worse, but leaving
+      tripsOnboard: expTripsOnboard
+
 
   get: (key) =>
     @experiments[key]

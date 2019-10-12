@@ -13,7 +13,7 @@ if window?
   require './index.styl'
 
 module.exports = class EditTripRouteInfoElevation
-  constructor: ({@model, routes}) ->
+  constructor: ({@model, routes, routeFocus}) ->
     @$mainGainIcon = new Icon()
     @$mainLostIcon = new Icon()
     @$altGainIcon = new Icon()
@@ -23,6 +23,7 @@ module.exports = class EditTripRouteInfoElevation
     @$elevationChart = new ElevationChart {
       @model
       routes
+      routeFocus
       size: @model.window.getSize().map ({width}) ->
         {width}
     }

@@ -1,13 +1,30 @@
 TODOS:
 
+- trips landing page
+
+- gas station ugc
+  - frontend
+    - card on dashboard
+  - backend:
+    - rv lanes (gas)
+    - easy entry
+    - has diesel?
+    - price compared to avg
+
+- rv repair w/ reviews
+
 - verify that everyone who clicked unsubscribe (analytics) got unsub'd
 
-- trip adding stops routes really weird and makes long route
-  - shows stop on route as 10 hour detour...
-    - think it has to do with saved waypoints and ordering
-  - route from bend to st george, stop at eddie's in burns
+- freeroam navigation USE STOPS
 
-- Ability to edit checkin dates from trip map
+- elevation chart route focus icon
+
+x trip adding stops routes really weird and makes long route
+  x shows stop on route as 10 hour detour...
+    x think it has to do with saved waypoints and ordering
+  x route from bend to st george, stop at eddie's in burns
+
+x Ability to edit checkin dates from trip map
 
 - newsletter
   - handle bounces
@@ -16,8 +33,6 @@ TODOS:
 
 - Seem to only allow 1 reroute
 x Rerouting snack bar
-
-- freeroam navigation USE STOPS
 
 - review title optional? or default to campground name?
 

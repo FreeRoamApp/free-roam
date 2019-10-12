@@ -315,6 +315,17 @@ card()
   display: block
   background: getColor('$tertiary0')
 
+ul()
+  margin: 0
+  padding-left: 20px
+  text-align: left
+  max-width: 500px
+  margin: 0 auto
+
+  > li
+    margin-top: 8px
+    list-style-type: circle
+
 tooltip(isDark = false)
   if isDark
     bgColor = getColor('$primary500')
