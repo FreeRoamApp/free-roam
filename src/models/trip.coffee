@@ -55,6 +55,7 @@ module.exports = class Trip
     }, {invalidateAll: true}
 
   upsertDestinationById: (id, checkIn) ->
+    ga? 'send', 'event', 'checkIn', 'upsert', 'trip'
     @auth.call "#{@namespace}.upsertDestinationById", {
       id, checkIn
     }, {invalidateAll: true}

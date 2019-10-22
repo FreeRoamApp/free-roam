@@ -1,6 +1,18 @@
 TODOS:
 
-- trips landing page
+- Tractor Supply propane
+
+- are push tokens getting deleted?
+  - does it error if phone is off and error count gets too high??
+  - or is the daily upsert busted?
+  - push tokens worked after force closing app
+  - they also worked after restarting phone
+
+x trips landing page
+
+- dialog to get people to share???
+
+- get more people adding stops (gas stations, etc...) and tweaking route
 
 - gas station ugc
   - frontend
@@ -18,6 +30,8 @@ TODOS:
 - freeroam navigation USE STOPS
 
 - elevation chart route focus icon
+
+- showers: cost, price, time limit, water pressure, hot water, cleanliness, privacy, description
 
 x trip adding stops routes really weird and makes long route
   x shows stop on route as 10 hour detour...

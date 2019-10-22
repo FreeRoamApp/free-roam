@@ -15,6 +15,8 @@ module.exports = class CheckIn
   upsert: (options) =>
     additionalDataStream = new RxReplaySubject()
 
+    ga? 'send', 'event', 'checkIn', 'upsert', 'base'
+
     @auth.call "#{@namespace}.upsert", options, {
       invalidateAll: true
       additionalDataStream: additionalDataStream # stream in results after promise finishes
