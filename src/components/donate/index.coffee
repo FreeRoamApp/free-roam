@@ -9,10 +9,10 @@ module.exports = class Donate
   constructor: ({@model, @router}) ->
     @$donateBox = new DonateBox {@model, @router}
 
-    @state = z.state {}
+    # @state = z.state {}
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     # TODO: json file with vars that are used in stylus and js
     # eg $breakPointLarge

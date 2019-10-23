@@ -18,10 +18,10 @@ module.exports = class HowToGuides
   constructor: ({@model, @router}) ->
     me = @model.user.getMe()
 
-    @state = z.state {}
+    # @state = z.state {}
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     guides = [
       {

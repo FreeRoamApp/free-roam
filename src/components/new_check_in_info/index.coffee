@@ -56,15 +56,13 @@ module.exports = class NewCheckInInfo
         )
     }
 
-    @state = z.state {
-      checkIn: @checkIn
-    }
+    # @state = z.state {}
 
   isCompleted: ->
     true
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     z '.z-edit-check-in',
       z '.g-grid',

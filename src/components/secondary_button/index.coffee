@@ -12,7 +12,7 @@ module.exports = class SecondaryButton extends Button
     z '.z-secondary-button',
       super _defaults opts, {
         isFullWidth: true
-        isRaised: true
+        isRaised: false
         isDark: true
         colors:
           c200: colors.$secondary200

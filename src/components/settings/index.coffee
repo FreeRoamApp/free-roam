@@ -15,10 +15,10 @@ module.exports = class Settings
     @$cacheSizeButton = new FlatButton()
     @$clearCacheButton = new FlatButton()
 
-    @state = z.state {}
+    # @state = z.state {}
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     z '.z-settings',
       z '.g-grid',

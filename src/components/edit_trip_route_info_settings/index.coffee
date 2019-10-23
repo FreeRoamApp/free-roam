@@ -21,12 +21,10 @@ module.exports = class EditTripRouteInfoElevation
     @$isEditingRouteToggle = new Toggle
       isSelected: isEditingRoute
 
-    @state = z.state {
-
-    }
+    # @state = z.state {}
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     z '.z-edit-trip-route-info-settings',
       z '.field',

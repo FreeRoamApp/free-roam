@@ -1,3 +1,7 @@
+- Keep components simple if possible (no state)
+  - Will make it so vdom doesn't need to have unhook fn
+
+
 - DONE Use modularized RxJS
 - DONE, sort of (loading separate file) Figure out a solution to load CSS dynamically and see if it's faster?
 - DONE Make own build of iscroll like iscroll-lite, but with snap

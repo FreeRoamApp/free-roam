@@ -111,7 +111,7 @@ module.exports = class Button
                  else if isDisabled
                  then null
                  else colors.cText
-          lineHeight: "#{heightPx}px"
+          # lineHeight: "#{heightPx}px"
           minHeight: "#{heightPx}px"
       },
         if icon

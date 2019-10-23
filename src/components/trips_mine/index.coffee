@@ -62,24 +62,25 @@ module.exports = class TripsMine
         [
           if not hasSeenInfoCard and @model.experiment.get('tripsOnboard') is 'control'
             z '.info-card',
-              z @$infoCard, {
-                $title: @model.l.get 'profile.infoCardTitle'
-                $content: @model.l.get 'profile.infoCard'
-                cancel:
-                  text: @model.l.get 'general.noThanks'
-                  onclick: =>
-                    @state.set hasSeenInfoCard: true
-                    @model.cookie.set 'hasSeenTripsCard', '1'
-                submit:
-                  text: @model.l.get 'profile.watchVideo'
-                  onclick: =>
-                    @model.portal.call 'browser.openWindow', {
-                      url: 'https://youtu.be/ZYFOXOlOtXQ'
-                      target: '_system'
-                    }
-                    @state.set hasSeenInfoCard: true
-                    @model.cookie.set 'hasSeenTripsCard', '1'
-              }
+              z '.g-grid.overflow-visible',
+                z @$infoCard, {
+                  $title: @model.l.get 'profile.infoCardTitle'
+                  $content: @model.l.get 'profile.infoCard'
+                  cancel:
+                    text: @model.l.get 'general.noThanks'
+                    onclick: =>
+                      @state.set hasSeenInfoCard: true
+                      @model.cookie.set 'hasSeenTripsCard', '1'
+                  submit:
+                    text: @model.l.get 'profile.watchVideo'
+                    onclick: =>
+                      @model.portal.call 'browser.openWindow', {
+                        url: 'https://youtu.be/ZYFOXOlOtXQ'
+                        target: '_system'
+                      }
+                      @state.set hasSeenInfoCard: true
+                      @model.cookie.set 'hasSeenTripsCard', '1'
+                }
           z '.create-button',
             z @$createCustom,
               text: @model.l.get 'tripsMine.createCustom'

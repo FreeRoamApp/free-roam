@@ -1,5 +1,25 @@
 TODOS:
 
+- Reduce bundle size
+  - Chunk components
+  - fingerprintjs = 1.2kb gzip
+  - Lazy load strings??? or most strings?
+  - replace lodash with native fns?
+
+- Performance
+  ** replace iscroll with scroll-snap-type for newer browsers
+
+  - Any optimizations in setting state? takes 34ms for trips page w/ 4 trips
+  - render on trips page takes 130ms...
+    - lots of unhook and destroywidgets called
+    - would it be faster if zorium only added hooks for components w/ beforeunmount?
+      - 120ms -> 70ms from commenting Hook.unhook in thunk
+      - but it's needed for zorium stuff (unsubscribing, etc..)
+    - destroywidgets is called whenever dom element is removed
+      - maybe could optimize in virtual-dom fork, remove widget support (isWidget calls) since we don't use type: 'Widget' often?
+    ** I think most of the slowdown is in the __disposable subscribe and unsubscribe when hooking and unhooking
+    ** Though rm hook.unhook still has big performance gain and I don't think that affects subscribes
+
 - Tractor Supply propane
 
 - are push tokens getting deleted?

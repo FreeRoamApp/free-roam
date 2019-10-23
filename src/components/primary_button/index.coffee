@@ -11,7 +11,7 @@ module.exports = class PrimaryButton extends Button
     z '.z-primary-button',
       super _defaults opts, {
         isFullWidth: true
-        isRaised: true
+        isRaised: false
         isDark: true
         colors:
           c200: colors.$primary500

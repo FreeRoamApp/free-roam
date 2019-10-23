@@ -14,10 +14,10 @@ module.exports = class Preservation
     @$trailsButton = new PrimaryButton()
     @$rulesButton = new PrimaryButton()
 
-    @state = z.state {}
+    # @state = z.state {}
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     z '.z-preservation',
       z '.top',

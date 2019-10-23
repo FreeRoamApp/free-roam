@@ -12,10 +12,10 @@ module.exports = class TripsFollowing
 
     @$tripList = new TripList {@model, @router, trips, cachePrefix: 'follow'}
 
-    @state = z.state {}
+    # @state = z.state {}
 
   render: =>
-    {} = @state.getValue()
+    # {} = @state.getValue()
 
     z '.z-trips-following',
       z @$tripList,
