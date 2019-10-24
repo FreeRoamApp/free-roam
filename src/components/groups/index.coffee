@@ -107,7 +107,7 @@ module.exports = class Groups
       #       z @$unreadInvitesChevronIcon,
       #         icon: 'chevron-right'
       #         isTouchTarget: false
-      #         color: colors.$primary500
+      #         color: colors.$primaryMain
       _map groupTypes, ({title, $groupList}) ->
         [
           z '.title',

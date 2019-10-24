@@ -31,13 +31,13 @@ module.exports = class SnackBar
               z @$actionIcon,
                 icon: data.action.icon
                 isTouchTarget: false
-                color: colors.$primary500
+                color: colors.$primaryMain
                 onclick: data.action.onclick
           else if data?.action?.text
             z '.icon',
               z @$actionButton,
                 text: data.action.text
-                # color: colors.$primary500
+                # color: colors.$primaryMain
                 onclick: data.action.onclick
           z '.icon',
             z @$closeIcon,

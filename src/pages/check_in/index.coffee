@@ -57,14 +57,14 @@ module.exports = class CheckInPage
           checkIn.startTime
         isPrimary: true
         $topLeftButton: z @$buttonBack, {
-          color: colors.$primary500Text
+          color: colors.$primaryMainText
         }
         $topRightButton:
           if checkIn?.id and hasEditPermission
             z '.p-new-check-in_top-right',
               z @$editIcon,
                 icon: 'edit'
-                color: colors.$primary500Text
+                color: colors.$primaryMainText
                 hasRipple: true
                 onclick: =>
                   @router.go 'editCheckIn', {
@@ -73,7 +73,7 @@ module.exports = class CheckInPage
 
               z @$deleteIcon,
                 icon: 'delete'
-                color: colors.$primary500Text
+                color: colors.$primaryMainText
                 hasRipple: true
                 onclick: =>
                   if confirm @model.l.get 'general.confirm'

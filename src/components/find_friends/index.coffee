@@ -72,7 +72,7 @@ module.exports = class FindFriends
               icon: 'close'
               isAlignedTop: true
               isAlignedRight: true
-              color: colors.$primary500Text
+              color: colors.$primaryMainText
               onclick: @clear
       z 'form.form',
         onsubmit: (e) ->

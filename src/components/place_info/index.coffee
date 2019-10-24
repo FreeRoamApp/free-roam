@@ -179,7 +179,7 @@ module.exports = class PlaceInfo extends Base
             #   if place?.address?.locality
             #     "#{place.address.locality}, #{place.address.administrativeArea}"
             z '.rating',
-              z @$rating, {size: '20px', color: colors.$secondary500}
+              z @$rating, {size: '20px', color: colors.$secondaryMain}
               z '.rating-text',
                 if place?.rating
                   "#{place?.rating.toFixed(1)}"

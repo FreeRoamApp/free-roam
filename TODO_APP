@@ -1,5 +1,9 @@
 TODOS:
 
+- Rating filter
+
+- Option to hide stop circles (1, 2, 3, ...) on map? As option/setting/toggle? dunno
+
 - Reduce bundle size
   - Chunk components
   - fingerprintjs = 1.2kb gzip
@@ -8,6 +12,11 @@ TODOS:
 
 - Performance
   ** replace iscroll with scroll-snap-type for newer browsers
+    - can't yet
+
+  ** should only load the adjacent tabs to current one
+    - or even no tabs until swiped in
+    - social page is slow because of this (when logged in as austin)
 
   - Any optimizations in setting state? takes 34ms for trips page w/ 4 trips
   - render on trips page takes 130ms...

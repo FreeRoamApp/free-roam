@@ -122,7 +122,7 @@ module.exports = class Head
         icon: undefined
 
       canonical: "https://#{config.HOST}#{path or ''}"
-      themeColor: colors.getRawColor colors.$primary500
+      themeColor: colors.getRawColor colors.$primaryMain
       # reccomended 32 x 32 png
       favicon: config.CDN_URL + '/favicon.png'
       manifestUrl: '/manifest.json'

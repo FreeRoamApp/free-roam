@@ -62,7 +62,7 @@ module.exports = class ItemPage extends BasePage
         title: item?.name
         isFlat: true
         isPrimary: true
-        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
+        $topLeftButton: z @$buttonBack, {color: colors.$primaryMainText}
       }
       z @$tabs,
         isBarFixed: false

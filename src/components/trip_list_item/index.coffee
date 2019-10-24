@@ -79,4 +79,4 @@ module.exports = class TripListItem
             z @$selectedIcon,
               icon: 'check'
               isTouchTarget: false
-              color: colors.$secondary500
+              color: colors.$secondaryMain

@@ -44,7 +44,7 @@ module.exports = class DonatePage
               onclick: =>
                 @router.go 'transactions'
               colors:
-                cText: colors.$secondary500
+                cText: colors.$secondaryMain
               text: @model.l.get 'general.transactions'
             }
       }

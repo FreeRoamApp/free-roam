@@ -85,7 +85,7 @@ module.exports = class GroupInfo extends Base
                 z @$datesIcon,
                   icon: 'clock'
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
               z '.text',
                 "#{group?.startTime} - #{group?.endTime}"
 
@@ -95,7 +95,7 @@ module.exports = class GroupInfo extends Base
                 z @$locationIcon,
                   icon: 'location'
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
               z '.text',
                 @model.placeBase.getLocation group
 
@@ -105,7 +105,7 @@ module.exports = class GroupInfo extends Base
                 z @$priceIcon,
                   icon: 'usd'
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
               z '.text',
                 price
 
@@ -117,7 +117,7 @@ module.exports = class GroupInfo extends Base
                 z @$webIcon,
                   icon: 'web'
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
               z '.text',
                 group?.contact?.website
 

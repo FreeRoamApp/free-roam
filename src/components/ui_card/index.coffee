@@ -49,4 +49,4 @@ module.exports = class UiCard
               isFullWidth: false
               onclick: submit.onclick
               colors:
-                cText: colors.$primary500
+                cText: colors.$primaryMain

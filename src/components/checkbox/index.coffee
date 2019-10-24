@@ -30,7 +30,7 @@ module.exports = class Checkbox
     {value} = @state.getValue()
 
     colors = _defaults colors or {}, {
-      checked: allColors.$primary500
+      checked: allColors.$primaryMain
       checkedBorder: allColors.$primary900
       border: allColors.$bgText26
       background: allColors.$tertiary0
@@ -59,5 +59,5 @@ module.exports = class Checkbox
         z @$icon,
           icon: 'check'
           isTouchTarget: false
-          color: allColors.$primary500Text
+          color: allColors.$primaryMainText
           size: '16px'

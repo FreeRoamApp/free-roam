@@ -116,7 +116,7 @@ module.exports = class PlaceInfoActionBox
             z @$directionsIcon,
               icon: 'directions'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.text', @model.l.get 'general.directions'
 
         z '.action', {
@@ -133,7 +133,7 @@ module.exports = class PlaceInfoActionBox
             z @$shareIcon,
               icon: 'share'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.text', @model.l.get 'general.share'
 
         if place?.type isnt 'amenity'
@@ -151,8 +151,8 @@ module.exports = class PlaceInfoActionBox
                   icon: 'add'
                   isTouchTarget: false
                   color: if visitedCheckIn \
-                         then colors.$primary500Text
-                         else colors.$primary500
+                         then colors.$primaryMainText
+                         else colors.$primaryMain
               z '.text',
                 if visitedSaving then @model.l.get 'general.saving'
                 else if visitedCheckIn then @model.l.get 'placeInfo.checkedIn'
@@ -170,8 +170,8 @@ module.exports = class PlaceInfoActionBox
         #       icon: 'star'
         #       isTouchTarget: false
         #       color: if plannedCheckIn \
-        #              then colors.$primary500Text
-        #              else colors.$primary500
+        #              then colors.$primaryMainText
+        #              else colors.$primaryMain
         #   z '.text',
         #     if plannedSaving then @model.l.get 'general.saving'
         #     else if plannedCheckIn then @model.l.get 'general.saved'

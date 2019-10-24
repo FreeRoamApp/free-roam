@@ -14,9 +14,9 @@ module.exports = class PrimaryButton extends Button
         isRaised: false
         isDark: true
         colors:
-          c200: colors.$primary500
-          c500: colors.$primary500
+          c200: colors.$primaryMain
+          c500: colors.$primaryMain
           c600: colors.$primary400
           c700: colors.$primary400
-          ink: colors.$primary500Text
+          ink: colors.$primaryMainText
       }

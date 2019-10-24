@@ -86,7 +86,7 @@ module.exports = class ThreadListItem
               icon: 'text'
               size: '30px'
               isTouchTarget: false
-              color: colors.$primary500Text
+              color: colors.$primaryMainText
         z '.info',
           z '.title', thread?.title
           z '.bottom',

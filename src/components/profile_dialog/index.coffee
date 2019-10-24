@@ -421,7 +421,7 @@ module.exports = class ProfileDialog
         z '.icon',
           z $icon, {
             icon: icon
-            color: colors.$primary500
+            color: colors.$primaryMain
             isTouchTarget: false
           }
         z '.text', text
@@ -474,13 +474,13 @@ module.exports = class ProfileDialog
                         icon: type
                         size: '18px'
                         isTouchTarget: false
-                        color: colors.$primary500
+                        color: colors.$primaryMain
                       }
               z '.close',
                 z '.icon',
                   z @$closeIcon,
                     icon: 'close'
-                    color: colors.$primary500
+                    color: colors.$primaryMain
                     isAlignedTop: true
                     isAlignedRight: true
                     onclick: =>

@@ -136,5 +136,5 @@ module.exports = class GroupSettings
                 z $icon,
                   icon: icon
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
               z '.text', text

@@ -49,7 +49,7 @@ module.exports = class Author
         z '.icon',
           z @$karmaIcon,
             icon: 'karma'
-            color: colors.$secondary500
+            color: colors.$secondaryMain
             isTouchTarget: false
             size: '14px'
         z '.text', user?.karma or 0

@@ -67,7 +67,7 @@ module.exports = class Donate
                 icon: 'check'
                 isTouchTarget: false
                 size: '52px'
-                color: colors.$primary500
+                color: colors.$primaryMain
             z '.title', @model.l.get 'donate.thanks', {
               replacements:
                 name: @model.user.getDisplayName(me)

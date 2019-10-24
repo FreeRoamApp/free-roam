@@ -28,11 +28,11 @@ module.exports = class ActionBar
     }
 
     if isPrimary
-      color = colors.$primary500Text
-      bgColor = colors.$primary500
+      color = colors.$primaryMainText
+      bgColor = colors.$primaryMain
     else if isSecondary
-      color = colors.$secondary500Text
-      bgColor = colors.$secondary500
+      color = colors.$secondaryMainText
+      bgColor = colors.$secondaryMain
     else
       color = colors.$header500Icon
       bgColor = colors.$header500

@@ -57,17 +57,17 @@ module.exports = class Dialog
                 className: z.classKebab {isFullWidth: cancelButton.isFullWidth}
               },
                 z @$cancelButton, _defaults cancelButton, {
-                  colors: {cText: colors.$primary500}
+                  colors: {cText: colors.$primaryMain}
                 }
             if resetButton
               z '.action', {
                 className: z.classKebab {isFullWidth: resetButton.isFullWidth}
               },
                 z @$resetButton, _defaults resetButton, {
-                  colors: {cText: colors.$primary500}
+                  colors: {cText: colors.$primaryMain}
                 }
             if submitButton
               z '.action',
                 z @$submitButton, _defaults submitButton, {
-                  colors: {cText: colors.$primary500}
+                  colors: {cText: colors.$primaryMain}
                 }

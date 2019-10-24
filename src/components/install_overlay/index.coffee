@@ -23,7 +23,7 @@ module.exports = class InstallOverlay
             z '.icon',
               z @$overflowIcon,
                 icon: 'overflow'
-                color: colors.$primary500Text
+                color: colors.$primaryMainText
                 isTouchTarget: false
           z '.instructions',
             @model.l.get 'installOverlay.instructions'

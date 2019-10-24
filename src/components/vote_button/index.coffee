@@ -27,7 +27,7 @@ module.exports = class VoteButton
         size: size
         isTouchTarget: isTouchTarget
         color: if hasVoted \
-               then colors.$primary500
+               then colors.$primaryMain
                else color
         onclick: (e) =>
           e?.stopPropagation()

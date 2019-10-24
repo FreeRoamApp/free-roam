@@ -337,7 +337,7 @@ module.exports = class Map
       source: 'fill'
       layout: {}
       paint:
-        'fill-color': colors.getRawColor colors.$primary500
+        'fill-color': colors.getRawColor colors.$primaryMain
         'fill-opacity': 0.1
     }
 

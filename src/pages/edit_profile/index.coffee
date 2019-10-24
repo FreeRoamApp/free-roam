@@ -36,7 +36,7 @@ module.exports = class EditProfilePage
       z @$appBar, {
         title: @model.l.get 'editProfilePage.title'
         isPrimary: true
-        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
+        $topLeftButton: z @$buttonBack, {color: colors.$primaryMainText}
         $topRightButton: z '.p-edit-profile_top-right', {
           onclick: =>
             @state.set isSaving: true

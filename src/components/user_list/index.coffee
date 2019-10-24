@@ -76,5 +76,5 @@ module.exports = class UserList
                     icon: 'karma'
                     size: '18px'
                     isTouchTarget: false
-                    color: colors.$secondary500
+                    color: colors.$secondaryMain
                 user.userInfo.karma

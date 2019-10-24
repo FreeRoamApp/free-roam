@@ -120,6 +120,6 @@ module.exports = class BottomBar
           z '.icon',
             z $icon,
               icon: icon
-              color: if isSelected then colors.$primary500 else colors.$bgText54
+              color: if isSelected then colors.$primaryMain else colors.$bgText54
               isTouchTarget: false
           z '.text', text

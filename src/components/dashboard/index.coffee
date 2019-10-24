@@ -181,7 +181,7 @@ module.exports = class Dashboard
                       icon: 'marker-outline'
                       isFullWidth: false
                       colors:
-                        cText: colors.$primary500Text
+                        cText: colors.$primaryMainText
                       onclick: =>
                         getLocationPromise = MapService.getLocation {@model}
                         @locationStreams.next RxObservable.fromPromise(

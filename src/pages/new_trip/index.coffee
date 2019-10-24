@@ -29,6 +29,6 @@ module.exports = class NewTripPage
       z @$appBar, {
         title: @model.l.get 'newTripPage.title'
         isPrimary: true
-        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
+        $topLeftButton: z @$buttonBack, {color: colors.$primaryMainText}
       }
       @$newTrip

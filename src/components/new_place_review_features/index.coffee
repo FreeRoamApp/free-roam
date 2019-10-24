@@ -82,6 +82,6 @@ module.exports = class PlaceNewReviewFeatures
                   isTouchTarget: false
                   size: '16px'
                   color: if isSelected \
-                         then colors.$secondary500Text
-                         else colors.$secondary500
+                         then colors.$secondaryMainText
+                         else colors.$secondaryMain
               @model.l.get "feature.#{feature}"

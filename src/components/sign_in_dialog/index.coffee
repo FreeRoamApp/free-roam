@@ -204,7 +204,7 @@ module.exports = class SignInDialog
                           then @model.l.get 'signInDialog.createAccount'
                           else @model.l.get 'general.signIn'
                     colors:
-                      cText: colors.$primary500
+                      cText: colors.$primaryMain
                     onclick: (e) =>
                       if data is 'reset'
                         @reset e

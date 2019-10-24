@@ -27,7 +27,7 @@ module.exports = class SocialPage
     @selectedIndex = new RxBehaviorSubject 0
 
     @$appBar = new AppBar {@model}
-    @$tabs = new Tabs {@model, @selectedIndex}
+    @$tabs = new Tabs {@model, @selectedIndex, deferTabLoads: true}
     @$buttonMenu = new ButtonMenu {@model, @router}
     @$notificationsIcon = new Icon()
     @$groupsIcon = new Icon()
@@ -79,7 +79,7 @@ module.exports = class SocialPage
           z @$notificationsIcon,
             icon: 'notifications'
             color: if unreadNotifications \
-                   then colors.$primary500
+                   then colors.$primaryMain
                    else colors.$bgText54
             onclick: =>
               @router.go 'notifications'

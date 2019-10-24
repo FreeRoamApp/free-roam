@@ -89,7 +89,7 @@ module.exports = class PlacePage extends BasePage
         isSecondary: Boolean tripId
         $topLeftButton: z @$buttonBack, {
           color: if tripId \
-                 then colors.$secondary500Text
+                 then colors.$secondaryMainText
                  else colors.$header500Icon
         }
         $topRightButton:

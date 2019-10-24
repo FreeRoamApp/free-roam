@@ -30,7 +30,7 @@ module.exports = class Sheet
                 z '.icon',
                   z @$icon,
                     icon: icon
-                    color: colors.$primary500
+                    color: colors.$primaryMain
                     isTouchTarget: false
                 z '.message', message
               z '.actions',
@@ -41,6 +41,6 @@ module.exports = class Sheet
                     @model.overlay.close()
                 z @$submitButton, _defaults submitButton, {
                   isFullWidth: false
-                  colors: {cText: colors.$primary500}
+                  colors: {cText: colors.$primaryMain}
                 }
             ]

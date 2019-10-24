@@ -67,7 +67,7 @@ module.exports = class Policies
                 z $icon,
                   icon: 'expand-more'
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
             z '.content', {className: z.classKebab {isVisible}},
               $content
         ]

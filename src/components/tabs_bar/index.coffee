@@ -32,16 +32,16 @@ module.exports = class TabsBar
       isFlat, isArrow, tabWidth} = props
     {selectedIndex} = @state.getValue()
 
-    bgColor ?= if isPrimary then colors.$primary500 else colors.$tertiary0
+    bgColor ?= if isPrimary then colors.$primaryMain else colors.$tertiary0
     inactiveColor ?= if isPrimary \
-                     then colors.$primary500Text54
+                     then colors.$primaryMainText54
                      else colors.$bgText54
     color ?= if isPrimary \
-             then colors.$primary500Text
+             then colors.$primaryMainText
              else colors.$bgText
     underlineColor ?= if isPrimary \
-                      then colors.$primary500Text
-                      else colors.$primary500
+                      then colors.$primaryMainText
+                      else colors.$primaryMain
 
     isFullWidth = not tabWidth
 

@@ -149,7 +149,7 @@ module.exports = class NewTrip
                       z @$editIcon,
                         icon: 'edit'
                         isTouchTarget: false
-                        color: colors.$secondary500
+                        color: colors.$secondaryMain
                         size: '18px'
                       z '.upload-overlay',
                         z @$uploadOverlay,

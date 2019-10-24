@@ -95,7 +95,7 @@ module.exports = class Textarea
     colors = _defaults colors, {
       c500: allColors.$bgText54
       background: allColors.$bgText12
-      underline: allColors.$primary500
+      underline: allColors.$primaryMain
     }
     hintText ?= ''
     type ?= 'text'

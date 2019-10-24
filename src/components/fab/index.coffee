@@ -19,11 +19,11 @@ module.exports = class Fab
     sizePx ?= 56
 
     colors = _defaults colors, {
-      c500: if isPrimary then allColors.$primary500 \
-            else if isSecondary then allColors.$secondary500
+      c500: if isPrimary then allColors.$primaryMain \
+            else if isSecondary then allColors.$secondaryMain
             else allColors.$white
-      cText: if isPrimary then allColors.$primary500Text \
-            else if isSecondary then allColors.$secondary500Text
+      cText: if isPrimary then allColors.$primaryMainText \
+            else if isSecondary then allColors.$secondaryMainText
             else allColors.$bgText87
       ripple: allColors.$white
     }

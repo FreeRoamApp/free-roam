@@ -51,7 +51,7 @@ module.exports = class EditProfileAbout
             z @$occupationIcon,
               icon: 'work'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$occupationInput,
               hintText: @model.l.get 'editProfile.occupation'
@@ -62,7 +62,7 @@ module.exports = class EditProfileAbout
             z @$homeIcon,
               icon: 'home'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$homeInput,
               hintText: @model.l.get 'editProfile.home'
@@ -73,7 +73,7 @@ module.exports = class EditProfileAbout
             z @$startTimeIcon,
               icon: 'flag'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$startTimeInput,
               hintText: @model.l.get 'editProfile.startTime'

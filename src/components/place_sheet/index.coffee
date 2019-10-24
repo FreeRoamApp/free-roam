@@ -339,7 +339,7 @@ module.exports = class PlaceSheet
             if place?.rating?
               [
                 z '.rating',
-                  z @$rating, {size: '16px', color: colors.$secondary500}
+                  z @$rating, {size: '16px', color: colors.$secondaryMain}
                 z '.rating-text',
                   if place?.rating
                     "#{place?.rating.toFixed(1)}"
@@ -375,7 +375,7 @@ module.exports = class PlaceSheet
                   icon: button.icon
                   size: '18px'
                   isTouchTarget: false
-                  color: colors.$primary500
+                  color: colors.$primaryMain
               z '.text',
                 if isLoading and button.loadingText
                 then button.loadingText

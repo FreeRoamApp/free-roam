@@ -212,7 +212,7 @@ module.exports = class GroupUserSettingsDialog
                           z $icon,
                             icon: icon
                             isTouchTarget: false
-                            color: colors.$primary500
+                            color: colors.$primaryMain
                       z '.text', text
 
             z '.title', @model.l.get 'groupSettings.groupNotifications'

@@ -60,7 +60,7 @@ module.exports = class Notifications
                   icon: @model.notification.ICON_MAP[notification.data.type] or
                           'off-topic'
                   color: if isUnread \
-                         then colors.$secondary500
+                         then colors.$secondaryMain
                          else colors.$tertiary500
                   isTouchTarget: false
               z '.right',

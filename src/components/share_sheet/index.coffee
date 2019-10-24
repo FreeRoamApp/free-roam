@@ -60,7 +60,7 @@ module.exports = class ShareSheet
         text: 'Other...'
         $icon: z @$shareAnyIcon,
           icon: 'share'
-          color: colors.$primary500
+          color: colors.$primaryMain
           isTouchTarget: false
 
     z '.z-share-sheet', {

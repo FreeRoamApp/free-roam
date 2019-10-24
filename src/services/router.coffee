@@ -5,6 +5,7 @@ _defaults = require 'lodash/defaults'
 _forEach = require 'lodash/forEach'
 _reduce = require 'lodash/reduce'
 _kebabCase = require 'lodash/kebabCase'
+_last = require 'lodash/last'
 RxObservable = require('rxjs/Observable').Observable
 Environment = require '../services/environment'
 
@@ -42,7 +43,7 @@ class RouterService
     unless ignoreHistory
       @history.push(path or window?.location.pathname)
 
-    if @history[0] is '/' or @history[0] is @get('home') or reset
+    if @history[0] is '/' or @history[0] is @get('places') or reset
       @history = [path]
 
     if path
@@ -120,9 +121,7 @@ class RouterService
       return fn
     if @model.drawer.isOpen().getValue()
       return @model.drawer.close()
-    if @history.length is 1 and fromNative and (
-      @history[0] is '/' or @history[0] is @get 'home'
-    )
+    if fromNative and _last(@history) is @get 'home'
       @model.portal.call 'app.exit'
     else if @history.length > 1 and window.history.length > 0
       window.history.back()

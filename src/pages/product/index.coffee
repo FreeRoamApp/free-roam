@@ -37,6 +37,6 @@ module.exports = class ProductPage
       z @$appBar, {
         title: product?.item?.name
         isPrimary: true
-        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
+        $topLeftButton: z @$buttonBack, {color: colors.$primaryMainText}
       }
       @$product

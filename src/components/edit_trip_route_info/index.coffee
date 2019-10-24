@@ -64,7 +64,7 @@ module.exports = class EditTripRouteInfo
           geojson: MapService.decodePolyline shape
           color:
             if i is 0
-            then colors.getRawColor(colors.$secondary500)
+            then colors.getRawColor(colors.$secondaryMain)
             else colors.getRawColor(colors.$grey500)
         }
       routes.reverse()
@@ -152,14 +152,14 @@ module.exports = class EditTripRouteInfo
               isTouchTarget: false
               color: if isOpen \
                      then colors.$bgText54
-                     else colors.$primary500Text
+                     else colors.$primaryMainText
           z '.close-icon',
             z @$headerCloseIcon,
              icon: 'close'
              isTouchTarget: false
              color: if isOpen \
                     then colors.$bgText54
-                    else colors.$primary500Text
+                    else colors.$primaryMainText
              onclick: (e) =>
                e?.stopPropagation()
                @selectedRoute.next null

@@ -25,7 +25,7 @@ module.exports = class PlaceInfoContact
           z @$locationIcon,
             icon: 'location'
             isTouchTarget: false
-            color: colors.$secondary500
+            color: colors.$secondaryMain
             size: '16px'
 
         z '.text',
@@ -42,7 +42,7 @@ module.exports = class PlaceInfoContact
             z @$phoneIcon,
               icon: 'phone'
               isTouchTarget: false
-              color: colors.$secondary500
+              color: colors.$secondaryMain
               size: '16px'
           z '.text', phone
       if place?.contact?.website
@@ -51,7 +51,7 @@ module.exports = class PlaceInfoContact
             z @$websiteIcon,
               icon: 'web'
               isTouchTarget: false
-              color: colors.$secondary500
+              color: colors.$secondaryMain
               size: '16px'
           z '.text',
             @router.link z 'a', {

@@ -225,7 +225,7 @@ module.exports = class Profile extends Base
                   z @$karmaIcon,
                     icon: 'karma'
                     isTouchTarget: false
-                    color: colors.$secondary500
+                    color: colors.$secondaryMain
                     size: '18px'
                 user?.karma or 0
               z '.name',

@@ -1,3 +1,15 @@
+###
+
+Work-in-progress...
+
+Has its advantages over iscroll, but not smooth enough right now.
+
+Trying to swipe twice in a row causes page to freeze mid-scroll
+
+
+###
+
+
 z = require 'zorium'
 _map = require 'lodash/map'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
@@ -13,7 +25,7 @@ TRANSITION_TIME_MS = 500 # 0.5s
 module.exports = class Tabs
   constructor: (options) ->
     {@model, @selectedIndex, @isPageScrolling, hideTabBar,
-      @disableDeceleration, @deferTabLoads} = options
+      @disableDeceleration} = options
     @selectedIndex ?= new RxBehaviorSubject 0
     @isPageScrolling ?= new RxBehaviorSubject false
     @mountDisposable = null
@@ -22,8 +34,6 @@ module.exports = class Tabs
     @transformProperty = @model.window.getTransformProperty()
     @transitionTime = TRANSITION_TIME_MS
 
-    @loadedIndices = []
-
     @$tabsBar = new TabsBar {@model, @selectedIndex}
 
     @state = z.state
@@ -31,18 +41,17 @@ module.exports = class Tabs
       hideTabBar: hideTabBar
       windowSize: @model.window.getSize()
 
-  afterMount: (@$$el) =>
-    checkIsReady = =>
-      $$container = @$$el?.querySelector('.z-tabs > .content > .tabs-scroller')
-      if $$container and $$container.clientWidth
-        @initIScroll $$container
-      else
-        setTimeout checkIsReady, 1000
-
-    checkIsReady()
+  # afterMount: (@$$el) =>
+  #   checkIsReady = =>
+  #     $$container = @$$el?.querySelector('.z-tabs > .content > .tabs-scroller')
+  #     if $$container and $$container.clientWidth
+  #       @initIScroll $$container
+  #     else
+  #       setTimeout checkIsReady, 1000
+  #
+  #   checkIsReady()
 
   beforeUnmount: (keepEl = false) =>
-    @loadedIndices = []
     @mountDisposable?.unsubscribe()
     @iScrollContainer?.destroy()
     # @$$el?.removeEventListener 'touchstart', @onTouchStart
@@ -122,7 +131,6 @@ module.exports = class Tabs
         @selectedIndex.next newIndex
 
     @mountDisposable = @selectedIndex.do((index) =>
-      @loadedIndices.push index
       if @iScrollContainer.pages?[index]
         @iScrollContainer.goToPage index, 0, @transitionTime
       unless hideTabBar
@@ -151,7 +159,7 @@ module.exports = class Tabs
     isBarFixed ?= true
     isBarFlat ?= true
 
-    z '.z-tabs', {
+    z '.z-tabs-new', {
       className: z.classKebab {isBarFixed}
       key: vDomKey
       style:
@@ -176,7 +184,7 @@ module.exports = class Tabs
         },
           z '.tabs', {
             style:
-              minWidth: "#{(100 * tabs.length)}%"
+              # minWidth: "#{(100 * tabs.length)}%"
               # v-dom sometimes changes up the DOM node we're using when the
               # page changes, then back to this page. when that happens,
               # translate x is 0 initially even though iscroll might realize
@@ -186,13 +194,9 @@ module.exports = class Tabs
               "#{@transformProperty}": "translate(#{x}px, 0px) translateZ(0px)"
               # webkitTransform: "translate(#{x}px, 0px) translateZ(0px)"
           },
-            _map tabs, ({$el}, i) =>
-              console.log 'def', @deferTabLoads
+            _map tabs, ({$el}, i) ->
               z '.iscroll-tab', {
-                style:
-                  width: "#{(100 / tabs.length)}%"
+                # style:
+                #   width: "#{(100 / tabs.length)}%"
               },
-                if not @deferTabLoads or (
-                  i is selectedIndex or @loadedIndices.indexOf(i) isnt -1
-                )
-                  $el
+                $el

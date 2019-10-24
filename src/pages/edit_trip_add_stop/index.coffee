@@ -175,13 +175,13 @@ module.exports = class EditTripAddStopPage
         isSecondary: true
         $topLeftButton: z @$closeIcon, {
           icon: 'close'
-          color: colors.$secondary500Text
+          color: colors.$secondaryMainText
           onclick: =>
             @router.back()
         }
         $topRightButton: z @$settingsIcon, {
           icon: 'settings'
-          color: colors.$secondary500Text
+          color: colors.$secondaryMainText
           onclick: =>
             @router.goOverlay 'editTripSettings', {
               id: trip?.id

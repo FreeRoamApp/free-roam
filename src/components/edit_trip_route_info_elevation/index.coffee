@@ -47,7 +47,7 @@ module.exports = class EditTripRouteInfoElevation
                 z @$mainGainIcon,
                   icon: 'arrow-up'
                   isTouchTarget: false
-                  color: colors.$secondary500
+                  color: colors.$secondaryMain
               z '.text',
                 "#{mainRoute?.elevationStats.gained} "
                 @model.l.get 'abbr.imperial.foot'
@@ -55,7 +55,7 @@ module.exports = class EditTripRouteInfoElevation
                 z @$mainLostIcon,
                   icon: 'arrow-down'
                   isTouchTarget: false
-                  color: colors.$secondary500
+                  color: colors.$secondaryMain
               z '.text',
                 "#{mainRoute?.elevationStats.lost} "
                 @model.l.get 'abbr.imperial.foot'

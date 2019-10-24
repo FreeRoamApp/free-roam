@@ -89,7 +89,7 @@ module.exports = class ProductGuides
                     z '.chevron',
                       z $chevronIcon,
                         icon: 'chevron-right'
-                        color: colors.$primary500
+                        color: colors.$primaryMain
                         isTouchTarget: false
                   z '.description',
                     category.description.replace /{home}/g, 'RV'

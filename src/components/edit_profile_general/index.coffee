@@ -121,7 +121,7 @@ module.exports = class EditProfileGeneral
             z @$instagramIcon,
               icon: 'instagram'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$instagramInput,
               hintText: @model.l.get 'general.instagram'
@@ -132,7 +132,7 @@ module.exports = class EditProfileGeneral
             z @$youtubeIcon,
               icon: 'youtube'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$youtubeInput,
               hintText: @model.l.get 'general.youtube'
@@ -143,7 +143,7 @@ module.exports = class EditProfileGeneral
             z @$webIcon,
               icon: 'web'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$webInput,
               hintText: @model.l.get 'general.web'
@@ -154,7 +154,7 @@ module.exports = class EditProfileGeneral
             z @$facebookIcon,
               icon: 'facebook'
               isTouchTarget: false
-              color: colors.$primary500
+              color: colors.$primaryMain
           z '.input',
             z @$facebookInput,
               hintText: @model.l.get 'general.facebook'

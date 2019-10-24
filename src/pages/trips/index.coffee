@@ -40,7 +40,7 @@ module.exports = class TripsPage
         title: @model.l.get 'tripsPage.title'
         isFlat: true
         isPrimary: true
-        $topLeftButton: z @$buttonMenu, {color: colors.$primary500Text}
+        $topLeftButton: z @$buttonMenu, {color: colors.$primaryMainText}
       }
       z @$tabs,
         isBarFixed: false

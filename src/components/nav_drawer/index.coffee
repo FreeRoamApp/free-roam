@@ -463,7 +463,7 @@ module.exports = class NavDrawer
                           z $icon,
                             isTouchTarget: false
                             icon: iconName
-                            color: color or colors.$primary500
+                            color: color or colors.$primaryMain
                         title
                         z '.notification', {
                           className: z.classKebab {
@@ -526,5 +526,5 @@ module.exports = class NavDrawer
               #             z @$socialIcon,
               #               icon: 'add'
               #               isTouchTarget: false
-              #               color: colors.$primary500
+              #               color: colors.$primaryMain
               #       ]

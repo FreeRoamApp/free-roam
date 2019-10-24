@@ -43,7 +43,7 @@ module.exports = class RequestRating
             text: @model.l.get 'requestRating.rate'
             isShort: true
             colors:
-              cText: colors.$secondary500
+              cText: colors.$secondaryMain
             onclick: =>
               ga? 'send', 'event', 'requestRating', 'rate'
               localStorage.hasSeenRequestRating = '1'

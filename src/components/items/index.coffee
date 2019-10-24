@@ -93,5 +93,5 @@ module.exports = class Items extends Base
                   z '.chevron',
                     z $chevronIcon,
                       icon: 'chevron-right'
-                      color: colors.$primary500
+                      color: colors.$primaryMain
                       isTouchTarget: false

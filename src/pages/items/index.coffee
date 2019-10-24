@@ -62,6 +62,6 @@ module.exports = class ItemsPage extends Base
       z @$appBar, {
         title: title
         isPrimary: true
-        $topLeftButton: z @$buttonBack, {color: colors.$primary500Text}
+        $topLeftButton: z @$buttonBack, {color: colors.$primaryMainText}
       }
       @$items

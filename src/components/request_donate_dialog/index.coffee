@@ -38,7 +38,7 @@ module.exports = class RequestDonateDialog
             text: @model.l.get 'requestDonateDialog.donate'
             isShort: true
             colors:
-              cText: colors.$secondary500
+              cText: colors.$secondaryMain
             onclick: =>
               ga? 'send', 'event', 'requestDonateDialog', 'rate'
               @model.cookie.set 'hasSeenRequestDonate', '1'

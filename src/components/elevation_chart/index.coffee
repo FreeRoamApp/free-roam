@@ -161,7 +161,7 @@ module.exports = class ElevationChart
             namespace: 'http://www.w3.org/2000/svg'
             attributes:
               fill: 'none'
-              stroke: colors.$secondary500
+              stroke: colors.$secondaryMain
               'stroke-width': 4
               points: points.join ' '
           }
@@ -169,7 +169,7 @@ module.exports = class ElevationChart
           z 'polyline', {
             namespace: 'http://www.w3.org/2000/svg'
             attributes:
-              fill: colors.$secondary500
+              fill: colors.$secondaryMain
               stroke: 'none'
               'fill-opacity': 0.12
               points: points.concat [

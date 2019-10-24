@@ -80,6 +80,6 @@ module.exports = class ChannelDrawer
             #         z @$manageChannelsSettingsIcon,
             #           icon: 'settings'
             #           isTouchTarget: false
-            #           color: colors.$primary500
+            #           color: colors.$primaryMain
             #       z '.text', 'Manage channels'
             #   ]

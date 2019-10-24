@@ -223,7 +223,7 @@ module.exports = class NewPlaceReviewExtras
                     z '.checkbox',
                       z $lteCheckbox, {
                         colors:
-                          checked: colors.$secondary500
+                          checked: colors.$secondaryMain
                           checkedBorder: colors.$secondary900
                       }
                     z '.text',

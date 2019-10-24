@@ -80,7 +80,7 @@ module.exports = class UploadImagesList
               icon: 'photo-add'
               isTouchTarget: false
               size: '32px'
-              color: colors.$primary500Text
+              color: colors.$primaryMainText
           z '.text',
             @model.l.get 'general.add'
 
@@ -144,12 +144,12 @@ module.exports = class UploadImagesList
               style:
                 backgroundImage: "url(#{dataUrl or src})"
                 backgroundColor: if type is 'video'
-                  colors.$secondary500
+                  colors.$secondaryMain
             },
               if type is 'video'
                 z $icon,
                   icon: 'youtube'
-                  color: colors.$secondary500Text
+                  color: colors.$secondaryMainText
             z '.progress',
               z '.bar', {
                 style:

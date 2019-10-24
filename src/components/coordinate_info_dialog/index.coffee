@@ -142,13 +142,13 @@ module.exports = class CoordinateInfoDialog
                             z $downloadIcon,
                               icon: 'download'
                               isTouchTarget: false
-                              color: colors.$primary500
+                              color: colors.$primaryMain
                           if me?.username in ['austin', 'big_boxtruck']
                             z '.map-icon',
                               z $deleteIcon,
                                 icon: 'delete'
                                 isTouchTarget: false
-                                color: colors.$primary500
+                                color: colors.$primaryMain
                                 onclick: (e) =>
                                   e.stopPropagation()
                                   if confirm @model.l.get 'general.confirm'
@@ -157,7 +157,7 @@ module.exports = class CoordinateInfoDialog
                             z $mapIcon,
                               icon: 'map-add'
                               isTouchTarget: false
-                              color: colors.$primary500
+                              color: colors.$primaryMain
 
         cancelButton:
           text: @model.l.get 'general.close'
