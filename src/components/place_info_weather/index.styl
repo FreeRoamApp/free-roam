@@ -4,7 +4,7 @@
   min-height: 300px
 
   > .title
-    font-title()
+    font-subtitle1()
     margin-bottom: 8px
 
   > .tabs
@@ -22,7 +22,7 @@
 
       &.is-selected
         background: getColor('$tertiary200')
-        font-title()
+        font-subtitle1()
 
   > .graph
     width: 100%
@@ -40,7 +40,7 @@
         flex-shrink: 0
 
         > .name
-          font-title()
+          font-subtitle1()
           text-transform: capitalize
           margin-bottom: 8px
 
@@ -87,11 +87,11 @@
           margin-right: 0
 
         > .day-of-week
-          font-title()
+          font-subtitle1()
           text-transform: uppercase
 
         > .date
-          font-caption3()
+          font-caption(true, disabled)
           // margin-bottom: 8px
 
         > .icon
@@ -110,11 +110,11 @@
 
         > .high-low
           > .high
-            font-title()
+            font-subtitle1()
             color: getColor('$red500')
 
           > .low
-            font-title()
+            font-subtitle1()
             color: getColor('$blue500')
 
         > .rain
@@ -128,6 +128,6 @@
                 font-tiny()
 
     > .attribution
-      font-caption3()
+      font-caption(true, disabled)
       display: block
       margin-top: 16px

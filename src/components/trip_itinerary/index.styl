@@ -32,12 +32,12 @@
           margin: 48px auto 0 auto
 
         > .title
-          font-title()
+          font-subtitle1()
           margin-top: 16px
           color: getColor('$primaryMain')
 
         > .description
-          font-body2()
+          font-body1(true, medium)
           margin-top: 8px
 
       > .check-in
@@ -66,7 +66,7 @@
             display: flex
 
             > .date
-              font-caption1()
+              font-caption()
 
           > .place-list-item
             margin-top: 8px
@@ -78,11 +78,11 @@
               display: flex
 
               > .plan-route
-                font-title()
+                font-subtitle1()
                 display: flex
 
               > .travel-time
-                font-caption3()
+                font-caption(true, disabled)
                 margin-left: auto
                 display: flex
                 align-items: center

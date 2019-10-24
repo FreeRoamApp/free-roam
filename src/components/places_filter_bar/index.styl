@@ -20,7 +20,7 @@
     padding-left: 4px
 
     > .show
-      font-caption2(false)
+      font-caption(false)
       cursor: pointer
       // background: getColor('$bg600')
       padding: 0 32px 0 12px
@@ -51,7 +51,7 @@
 
       > .filter
         // TODO: shared with coordinate sheet button, make an fn for this?
-        font-caption2(false)
+        font-caption(false)
         cursor: pointer
         display: inline-block
         background: getColor('$tertiary0')
@@ -101,11 +101,11 @@
       display: block
 
     > .title
-      font-caption3(false)
+      font-caption(false, disabled)(false)
       padding: 8px
 
     > .type
-      font-caption2(false)
+      font-caption(false)
       padding: 6px 8px
       display: flex
       align-items: center

@@ -29,7 +29,7 @@
       color: getColor('$white')
 
   > .warning
-    font-title()
+    font-subtitle1()
     background: getColor('$red500')
     color: getColor('$red500Text')
     padding: 8px
@@ -73,14 +73,14 @@
             margin-left: 8px
 
             > .rating-count
-              font-body2()
+              font-body1(true, medium)
 
       > .right
         margin-left: auto
         text-align: right
 
     > .name
-      font-h1()
+      font-h5()
       margin-bottom: 6px
 
     > .is-overnight-allowed
@@ -128,10 +128,10 @@
       padding: 0 16px
 
       > .title
-        font-title()
+        font-subtitle1()
 
       > .h2
-        font-h2()
+        font-h6()
         margin-bottom: 4px
 
       > .image
@@ -162,11 +162,11 @@
 
           &.is-selected
             background: getColor('$tertiary200')
-            font-title()
+            font-subtitle1()
 
 
       > .title
-        font-title()
+        font-subtitle1()
         margin-bottom: 8px
 
       > .carriers
@@ -174,7 +174,7 @@
         overflow-x: auto
 
         > .carrier
-          font-caption2()
+          font-caption()
           display: inline-block
           text-align: center
           margin-right: 16px
@@ -183,7 +183,7 @@
             margin-right: 0
 
           > .name
-            font-caption3()
+            font-caption(true, disabled)
             margin-top: 4px
 
 

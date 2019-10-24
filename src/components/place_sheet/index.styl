@@ -47,16 +47,16 @@
       > .left
 
         > .title
-          font-h3(false)
+          font-subtitle1(false)
           margin-bottom: 4px
           user-select: all
 
         > .elevation
-          font-caption1(false)
+          font-caption(false)
           margin-bottom: 8px
 
         > .add-stop-info
-          font-body2(false)
+          font-body1(false, medium)(false)
 
       > .right
         margin-left: auto
@@ -67,10 +67,10 @@
           justify-content: flex-end
 
         > .rating-text
-          font-caption1()
+          font-caption()
 
           > .rating-count
-            font-caption2()
+            font-caption()
 
     > .buttons
       display: flex
@@ -80,7 +80,7 @@
 
       > .button
         // TODO: shared with map filter, make an fn for this?
-        font-caption2(false)
+        font-caption(false)
         cursor: pointer
         display: inline-block
         background: getColor('$tertiary0')
@@ -103,7 +103,7 @@
           margin-right: 4px
 
         > .text
-          font-subhead2(false)
+          font-subtitle1(false, medium)
 
     > .local-maps
       border-top: 1px solid getColor('$bgText12')

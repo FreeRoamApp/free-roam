@@ -1,7 +1,7 @@
 @require '../../vars'
 
 .z-input
-  font-input()
+  font-body1(true, medium)
   appearance: none
   min-height: 48px
   display: block
@@ -48,7 +48,7 @@
       background: getColor('$bgText54')
 
   > .error
-    font-caption1()
+    font-caption()
     color: getColor('$red500')
     margin-top: -3px
     position: absolute
@@ -71,7 +71,7 @@
     min-height: 48px
 
     > .hint
-      font-input()
+      font-body1(true, medium)
       color: getColor('$bgText54')
       // transform: translate(16px, 16px)
       transform: translate(0, 16px)

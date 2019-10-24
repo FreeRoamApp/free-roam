@@ -62,62 +62,49 @@ shadow-5()
   transition: box-shadow 0.25s
   box-shadow: 0 17px 17px 0 rgba(0, 0, 0, 0.15), 0 27px 55px 0 rgba(0, 0, 0, 0.3)
 
-font-huge(scale = yes)
-  // font-family: Nunito Sans
+font-h4(scale = yes)
   font-family: Nunito Sans
-  color: getColor('$bgText87')
-  font-weight: 600
-  font-size: 36px
-  line-height: 40px
+  font-size: 36.9px
+  font-weight: normal
+  font-stretch: normal
+  font-style: normal
+  line-height: normal
+  letter-spacing: 0.25px
+  text-align: center
 
-font-display1(scale = yes)
-  // font-family: Nunito Sans
+  // if scale is yes
+  //   @media (min-width: $breakPointLarge)
+  //     font-size: 28px
+
+font-h5(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-weight: 600
   font-size: 26px
-  line-height: 1.2em
-
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 26px
-
-font-display2(scale = yes)
-  // font-family: Nunito Sans
-  font-family: Nunito Sans
-  color: getColor('$primary500')
   font-weight: 600
-  font-size: 26px
-  line-height: 1.2em
-  text-transform: uppercase
+  font-stretch: normal
+  font-style: normal
+  line-height: normal
+  letter-spacing: normal
 
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 28px
+  // if scale is yes
+  //   @media (min-width: $breakPointLarge)
+  //     font-size: 24px
 
-font-h1(scale = yes)
+font-h6(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
+  font-size: 21.7px
   font-weight: 600
-  font-size: 20px
-  line-height: 1.2em
-  // text-transform: uppercase
+  font-stretch: normal
+  font-style: normal
+  line-height: normal
+  letter-spacing: 0.25px
 
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 24px
+  // if scale is yes
+  //   @media (min-width: $breakPointLarge)
+  //     font-size: 20px
 
-font-h2(scale = yes)
-  font-family: Nunito Sans
-  color: getColor('$bgText87')
-  font-weight: 600
-  font-size: 18px
-
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 20px
-
-font-h3(scale = yes)
+font-subtitle1(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
   font-weight: 600
@@ -127,122 +114,121 @@ font-h3(scale = yes)
     @media (min-width: $breakPointLarge)
       font-size: 18px
 
-font-h3m(scale = yes)
-  font-h3(scale)
+font-subtitle1m(scale = yes)
+  font-subtitle1(scale)
   font-weight: 400
-
-font-title(scale = yes)
-  font-family: Nunito Sans
-  color: getColor('$bgText87')
-  font-weight: 600
-  font-size: 14px
-
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 16px
-
-font-title2(scale = yes)
-  font-title(scale)
-  color: getColor('$bgText54')
-
-// TODO: rm all instances / replace with subhead2?
-font-subhead(scale = yes)
-  font-title(scale)
-  font-weight: 600
-  // text-transform: uppercase
-
-font-subhead2(scale = yes)
-  font-family: Nunito Sans
-  color: getColor('$bgText87')
-  font-weight: 600
-  font-size: 12px
-
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 14px
 
 font-button(scale = yes)
   font-family: Nunito Sans
-  font-weight: 600
   color: getColor('$bgText87')
-  line-height: 16px
-  font-size: 14px
-  // text-transform: uppercase
+  font-size: 15.1px
+  font-weight: bold
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.06
+  letter-spacing: 1.25px
+
   if scale is yes
     @media (min-width: $breakPointLarge)
       font-size: 16px
 
-font-button-small(scale = yes)
-  font-button(scale)
-  font-size: 12px
-
-font-body1(scale = yes)
+font-body1(scale = yes, state = high)
   font-family: Nunito Sans
-  font-weight: 400
   color: getColor('$bgText87')
-  line-height: 20px
-  font-size: 14px
-  if scale
-    @media (min-width: $breakPointLarge)
-      font-size: 16px
+  font-size: 17.4px
+  font-weight: normal
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.61
+  letter-spacing: 0.5px
+
+  if state is medium
+    color: getColor('$bgText60')
+  // if scale
+  //   @media (min-width: $breakPointLarge)
+  //     font-size: 16px
 
 font-body2(scale = yes)
-  font-body1()
-  color: getColor('$bgText54')
-
-font-input(scale = yes)
-  font-body1()
-  font-size: 14px
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 14px
-
-font-caption1(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-weight: 400
-  font-size: 12px
+  font-size: 15.2px
+  font-weight: normal
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.32
+  letter-spacing: 0.25px
+
+font-caption(scale = yes, state = disabled) // primary, disabled, italic
+  font-family: Nunito Sans
+  color: getColor('$bgText60')
+  font-size: 13px
+  font-weight: normal
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.23
+  letter-spacing: 0.4px
+
+  if state is italic
+    font-style: italic
+
+  if style is disabled
+    color: getColor('$bgText38')
 
   if scale is yes
     @media (min-width: $breakPointLarge)
       font-size: 14px
 
-font-caption2(scale = yes)
-  font-caption1(scale)
-  color: getColor('$bgText70')
-
-font-caption-bold(scale = yes)
-  font-caption1(scale)
+font-subtitle1(scale = yes, state = high)
+  font-family: Nunito Sans
+  color: getColor('$bgText87')
+  font-size: 17.3px
   font-weight: 600
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.39
+  letter-spacing: 0.15px
 
-font-caption3(scale = yes)
-  font-caption1(scale)
-  color: getColor('$bgText54')
+  if state is medium
+    color: getColor('$bgText60')
 
-font-action(scale = yes)
-  font-caption1(scale)
-  font-style: italic
-  color: getColor('$bgText70')
-
-font-label(scale = yes)
-  font-family: Nunito Sans
-  color: getColor('$primary500')
-  font-weight: 400
-  font-size: 12px
-
-font-tiny(scale = yes)
+font-subtitle2(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-weight: 400
-  font-size: 10px
+  font-size: 15.2px
+  font-weight: 600
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.58
+  letter-spacing: 0.1px
+
+font-overline(scale = yes)
+  font-family: Nunito Sans
+  color: getColor('$bgText87')
+  font-size: 13px
+  font-weight: bold
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.23
+  letter-spacing: 2px
+
+font-micro(scale = yes)
+  font-family: Nunito Sans
+  color: getColor('$bgText87')
+  font-size: 11px
+  font-weight: normal
+  font-stretch: normal
+  font-style: normal
+  line-height: 1.45
+  letter-spacing: 0.34px
 
   if scale is yes
     @media (min-width: $breakPointLarge)
       font-size: 12px
 
-font-micro(scale = yes)
-  font-size: 8px
+// TODO
+font-old-micro(scale = yes)
   font-family: Nunito Sans
+  font-size: 8px
   color: getColor('$bgText54')
   text-transform: uppercase
   font-weight: 400
@@ -440,7 +426,7 @@ tooltip(isDark = false)
     color: color
 
     > .title
-      font-title()
+      font-subtitle1()
       color: color
       padding-right: 24px
       margin-bottom: 8px

@@ -119,7 +119,9 @@ colors = _defaults {
     '--bg-text-6': 'rgba(0, 0, 0, 0.06)'
     '--bg-text-12': materialColors.$black12
     '--bg-text-26': materialColors.$black26
+    '--bg-text-38': 'rgba(0, 0, 0, 0.38)'
     '--bg-text-54': materialColors.$black54
+    '--bg-text-60': 'rgba(0, 0, 0, 0.6)'
     '--bg-text-70': materialColors.$black70
     '--bg-text-87': materialColors.$black87
 
@@ -235,7 +237,9 @@ colors = _defaults {
   '$bgText6': 'var(--bg-text-6)'
   '$bgText12': 'var(--bg-text-12)'
   '$bgText26': 'var(--bg-text-26)'
+  '$bgText38': 'var(--bg-text-38)'
   '$bgText54': 'var(--bg-text-54)'
+  '$bgText60': 'var(--bg-text-60)'
   '$bgText70': 'var(--bg-text-70)'
   '$bgText87': 'var(--bg-text-87)'
 
