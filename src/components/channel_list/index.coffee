@@ -25,7 +25,7 @@ module.exports = class ChannelList extends Base
         _map conversations, (channel) ->
           {
             channel
-            $statusIcon: new Icon()
+            $hashtagIcon: new Icon()
           }
 
   afterMount: (@$$el) =>
@@ -49,7 +49,7 @@ module.exports = class ChannelList extends Base
     {me, conversations, selectedConversationId} = @state.getValue()
 
     z '.z-channel-list',
-      _map conversations, ({channel}) =>
+      _map conversations, ({channel, $hashtagIcon}) =>
         isSelected = selectedConversationId is channel.id
         z '.channel.draggable', {
           className: z.classKebab {isSelected}
@@ -63,7 +63,12 @@ module.exports = class ChannelList extends Base
           onclick: (e) ->
             onclick e, channel
         },
-          z '.hashtag', '#'
+          z '.hashtag',
+            z $hashtagIcon,
+              icon: 'hashtag'
+              color: colors.$primaryMain
+              isTouchTarget: false
+              size: '20px'
           z '.info',
             z '.name',
               channel.data?.name

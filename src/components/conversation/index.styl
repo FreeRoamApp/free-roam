@@ -19,12 +19,12 @@ $zIndexTextarea = 2
     right: 0
     height: 30px
 
-  &.has-bottom-bar
-    > .messages
-      padding-top: 30px + 64px
-
-    > .loading
-      top: 64px
+  // &.has-bottom-bar
+  //   > .messages
+  //     padding-top: 30px + 64px
+  //
+  //   > .loading
+  //     top: 64px
 
   > .messages
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
@@ -45,10 +45,10 @@ $zIndexTextarea = 2
     // margin-bottom: 64px
     width: 100%
     min-width: 0 // fix
-    padding: 8px
+    padding: 8px 0
     box-sizing: border-box
     padding-top: 30px // for loading more indicator
-    margin-bottom: 100px // for bottom input bar
+    margin-bottom: 64px // for bottom input bar
     // padding-bottom: 90px
 
     > .messages-inner
@@ -61,15 +61,16 @@ $zIndexTextarea = 2
         &.is-loaded
           opacity: 1
 
-        > .divider
-          width: 100%
-          height: 1px
-          background: getColor('$bgText12')
-          margin: 0
+        // > .divider
+        //   width: 100%
+        //   height: 1px
+        //   background: getColor('$bgText12')
+        //   margin: 0
 
   > .bottom
     padding: 0 8px 8px 8px
     position: absolute
+    border-top: 1px solid getColor('$bgText12')
     bottom: -1px // fix text showing behind for bottom 1px
     left: 0
     right: 0
@@ -88,12 +89,12 @@ $zIndexTextarea = 2
       cursor: pointer
 
     &.is-gate
-      shadow-1()
+      shadow-upper-1()
       background: getColor('$tertiary0')
       padding: 16px
 
       > .text
-        font-subtitle1()
+        font-body1()
         text-align: center
         margin-bottom: 16px
 

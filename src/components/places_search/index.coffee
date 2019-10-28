@@ -38,15 +38,16 @@ module.exports = class LocationSearch
         RxObservable.of []
     .map (locations) ->
       _map locations, (location) ->
-        $icon = if location.type is 'campground' then new Icon() else null
+        $visitIcon = if location.type is 'campground' then new Icon() else null
         {
           location
-          $icon
+          $icon: new Icon()
+          $visitIcon
         }
 
     @isOpen = new RxBehaviorSubject false
     @$searchInput = new SearchInput {
-      @model, @router, @searchValueStreams, @isOpen
+      @model, @router, @searchValueStreams, isFocused: @isOpen
     }
     @$doneButton = new FlatButton()
     @$tooltip = new TooltipPositioner {
@@ -109,39 +110,39 @@ module.exports = class LocationSearch
         key: 'places-search-overlay'
       },
         z '.overlay-inner',
-          if dataTypes
-            z '.data-types',
-              z '.title', @model.l.get 'placesSearch.dataTypesTitle'
-
-              z '.g-grid',
-                z '.g-cols',
-                _map dataTypes, (type) =>
-                  {dataType, onclick, $checkbox, layer} = type
-                  z '.g-col.g-xs-12.g-md-3',
-                    z 'label.type', {
-                      onclick: ->
-                        ga? 'send', 'event', 'mapSearch', 'dataType', dataType
-                      className: z.classKebab {
-                        "#{dataType}": true
-                      }
-                    },
-                      z '.info',
-                        z '.name', @model.l.get "placeTypes.#{dataType}"
-                        z '.description',
-                          @model.l.get "placeTypes.#{dataType}Description"
-                      z '.checkbox', z $checkbox
-
-              if _isEmpty locations
-                z '.done',
-                  z @$doneButton,
-                    text: @model.l.get 'general.done'
-                    onclick: =>
-                      @isOpen.next false
+        #   if dataTypes
+        #     z '.data-types',
+        #       z '.title', @model.l.get 'placesSearch.dataTypesTitle'
+        #
+        #       z '.g-grid',
+        #         z '.g-cols',
+        #         _map dataTypes, (type) =>
+        #           {dataType, onclick, $checkbox, layer} = type
+        #           z '.g-col.g-xs-12.g-md-3',
+        #             z 'label.type', {
+        #               onclick: ->
+        #                 ga? 'send', 'event', 'mapSearch', 'dataType', dataType
+        #               className: z.classKebab {
+        #                 "#{dataType}": true
+        #               }
+        #             },
+        #               z '.info',
+        #                 z '.name', @model.l.get "placeTypes.#{dataType}"
+        #                 z '.description',
+        #                   @model.l.get "placeTypes.#{dataType}Description"
+        #               z '.checkbox', z $checkbox
+        #
+        #       if _isEmpty locations
+        #         z '.done',
+        #           z @$doneButton,
+        #             text: @model.l.get 'general.done'
+        #             onclick: =>
+        #               @isOpen.next false
 
           if not _isEmpty locations
             z '.locations',
-              z '.title', @model.l.get 'placesSearch.locationsTitle'
-              _map locations, ({location, $icon}) =>
+              # z '.title', @model.l.get 'placesSearch.locationsTitle'
+              _map locations, ({location, $icon, $visitIcon}) =>
                 z '.location', {
                   onclick: =>
                     @model.geocoder.getBoundingFromLocation location.location
@@ -164,26 +165,32 @@ module.exports = class LocationSearch
                     @searchValueStreams.next RxObservable.of location.text
                     @isOpen.next false
                 },
-                  z '.text',
-                    # geocoded locations are 'text', campgrounds are 'name'
-                    location.text or location.name
-                  z '.locality',
-                    if location.locality
-                      [
-                        location.locality
-                        if location.administrativeArea
-                          ", #{location.administrativeArea}"
-                      ]
-                    else
-                      location.administrativeArea
-                  if location.type and @hasDirectPlaceLinks
-                    z '.open',
-                      z $icon,
-                        icon: 'open'
-                        color: colors.$bgText54
-                        isTouchTarget: false
-                        size: '20px'
-                        onclick: =>
-                          @router.go 'campground', {
-                            slug: location.slug
-                          }
+                  z '.icon',
+                    z $icon,
+                      icon: 'location'
+                      color: colors.$bgText54
+                      isTouchTarget: false
+                  z '.content',
+                    z '.text',
+                      # geocoded locations are 'text', campgrounds are 'name'
+                      location.text or location.name
+                    z '.locality',
+                      if location.locality
+                        [
+                          location.locality
+                          if location.administrativeArea
+                            ", #{location.administrativeArea}"
+                        ]
+                      else
+                        location.administrativeArea
+                    if location.type and @hasDirectPlaceLinks
+                      z '.open',
+                        z $visitIcon,
+                          icon: 'open'
+                          color: colors.$bgText54
+                          isTouchTarget: false
+                          size: '20px'
+                          onclick: =>
+                            @router.go 'campground', {
+                              slug: location.slug
+                            }

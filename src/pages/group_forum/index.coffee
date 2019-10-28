@@ -2,7 +2,7 @@ z = require 'zorium'
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 
 AppBar = require '../../components/app_bar'
-ButtonMenu = require '../../components/button_menu'
+ButtonBack = require '../../components/button_back'
 Threads = require '../../components/threads'
 FilterThreadsDialog = require '../../components/filter_threads_dialog'
 Icon = require '../../components/icon'
@@ -15,7 +15,8 @@ if window?
 
 module.exports = class GroupForumPage
   isGroup: true
-  @hasBottomBar: true
+  hideDrawer: true
+
   constructor: ({@model, requests, @router, serverData, group, @$bottomBar}) ->
     @isFilterThreadsDialogVisible = new RxBehaviorSubject false
     filter = new RxBehaviorSubject {
@@ -24,7 +25,7 @@ module.exports = class GroupForumPage
     }
 
     @$appBar = new AppBar {@model}
-    @$buttonMenu = new ButtonMenu {@model}
+    @$buttonBack = new ButtonBack {@model, @router}
     @$fab = new Fab()
     @$addIcon = new Icon()
     @$filterIcon = new Icon()
@@ -50,7 +51,7 @@ module.exports = class GroupForumPage
     z '.p-group-forum',
       z @$appBar, {
         title: @model.l.get 'general.forum'
-        $topLeftButton: z @$buttonMenu, {color: colors.$header500Icon}
+        $topLeftButton: z @$buttonBack, {color: colors.$header500Icon}
         $topRightButton:
           z @$filterIcon,
             color: colors.$header500Icon

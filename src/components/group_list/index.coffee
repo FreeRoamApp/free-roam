@@ -3,21 +3,27 @@ _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 _startCase = require 'lodash/startCase'
 
+Base = require '../base'
 Spinner = require '../spinner'
+FlatButton = require '../flat_button'
 FormatService = require '../../services/format'
 config = require '../../config'
 
 if window?
   require './index.styl'
 
-module.exports = class GroupList
+module.exports = class GroupList extends Base
   constructor: ({@model, @router, groups}) ->
     @$spinner = new Spinner()
     @state = z.state
       me: @model.user.getMe()
       groups: groups.map (groups) =>
         _map groups, (group) =>
-          {group}
+          {
+            group
+            $forumButton: new FlatButton()
+            $chatButton: new FlatButton()
+          }
 
   render: =>
     {groups, me} = @state.getValue()
@@ -33,16 +39,27 @@ module.exports = class GroupList
           ontouchstart: (e) ->
             e.stopPropagation()
         },
-          _map groups, ({group}) =>
+          _map groups, ({group, $forumButton, $chatButton}) =>
             group.type ?= 'general'
-            route = @model.group.getPath group, 'groupChat', {@router}
-            @router.link z 'a.group', {
-              href: route
-              className: z.classKebab {
-                isLight: group?.slug in ['nomadcollab', 'goodvibetribe'] # FIXME: rm hardcode
-              }
-              style:
-                backgroundImage:
-                  "url(#{config.CDN_URL}/groups/#{group?.slug}.jpg?1)" # FIXME rm ?1
-            },
-              z '.name', group.name or @model.l.get 'general.anonymous'
+            url = "#{config.CDN_URL}/groups/#{group?.slug}.jpg"
+            z '.group',
+              z '.image', {
+                className: @getImageLoadHashByUrl url
+                onclick: =>
+                  @model.group.goPath group, 'groupChat', {@router}
+                style:
+                  backgroundImage:
+                    "url(#{url})"
+              },
+                z '.name', group.name or @model.l.get 'general.anonymous'
+              z '.actions',
+                z '.action',
+                  z $forumButton,
+                    text: @model.l.get 'general.forum'
+                    onclick: =>
+                      @model.group.goPath group, 'groupForum', {@router}
+                z '.action.chat',
+                  z $chatButton,
+                    text: @model.l.get 'general.chat'
+                    onclick: =>
+                      @model.group.goPath group, 'groupChat', {@router}

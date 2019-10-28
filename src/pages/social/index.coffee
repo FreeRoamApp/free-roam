@@ -86,6 +86,7 @@ module.exports = class SocialPage
       }
       z @$tabs,
         isBarFixed: false
+        isBarFlat: false
         tabs: [
           {
             $menuIcon: @$groupsIcon

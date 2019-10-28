@@ -6,6 +6,7 @@
   // box-shadow: 0 -2px 4px getColor('$bgText12')
   border-top: 1px solid getColor('$bgText12')
   transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
+  overflow: hidden
 
   // hard-coded in pages/group_chat
   @media (min-width: $breakPointLarge)
@@ -21,14 +22,15 @@
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
   > .menu-item
-    ripple(getColor('$primaryMain'))
-    opacity: 0
+    ripple(getColor('$bgText87'), bottomBar)
     flex1()
+    opacity: 0
     text-align: center
     padding: 8px 0
     cursor: pointer
     user-select: none
     position: relative
+    overflow: visible
 
     &.is-selected
       > .text
@@ -37,6 +39,7 @@
     &.has-notification
       > .icon
         position: relative
+        z-index: 1
 
         &:after
           content: ''
@@ -52,9 +55,11 @@
           background: getColor('$primaryMain')
 
     > .text
-      font-caption()
+      font-micro()
       color: getColor('$bgText54')
       margin-top: 2px
       white-space: nowrap
       text-overflow: ellipsis
       overflow: hidden
+      position: relative
+      z-index: 1

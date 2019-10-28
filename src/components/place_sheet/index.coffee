@@ -11,6 +11,7 @@ _filter = require 'lodash/filter'
 _find = require 'lodash/find'
 _defaults = require 'lodash/defaults'
 
+Base = require '../base'
 Icon = require '../icon'
 Rating = require '../rating'
 Toggle = require '../toggle'
@@ -24,7 +25,7 @@ colors = require '../../colors'
 if window?
   require './index.styl'
 
-module.exports = class PlaceSheet
+module.exports = class PlaceSheet extends Base
   constructor: (options) ->
     {@model, @router, @place, trip, tripRoute, isEditingRoute,
       editRouteWaypoints, @layersVisible,
@@ -298,11 +299,13 @@ module.exports = class PlaceSheet
               src = @model.image.getSrcByPrefix attachment.prefix, {
                 size: 'small'
               }
+
               z '.attachment',
+                className: @getImageLoadHashByUrl src
                 style:
                   backgroundImage: "url(#{src})"
-                  width: "#{attachment.aspectRatio * 100}px"
-                  height: '100px'
+                  width: "#{attachment.aspectRatio * 120}px"
+                  height: '120px'
         z '.content',
           z '.left',
             z '.title', place?.name
@@ -373,9 +376,9 @@ module.exports = class PlaceSheet
               z '.icon',
                 z button.$icon,
                   icon: button.icon
-                  size: '18px'
+                  size: '24px'
                   isTouchTarget: false
-                  color: colors.$primaryMain
+                  color: colors.$bgText54
               z '.text',
                 if isLoading and button.loadingText
                 then button.loadingText

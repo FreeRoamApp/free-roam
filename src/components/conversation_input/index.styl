@@ -10,8 +10,6 @@ $requireVerifiedZIndex = 900
   pointer-events: none
   position: relative
   overflow: hidden
-  border-top-left-radius: 16px
-  border-top-right-radius: 16px
 
   > .locked
     position: absolute
@@ -29,8 +27,8 @@ $requireVerifiedZIndex = 900
 
   > .panel
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1)
-    background: getColor('$tertiary0')
-    box-shadow: 0 1px 4px getColor('$black26')
+    // background: getColor('$tertiary0')
+    // box-shadow: 0 1px 4px getColor('$black26')
     flex1()
     max-height: 150px // also in conversation_input_textarea
     position: relative
@@ -69,11 +67,14 @@ $requireVerifiedZIndex = 900
       > .description
         font-body1()
 
-  > .bottom-icons
-    height: 36px
+  > .panel-icons
+    position: absolute
+    top: 12px
+    right: 0
     align-items: center
-    position: relative
-    background: getColor('$tertiary0')
+    // position: relative
+    width: 108px
+    // background: getColor('$tertiary0')
     display: none
     pointer-events: all
 

@@ -2,6 +2,7 @@ z = require 'zorium'
 _defaults = require 'lodash/defaults'
 _snakeCase = require 'lodash/snakeCase'
 
+Base = require '../base'
 Icon = require '../icon'
 DateService = require '../../services/date'
 FormatService = require '../../services/format'
@@ -11,7 +12,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-module.exports = class TripListItem
+module.exports = class TripListItem extends Base
   constructor: ({@model, @router, trip}) ->
     me = @model.user.getMe()
 
@@ -57,6 +58,7 @@ module.exports = class TripListItem
     },
       z '.g-grid',
         z '.image',
+          className: @getImageLoadHashByUrl imageUrl
           style:
             backgroundImage: if imageUrl
               "url(#{imageUrl})"

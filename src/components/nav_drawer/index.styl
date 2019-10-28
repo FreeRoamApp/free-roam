@@ -16,7 +16,7 @@ $zIndexDrawer = 300
     shadow-1()
     // prevents flicker glitch http://stackoverflow.com/a/3921870
     backface-visibility: hidden
-    padding: 20px 16px
+    padding: 16px
     height: 56px
     box-sizing: border-box
     background: getColor('$header500')
@@ -34,18 +34,12 @@ $zIndexDrawer = 300
       font-h5(false)
       color: getColor('$header500Text')
 
-  > .ad
-    // position: absolute
-    // bottom: 0
-    width: 336px
-    height: 280px
-
   > .content
     flex1()
     width: 100%
     box-sizing: border-box
     background: getColor('$tertiary0')
-    padding: 8px 0
+    // padding: 8px 0
     overflow-y: auto
     -webkit-overflow-scrolling: touch
 
@@ -56,17 +50,17 @@ $zIndexDrawer = 300
       padding: 0
 
       > .sign-in-buttons
-        padding: 6px 16px
+        padding: 6px 16px 24px 16px
         display: flex
 
         > .button
           font-button()
           flex1()
-          padding: 10px
-          background: getColor('$primaryMain')
-          color: getColor('$primaryMainText')
+          padding: 10px 16px
+          background: getColor('$primary700')
+          color: getColor('$primary700Text')
           text-align: center
-          border-radius: 2px
+          border-radius: 4px
           cursor: pointer
 
           &:first-child
@@ -85,11 +79,11 @@ $zIndexDrawer = 300
 
       .menu-item
         > .menu-item-link
-          font-body1()
+          font-body1(true, medium)
           cursor: pointer
           display: flex
           align-items: center
-          padding: 8px 16px
+          padding: 12px 16px
 
           // &:active
           //   background: getColor('$tertiary200')
@@ -126,8 +120,7 @@ $zIndexDrawer = 300
 
         &.is-selected
           > .menu-item-link
-            // font-subtitle1()
-            background: getColor('$tertiary100')
+            color: getColor('$primary700')
 
     // > .my-groups
     //   position: relative

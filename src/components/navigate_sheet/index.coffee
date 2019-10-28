@@ -116,10 +116,6 @@ module.exports = class NavigateSheet
                 }
                 @state.set currentLoading: null
         text: 'FreeRoam'
-        # $icon: z @$facebookIcon,
-        #   icon: 'facebook'
-        #   color: FACEBOOK_BLUE
-        #   isTouchTarget: false
 
       googleMaps:
         isVisible: true
@@ -139,10 +135,25 @@ module.exports = class NavigateSheet
               onCancel: go
             }
         text: 'Google Maps'
-        # $icon: z @$twitterIcon,
-        #   icon: 'twitter'
-        #   color: TWITTER_BLUE
-        #   isTouchTarget: false
+
+      # waze:
+      #   isVisible: true
+      #   onclick: =>
+      #     {places} = @state.getValue()
+      #     go = =>
+      #       MapService.getDirectionsBetweenPlaces(
+      #         places
+      #         {@model}
+      #       )
+      #     if @model.cookie.get('hasSeenGoogleMapsWarning')
+      #       go()
+      #     else
+      #       @model.cookie.set 'hasSeenGoogleMapsWarning', '1'
+      #       @model.overlay.open new GoogleMapsWarningDialog({@model}), {
+      #         onComplete: go
+      #         onCancel: go
+      #       }
+      #   text: 'Waze'
 
     z '.z-navigate-sheet',
       z @$sheet,

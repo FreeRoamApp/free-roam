@@ -66,7 +66,9 @@ module.exports = class SearchInput
         unless isSearchOnSubmit
           z '.left-icon',
             if isAppBar and @$buttonMenu.isVisible() and not alwaysShowBack
-              z @$buttonMenu, {isAlignedLeft: false}
+              z @$buttonMenu, {
+                isAlignedLeft: false
+              }
             else
               z @$backIcon,
                 icon: if isFocused or alwaysShowBack then 'back' else 'search'

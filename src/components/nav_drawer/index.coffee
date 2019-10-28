@@ -463,7 +463,9 @@ module.exports = class NavDrawer
                           z $icon,
                             isTouchTarget: false
                             icon: iconName
-                            color: color or colors.$primaryMain
+                            color: if isSelected \
+                                   then colors.$primary700
+                                   else color or colors.$bgText60
                         title
                         z '.notification', {
                           className: z.classKebab {

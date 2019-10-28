@@ -1,4 +1,5 @@
 _map = require 'lodash/map'
+_forEach = require 'lodash/forEach'
 
 getDraggable = (el, tries = 0) ->
   parent = el.parentNode
@@ -30,6 +31,19 @@ module.exports = class Base
       $component = new component args...
       @cachedComponents[id] = $component
       return $component
+
+  getImageLoadHashByUrl: (url) =>
+    hash = @model.image.getHash url
+    isImageLoaded = @model.image.isLoadedByHash hash
+    if isImageLoaded
+      return 'is-image-loaded'
+    else
+      @model.image.load url
+      .then =>
+        # don't want to re-render entire state every time a pic loads in
+        all = document.querySelectorAll(".image-loading-#{hash}")
+        _forEach all, (el) -> el.classList.add 'is-image-loaded'
+      return "image-loading-#{hash}"
 
   fadeInWhenLoaded: (url) =>
     @isImageLoaded = @model.image.isLoaded url

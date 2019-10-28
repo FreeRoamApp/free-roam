@@ -154,7 +154,7 @@ module.exports = class ConversationInput
         "is-#{currentPanel}-panel": true
       }
       style:
-        height: "#{panelHeight + 32}px"
+        height: "#{panelHeight}px"
     },
       z '.panel', {
         'ev-transitionend': =>
@@ -164,20 +164,20 @@ module.exports = class ConversationInput
       },
         @panels[currentPanel].$el
 
-      z '.bottom-icons',  {
+      z '.panel-icons',  {
         className: z.classKebab {isVisible: true}
       },
         [
           _map panels, (options, panel) =>
+            if currentPanel is panel
+              return
             {$icon, icon, onclick, $uploadOverlay, requireVerified} = options
             z '.icon',
               z $icon, {
                 onclick: onclick or =>
                   @currentPanel.next panel
                 icon: icon
-                color: if currentPanel is panel \
-                       then colors.$bgText
-                       else colors.$bgText54
+                color: colors.$bgText54
                 isTouchTarget: true
                 hasRipple: true
                 touchWidth: '36px'

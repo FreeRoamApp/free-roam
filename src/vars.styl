@@ -64,7 +64,7 @@ shadow-5()
 
 font-h4(scale = yes)
   font-family: Nunito Sans
-  font-size: 36.9px
+  font-size: 34px
   font-weight: normal
   font-stretch: normal
   font-style: normal
@@ -79,7 +79,7 @@ font-h4(scale = yes)
 font-h5(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 26px
+  font-size: 24px
   font-weight: 600
   font-stretch: normal
   font-style: normal
@@ -93,7 +93,7 @@ font-h5(scale = yes)
 font-h6(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 21.7px
+  font-size: 20px
   font-weight: 600
   font-stretch: normal
   font-style: normal
@@ -104,24 +104,10 @@ font-h6(scale = yes)
   //   @media (min-width: $breakPointLarge)
   //     font-size: 20px
 
-font-subtitle1(scale = yes)
-  font-family: Nunito Sans
-  color: getColor('$bgText87')
-  font-weight: 600
-  font-size: 16px
-
-  if scale is yes
-    @media (min-width: $breakPointLarge)
-      font-size: 18px
-
-font-subtitle1m(scale = yes)
-  font-subtitle1(scale)
-  font-weight: 400
-
 font-button(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 15.1px
+  font-size: 14px
   font-weight: bold
   font-stretch: normal
   font-style: normal
@@ -135,7 +121,7 @@ font-button(scale = yes)
 font-body1(scale = yes, state = high)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 17.4px
+  font-size: 16px
   font-weight: normal
   font-stretch: normal
   font-style: normal
@@ -151,7 +137,7 @@ font-body1(scale = yes, state = high)
 font-body2(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 15.2px
+  font-size: 14px
   font-weight: normal
   font-stretch: normal
   font-style: normal
@@ -161,7 +147,7 @@ font-body2(scale = yes)
 font-caption(scale = yes, state = disabled) // primary, disabled, italic
   font-family: Nunito Sans
   color: getColor('$bgText60')
-  font-size: 13px
+  font-size: 12px
   font-weight: normal
   font-stretch: normal
   font-style: normal
@@ -181,7 +167,7 @@ font-caption(scale = yes, state = disabled) // primary, disabled, italic
 font-subtitle1(scale = yes, state = high)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 17.3px
+  font-size: 16px
   font-weight: 600
   font-stretch: normal
   font-style: normal
@@ -194,7 +180,7 @@ font-subtitle1(scale = yes, state = high)
 font-subtitle2(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 15.2px
+  font-size: 14px
   font-weight: 600
   font-stretch: normal
   font-style: normal
@@ -204,7 +190,7 @@ font-subtitle2(scale = yes)
 font-overline(scale = yes)
   font-family: Nunito Sans
   color: getColor('$bgText87')
-  font-size: 13px
+  font-size: 12px
   font-weight: bold
   font-stretch: normal
   font-style: normal
@@ -260,7 +246,7 @@ box-shadow()
 border()
   cssVariableFallbacks('border', arguments)
 
-ripple(color)
+ripple(color, type = default)
   position: relative
   outline: none
   overflow: hidden
@@ -283,23 +269,35 @@ ripple(color)
   // hover seems to be the fastest way to get the animation to start in android.
   // :focus has a couple hundred ms delay, i think active might too.
   // ios and desktop look bad on hover
-  .is-android &:hover::after {
+  .is-android &:hover::after
     will-change: transform
     // anim defined in root
-    animation: z-ripple-animation-css-only 0.6s ease-out
+    if type is 'bottomBar'
+      animation: z-ripple-bottom-bar-animation-css-only 0.25s ease-out
+    else
+      animation: z-ripple-animation-css-only 0.6s ease-out
     opacity: 0
-  }
-  &:focus:not(:active)::after {
+
+  &:focus:not(:active)::after
     will-change: transform
-    animation: z-ripple-animation-css-only 0.6s ease-out
+    if type is bottomBar
+      animation: z-ripple-bottom-bar-animation-css-only 0.25s ease-out
+    else
+      animation: z-ripple-animation-css-only 0.6s ease-out
     opacity: 0
-  }
 
 card()
   shadow-1()
   border-radius: 4px
   display: block
   background: getColor('$tertiary0')
+
+imageFadeIn()
+  opacity: 0
+
+  &.is-image-loaded
+    opacity: 1
+    transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
 
 ul()
   margin: 0

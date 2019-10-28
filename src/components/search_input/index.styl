@@ -10,6 +10,10 @@ $zIndexForm = 1
     > .form > .input
       cursor: pointer
 
+  &.is-focused
+    > .form > .input
+      border: 1px solid rgba(0, 0, 0, 0)
+
   > .search-overlay
     position: absolute
     z-index: $zIndexSearchOverlay
@@ -40,20 +44,20 @@ $zIndexForm = 1
       flex1()
       font-subtitle1()
       appearance: none
-      padding: 14px 14px 14px 48px
-      border-radius: 8px
-      border: 2px solid getColor('$tertiary300')
+      padding: 14px 14px 14px 68px
+      border-radius: 4px
+      border: 1px solid getColor('$bgText12')
       box-sizing: border-box
-      transition: margin 0.1s
+      transition: border 0.2s cubic-bezier(0.4, 0, 0.2, 1)
       -webkit-tap-highlight-color: transparent
-      color: getColor('$tertiary0Text')
+      // color: getColor('$bgText70')
       margin: 0
       outline: none
 
       &::placeholder
         font-subtitle1()
         opacity: 1
-        color: getColor('$bgText54')
+        // color: getColor('$bgText54')
 
       &::-moz-placeholder
         line-height: 48px // should center in ff

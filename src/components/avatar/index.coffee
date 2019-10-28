@@ -37,7 +37,7 @@ module.exports = class Avatar
     # textShadowColor = colors["$#{config.XP_LEVEL_COLORS[level]}500TextShadow"]
 
     z '.z-avatar', {
-      className: z.classKebab {hasBorder}
+      # className: z.classKebab {hasBorder}
       style:
         width: size
         height: size

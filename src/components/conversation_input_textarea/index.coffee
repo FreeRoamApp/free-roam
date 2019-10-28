@@ -11,7 +11,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-DEFAULT_TEXTAREA_HEIGHT = 54
+DEFAULT_TEXTAREA_HEIGHT = 50
 
 module.exports = class ConversationInputTextarea
   constructor: (options) ->

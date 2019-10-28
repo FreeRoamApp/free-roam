@@ -24,24 +24,25 @@
     border-radius: 4px
     max-width: 480px
     margin: 0 auto
+    padding-top: 8px
 
     > .attachments
       white-space: nowrap
       overflow-x: auto
       overflow-y: hidden
-      height: 116px
-      padding: 12px 16px 0 16px
+      height: 120px
+      padding: 4px 16px 0 16px
 
       > .attachment
+        imageFadeIn()
         display: inline-block
-        width: 100px
-        height: 100px
+        width: 120px
+        height: 120px
         margin-right: 8px
         background-size: 100% auto
-        border-radius: 4px
 
     > .content
-      padding: 16px 16px 0 16px
+      padding: 8px 16px 0 16px
       display: flex
 
       > .left
@@ -53,10 +54,10 @@
 
         > .elevation
           font-caption(false)
-          margin-bottom: 8px
 
         > .add-stop-info
-          font-body1(false, medium)(false)
+          margin-top: 8px
+          font-body1(false, medium)
 
       > .right
         margin-left: auto
@@ -76,7 +77,7 @@
       display: flex
       overflow: auto
       -webkit-overflow-scrolling: touch
-      padding: 16px
+      padding: 12px 16px
 
       > .button
         // TODO: shared with map filter, make an fn for this?
@@ -85,8 +86,8 @@
         display: inline-block
         background: getColor('$tertiary0')
         border: 1px solid getColor('$tertiary300')
-        padding: 4px 12px
-        border-radius: 16px
+        padding: 6px 12px
+        border-radius: 19px
         margin: 0 4px
         position: relative
         flex-shrink: 0
@@ -100,20 +101,22 @@
           border: 1px solid getColor('$primaryMain')
 
         > .icon
-          margin-right: 4px
+          margin-right: 10px
 
         > .text
-          font-subtitle1(false, medium)
+          font-body2()
 
     > .local-maps
       border-top: 1px solid getColor('$bgText12')
       width: 100%
-      padding: 16px
+      padding: 8px 16px
       box-sizing: border-box
 
       > .local-map
+        font-subtitle2()
         display: flex
         align-items: center
+        padding: 8px 0
 
         > .toggle
           margin-left: auto

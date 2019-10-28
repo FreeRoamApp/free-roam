@@ -38,6 +38,9 @@ module.exports = class Author
             color: colors.$bgText
             isTouchTarget: false
             size: '22px'
+      z '.name',
+        @model.user.getDisplayName user
+
       z '.icons',
         if user?.flags?.isSupporter
           z '.icon',
@@ -45,16 +48,15 @@ module.exports = class Author
               icon: 'heart'
               color: colors.$red500
               isTouchTarget: false
-              size: '14px'
+              size: '18px'
         z '.icon',
           z @$karmaIcon,
             icon: 'karma'
             color: colors.$secondaryMain
             isTouchTarget: false
-            size: '14px'
+            size: '18px'
+
         z '.text', user?.karma or 0
-      z '.name',
-        @model.user.getDisplayName user
       z '.time', {
         className: z.classKebab {isAlignedLeft: isTimeAlignedLeft}
       },

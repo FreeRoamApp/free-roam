@@ -27,7 +27,7 @@ html, body
 body
   font-body1()
   -webkit-tap-highlight-color: transparent
-  background: getColor('$tertiary100')
+  background: getColor('$tertiary0')
   padding-top: constant(safe-area-inset-top)
   padding-top: env(safe-area-inset-top)
 
@@ -73,7 +73,7 @@ body
       height: 100%
       top: 0
       left: 0
-      background: getColor('$tertiary100')
+      background: getColor('$tertiary0')
       display: flex
       flex-direction: column
 
@@ -129,6 +129,21 @@ input:-webkit-autofill:active
   &::-webkit-scrollbar-track
     background: getColor('$tertiary200')
     border-radius: 20px
+
+@keyframes z-ripple-bottom-bar-animation-css-only
+  // w/ from/to instead of 0 50 100, sometimes a second ripple shows once animation is done (bottom bar)
+  0%
+    transform: scale(14) // 80% width
+    opacity: 0.12
+  60%
+    transform: scale(20) // 125% width
+    opacity: 0.12
+  70%
+    transform: scale(24) // 120% width
+    opacity: 0.12
+  100%
+    transform: scale(24) // 120% width
+    opacity: 0
 
 @keyframes z-ripple-animation-css-only
   // w/ from/to instead of 0 50 100, sometimes a second ripple shows once animation is done (bottom bar)

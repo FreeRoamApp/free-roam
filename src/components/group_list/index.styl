@@ -14,36 +14,55 @@
     overflow: auto
     -webkit-overflow-scrolling: touch
     white-space: nowrap
+    padding-bottom: 4px
 
     > .group
       shadow-1()
       background: getColor('$tertiary0')
       border-radius: 2px
       display: inline-block
-      width: 104px
-      height: 128px
-      padding: 6px
-      box-sizing: border-box
+      width: 200px
       margin-right: 8px
-      background-size: 100% auto
-      position: relative
 
       &:last-child
         margin-right: 0
 
-      > .name
-        font-subtitle1(false)
-        position: absolute
-        bottom: 6px
-        left: 6px
-        white-space: normal
-        line-height: 1em
-        // overflow: hidden
-        // text-overflow: ellipsis
-        // white-space: nowrap
+      > .image
+        imageFadeIn()
         width: 100%
-        color: getColor('$white')
+        height: 150px
+        border-radius: 2px
+        padding: 8px
+        box-sizing: border-box
+        background-size: 100% auto
+        position: relative
 
-      &.is-light
+        &:after
+          content: ''
+          position: absolute
+          left: 0
+          bottom: 0
+          width: 100%
+          height: 60px
+          background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), getColor('$black26'))
+          z-index: 1
+
         > .name
-          color: getColor('$bgText87')
+          font-subtitle1(false)
+          position: absolute
+          z-index: 2
+          bottom: 6px
+          left: 6px
+          white-space: normal
+          line-height: 1em
+          // overflow: hidden
+          // text-overflow: ellipsis
+          // white-space: nowrap
+          width: 100%
+          color: getColor('$white')
+
+      > .actions
+        display: flex
+
+        > .chat
+          margin-left: auto

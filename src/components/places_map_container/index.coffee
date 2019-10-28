@@ -475,6 +475,8 @@ module.exports = class PlacesMapContainer
             z '.layers-fab',
               z @$fab,
                 icon: 'layers'
+                colors:
+                  cText: colors.$bgText54
                 isImmediate: true
                 onclick: =>
                   ga? 'send', 'event', 'map', 'showLayers'

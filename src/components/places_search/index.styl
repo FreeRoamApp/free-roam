@@ -7,10 +7,12 @@
 
   > .input-container
     pointer-events: all
-    padding: 8px
+    // padding: 8px 0 12px 0
     background: getColor('$tertiary0')
+    margin-bottom: 4px
 
     > .input
+      padding: 8px 12px 8px 12px
       position: relative
       z-index: 99 // needs to be less than 100 (place page overlay is 100)
 
@@ -18,6 +20,9 @@
     > .overlay
       opacity: 1
       pointer-events: all
+
+    > .input-container > .input
+      shadow-1()
 
   > .overlay
     position: absolute
@@ -28,7 +33,8 @@
     width: 100%
     height: 100%
     padding-bottom: 62px // hack to cover bottom bar
-    background: getColor('$tertiary100')
+    box-sizing: border-box
+    background: getColor('$tertiary0')
     opacity: 0
     overflow: auto
     -webkit-overflow-scrolling: touch
@@ -38,54 +44,72 @@
       padding: 8px
       padding-top: 56px
 
-      > .locations, > .data-types
-        shadow-1()
-        background: getColor('$tertiary0')
-        border-radius: 2px
+      > .locations //, > .data-types
         padding: 8px
         margin-top: 8px
 
-        > .title
-          font-subtitle1()
-          color: getColor('$primaryMain')
-          padding: 0 8px
-          margin-bottom: 8px
+        // > .title
+        //   font-subtitle1()
+        //   color: getColor('$primaryMain')
+        //   padding: 0 8px
+        //   margin-bottom: 8px
 
-      > .data-types > .g-grid > .g-cols > .g-col
-        > .type
-          display: flex
-          align-items: center
-          padding: 0 8px
-          cursor: pointer
-
-          > .info
-            > .name
-              font-subtitle1()
-
-            > .description
-              font-caption()
-              white-space: nowrap
-              overflow: hidden
-              text-overflow: ellipsis
-
-          > .checkbox
-            margin-left: auto
+      // > .data-types > .g-grid > .g-cols > .g-col
+      //   > .type
+      //     display: flex
+      //     align-items: center
+      //     padding: 0 8px
+      //     cursor: pointer
+      //
+      //     > .info
+      //       > .name
+      //         font-subtitle1()
+      //
+      //       > .description
+      //         font-caption()
+      //         white-space: nowrap
+      //         overflow: hidden
+      //         text-overflow: ellipsis
+      //
+      //     > .checkbox
+      //       margin-left: auto
 
       > .locations
         > .location
           display: flex
           padding: 8px
           cursor: pointer
+          height: 40px
 
           &:hover
             background: getColor('$tertiary100')
 
-          > .locality
-            margin-left: 8px
-            color: getColor('$bgText54')
+          > .icon
+            margin-right: 16px
 
-          > .open
-            margin-left: 16px
+          > .content
+            flex1()
+            height: 100%
+            display: flex
+            align-items: center
+            border-bottom: 1px solid getColor('$bgText12')
+            overflow: hidden
+
+            > .text
+              font-subtitle1()
+              overflow: hidden
+              text-overflow: ellipsis
+              white-space: nowrap
+
+            > .locality
+              margin-left: 8px
+              color: getColor('$bgText54')
+              overflow: hidden
+              text-overflow: ellipsis
+              white-space: nowrap
+
+            > .open
+              margin-left: 16px
 
   @media (min-width: $breakPointMedium)
     > .overlay > .overlay-inner > .data-types > .g-grid > .g-cols > .g-col > .type

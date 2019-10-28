@@ -8,7 +8,7 @@ colors = _defaults {
     '--header-500': '#ffffff' # t100
     '--header-500-text': materialColors.$black87
     '--header-500-text-54': materialColors.$black54
-    '--header-500-icon': '#D25A00' # primary500
+    '--header-500-icon': '#757575'
 
     '--primary-50': '#FBE9E7'
     '--primary-100': '#FFCCBC'
