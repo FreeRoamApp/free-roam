@@ -18,9 +18,9 @@ colors = _defaults {
     '--primary-500': '#FF5722'
     '--primary-600': '#F4511E'
     '--primary-700': '#E64A19'
+    '--primary-700-96': 'rgba(230, 74, 25, 0.96)'
     '--primary-800': '#D84315'
     '--primary-900': '#BF360C'
-    '--primary-90096': 'rgba(191, 54, 12, 0.96)'
     '--primary-100-text': materialColors.$black87
     '--primary-200-text': materialColors.$black87
     '--primary-300-text': materialColors.$black87
@@ -146,8 +146,8 @@ colors = _defaults {
   '$primary700': 'var(--primary-700)'
   '$primary800': 'var(--primary-800)'
   '$primary900': 'var(--primary-900)'
-  '$primaryMain': 'var(--primary-900)'
-  '$primaryMain96': 'var(--primary-900-96)'
+  '$primaryMain': 'var(--primary-700)'
+  '$primaryMain96': 'var(--primary-700-96)'
 
   '$primary100Text': 'var(--primary-100-text)'
   '$primary200Text': 'var(--primary-200-text)'
@@ -176,7 +176,7 @@ colors = _defaults {
   '$secondary100Text': 'var(--secondary-100-text)'
   '$secondary200Text': 'var(--secondary-200-text)'
   '$secondary300Text': 'var(--secondary-300-text)'
-  '$secondary500Text': 'var(--secondary-500-text)'
+  '$secondary400Text': 'var(--secondary-400-text)'
   '$secondary500Text': 'var(--secondary-500-text)'
   '$secondary600Text': 'var(--secondary-600-text)'
   '$secondary700Text': 'var(--secondary-700-text)'

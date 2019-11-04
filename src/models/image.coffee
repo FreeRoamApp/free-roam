@@ -1,6 +1,8 @@
 config = require '../config'
 
 hashFn = (s) ->
+  unless s
+    return 'none'
   s.split('').reduce ((a, b) ->
     a = (a << 5) - a + b.charCodeAt(0)
     a & a

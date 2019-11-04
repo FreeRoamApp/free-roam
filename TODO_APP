@@ -1,5 +1,7 @@
 TODOS:
 
+- About / donation page show how much money FreeRoam makes: donations + amazon
+
 - Easier fadeInWhenLoaded
   - hash the url and set as class name?
   - when hashing, check if load listener for hash

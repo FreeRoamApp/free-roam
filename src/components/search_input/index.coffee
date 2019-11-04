@@ -39,7 +39,8 @@ module.exports = class SearchInput
       @searchValue.next ''
 
   render: (options = {}) =>
-    {placeholder, onBack, height, bgColor, clearOnBack, isAppBar, alwaysShowBack
+    {$topLeftButton, $topRightButton, placeholder, onBack, height, bgColor,
+      clearOnBack, isAppBar, alwaysShowBack
       isSearchOnSubmit, onclick, onsubmit, onfocus, onblur
       ontouchstart} = options
 
@@ -82,7 +83,9 @@ module.exports = class SearchInput
                   @close()
                   @$$el?.querySelector('.input').blur()
         z '.right-icon',
-          if (searchValue or isSearchOnSubmit) and not isAppBar
+          if $topRightButton
+            $topRightButton
+          else if (searchValue or isSearchOnSubmit) and not isAppBar
             z @$clearIcon,
               icon: 'search'
               color: if isSearchOnSubmit and not searchValue \

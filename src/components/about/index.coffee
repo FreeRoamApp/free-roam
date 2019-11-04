@@ -166,7 +166,7 @@ module.exports = class About
                     text: @model.l.get 'about.helpFeedbackButton'
                     onclick: =>
                       @router.go 'groupChat', {
-                        groupId: 'boondocking'
+                        groupId: 'freeroam'
                       }
                     colors:
                       c200: colors.$yellow200

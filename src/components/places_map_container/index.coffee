@@ -147,6 +147,7 @@ module.exports = class PlacesMapContainer
     }
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
+      @dataTypesStream
       onclick: ({location, bbox, text}) =>
         @addPlacesStreams.next RxObservable.of [{
           location: location
@@ -437,7 +438,7 @@ module.exports = class PlacesMapContainer
       [
         unless @isSearchHidden
           z '.search',
-            z @$placesSearch, {dataTypes}
+            z @$placesSearch
             z @$placesFilterBar, {
               dataTypes, currentDataType, filterTypes, visibleDataTypes
               @trip, @isTripFilterEnabled

@@ -1,0 +1,40 @@
+@require '../../vars'
+
+.z-places-filters-overlay
+  position: absolute
+  z-index: 99
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  padding-bottom: 62px // hack to cover bottom bar
+  box-sizing: border-box
+  background: getColor('$tertiary0')
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+
+  > .data-types > .g-grid > .g-cols > .g-col
+    > .type
+      display: flex
+      align-items: center
+      padding: 0 8px
+      cursor: pointer
+
+      > .info
+        > .name
+          font-subtitle1()
+
+        > .description
+          font-caption()
+          white-space: nowrap
+          overflow: hidden
+          text-overflow: ellipsis
+
+      > .checkbox
+        margin-left: auto
+
+  @media (min-width: $breakPointMedium)
+    padding-bottom: 0 // get rid of bottom bar padding
+    > .data-types > .g-grid > .g-cols > .g-col > .type
+      > .checkbox
+        margin-left: 8px

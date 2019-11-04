@@ -9,6 +9,13 @@ if window?
 
 module.exports = class SecondaryButton extends Button
   render: (opts) ->
+    if opts.isInverted
+      opts.colors =
+        c200: colors.$secondaryMainText
+        c500: colors.$secondaryMainText
+        c600: colors.$secondaryMainText
+        c700: colors.$secondaryMainText
+        ink: colors.$secondaryMain
     z '.z-secondary-button',
       super _defaults opts, {
         isFullWidth: true

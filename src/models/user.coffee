@@ -1,4 +1,4 @@
-SignInDialog = require '../components/sign_in_dialog'
+SignInOverlay = require '../components/sign_in_overlay'
 config = require '../config'
 
 module.exports = class User
@@ -68,7 +68,7 @@ module.exports = class User
       if user?.username
         resolve true
       else
-        @overlay.open new SignInDialog({
+        @overlay.open new SignInOverlay({
           model: {@l, @auth, @overlay, @portal, user: this}
         }), {
           data: 'join'

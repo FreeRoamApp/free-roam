@@ -3,7 +3,7 @@ _defaults = require 'lodash/defaults'
 
 Icon = require '../icon'
 Input = require '../input'
-colors = require '../../colors'
+allColors = require '../../colors'
 
 
 if window?
@@ -24,6 +24,14 @@ module.exports = class PrimaryInput extends Input
 
     isFullWidth = opts.isFullWidth
 
+    colors = opts.colors or
+      # background: colors.$tertiary0
+      c200: allColors.$tertiary200Text
+      c500: allColors.$bgText
+      c600: allColors.$tertiary300Text
+      c700: allColors.$tertiary200Text
+      ink: allColors.$tertiary200Text
+
     z '.z-primary-input', {
       className: z.classKebab {isFullWidth}
     },
@@ -31,13 +39,7 @@ module.exports = class PrimaryInput extends Input
         isRaised: true
         isFloating: true
         isDark: true
-        colors:
-          background: colors.$tertiary0
-          c200: colors.$tertiary200Text
-          c500: colors.$bgText
-          c600: colors.$tertiary300Text
-          c700: colors.$tertiary200Text
-          ink: colors.$tertiary200Text
+        colors: colors
       }
       if optType is 'password'
         z '.make-visible', {
@@ -46,7 +48,7 @@ module.exports = class PrimaryInput extends Input
         },
           z @$eyeIcon,
             icon: 'eye'
-            color: colors.$bgText
+            color: colors.$ink
       else if opts.onInfo
         z '.make-visible', {
           onclick: ->
@@ -54,4 +56,4 @@ module.exports = class PrimaryInput extends Input
         },
           z @$eyeIcon,
             icon: 'help'
-            color: colors.$bgText
+            color: colors.$ink

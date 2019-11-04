@@ -40,6 +40,8 @@ module.exports = class Input
     isDisabled ?= false
     autoCapitalize ?= true
 
+    console.log 'COLORS', colors
+
     z '.z-input',
       className: z.classKebab {
         isDark
@@ -53,6 +55,8 @@ module.exports = class Input
       # style:
       #   backgroundColor: colors.background
       z '.hint', {
+        style:
+          color: colors.ink
         # style:
         #   color: if isFocused and not error? \
         #          then colors.c500 else null
@@ -78,10 +82,13 @@ module.exports = class Input
           @isFocused.next true
         onblur: z.ev (e, $$el) =>
           @isFocused.next false
+        style:
+          color: colors.ink
       z '.underline-wrapper',
         z '.underline',
           style:
             backgroundColor: if isFocused and not error? \
-                             then colors.underline or colors.c500 else null
+                             then colors.underline or colors.c500
+                             else colors.ink
       if error?
         z '.error', error

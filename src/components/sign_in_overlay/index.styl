@@ -1,0 +1,47 @@
+@require '../../vars'
+
+.z-sign-in-overlay
+  position: fixed
+  z-index: 1000000
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  display: flex
+  flex-direction: column
+  background: getColor('$secondary400')
+
+  > .content
+    flex1()
+    padding: 8px 16px 4px 16px
+
+    > .title
+      font-h5()
+      color: getColor('$secondary400Text')
+
+    > .input
+      margin: 16px 0
+
+    // > .social-logins
+    //
+    //   > .or
+    //     font-caption()
+    //     margin-top: 8px
+    //     text-align: center
+
+    > .terms
+      font-body2()
+      color: getColor('$secondary400Text')
+      margin-top: 16px
+
+      a
+        color: getColor('$secondary400Text')
+
+    > .actions
+      margin-top: 16px
+
+.z-sign-in-overlay_button
+  display: flex
+
+  > .icon
+    margin-right: 8px
