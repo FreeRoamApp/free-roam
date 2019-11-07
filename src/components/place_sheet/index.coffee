@@ -342,7 +342,7 @@ module.exports = class PlaceSheet extends Base
             if place?.rating?
               [
                 z '.rating',
-                  z @$rating, {size: '16px', color: colors.$secondaryMain}
+                  z @$rating, {size: '18px', color: colors.$secondaryMain}
                 z '.rating-text',
                   if place?.rating
                     "#{place?.rating.toFixed(1)}"

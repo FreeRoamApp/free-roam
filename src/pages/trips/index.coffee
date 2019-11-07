@@ -39,7 +39,7 @@ module.exports = class TripsPage
       z @$appBar, {
         title: @model.l.get 'tripsPage.title'
         isFlat: true
-        $topLeftButton: z @$buttonMenu, {color: colors.$primaryMainText}
+        $topLeftButton: z @$buttonMenu
       }
       z @$tabs,
         isBarFixed: false

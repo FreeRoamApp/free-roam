@@ -10,7 +10,7 @@ allColors = require '../../colors'
 if window?
   require './index.styl'
 
-DEFAULT_TEXTAREA_HEIGHT = 54
+DEFAULT_TEXTAREA_HEIGHT = 59
 
 module.exports = class Textarea
   constructor: (options = {}) ->
@@ -57,7 +57,6 @@ module.exports = class Textarea
     # problem is the valueStreams / switch
     {value} = @state.getValue()
 
-    console.log @$$textarea
     startPos = @$$textarea.selectionStart
     endPos = @$$textarea.selectionEnd
     selectedText = value.substring startPos, endPos

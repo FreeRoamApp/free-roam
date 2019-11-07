@@ -80,7 +80,7 @@ module.exports = class NavigateSheet
 
     options =
       freeRoam:
-        isVisible: isNative and SemverService.gte appVersion, '2.0.06'
+        isVisible: isNative and SemverService.gte appVersion, '2.1.06'
         onclick: =>
           {trip, tripRoute, currentLoading} = @state.getValue()
           if currentLoading is 'freeRoam'

@@ -1,3 +1,5 @@
+# not currently used. previously used for cell carrier selection
+
 z = require 'zorium'
 _map = require 'lodash/map'
 _filter = require 'lodash/filter'
@@ -66,6 +68,8 @@ module.exports = class DropdownMultiple
     {value, isOpen, options, error} = @state.getValue()
 
     isDisabled ?= false
+
+    console.log 'opt', options
 
     z '.z-dropdown-multiple', {
       # vdom doesn't key defaultValue correctly if elements are switched

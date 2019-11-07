@@ -25,7 +25,7 @@ module.exports = class Input
 
   render: (props) =>
     {colors, hintText, type, isFloating, isDisabled, isFullWidth, autoCapitalize
-      isDark, isCentered, disableAutoComplete} = props
+      height, isDark, isCentered, disableAutoComplete} = props
 
     {value, error, isFocused} = @state.getValue()
 
@@ -40,9 +40,10 @@ module.exports = class Input
     isDisabled ?= false
     autoCapitalize ?= true
 
-    console.log 'COLORS', colors
-
     z '.z-input',
+      style:
+        height: height
+        minHeight: height
       className: z.classKebab {
         isDark
         isFloating
@@ -84,6 +85,7 @@ module.exports = class Input
           @isFocused.next false
         style:
           color: colors.ink
+          height: height
       z '.underline-wrapper',
         z '.underline',
           style:

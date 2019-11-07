@@ -52,7 +52,7 @@ module.exports = class BottomBar
     @menuItems = _filter [
       {
         $icon: new Icon()
-        icon: 'map'
+        icon: 'campsite'
         route: @router.get 'places'
         text: @model.l.get 'general.places'
         isDefault: true
@@ -71,13 +71,13 @@ module.exports = class BottomBar
       }
       {
         $icon: new Icon()
-        icon: 'road'
+        icon: 'near-me'
         route: @router.get 'trips'
         text: @model.l.get 'general.trips'
       }
       {
         $icon: new Icon()
-        icon: 'chat-bubble'
+        icon: 'chat'
         route: @router.get 'social'
         text: @model.l.get 'general.social'
         hasNotification: hasUnreadMessages

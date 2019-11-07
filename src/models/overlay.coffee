@@ -1,6 +1,7 @@
 
 RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 _filter = require 'lodash/filter'
+_findIndex = require 'lodash/findIndex'
 _isEmpty = require 'lodash/isEmpty'
 _map = require 'lodash/map'
 
@@ -23,7 +24,7 @@ module.exports = class Overlay
   get$: =>
     @overlays.map (overlays) -> _map overlays, '$'
 
-  open: ($, {data, onComplete, onCancel} = {}) =>
+  open: ($, {data, onComplete, onCancel, id} = {}) =>
     if Environment.isIos()
       document.activeElement.blur() # hide keyboard
       # setTimeout ->
@@ -31,7 +32,7 @@ module.exports = class Overlay
       # , 0
 
     newOverlays = _filter (@overlays.getValue() or []).concat(
-      {$, onComplete, onCancel}
+      {$, onComplete, onCancel, id}
     )
     @overlays.next newOverlays
 
@@ -46,14 +47,20 @@ module.exports = class Overlay
     e.stopPropagation()
     @close {isFromBackButton: true}
 
-  close: ({action, response, isFromBackButton} = {}) =>
+  close: ({action, response, isFromBackButton, id} = {}) =>
     overlays = @overlays.getValue()
     if _isEmpty overlays
       return
 
     window.removeEventListener 'backbutton', @closeFromBackButton
 
-    {onComplete, onCancel} = overlays.pop()
+    if id
+      index = _findIndex overlays, {id}
+      {onComplete, onCancel} = overlays[index]
+      overlays.splice index, 1
+    else
+      {onComplete, onCancel} = overlays.pop()
+
     if _isEmpty overlays
       overlays = null
     @overlays.next overlays

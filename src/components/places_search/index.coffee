@@ -12,7 +12,6 @@ Icon = require '../icon'
 SearchInput = require '../search_input'
 FlatButton = require '../flat_button'
 TooltipPositioner = require '../tooltip_positioner'
-PlacesFiltersOverlay = require '../places_filters_overlay'
 colors = require '../../colors'
 
 if window?
@@ -25,7 +24,8 @@ SEARCH_DEBOUNCE = 300
 module.exports = class PlacesSearch
   constructor: (options) ->
     {@model, @router, @onclick, searchQuery, @persistValue, @dataTypesStream
-      @hasDirectPlaceLinks, @isAppBar} = options
+      @filterTypesStream, @hasDirectPlaceLinks, @isAppBar,
+      @isPlaceFiltersVisible} = options
 
     @searchValueStreams = new RxReplaySubject 1
     @searchValueStreams.next searchQuery or (new RxBehaviorSubject '')
@@ -88,10 +88,8 @@ module.exports = class PlacesSearch
                 z @$filterIcon,
                   icon: 'filter'
                   color: colors.$bgText54
-                  onclick: =>
-                    @model.overlay.open new PlacesFiltersOverlay {
-                      @model, @router, @dataTypesStream
-                    }
+                  onclick: (e) =>
+                    @isPlaceFiltersVisible.next true
             placeholder: if isOpen \
                          then @model.l.get 'placesSearch.openPlaceholder'
                          else @model.l.get 'placesSearch.placeholder'

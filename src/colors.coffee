@@ -162,6 +162,7 @@ colors = _defaults {
   '$primaryMainText': 'var(--primary-900-text)'
   '$primaryMainText54': 'var(--primary-900-text-54)'
 
+  '$secondary50': 'var(--secondary-50)'
   '$secondary100': 'var(--secondary-100)'
   '$secondary200': 'var(--secondary-200)'
   '$secondary300': 'var(--secondary-300)'

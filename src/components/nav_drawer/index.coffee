@@ -111,7 +111,7 @@ module.exports = class NavDrawer
             title: @model.l.get 'general.places'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'map'
+            iconName: 'campsite'
             isDefault: true
           }
           {
@@ -119,7 +119,7 @@ module.exports = class NavDrawer
             title: @model.l.get 'general.social'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'chat-bubble'
+            iconName: 'chat'
             hasNotification: hasUnreadMessages
           }
           {
@@ -127,7 +127,7 @@ module.exports = class NavDrawer
             title: @model.l.get 'tripsPage.title'
             $icon: new Icon()
             $ripple: new Ripple()
-            iconName: 'road'
+            iconName: 'near-me'
           }
           # {
           #   path: @model.group.getPath group, 'groupForum', {@router}

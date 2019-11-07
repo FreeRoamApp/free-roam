@@ -9,6 +9,7 @@ _reduce = require 'lodash/reduce'
 _groupBy = require 'lodash/groupBy'
 _some = require 'lodash/some'
 _sumBy = require 'lodash/sumBy'
+_isEqual = require 'lodash/isEqual'
 _isEmpty = require 'lodash/isEmpty'
 _uniq = require 'lodash/uniq'
 _values = require 'lodash/values'
@@ -16,13 +17,15 @@ RxBehaviorSubject = require('rxjs/BehaviorSubject').BehaviorSubject
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/combineLatest'
+require 'rxjs/add/operator/distinctUntilChanged'
 require 'rxjs/add/observable/of'
 
-Checkbox = require '../checkbox'
+Toggle = require '../toggle'
 PlaceSheet = require '../place_sheet'
 LayerSettingsOverlay = require '../layer_settings_overlay'
 Map = require '../map'
 PlacesFilterBar = require '../places_filter_bar'
+PlacesFiltersOverlay = require '../places_filters_overlay'
 PlacesSearch = require '../places_search'
 Fab = require '../fab'
 TooltipPositioner = require '../tooltip_positioner'
@@ -145,9 +148,12 @@ module.exports = class PlacesMapContainer
       editRouteWaypoints, @coordinate, @addOptionalLayer, @layersVisible
       @addLayerById, @removeLayerById
     }
+    @isPlaceFiltersVisible = new RxBehaviorSubject false
     @$placesSearch = new PlacesSearch {
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
       @dataTypesStream
+      @filterTypesStream
+      @isPlaceFiltersVisible
       onclick: ({location, bbox, text}) =>
         @addPlacesStreams.next RxObservable.of [{
           location: location
@@ -157,8 +163,13 @@ module.exports = class PlacesMapContainer
         }]
         mapBoundsStreams.next RxObservable.of bbox
     }
+    @$placeFiltersOverlay = new PlacesFiltersOverlay {
+      @model, @router, @dataTypesStream, @filterTypesStream
+      isVisible: @isPlaceFiltersVisible
+    }
     @$placesFilterBar = new PlacesFilterBar {
       @model, @isFilterTypesVisible, @currentDataType
+      @dataTypesStream, @filterTypesStream
       @tripRoute, @isTripFilterEnabled
     }
 
@@ -221,7 +232,7 @@ module.exports = class PlacesMapContainer
         onclick: onclick
         getIconFn: getIconFn
         isCheckedValueStreams: isCheckedValueStreams
-        $checkbox: new Checkbox {valueStreams: isCheckedValueStreams}
+        $toggle: new Toggle {isSelectedStreams: isCheckedValueStreams}
       }
 
     RxObservable.combineLatest(
@@ -250,6 +261,7 @@ module.exports = class PlacesMapContainer
         @currentDataType.next RxObservable.of _find(dataTypesWithValue, 'isChecked')?.dataType
 
       dataTypesWithValue
+    .publishReplay(1).refCount()
 
   getFilterTypesStream: =>
     @initialFilters.switchMap (initialFilters) =>
@@ -285,6 +297,9 @@ module.exports = class PlacesMapContainer
         _map filters, ({valueStreams}) -> valueStreams.switch()
         (vals...) -> vals
       )
+      # ^^ updates a lot since $filterContent sets valueStreams on a lot
+      # on load. this prevents a bunch of extra lodash loops from getting called
+      .distinctUntilChanged _isEqual
       .map (values) =>
         filtersWithValue = _zipWith filters, values, (filter, value) ->
           _defaults {value}, filter
@@ -421,7 +436,7 @@ module.exports = class PlacesMapContainer
 
 
   render: =>
-    {isShell, filterTypes, dataTypes, currentDataType, place, layersVisible,
+    {isShell, currentDataType, place, layersVisible,
       counts, visibleDataTypes, isFilterTypesVisible, isLegendVisible, icons,
       isLayersPickerVisible, tripRoute} = @state.getValue()
 
@@ -440,9 +455,10 @@ module.exports = class PlacesMapContainer
           z '.search',
             z @$placesSearch
             z @$placesFilterBar, {
-              dataTypes, currentDataType, filterTypes, visibleDataTypes
+              currentDataType, visibleDataTypes
               @trip, @isTripFilterEnabled
             }
+            z @$placeFiltersOverlay
         z '.counts-bar', {
           className: z.classKebab {isVisible: isCountsBarVisbile}
         },

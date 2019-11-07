@@ -13,9 +13,9 @@ $zIndexDrawer = 300
   border-right: 1px solid getColor('$bgText12')
 
   > .header
-    shadow-1()
+    // shadow-1()
     // prevents flicker glitch http://stackoverflow.com/a/3921870
-    backface-visibility: hidden
+    // backface-visibility: hidden
     padding: 16px
     height: 56px
     box-sizing: border-box
@@ -44,13 +44,14 @@ $zIndexDrawer = 300
     -webkit-overflow-scrolling: touch
 
     > .menu
+      flex1()
       width: 100%
       list-style-type: none
       margin: 0
       padding: 0
 
       > .sign-in-buttons
-        padding: 6px 16px 24px 16px
+        padding: 0 16px 16px 16px
         display: flex
 
         > .button

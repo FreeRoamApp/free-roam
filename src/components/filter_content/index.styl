@@ -1,0 +1,104 @@
+@require '../../vars'
+
+.z-filter-content
+  > .title
+    font-subtitle1()
+    margin-bottom: 24px
+
+  > .content
+    > .warning
+      font-caption()
+      background: getColor('$secondary50')
+      margin-top: 8px
+      margin-bottom: 8px
+      padding: 12px
+      border-radius: 4px
+
+    > .content // FIXME: rename
+      > .title
+        font-body1()
+        margin-top: 24px
+
+      > .info
+        font-body2(true, medium)
+        margin-bottom: 16px
+
+      > .rating
+        margin-bottom: 28px
+
+      > .tap-item
+        font-body2()
+        display: inline-block
+        margin-right: 12px
+        margin-bottom: 12px
+        padding: 6px 12px
+        border-radius: 4px
+        text-align: center
+        cursor: pointer
+        border: 1px solid getColor('$bgText38')
+
+        &.is-selected
+          background: getColor('$secondary50')
+          border: 1px solid getColor('$secondary700')
+
+      > .tap-tabs
+        border: 1px solid getColor('$secondary50')
+        border-radius: 4px
+        display: flex
+
+        > .tap-tab
+          flex1()
+          font-body2()
+          padding: 8px 16px
+          border-radius: 4px
+          text-align: center
+          cursor: pointer
+
+          &.is-selected
+            background: getColor('$secondary50')
+
+      > .carrier, > .amenity
+        margin-bottom: 16px
+
+      > .checkbox-label
+        font-body2()
+        margin-top: 16px
+        display: flex
+        align-items: center
+
+        // > .text
+        //   margin-left: 8px
+
+        > .operators
+          margin-left: auto
+          display: flex
+
+          > .operator
+            border: 1px solid getColor('$bgText38')
+            border-radius: 50%
+            width: 24px
+            height: 24px
+            margin-right: 8px
+
+            &.is-selected
+              border: 1px solid getColor('$secondaryMain')
+              background: getColor('$secondaryMain')
+
+        > .operator-input
+          width: 30px
+
+        > .small-input
+          width: 50px
+          margin-left: auto
+          display: flex
+          align-items: center
+
+        > .input
+          margin-left: auto
+
+      > .label
+        font-body2()
+        margin-bottom: 8px
+
+      > .fields
+        display: flex

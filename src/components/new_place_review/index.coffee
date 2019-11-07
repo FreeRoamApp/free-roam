@@ -238,7 +238,7 @@ module.exports = class NewPlaceReview
 
 
   render: =>
-    {step, isLoading, review, attachmentsValue} = @state.getValue()
+    {step, isLoading, review, attachmentsValue, reviewExtraFieldsValues} = @state.getValue()
 
     z '.z-new-place-review',
       z @$steps[step]

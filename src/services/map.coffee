@@ -94,7 +94,7 @@ class MapService
 
   getDirections: (place, {model}) ->
     target = '_system'
-    baseUrl = 'https://google.com/maps/dir/?api=1'
+    baseUrl = 'https://www.google.com/maps/dir/?api=1'
     destination = place?.location?.lat + ',' + place?.location?.lon
 
     isIos = Environment.isIos()
@@ -139,6 +139,7 @@ class MapService
         isBoolean: true
         arrayValue: 'dump'
         name: model.l.get 'amenities.dump'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -146,6 +147,7 @@ class MapService
         isBoolean: true
         arrayValue: 'water'
         name: model.l.get 'amenities.water'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -153,6 +155,7 @@ class MapService
         isBoolean: true
         arrayValue: 'restArea'
         name: model.l.get 'overnight.restArea'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -160,6 +163,7 @@ class MapService
         isBoolean: true
         arrayValue: 'groceries'
         name: model.l.get 'amenities.groceries'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -167,6 +171,7 @@ class MapService
         isBoolean: true
         arrayValue: 'propane'
         name: model.l.get 'amenities.propane'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -174,6 +179,7 @@ class MapService
         isBoolean: true
         arrayValue: 'trash'
         name: model.l.get 'amenities.trash'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -181,6 +187,7 @@ class MapService
         isBoolean: true
         arrayValue: 'recycle'
         name: model.l.get 'amenities.recycle'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -192,6 +199,7 @@ class MapService
         ]
         arrayValue: 'shower'
         name: model.l.get 'amenities.shower'
+        filterOverlayGroup: 'amenities'
         valueFn: (value) ->
           _filter _map value, (subTypeValue, subTypeKey) ->
             if subTypeValue
@@ -203,6 +211,7 @@ class MapService
         isBoolean: true
         arrayValue: 'laundry'
         name: model.l.get 'amenities.laundry'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -210,6 +219,7 @@ class MapService
         isBoolean: true
         arrayValue: 'gas'
         name: model.l.get 'amenities.gas'
+        filterOverlayGroup: 'amenities'
       }
       {
         field: 'amenities'
@@ -217,16 +227,28 @@ class MapService
         isBoolean: true
         arrayValue: 'water'
         name: model.l.get 'amenities.npwater'
+        filterOverlayGroup: 'amenities'
       }
     ]
 
   getCampgroundFilters: ({model}) ->
     [
       {
+        field: 'subType'
+        type: 'fieldList'
+        items: [
+          {key: 'public', label: model.l.get 'placeInfo.landTypePublic'}
+          {key: 'private', label: model.l.get 'placeInfo.landTypePrivate'}
+        ]
+        name: model.l.get 'placeInfo.landType'
+      }
+      {
         field: 'prices.all.mode'
         key: 'maxPrice'
         type: 'maxIntCustom'
+        inputPrefix: '$'
         name: model.l.get 'campground.maxPrice'
+        title: model.l.get 'filterContent.title.maxPrice'
       }
       {
         field: 'cellSignal'
@@ -237,6 +259,7 @@ class MapService
         field: 'fullness'
         type: 'maxIntSeasonal'
         name: model.l.get 'campground.fullness'
+        filterOverlayGroup: 'sliders'
       }
       {
         field: 'weather'
@@ -246,18 +269,23 @@ class MapService
       {
         field: 'distanceTo'
         type: 'distanceTo'
-        name: model.l.get 'campground.distanceTo'
+        name: model.l.get 'filterSheet.facilitiesNearby'
       }
       {
         field: 'features'
         type: 'listBooleanAnd'
         items: [
-          {key: 'waterHookup', label: model.l.get 'filterDialog.hasFreshWater'}
-          {key: 'sewerHookup', label: model.l.get 'filterDialog.hasSewage'}
-          {key: '30amp', label: model.l.get 'filterDialog.has30Amp'}
-          {key: '50amp', label: model.l.get 'filterDialog.has50Amp'}
+          {key: 'waterHookup', label: model.l.get 'filterSheet.hasFreshWater'}
+          {key: 'sewerHookup', label: model.l.get 'filterSheet.hasSewage'}
+          {key: '30amp', label: model.l.get 'filterSheet.has30Amp'}
+          {key: '50amp', label: model.l.get 'filterSheet.has50Amp'}
         ]
         name: model.l.get 'general.hookups'
+      }
+      {
+        field: 'rating'
+        type: 'reviews'
+        name: model.l.get 'general.reviews'
       }
       {
         field: 'affiliations'
@@ -273,50 +301,41 @@ class MapService
         name: model.l.get 'general.affiliations'
       }
       {
-        field: 'subType'
-        type: 'fieldList'
-        items: [
-          {key: 'public', label: model.l.get 'placeInfo.landTypePublic'}
-          {key: 'private', label: model.l.get 'placeInfo.landTypePrivate'}
-        ]
-        name: model.l.get 'placeInfo.landType'
-      }
-      {
         field: 'maxLength'
         key: 'minLength'
         type: 'minIntCustom'
+        inputPostfix: 'ft'
         name: model.l.get 'campground.minLength'
       }
       {
         field: 'crowds'
         type: 'maxIntSeasonal'
         name: model.l.get 'campground.crowds'
+        filterOverlayGroup: 'sliders'
       }
       {
         field: 'roadDifficulty'
         type: 'maxInt'
         name: model.l.get 'campground.roadDifficulty'
+        filterOverlayGroup: 'sliders'
       }
       {
         field: 'shade'
         type: 'maxInt'
         name: model.l.get 'campground.shade'
+        filterOverlayGroup: 'sliders'
       }
       {
         field: 'safety'
         type: 'minInt'
         name: model.l.get 'campground.safety'
+        filterOverlayGroup: 'sliders'
       }
       {
         field: 'noise'
         type: 'maxIntDayNight'
         name: model.l.get 'campground.noise'
-      }
-      {
-        field: 'attachmentCount'
-        type: 'gtZero'
-        isBoolean: true
-        name: model.l.get 'campground.hasPhoto'
+        filterOverlayGroup: 'sliders'
       }
     ]
 
@@ -355,6 +374,7 @@ class MapService
         isBoolean: true
         arrayValue: 'walmart'
         name: model.l.get 'overnight.walmart'
+        filterOverlayGroup: 'overnights'
       }
       {
         field: 'subType'
@@ -362,6 +382,7 @@ class MapService
         isBoolean: true
         arrayValue: 'truckStop'
         name: model.l.get 'overnight.truckStop'
+        filterOverlayGroup: 'overnights'
       }
       {
         field: 'subType'
@@ -369,6 +390,7 @@ class MapService
         isBoolean: true
         arrayValue: 'restArea'
         name: model.l.get 'overnight.restArea'
+        filterOverlayGroup: 'overnights'
       }
       {
         field: 'subType'
@@ -376,6 +398,7 @@ class MapService
         isBoolean: true
         arrayValue: 'casino'
         name: model.l.get 'overnight.casino'
+        filterOverlayGroup: 'overnights'
       }
       {
         field: 'subType'
@@ -383,6 +406,7 @@ class MapService
         isBoolean: true
         arrayValue: 'crackerBarrel'
         name: model.l.get 'overnight.crackerBarrel'
+        filterOverlayGroup: 'overnights'
       }
       {
         field: 'subType'
@@ -390,6 +414,7 @@ class MapService
         isBoolean: true
         arrayValue: 'cabelas'
         name: model.l.get 'overnight.cabelas'
+        filterOverlayGroup: 'overnights'
       }
       {
         field: 'subType'
@@ -397,6 +422,7 @@ class MapService
         isBoolean: true
         arrayValue: 'other'
         name: model.l.get 'overnight.other'
+        filterOverlayGroup: 'overnights'
       }
     ]
 
@@ -683,49 +709,74 @@ class MapService
                 if value
                   match: "#{field}": key
           }
-        when 'cellSignal'
-          carrier = filter.value.carrier
-          if filter.value.isLte
-            {
-              range:
-                "#{field}.#{carrier}_lte.signal":
-                  gte: filter.value.signal
-            }
-          else
-            # check for lte and non lte
+        when 'reviews'
+          {
             bool:
-              should: [
-                {
-                  range:
-                    "#{field}.#{carrier}.signal":
-                      gte: filter.value.signal
-                }
-                {
-                  range:
-                    "#{field}.#{carrier}_lte.signal":
-                      gte: filter.value.signal
-                }
+              must: _filter [
+                if filter.value.rating
+                  {range: {rating: {gte: filter.value.rating}}}
+                if filter.value.hasPhotos
+                  {range: {attachmentCount: {gt: 0}}}
               ]
+
+          }
+          # {
+          #   field: 'attachmentCount'
+          #   type: 'gtZero'
+          #   isBoolean: true
+          #   name: model.l.get 'campground.hasPhoto'
+          # }
+        when 'cellSignal'
+          {
+            bool:
+              should: _map filter.value, (value, carrier) ->
+                if carrier.indexOf('_lte') isnt -1
+                  {
+                    range:
+                      "#{field}.#{carrier}.signal":
+                        gte: value
+                  }
+                else
+                  # check for lte and non lte
+                  bool:
+                    should: [
+                      {
+                        range:
+                          "#{field}.#{carrier}.signal":
+                            gte: value
+                      }
+                      {
+                        range:
+                          "#{field}.#{carrier.replace('_lte', '')}.signal":
+                            gte: value
+                      }
+                    ]
+          }
         when 'weather'
           if filter.value.month is 'forecast'
-            {
-              range:
-                "forecast.#{filter.value.metric}":
-                  "#{filter.value.operator}": parseFloat(filter.value.number)
-            }
+            bool:
+              must: _map filter.value.metrics, ({operator, value}, metric) ->
+                {
+                  range:
+                    "forecast.#{metric}":
+                      "#{operator}": parseFloat(value)
+                }
           else
+            console.log filter.value.month, config.MONTHS[filter.value.month]
             month = config.MONTHS[filter.value.month]
-            {
-              range:
-                "#{field}.months.#{month}.#{filter.value.metric}":
-                  "#{filter.value.operator}": parseFloat(filter.value.number)
-            }
+            bool:
+              must: _map filter.value.metrics, ({operator, value}, metric) ->
+                range:
+                  "#{field}.months.#{month}.#{metric}":
+                    "#{operator}": parseFloat(value)
         when 'distanceTo'
-          {
-            range:
-              "#{field}.#{filter.value.amenity}.time":
-                lte: parseInt(filter.value.time)
-          }
+          bool:
+            must: _map filter.value.facilities, (facility) ->
+              {
+                range:
+                  "#{field}.#{facility}.time":
+                    lte: parseInt(filter.value.time)
+              }
         when 'booleanArray'
           withValues = _filter(fieldFilters, 'value')
 
@@ -746,6 +797,7 @@ class MapService
 
             }
 
+    console.log 'filter', filter
     filter.push {
       geo_bounding_box:
         location:

@@ -26,7 +26,7 @@ module.exports = class InputRange
   beforeUnmount: =>
     @disposable?.unsubscribe()
 
-  render: ({label, hideInfo, step} = {}) =>
+  render: ({hideInfo, step} = {}) =>
     {value} = @state.getValue()
 
     value = if value? then parseInt(value) else null
@@ -39,7 +39,6 @@ module.exports = class InputRange
       className: z.classKebab {hasValue: value?}
     },
       z 'label.label',
-        label
         z '.range-container',
           z "input.range.percent-#{percent}",
             type: 'range'

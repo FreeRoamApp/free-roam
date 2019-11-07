@@ -1,0 +1,45 @@
+@require '../../vars'
+
+.z-cell-selector
+  > .carriers
+    margin-bottom: 24px
+
+    > .carrier
+      font-body2()
+      display: inline-block
+      padding: 6px 12px
+      border: 1px solid getColor('$bgText12')
+      border-radius: 4px
+      margin-right: 8px
+      cursor: pointer
+
+      &:last-child
+        margin-right: 0
+
+      &.is-selected
+        background: getColor('$secondary50')
+        border: 1px solid getColor('$secondaryMain')
+
+  > .label
+    font-body2(true, medium)
+    margin-bottom: 24px
+
+  > .signals
+    display: flex
+
+    > .signal
+      margin-right: 24px
+
+      > .name
+        font-overline()
+        margin-top: 16px
+        text-align: center
+
+      > .lte
+        display: flex
+        align-items: center
+        margin-top: 6px
+
+        > .text
+          font-body2()
+          margin-right: 10px

@@ -1,40 +1,90 @@
 @require '../../vars'
 
+.z-places-filters-overlay_reset-button
+  margin-right: -16px
+
 .z-places-filters-overlay
-  position: absolute
+  position: fixed
   z-index: 99
   top: 0
   left: 0
+  opacity: 0
+  pointer-events: none
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1)
   width: 100%
   height: 100%
-  padding-bottom: 62px // hack to cover bottom bar
   box-sizing: border-box
   background: getColor('$tertiary0')
   overflow: auto
   -webkit-overflow-scrolling: touch
+  display: flex
+  flex-direction: column
 
-  > .data-types > .g-grid > .g-cols > .g-col
-    > .type
-      display: flex
-      align-items: center
-      padding: 0 8px
-      cursor: pointer
+  &.is-visible
+    opacity: 1
+    pointer-events: all
 
-      > .info
-        > .name
-          font-subtitle1()
+  > .g-grid
+    flex1()
+    overflow: auto
+    -webkit-overflow-scrolling: touch
 
-        > .description
-          font-caption()
-          white-space: nowrap
-          overflow: hidden
-          text-overflow: ellipsis
+    > .data-types
+      > .title
+        font-subtitle2()
+        padding: 24px 16px 12px 16px
 
-      > .checkbox
-        margin-left: auto
+      > .g-grid > .g-cols > .g-col
+        > .type
+          display: flex
+          align-items: center
+          padding: 12px 16px
+          cursor: pointer
+
+          > .info
+            > .name
+              font-body1()
+              margin-bottom: 2px
+
+            > .description
+              font-caption()
+              white-space: nowrap
+              overflow: hidden
+              text-overflow: ellipsis
+
+          > .toggle
+            margin-left: auto
+
+    > .filter-types
+      margin-top: 16px
+
+      > .title
+        font-subtitle2()
+        padding: 24px 16px 12px 16px
 
   @media (min-width: $breakPointMedium)
-    padding-bottom: 0 // get rid of bottom bar padding
-    > .data-types > .g-grid > .g-cols > .g-col > .type
+    > .g-grid > .data-types > .g-grid > .g-cols > .g-col > .type
       > .checkbox
         margin-left: 8px
+
+.z-places-filters-overlay_filter
+  padding: 0 16px
+  > .inner
+    padding: 16px 0
+    border-bottom: 1px solid getColor('$bgText12')
+
+    > .group-title
+      font-subtitle1()
+
+    > .description
+      font-body2(true, medium)
+      margin-top: 4px
+      margin-bottom: 20px
+
+    > .warning
+      font-caption()
+      background: getColor('$secondary50')
+      margin-top: 8px
+      margin-bottom: 8px
+      padding: 12px
+      border-radius: 4px

@@ -23,24 +23,11 @@
       font-caption(false)
       cursor: pointer
       // background: getColor('$bg600')
-      padding: 0 32px 0 12px
-      border-right: 1px solid getColor('$black12')
-      margin-right: 4px
+      padding: 0 16px
+      // margin-right: 4px
       position: relative
       display: none
       align-items: center
-
-      &:after
-        content: ''
-        position: absolute
-        top: 50%
-        margin-top: -2px
-        right: 12px
-        width: 0
-        height: 0
-        border-left: 4px solid transparent
-        border-right: 4px solid transparent
-        border-top: 4px solid getColor('$bgText70')
 
     > .filters
       flex1()
@@ -85,27 +72,26 @@
             border-top: 4px solid getColor('$tertiary800')
 
   > .filter-type-selector
+    shadow-1()
     position: absolute
     display: none
-    top: 100px
+    top: 64px
     left: 0
     min-width: 180px
     background: getColor('$tertiary0')
-    border: 1px solid getColor('$black12')
-    border-left: none
-    border-top: none
     z-index: 1000 // nav bar grip is 999, this needs to be higher
     padding-bottom: 4px
+    border-radius: 2px
 
     &.is-visible
       display: block
 
     > .title
-      font-caption(false, disabled)(false)
+      font-subtitle2()
       padding: 8px
 
     > .type
-      font-caption(false)
+      font-body2()
       padding: 6px 8px
       display: flex
       align-items: center

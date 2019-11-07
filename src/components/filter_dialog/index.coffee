@@ -199,14 +199,14 @@ module.exports = class FilterDialog
         $content =
           z '.content',
             z @$inputRange, {
-              label: @model.l.get "filterDialog.#{@filter.field}Label"
+              label: @model.l.get "filterSheet.#{@filter.field}Label"
             }
             @model.l.get "levelText.#{@filter.field}#{value}"
       when 'maxIntCustom', 'minIntCustom'
         $title = @model.l.get "campground.#{@filter.key}"
         $content =
           z '.content',
-            z '.label', @model.l.get "filterDialog.#{@filter.key}"
+            z '.label', @model.l.get "filterSheet.#{@filter.key}"
             z '.fields',
               z @$input, {
                 type: 'number'
@@ -217,17 +217,17 @@ module.exports = class FilterDialog
         $title = @model.l.get 'lowClearance.maxClearance'
         $content =
           z '.content',
-            z '.label', @model.l.get 'filterDialog.maxClearance'
+            z '.label', @model.l.get 'filterSheet.maxClearance'
             z '.fields',
               z @$feetInput, {
                 type: 'number'
                 hintText:
-                  @model.l.get 'filterDialog.feet'
+                  @model.l.get 'filterSheet.feet'
               }
               z @$inchesInput, {
                 type: 'number'
                 hintText:
-                  @model.l.get 'filterDialog.inches'
+                  @model.l.get 'filterSheet.inches'
               }
       when 'list', 'fieldList', 'booleanArraySubTypes', 'listBooleanAnd', 'listBooleanOr'
         $title = @filter?.name
@@ -241,7 +241,7 @@ module.exports = class FilterDialog
       when 'cellSignal'
         $content =
           z '.content',
-            z '.div', @model.l.get 'filterDialog.cellCarrier'
+            z '.div', @model.l.get 'filterSheet.cellCarrier'
             z '.carrier',
               z @$carrierDropdown,
                 options: [
@@ -250,12 +250,12 @@ module.exports = class FilterDialog
                   {value: 'tmobile', text: @model.l.get 'carriers.tmobile'}
                   {value: 'sprint', text: @model.l.get 'carriers.sprint'}
                 ]
-            z '.label', @model.l.get 'filterDialog.minSignal'
+            z '.label', @model.l.get 'filterSheet.minSignal'
             z '.bars', z @$cellBars, {widthPx: 200}
             z 'label.checkbox-label',
               z '.checkbox',
                 z @$isLteCheckbox
-              z '.text', @model.l.get 'filterDialog.requireLte'
+              z '.text', @model.l.get 'filterSheet.requireLte'
       when 'weather'
         metric = filterValue?.metric
         $content =
@@ -266,7 +266,7 @@ module.exports = class FilterDialog
                 options: [
                   {
                     value: 'forecast'
-                    text: @model.l.get 'filterDialog.weatherForecast'
+                    text: @model.l.get 'filterSheet.weatherForecast'
                   }
                 ].concat _map _range(12), (i) =>
                   {value: "#{i}", text: @model.l.get "months.#{i}"}
@@ -276,38 +276,38 @@ module.exports = class FilterDialog
                   [
                     {
                       value: 'maxHigh'
-                      text: @model.l.get 'filterDialog.weatherMaxHigh'
+                      text: @model.l.get 'filterSheet.weatherMaxHigh'
                     }
                     {
                       value: 'minHigh'
-                      text: @model.l.get 'filterDialog.weatherMinHigh'
+                      text: @model.l.get 'filterSheet.weatherMinHigh'
                     }
                     {
                       value: 'maxLow'
-                      text: @model.l.get 'filterDialog.weatherMaxLow'
+                      text: @model.l.get 'filterSheet.weatherMaxLow'
                     }
                     {
                       value: 'minLow'
-                      text: @model.l.get 'filterDialog.weatherMinLow'
+                      text: @model.l.get 'filterSheet.weatherMinLow'
                     }
                     {
                       value: 'rainyDays'
-                      text: @model.l.get 'filterDialog.weatherRainyDays'
+                      text: @model.l.get 'filterSheet.weatherRainyDays'
                     }
                   ]
                 else
                   [
                     {
                       value: 'tmin'
-                      text: @model.l.get 'filterDialog.weatherTmin'
+                      text: @model.l.get 'filterSheet.weatherTmin'
                     }
                     {
                       value: 'tmax'
-                      text: @model.l.get 'filterDialog.weatherTmax'
+                      text: @model.l.get 'filterSheet.weatherTmax'
                     }
                     {
                       value: 'precip'
-                      text: @model.l.get 'filterDialog.weatherPrecip'
+                      text: @model.l.get 'filterSheet.weatherPrecip'
                     }
                   ]
             z '.operator',
@@ -326,7 +326,7 @@ module.exports = class FilterDialog
               z @$numberInput, {
                 type: 'number'
                 hintText: @model.l.get(
-                  "filterDialog.weather#{_startCase(metric).replace(/ /g, '')}"
+                  "filterSheet.weather#{_startCase(metric).replace(/ /g, '')}"
                 )
               }
       when 'distanceTo'
@@ -341,11 +341,11 @@ module.exports = class FilterDialog
                   {value: 'groceries', text: 'Groceries'}
                 ]
             z 'label.label.time',
-              @model.l.get 'filterDialog.timeLabel'
+              @model.l.get 'filterSheet.timeLabel'
               z @$timeInput, {
                 type: 'number'
                 hintText:
-                  @model.l.get 'filterDialog.time'
+                  @model.l.get 'filterSheet.time'
               }
 
     $title ?= @model.l.get "campground.#{@filter.field}"
@@ -365,7 +365,7 @@ module.exports = class FilterDialog
           z '.z-filter-dialog_dialog',
             if @filter.field in ['maxLength', 'crowds', 'roadDifficulty', 'shade', 'safety', 'noise', 'features']
               z '.warning',
-                @model.l.get 'filterDialog.userInputWarning'
+                @model.l.get 'filterSheet.userInputWarning'
             $content
         cancelButton:
           text: @model.l.get 'general.cancel'

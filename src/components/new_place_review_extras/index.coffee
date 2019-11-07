@@ -13,7 +13,7 @@ _every = require 'lodash/every'
 _defaults = require 'lodash/defaults'
 _startCase = require 'lodash/startCase'
 
-CellBars = require '../cell_bars'
+CellSelector = require '../cell_selector'
 Checkbox = require '../checkbox'
 DropdownMultiple = require '../dropdown_multiple'
 InputRange = require '../input_range'
@@ -57,19 +57,6 @@ module.exports = class NewPlaceReviewExtras
         }
       }
 
-    @carrierCache = []
-
-    carriersValueStreams = new RxReplaySubject 1
-    carriersValueStreams.next try
-      JSON.parse localStorage?['cellCarriers']
-    catch err
-      []
-
-    # HACK: infinite loop with other approaches
-    # (using cellSignal.valueStreams directly)
-    initialValue = new RxBehaviorSubject null
-    @fields.cellSignal.valueStreams.switch().take(1).subscribe (cellSignal) ->
-      initialValue.next cellSignal
 
     carriers = @parent.map (parent) ->
       # TODO: store country in address so we don't have to do this
@@ -83,91 +70,15 @@ module.exports = class NewPlaceReviewExtras
       else
         ['verizon', 'att', 'tmobile', 'sprint']
 
-    @$carrierDropdown = new DropdownMultiple {
-      @model
-      valueStreams: carriersValueStreams
-      options: carriers.map((carriers) =>
-        _map carriers, (carrier) =>
-          streams = new RxReplaySubject 1
-          streams.next initialValue.map (value) =>
-            Boolean value?["#{carrier}_lte"]
-          {
-            value: carrier
-            text: @model.l.get "carriers.#{carrier}"
-            isCheckedStreams: streams
-          }
-      ).publishReplay(1).refCount()
+    @$cellSelector = new CellSelector {
+      @model, carriers, useLocalStorage: true
+      valueStreams: @fields.cellSignal.valueStreams
     }
-
-    carriersAndInitialValue = RxObservable.combineLatest(
-      carriersValueStreams.switch()
-      initialValue
-      (vals...) -> vals
-    )
-
-    carriersWithExtras = carriersAndInitialValue.map ([carriers, initial]) =>
-      initial ?= {}
-
-      localStorage?['cellCarriers'] = JSON.stringify _map carriers, (carrier) ->
-        _pick carrier, ['value', 'text']
-      _map carriers, (carrier) =>
-        if @carrierCache[carrier.value]
-          return @carrierCache[carrier.value]
-
-        barsValueSubject = new RxBehaviorSubject(
-          initial["#{carrier.value}_lte"] or null
-        )
-        lteValueSubject = new RxBehaviorSubject(
-          Boolean (
-            initial["#{carrier.value}"] and not initial["#{carrier.value}_lte"]
-          ) or not initial["#{carrier.value}"]
-        )
-
-        @carrierCache[carrier.value] = {
-          carrier
-          barsValueSubject
-          lteValueSubject
-          $lteCheckbox: new Checkbox {value: lteValueSubject}
-          $bars: new CellBars {
-            value: barsValueSubject, isInteractive: true
-            includeNoSignal: true
-          }
-        }
-
-    @fields.cellSignal.valueStreams.next(
-      carriersWithExtras.switchMap (carriersWithExtras) ->
-        if _isEmpty carriersWithExtras
-          return RxObservable.of {}
-
-        barsChangesFeed = RxObservable.combineLatest(
-          _map carriersWithExtras, 'barsValueSubject'
-          (vals...) -> vals
-        )
-        lteChangesFeed = RxObservable.combineLatest(
-          _map carriersWithExtras, 'lteValueSubject'
-          (vals...) -> vals
-        )
-        changesFeed = RxObservable.combineLatest(
-          barsChangesFeed, lteChangesFeed, (vals...) -> vals
-        )
-
-        changesFeed.map (changes) ->
-          _reduce carriersWithExtras, (obj, carrierWithExtras) ->
-            {carrier, barsValueSubject, lteValueSubject} = carrierWithExtras
-            key = carrier.value
-            if lteValueSubject.getValue()
-              key += '_lte'
-            obj[key] = barsValueSubject.getValue()
-            obj
-          , {}
-
-    )
 
     @state = z.state {
       @season
       me: @model.user.getMe()
       fieldsValues: fieldsValues
-      carriers: carriersWithExtras
     }
 
   reset: =>
@@ -185,7 +96,7 @@ module.exports = class NewPlaceReviewExtras
     @model.l.get 'newReviewExtras.title'
 
   render: =>
-    {season, carriers, fieldsValues} = @state.getValue()
+    {season, fieldsValues} = @state.getValue()
 
     z '.z-place-new-review-extras',
       z '.g-grid',
@@ -204,30 +115,7 @@ module.exports = class NewPlaceReviewExtras
 
         z '.field.cell',
           z '.name', @model.l.get 'newReviewExtras.cellSignal'
-          z '.dropdown',
-            z @$carrierDropdown, {
-              currentText: if _isEmpty carriers \
-                     then @model.l.get 'carriers.selectCarrier'
-                     else _map(carriers, ({carrier}) -> carrier.text).join ', '
-            }
-          z '.carriers',
-              _map carriers, (carrier) =>
-                {carrier, $bars, $lteCheckbox} = carrier
-
-                z '.carrier',
-                  z '.bars',
-                    z $bars, {widthPx: 100}
-                  z '.name',
-                    carrier.text
-                  z 'label.lte',
-                    z '.checkbox',
-                      z $lteCheckbox, {
-                        colors:
-                          checked: colors.$secondaryMain
-                          checkedBorder: colors.$secondary900
-                      }
-                    z '.text',
-                      @model.l.get 'newReviewExtras.hasLte'
+          z @$cellSelector
 
         z '.field.when',
           z '.name', @model.l.get 'newReviewExtras.whenVisit'

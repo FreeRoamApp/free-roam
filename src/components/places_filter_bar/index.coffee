@@ -2,8 +2,11 @@ z = require 'zorium'
 RxObservable = require('rxjs/Observable').Observable
 require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
+_mapValues = require 'lodash/mapValues'
+_orderBy = require 'lodash/orderBy'
 
-FilterDialog = require '../filter_dialog'
+FilterSheet = require '../filter_sheet'
+Icon = require '../icon'
 colors = require '../../colors'
 
 if window?
@@ -12,22 +15,30 @@ if window?
 
 module.exports = class PlacesFilterBar
   constructor: (options) ->
-    {@model, @isFilterTypesVisible, @currentDataType,
-      tripRoute, @isTripFilterEnabled} = options
+    {@model, @isFilterTypesVisible, @currentDataType, @dataTypesStream
+      @filterTypesStream, tripRoute, @isTripFilterEnabled} = options
+
+    @$switchIcon = new Icon()
 
     @state = z.state {
       @isFilterTypesVisible
       tripRoute
       @isTripFilterEnabled
+      dataTypes: @dataTypesStream
+      filterTypes: @filterTypesStream.map (filterTypes) ->
+        _mapValues filterTypes, (filters) ->
+          _orderBy filters, (({value}) -> value?), 'desc'
     }
 
-  showFilterDialog: (filter) =>
-    @model.overlay.open new FilterDialog {
-      @model, @router, filter
-    }
+  showFilterSheet: (filter) =>
+    id = Date.now()
+    @model.overlay.open new FilterSheet({
+      @model, @router, filter, id
+    }), {id}
 
-  render: ({dataTypes, currentDataType, filterTypes, visibleDataTypes}) =>
-    {isFilterTypesVisible, tripRoute, isTripFilterEnabled} = @state.getValue()
+  render: ({currentDataType, visibleDataTypes}) =>
+    {isFilterTypesVisible, tripRoute, isTripFilterEnabled
+      filterTypes, dataTypes} = @state.getValue()
 
     z '.z-places-filter-bar', {
       className: z.classKebab {
@@ -41,7 +52,10 @@ module.exports = class PlacesFilterBar
               ga? 'send', 'event', 'map', 'showTypes'
             @isFilterTypesVisible.next not isFilterTypesVisible
         },
-          @model.l.get 'placesMapContainer.filters'
+          z @$switchIcon,
+            icon: 'swap'
+            color: colors.$bgText54
+            isTouchTarget: false
         z '.filters', {
           className: z.classKebab {"#{currentDataType}": true}
         },
@@ -67,7 +81,7 @@ module.exports = class PlacesFilterBar
                       RxObservable.of (not filter.value) or null
                     )
                   else
-                    @showFilterDialog filter
+                    @showFilterSheet filter
               }, filter.name
 
       z '.filter-type-selector', {
@@ -86,5 +100,6 @@ module.exports = class PlacesFilterBar
             onclick: =>
               ga? 'send', 'event', 'map', 'typeClick', dataType
               @currentDataType.next RxObservable.of dataType
+              @isFilterTypesVisible.next false
           },
             z '.name', @model.l.get "placeTypes.#{dataType}"

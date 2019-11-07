@@ -24,14 +24,14 @@
     border-radius: 4px
     max-width: 480px
     margin: 0 auto
-    padding-top: 8px
+    padding-top: 16px
 
     > .attachments
       white-space: nowrap
       overflow-x: auto
       overflow-y: hidden
-      height: 120px
-      padding: 4px 16px 0 16px
+      height: 120px + 8px // 8px for horizontal scrollbar on desktop. otherwise creates vertical scrolling
+      padding: 0 16px 0 16px
 
       > .attachment
         imageFadeIn()
@@ -42,7 +42,7 @@
         background-size: 100% auto
 
     > .content
-      padding: 8px 16px 0 16px
+      padding: 0 16px 0 16px
       display: flex
 
       > .left
