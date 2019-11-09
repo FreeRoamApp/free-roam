@@ -56,8 +56,9 @@ module.exports = class Overlay
 
     if id
       index = _findIndex overlays, {id}
-      {onComplete, onCancel} = overlays[index]
-      overlays.splice index, 1
+      if index isnt -1
+        {onComplete, onCancel} = overlays[index]
+        overlays.splice index, 1
     else
       {onComplete, onCancel} = overlays.pop()
 

@@ -33,6 +33,9 @@ module.exports = class Base
       return $component
 
   getImageLoadHashByUrl: (url) =>
+    unless window?
+      return 'is-image-loaded'
+
     hash = @model.image.getHash url
     isImageLoaded = @model.image.isLoadedByHash hash
     if isImageLoaded

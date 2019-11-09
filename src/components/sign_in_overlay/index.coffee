@@ -179,7 +179,7 @@ module.exports = class SignInOverlay
             hintText: @model.l.get 'general.username'
             autoCapitalize: false
             colors:
-              background: null
+              background: colors.$secondary400
               ink: colors.$secondary400Text
               underline: colors.$secondary400Text
           }
@@ -189,7 +189,7 @@ module.exports = class SignInOverlay
               hintText: @model.l.get 'general.email'
               type: 'email'
               colors:
-                background: null
+                background: colors.$secondary400
                 ink: colors.$secondary400Text
                 underline: colors.$secondary400Text
             }
@@ -199,7 +199,7 @@ module.exports = class SignInOverlay
               hintText: @model.l.get 'general.password'
               type: 'password'
               colors:
-                background: null
+                background: colors.$secondary400
                 ink: colors.$secondary400Text
                 underline: colors.$secondary400Text
             }

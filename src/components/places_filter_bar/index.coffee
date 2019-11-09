@@ -16,9 +16,10 @@ if window?
 module.exports = class PlacesFilterBar
   constructor: (options) ->
     {@model, @isFilterTypesVisible, @currentDataType, @dataTypesStream
-      @filterTypesStream, tripRoute, @isTripFilterEnabled} = options
+      @filterTypesStream, tripRoute, @isTripFilterEnabled,
+      @isPlaceFiltersVisible} = options
 
-    @$switchIcon = new Icon()
+    @$filterIcon = new Icon()
 
     @state = z.state {
       @isFilterTypesVisible
@@ -40,11 +41,7 @@ module.exports = class PlacesFilterBar
     {isFilterTypesVisible, tripRoute, isTripFilterEnabled
       filterTypes, dataTypes} = @state.getValue()
 
-    z '.z-places-filter-bar', {
-      className: z.classKebab {
-        hasMultipleDataTypes: visibleDataTypes?.length > 1
-      }
-    },
+    z '.z-places-filter-bar',
       z '.bar',
         z '.show', {
           onclick: =>
@@ -52,8 +49,8 @@ module.exports = class PlacesFilterBar
               ga? 'send', 'event', 'map', 'showTypes'
             @isFilterTypesVisible.next not isFilterTypesVisible
         },
-          z @$switchIcon,
-            icon: 'swap'
+          z @$filterIcon,
+            icon: 'filter'
             color: colors.$bgText54
             isTouchTarget: false
         z '.filters', {
@@ -103,3 +100,9 @@ module.exports = class PlacesFilterBar
               @isFilterTypesVisible.next false
           },
             z '.name', @model.l.get "placeTypes.#{dataType}"
+        z '.all-filters', {
+          onclick: =>
+            @isPlaceFiltersVisible.next true
+            @isFilterTypesVisible.next false
+        },
+          @model.l.get 'placesFilterBar.allFilters'

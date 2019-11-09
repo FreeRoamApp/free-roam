@@ -1,0 +1,32 @@
+@require '../../vars'
+
+.z-data-types-sheet_sheet
+  > .title
+    font-subtitle1()
+    margin-bottom: 8px
+
+  > .g-grid > .g-cols > .g-col
+    > .type
+      display: flex
+      align-items: center
+      padding: 12px 0 //16px
+      cursor: pointer
+
+      > .info
+        > .name
+          font-body1()
+          margin-bottom: 2px
+
+        > .description
+          font-caption()
+          white-space: nowrap
+          overflow: hidden
+          text-overflow: ellipsis
+
+      > .toggle
+        margin-left: auto
+
+  @media (min-width: $breakPointMedium)
+    > .g-grid > .g-cols > .g-col > .type
+      > .checkbox
+        margin-left: 8px

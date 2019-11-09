@@ -71,6 +71,8 @@ module.exports = class Input
           readonly: if disableAutoComplete then true else undefined
           autocapitalize: if not autoCapitalize then 'off' else undefined
           type: type
+          # HACK: webkit text fill color doesn't work in normal style obj
+          style: "color: #{colors.ink};height: #{height};-webkit-text-fill-color:#{colors.ink} !important;-webkit-box-shadow: 0 0 0 30px #{colors.background} inset !important"
         value: "#{value}" or ''
         oninput: z.ev (e, $$el) =>
           if @valueStreams
@@ -83,9 +85,6 @@ module.exports = class Input
           @isFocused.next true
         onblur: z.ev (e, $$el) =>
           @isFocused.next false
-        style:
-          color: colors.ink
-          height: height
       z '.underline-wrapper',
         z '.underline',
           style:

@@ -273,14 +273,15 @@ class MapService
       }
       {
         field: 'features'
-        type: 'listBooleanAnd'
+        type: 'iconListBooleanAnd'
         items: [
-          {key: 'waterHookup', label: model.l.get 'filterSheet.hasFreshWater'}
-          {key: 'sewerHookup', label: model.l.get 'filterSheet.hasSewage'}
-          {key: '30amp', label: model.l.get 'filterSheet.has30Amp'}
-          {key: '50amp', label: model.l.get 'filterSheet.has50Amp'}
+          {key: 'waterHookup', label: model.l.get 'feature.waterHookup'}
+          {key: 'sewerHookup', label: model.l.get 'feature.sewerHookup'}
+          {key: '30amp', label: model.l.get 'feature.30amp'}
+          {key: '50amp', label: model.l.get 'feature.50amp'}
+          {key: 'petsAllowed', label: model.l.get 'feature.petsAllowed'}
         ]
-        name: model.l.get 'general.hookups'
+        name: model.l.get 'filterSheet.features'
       }
       {
         field: 'rating'
@@ -347,6 +348,7 @@ class MapService
         isBoolean: true
         arrayValue: 'wildfire'
         name: model.l.get 'hazard.wildfire'
+        filterOverlayGroup: 'subType'
       }
       {
         field: 'subType'
@@ -363,6 +365,8 @@ class MapService
               feet = 0
             inches = feet * 12 + inches
             {range: 'data.heightInches': lte: inches}
+
+        filterOverlayGroup: 'lowClearance'
       }
     ]
 
@@ -688,7 +692,7 @@ class MapService
                 if value
                   match: "#{key}": value
           }
-        when 'listBooleanAnd'
+        when 'listBooleanAnd', 'iconListBooleanAnd'
           {
             bool:
               must: _filter _map filter.value, (value, key) ->

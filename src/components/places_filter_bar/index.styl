@@ -3,12 +3,6 @@
 .z-places-filter-bar
   pointer-events: all
 
-  &.has-multiple-data-types
-    > .bar
-      padding-left: 0
-      > .show
-        display: flex
-
   > .bar
     background: getColor('$tertiary0')
     width: 100%
@@ -17,16 +11,16 @@
     box-sizing: border-box
     display: flex
     // margin-top: 60px
-    padding-left: 4px
 
     > .show
       font-caption(false)
       cursor: pointer
       // background: getColor('$bg600')
       padding: 0 16px
+      height: 34px
       // margin-right: 4px
       position: relative
-      display: none
+      display: flex
       align-items: center
 
     > .filters
@@ -80,7 +74,7 @@
     min-width: 180px
     background: getColor('$tertiary0')
     z-index: 1000 // nav bar grip is 999, this needs to be higher
-    padding-bottom: 4px
+    // padding-bottom: 4px
     border-radius: 2px
 
     &.is-visible
@@ -92,9 +86,9 @@
 
     > .type
       font-body2()
-      padding: 6px 8px
-      display: flex
-      align-items: center
+      padding: 8px
+      // display: flex
+      // align-items: center
       cursor: pointer
 
       &.is-selected
@@ -121,3 +115,10 @@
           width: 10px
           height: 10px
           margin-right: 4px
+
+    > .all-filters
+      font-subtitle2()
+      border-top: 1px solid getColor('$black12')
+      color: getColor('$primaryMain')
+      padding: 8px
+      cursor: pointer

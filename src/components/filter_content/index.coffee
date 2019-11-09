@@ -7,6 +7,7 @@ _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _isEmpty = require 'lodash/isEmpty'
 _range = require 'lodash/range'
+_kebabCase = require 'lodash/kebabCase'
 _startCase = require 'lodash/startCase'
 _reduce = require 'lodash/reduce'
 _zipObject = require 'lodash/zipObject'
@@ -95,23 +96,26 @@ module.exports = class FilterContent
           valueStreams: @filter.valueStreams
         }
 
-      when 'listBooleanAnd', 'listBooleanOr', 'fieldList'
+      when 'iconListBooleanAnd', 'listBooleanAnd', 'listBooleanOr', 'fieldList', 'booleanArraySubTypes'
         list = @filter.items
-        @items = _map list, ({key, label}) ->
+        @items = _map list, ({key, label}) =>
           valueSubject = new RxBehaviorSubject(
             filterValue?[key]
           )
-          {valueSubject, label}
+          {
+            valueSubject, label, key
+            $icon: if @filter.type is 'iconListBooleanAnd'
+              new Icon()
+          }
 
         @filter.valueStreams.next RxObservable.combineLatest(
           _map @items, 'valueSubject'
           (vals...) -> vals
         ).map (vals) ->
-          console.log 'vals', vals, _zipObject _map(list, 'key'), vals
           unless _isEmpty _filter(vals)
             _zipObject _map(list, 'key'), vals
 
-      when 'list', 'booleanArraySubTypes'
+      when 'list'
         list = @filter.items
 
         @checkboxes = _map list, ({key, label}) =>
@@ -271,25 +275,45 @@ module.exports = class FilterContent
                 hintText:
                   @model.l.get 'filterSheet.inches'
               }
-      when 'listBooleanAnd', 'listBooleanOr', 'fieldList'
+      when 'iconListBooleanAnd', 'listBooleanAnd', 'listBooleanOr', 'fieldList', 'booleanArraySubTypes'
         $content =
           z '.content',
-            _map @items, ({valueSubject, label}) ->
-              isSelected = valueSubject.getValue()
-              z '.tap-item', {
-                className: z.classKebab {isSelected}
-                onclick: -> valueSubject.next not isSelected
-              },
-                label or 'fixme'
-      when 'list', 'fieldList', 'booleanArraySubTypes'
+            if @isGrouped
+              z '.title', @filter.title or @filter.name
+
+            z '.tap-items', {
+              className: z.classKebab {isFullWidth: @filter.field is 'subType'}
+            },
+              _map @items, ({valueSubject, label, key, $icon}) =>
+                isSelected = valueSubject.getValue()
+                z '.tap-item', {
+                  className: z.classKebab {
+                    isSelected
+                    hasIcon: @filter.type is 'iconListBooleanAnd'
+                  }
+                  onclick: ->
+                    valueSubject.next not isSelected
+                },
+                  if @filter.type is 'iconListBooleanAnd'
+                    z '.icon',
+                      z $icon,
+                        icon: config.FEATURES_ICONS[key] or _kebabCase key
+                        isTouchTarget: false
+                        size: '20px'
+                        color: if isSelected \
+                               then colors.$secondary700
+                               else colors.$bgText38
+
+                  label or 'fixme'
+      when 'list', 'fieldList'
         # $title = @filter?.name
         $content =
           z '.content',
             _map @checkboxes, ({$checkbox, label}) ->
               z 'label.checkbox-label',
-                z '.checkbox',
-                  z $checkbox
                 z '.text', label or 'fixme'
+                z '.input',
+                  z $checkbox
       when 'cellSignal'
         $content =
           z '.content',

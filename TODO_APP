@@ -1,13 +1,21 @@
 TODOS:
 
+- desktop login page is ugly
+x campground place sheet should fade in (coords do)
+- search placeholder / recent
+
+- new tooltips
+
 - About / donation page show how much money FreeRoam makes: donations + amazon
 
-- Easier fadeInWhenLoaded
-  - hash the url and set as class name?
-  - when hashing, check if load listener for hash
-    - when loaded, set className for all classes with hash as class
+- Backing out of place page is really slow
 
-- Rating filter
+x Easier fadeInWhenLoaded
+  x hash the url and set as class name?
+  x when hashing, check if load listener for hash
+    x when loaded, set className for all classes with hash as class
+
+x Rating filter
 
 - Option to hide stop circles (1, 2, 3, ...) on map? As option/setting/toggle? dunno
 

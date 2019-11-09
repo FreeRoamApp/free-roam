@@ -7,7 +7,7 @@ config = require '../../config'
 colors = require '../../colors'
 
 # FIXME: allow another one to be opened when this is still closing
-CLOSE_DELAY_MS = 650 # 0.65s for animation
+CLOSE_DELAY_MS = 450 # 0.45s for animation
 
 if window?
   require './index.styl'
@@ -18,21 +18,16 @@ module.exports = class Sheet
     @$closeButton = new FlatButton()
     @$submitButton = new FlatButton()
 
-    @state = z.state {isVisible: false}
-
-  afterMount: =>
-    @state.set {isVisible: true}
+  afterMount: (@$$el) =>
+    @$$el.classList.add 'is-visible'
 
   render: ({icon, message, submitButton, $content}) =>
-    {isVisible} = @state.getValue()
-
     z '.z-sheet', {
-      className: z.classKebab {isVisible}
       key: @id
     },
       z '.overlay',
         onclick: =>
-          @state.set isVisible: false
+          @$$el.classList.remove 'is-visible'
           setTimeout =>
             @model.overlay.close {@id}
           , CLOSE_DELAY_MS

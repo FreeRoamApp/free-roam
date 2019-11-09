@@ -273,9 +273,8 @@ module.exports = class PlaceSheet extends Base
       'campground', 'overnight', 'amenity'
     ])
 
-    elType = if isDisabled then 'div' else 'a'
-
-    z "#{elType}.z-place-sheet", {
+    # needs to always be an a (even for non-clickable) so vdom reuses
+    z 'a.z-place-sheet', {
       className: z.classKebab {isVisible}
       href: if not isDisabled
         @router.get place?.type, {slug: place?.slug}

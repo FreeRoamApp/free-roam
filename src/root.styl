@@ -9,16 +9,16 @@ $breakPointLarge = 840px
 
 @keyframes z-overlay-fade-in
   0%
-    transform: translateY(25%)
-    // opacity: 0.25
-  25%
+    // transform: translateY(25%)
+    opacity: 0.25
+  // 25%
     // prevent transform from sticking around for good (pixelated/blurry)
-    transform: translateY(0.001px)
+    // transform: translateY(0.001px)
     // opacity: 0.4375
   100%
-    transform: none
+    // transform: none
     // transform: translateY(0)
-    // opacity: 1
+    opacity: 1
 
 html, body
   width: 100%
@@ -77,7 +77,7 @@ body
       display: flex
       flex-direction: column
 
-      animation: z-overlay-fade-in 0.6s
+      animation: z-overlay-fade-in 0.2s
 
     > #server-loading
       position: fixed
@@ -138,9 +138,9 @@ input:-webkit-autofill:active
   60%
     transform: scale(20) // 125% width
     opacity: 0.12
-  70%
-    transform: scale(24) // 120% width
-    opacity: 0.12
+  // 70%
+  //   transform: scale(24) // 120% width
+  //   opacity: 0.12
   100%
     transform: scale(24) // 120% width
     opacity: 0

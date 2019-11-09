@@ -176,6 +176,7 @@ app.use (req, res, next) ->
   start = Date.now()
 
   onError = (err) ->
+    console.log Date.now() - start
     io.disconnect()
     model.dispose()
     disposable?.unsubscribe()
@@ -200,6 +201,7 @@ app.use (req, res, next) ->
                else RENDER_TO_STRING_TIMEOUT_MS
     }
     .then (html) ->
+      console.log Date.now() - start
       io.disconnect()
       model.dispose()
       disposable = null

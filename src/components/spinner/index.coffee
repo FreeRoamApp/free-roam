@@ -24,6 +24,9 @@ module.exports = class Spinner
         z '.chassis'
         z '.wheel-1'
         z '.wheel-2'
-        z '.smoke'
+        z '.wheel-3'
+        z '.line-1'
+        # z '.line-2'
+        z '.line-3'
       z '.text',
         'Are we there yet?' # FIXME lang

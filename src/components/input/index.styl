@@ -35,6 +35,12 @@
     outline: none
     -webkit-tap-highlight-color: transparent
 
+
+    // rm chrome autofill styles
+    &:-internal-autofill-selected
+      background-color: transparent !important
+
+
   > .underline-wrapper
     position: absolute
     bottom: 0

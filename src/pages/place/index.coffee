@@ -70,6 +70,7 @@ module.exports = class PlacePage extends BasePage
       }
 
   beforeUnmount: =>
+    super
     placesViewed = localStorage.placesViewed or 0
     localStorage.placesViewed = parseInt(placesViewed) + 1
     if not localStorage.hasSeenRequestRating and

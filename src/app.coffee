@@ -20,7 +20,8 @@ Head = require './components/head'
 NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
-WelcomeDialog = require './components/welcome_dialog'
+# WelcomeDialog = require './components/welcome_dialog'
+WelcomeOverlay = require './components/welcome_overlay'
 StatusBar = require './components/status_bar'
 SnackBar = require './components/snack_bar'
 Environment = require './services/environment'
@@ -199,9 +200,10 @@ module.exports = class App
           @model.cookie.set 'lastAddToHomePromptTime', Date.now()
       , TIME_UNTIL_ADD_TO_HOME_PROMPT_MS
 
-    if (window? and not @model.cookie.get 'hasSeenWelcome')
+    if window? and true # FIXME (window? and not @model.cookie.get 'hasSeenWelcome')
       @model.cookie.set 'hasSeenWelcome', 1
-      @model.overlay.open new WelcomeDialog {@model, @router}
+      @model.overlay.open new WelcomeOverlay {@model, @router}
+      # @model.overlay.open new WelcomeDialog {@model, @router}
 
     # used if state / requests fails to work
     $backupPage = if @serverData?
@@ -234,6 +236,11 @@ module.exports = class App
         if $page instanceof Pages['FourOhFourPage']
           res?.status? 404
     }
+
+    # FIXME: rm
+    if window?
+      @state.subscribe (state) ->
+        console.log 'app state change', state
 
   getRoutes: (breakpoint) =>
     # can have breakpoint (mobile/desktop) specific routes
@@ -348,8 +355,11 @@ module.exports = class App
     routes
 
   render: =>
+    start = Date.now()
     {request, $backupPage, me, hideDrawer, statusBarData, windowSize,
       $overlays, $tooltip} = @state.getValue()
+
+    console.log '======== RENDER =========='
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isIos {userAgent}
@@ -369,7 +379,7 @@ module.exports = class App
 
     focusTags = ['INPUT', 'TEXTAREA', 'SELECT']
 
-    z 'html', {
+    a = z 'html', {
       attributes:
         lang: 'en'
     },
@@ -436,3 +446,6 @@ module.exports = class App
                 style:
                   display: 'none'
                   backgroundColor: 'var(--test-color)'
+
+    console.log '$app render time:', Date.now() - start
+    a

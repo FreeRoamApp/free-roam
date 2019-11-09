@@ -153,7 +153,6 @@ module.exports = class PlacesMapContainer
       @model, @router, searchQuery, isAppBar: true, hasDirectPlaceLinks: true
       @dataTypesStream
       @filterTypesStream
-      @isPlaceFiltersVisible
       onclick: ({location, bbox, text}) =>
         @addPlacesStreams.next RxObservable.of [{
           location: location
@@ -171,6 +170,7 @@ module.exports = class PlacesMapContainer
       @model, @isFilterTypesVisible, @currentDataType
       @dataTypesStream, @filterTypesStream
       @tripRoute, @isTripFilterEnabled
+      @isPlaceFiltersVisible
     }
 
     @state = z.state

@@ -9,6 +9,7 @@ _map = require 'lodash/map'
 _isEmpty = require 'lodash/isEmpty'
 
 Icon = require '../icon'
+DataTypesSheet = require '../data_types_sheet'
 SearchInput = require '../search_input'
 FlatButton = require '../flat_button'
 TooltipPositioner = require '../tooltip_positioner'
@@ -24,8 +25,7 @@ SEARCH_DEBOUNCE = 300
 module.exports = class PlacesSearch
   constructor: (options) ->
     {@model, @router, @onclick, searchQuery, @persistValue, @dataTypesStream
-      @filterTypesStream, @hasDirectPlaceLinks, @isAppBar,
-      @isPlaceFiltersVisible} = options
+      @filterTypesStream, @hasDirectPlaceLinks, @isAppBar} = options
 
     @searchValueStreams = new RxReplaySubject 1
     @searchValueStreams.next searchQuery or (new RxBehaviorSubject '')
@@ -50,7 +50,7 @@ module.exports = class PlacesSearch
     @$searchInput = new SearchInput {
       @model, @router, @searchValueStreams, isFocused: @isOpen
     }
-    @$filterIcon = new Icon()
+    @$eyeIcon = new Icon()
     @$doneButton = new FlatButton()
     @$tooltip = new TooltipPositioner {
       @model
@@ -68,7 +68,7 @@ module.exports = class PlacesSearch
   render: (props = {}) =>
     {locations, isOpen} = @state.getValue()
 
-    {dataTypes, placeholder, locationsTitle} = props
+    {placeholder, locationsTitle} = props
 
     placeholder ?= @model.l.get 'placesSearch.placeholder'
     locationsTitle ?= @model.l.get 'placesSearch.locationsTitle'
@@ -85,11 +85,13 @@ module.exports = class PlacesSearch
             alwaysShowBack: isOpen
             $topRightButton:
               z '.z-places-search_search-top-right',
-                z @$filterIcon,
-                  icon: 'filter'
+                z @$eyeIcon,
+                  icon: 'eye'
                   color: colors.$bgText54
                   onclick: (e) =>
-                    @isPlaceFiltersVisible.next true
+                    @model.overlay.open new DataTypesSheet({
+                      @model, @dataTypesStream, id: 'dataTypes'
+                    }), {id: 'dataTypes'}
             placeholder: if isOpen \
                          then @model.l.get 'placesSearch.openPlaceholder'
                          else @model.l.get 'placesSearch.placeholder'
@@ -119,35 +121,6 @@ module.exports = class PlacesSearch
         key: 'places-search-overlay'
       },
         z '.overlay-inner',
-        #   if dataTypes
-        #     z '.data-types',
-        #       z '.title', @model.l.get 'placesSearch.dataTypesTitle'
-        #
-        #       z '.g-grid',
-        #         z '.g-cols',
-        #         _map dataTypes, (type) =>
-        #           {dataType, onclick, $checkbox, layer} = type
-        #           z '.g-col.g-xs-12.g-md-3',
-        #             z 'label.type', {
-        #               onclick: ->
-        #                 ga? 'send', 'event', 'mapSearch', 'dataType', dataType
-        #               className: z.classKebab {
-        #                 "#{dataType}": true
-        #               }
-        #             },
-        #               z '.info',
-        #                 z '.name', @model.l.get "placeTypes.#{dataType}"
-        #                 z '.description',
-        #                   @model.l.get "placeTypes.#{dataType}Description"
-        #               z '.checkbox', z $checkbox
-        #
-        #       if _isEmpty locations
-        #         z '.done',
-        #           z @$doneButton,
-        #             text: @model.l.get 'general.done'
-        #             onclick: =>
-        #               @isOpen.next false
-
           if not _isEmpty locations
             z '.locations',
               # z '.title', @model.l.get 'placesSearch.locationsTitle'

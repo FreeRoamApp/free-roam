@@ -187,7 +187,6 @@ module.exports = class Tabs
               # webkitTransform: "translate(#{x}px, 0px) translateZ(0px)"
           },
             _map tabs, ({$el}, i) =>
-              console.log 'def', @deferTabLoads
               z '.iscroll-tab', {
                 style:
                   width: "#{(100 / tabs.length)}%"

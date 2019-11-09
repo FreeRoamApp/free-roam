@@ -170,7 +170,7 @@ module.exports = class NavDrawer
             $icon: new Icon()
             $ripple: new Ripple()
             iconName: 'heart'
-            color: colors.$red500
+            # color: colors.$red500
           }
           {
             path: @router.get 'about'

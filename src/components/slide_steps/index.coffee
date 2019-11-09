@@ -40,12 +40,12 @@ module.exports = class SlideSteps
         #       color: colors.$bgText
         #       onclick: =>
         #         @selectedIndex.next Math.max(selectedIndex - 1, 0)
-        if selectedIndex is 0
+        if selectedIndex is 0 and onSkip
           z '.text', {
             onclick: onSkip
           },
             @model.l.get 'general.skip'
-        else
+        else if selectedIndex
           z '.text', {
             onclick: =>
               @selectedIndex.next Math.max(selectedIndex - 1, 0)

@@ -49,7 +49,6 @@ module.exports = class PlacesFiltersOverlay
 
     @state = z.state {
       isVisible: @isVisible
-      dataTypes: dataTypesStream
       # FIXME: only do this stuff after opened at least once?
       filterTypes: filterTypesAndDataTypes.map ([filterTypes, dataTypes]) =>
         _pickBy _mapValues filterTypes, (filters, filterType) =>
@@ -79,6 +78,7 @@ module.exports = class PlacesFiltersOverlay
     },
       z @$appBar, {
         title: @model.l.get 'placesFiltersOverlay.title'
+        isFlat: true
         $topLeftButton: z @$buttonBack, {
           onclick: =>
             @isVisible.next false
@@ -95,30 +95,6 @@ module.exports = class PlacesFiltersOverlay
           }
       }
       z '.g-grid',
-        z '.data-types',
-          z '.title', @model.l.get 'placesFiltersOverlay.dataTypesTitle'
-
-          z '.g-grid',
-            z '.g-cols',
-            _map dataTypes, (type) =>
-              {dataType, onclick, $toggle, layer} = type
-              z '.g-col.g-xs-12.g-md-3',
-                z 'label.type', {
-                  onclick: ->
-                    ga? 'send', 'event', 'mapSearch', 'dataType', dataType
-                  className: z.classKebab {
-                    "#{dataType}": true
-                  }
-                },
-                  z '.info', {
-                    onclick: =>
-                      $toggle.toggle()
-                  },
-                    z '.name', @model.l.get "placeTypes.#{dataType}"
-                    z '.description',
-                      @model.l.get "placeTypes.#{dataType}Description"
-                  z '.toggle', z $toggle
-
         if isVisible
           tabs = _map filterTypes, (filters, filterType) =>
             {
@@ -130,8 +106,6 @@ module.exports = class PlacesFiltersOverlay
                   tablet: 2
                 $elements: _map filters, ({filters, $el}) =>
                   group = filters[0].filterOverlayGroup
-
-                  console.log 'fff', filters
 
                   z '.z-places-filters-overlay_filter',
                     z '.inner',
@@ -148,11 +122,9 @@ module.exports = class PlacesFiltersOverlay
                       z $el
             }
 
-          z '.filter-types',
-            z '.title', @model.l.get 'placesFiltersOverlay.filterTypesTitle'
-            if tabs.length is 1
-              z tabs[0].$el
-            else
-              z @$filterTabs,
-                isBarFixed: false
-                tabs: tabs
+          if tabs.length is 1
+            z tabs[0].$el
+          else
+            z @$filterTabs,
+              isBarFixed: false
+              tabs: tabs
