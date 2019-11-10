@@ -34,7 +34,7 @@ module.exports = class WelcomeOverlay
                 z '.image.welcome'
                 z '.title', @model.l.get 'welcomeDialog.title'
                 z '.content',
-                  @model.l.get 'welcomeDialog.text1'
+                  @model.l.get 'welcomeDialog.text1a'
           }
           {
             $content:
@@ -58,14 +58,15 @@ module.exports = class WelcomeOverlay
                 z '.image.video'
                 z '.title', @model.l.get 'welcomeDialog.videoTitle'
                 z '.content',
-                   @model.l.get 'welcomeDialog.videoContent'
-                 z '.action',
-                   z @$watchButton,
-                     text: @model.l.get 'welcomeDialog.watchTutorial'
-                     onclick: =>
-                       @model.portal.call 'browser.openWindow', {
-                         url: 'https://youtu.be/GvRNzOFAbpg'
-                         target: '_system'
-                       }
+                  @model.l.get 'welcomeDialog.videoContent'
+                  z '.action',
+                    z @$watchButton,
+                      text: @model.l.get 'welcomeDialog.watchTutorial'
+                      isFullWidth: false
+                      onclick: =>
+                        @model.portal.call 'browser.openWindow', {
+                          url: 'https://youtu.be/GvRNzOFAbpg'
+                          target: '_system'
+                        }
           }
         ]

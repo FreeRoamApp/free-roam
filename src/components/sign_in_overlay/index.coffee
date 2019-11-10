@@ -142,6 +142,8 @@ module.exports = class SignInOverlay
   render: =>
     {isLoading, data, hasError} = @state.getValue()
 
+    console.log 'DATA', data
+
     z '.z-sign-in-overlay',
       z @$appBar, {
         # title: ''
@@ -169,77 +171,78 @@ module.exports = class SignInOverlay
 
         isFlat: true
       }
-      z 'form.content',
-        z '.title',
-          if data is 'join'
-          then @model.l.get 'signInOverlay.join'
-          else @model.l.get 'signInOverlay.signIn'
-        z '.input',
-          z @$usernameInput, {
-            hintText: @model.l.get 'general.username'
-            autoCapitalize: false
-            colors:
-              background: colors.$secondary400
-              ink: colors.$secondary400Text
-              underline: colors.$secondary400Text
-          }
-        if data is 'join' or data is 'reset'
+      if data
+        z 'form.content',
+          z '.title',
+            if data is 'join'
+            then @model.l.get 'signInOverlay.join'
+            else @model.l.get 'signInOverlay.signIn'
           z '.input',
-            z @$emailInput, {
-              hintText: @model.l.get 'general.email'
-              type: 'email'
+            z @$usernameInput, {
+              hintText: @model.l.get 'general.username'
+              autoCapitalize: false
               colors:
                 background: colors.$secondary400
                 ink: colors.$secondary400Text
                 underline: colors.$secondary400Text
             }
-        if data isnt 'reset'
-          z '.input', {key: 'password-input'},
-            z @$passwordInput, {
-              hintText: @model.l.get 'general.password'
-              type: 'password'
-              colors:
-                background: colors.$secondary400
-                ink: colors.$secondary400Text
-                underline: colors.$secondary400Text
-            }
+          if data is 'join' or data is 'reset'
+            z '.input',
+              z @$emailInput, {
+                hintText: @model.l.get 'general.email'
+                type: 'email'
+                colors:
+                  background: colors.$secondary400
+                  ink: colors.$secondary400Text
+                  underline: colors.$secondary400Text
+              }
+          if data isnt 'reset'
+            z '.input', {key: 'password-input'},
+              z @$passwordInput, {
+                hintText: @model.l.get 'general.password'
+                type: 'password'
+                colors:
+                  background: colors.$secondary400
+                  ink: colors.$secondary400Text
+                  underline: colors.$secondary400Text
+              }
 
-        if data is 'join'
-          z '.terms',
-            @model.l.get 'signInOverlay.terms', {
-              replacements: {tos: ' '}
-            }
-            z 'a', {
-              href: "https://#{config.HOST}/policies"
-              target: '_system'
-              onclick: (e) =>
-                e.preventDefault()
-                @model.portal.call 'browser.openWindow', {
-                  url: "https://#{config.HOST}/policies"
-                }
-            }, 'TOS'
-        z '.actions',
-          z '.button',
-            z @$submitButton,
-              text: if isLoading \
-                    then @model.l.get 'general.loading'
-                    else if data is 'reset'
-                    then @model.l.get 'signInOverlay.emailResetLink'
-                    else if data is 'join'
-                    then @model.l.get 'signInOverlay.createAccount'
-                    else @model.l.get 'general.signIn'
-              isInverted: true
-              onclick: (e) =>
-                if data is 'reset'
-                  @reset e
-                else if data is 'join'
-                  @join e
-                else
-                  @signIn e
-              type: 'submit'
-          if hasError and data is 'signIn'
+          if data is 'join'
+            z '.terms',
+              @model.l.get 'signInOverlay.terms', {
+                replacements: {tos: ' '}
+              }
+              z 'a', {
+                href: "https://#{config.HOST}/policies"
+                target: '_system'
+                onclick: (e) =>
+                  e.preventDefault()
+                  @model.portal.call 'browser.openWindow', {
+                    url: "https://#{config.HOST}/policies"
+                  }
+              }, 'TOS'
+          z '.actions',
             z '.button',
-              z @$resetPasswordButton,
-                text: @model.l.get 'signInOverlay.resetPassword'
-                onclick: =>
-                  @model.overlay.setData 'reset'
+              z @$submitButton,
+                text: if isLoading \
+                      then @model.l.get 'general.loading'
+                      else if data is 'reset'
+                      then @model.l.get 'signInOverlay.emailResetLink'
+                      else if data is 'join'
+                      then @model.l.get 'signInOverlay.createAccount'
+                      else @model.l.get 'general.signIn'
+                isInverted: true
+                onclick: (e) =>
+                  if data is 'reset'
+                    @reset e
+                  else if data is 'join'
+                    @join e
+                  else
+                    @signIn e
+                type: 'submit'
+            if hasError and data is 'signIn'
+              z '.button',
+                z @$resetPasswordButton,
+                  text: @model.l.get 'signInOverlay.resetPassword'
+                  onclick: =>
+                    @model.overlay.setData 'reset'

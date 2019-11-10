@@ -111,6 +111,7 @@ module.exports = class ConversationInput
       inputTranslateY: @inputTranslateY.switch()
       panelHeight: panelHeight
       group: group
+      isTextareaFocused: @isTextareaFocused
       panels: allowedPanels.map (allowedPanels) =>
         _pick @panels, allowedPanels
       meGroupUser: meGroupUser
@@ -143,7 +144,7 @@ module.exports = class ConversationInput
 
   render: =>
     {currentPanel, me, inputTranslateY, meGroupUser, conversation,
-      group, panels, panelHeight} = @state.getValue()
+      group, panels, panelHeight, isTextareaFocused} = @state.getValue()
 
     baseHeight = 54
     panelHeight or= @defaultPanelHeight
@@ -165,7 +166,7 @@ module.exports = class ConversationInput
         @panels[currentPanel].$el
 
       z '.panel-icons',  {
-        className: z.classKebab {isVisible: true}
+        className: z.classKebab {isVisible: not isTextareaFocused}
       },
         [
           _map panels, (options, panel) =>

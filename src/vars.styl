@@ -76,7 +76,7 @@ font-h4(scale = yes)
   //   @media (min-width: $breakPointLarge)
   //     font-size: 28px
 
-font-h5(scale = yes)
+font-h5(scale = yes, state = high)
   font-family: Nunito Sans
   color: getColor('$bgText87')
   font-size: 26px
@@ -85,6 +85,9 @@ font-h5(scale = yes)
   font-style: normal
   line-height: normal
   letter-spacing: normal
+
+  if state is medium
+    color: getColor('$bgText60')
 
   // if scale is yes
   //   @media (min-width: $breakPointLarge)
@@ -315,15 +318,15 @@ ul()
 
 tooltip(isDark = false)
   if isDark
-    bgColor = getColor('$primary500')
-    color = getColor('$primary500Text')
+    bgColor = getColor('$primaryMain')
+    color = getColor('$primaryMainText')
   else
     bgColor = getColor('$tertiary100')
     color = getColor('$tertiary100Text')
 
   shadow-1()
   position: absolute
-  z-index: 97
+  z-index: 99
   opacity: 0
   pointer-events: none
   border-radius: 8px

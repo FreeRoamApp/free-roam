@@ -3,31 +3,36 @@
 .z-coordinate-info-dialog_dialog
   > .feature
     > .layer
-      font-subtitle1()
-      color: getColor('$bgText26')
+      font-overline()
 
     > .office
       font-subtitle1()
-      margin-bottom: 16px
+      margin-bottom: 4px
       white-space: nowrap
       text-overflow: ellipsis
       overflow: hidden
       height: 20px
 
     > .region
-      margin-bottom: 4px
+      font-body2()
+
+    > .access
+      font-body2()
 
     > .mvums
       margin-top: 12px
+      max-height: 200px
+      overflow: auto
+      -webkit-overflow-scrolling: touch
 
       > .title
         font-subtitle1()
         margin-bottom: 8px
 
       > .mvum
-        font-caption()
+        font-body2()
         display: flex
-        padding: 8px 0
+        padding: 12px 0
 
         > .download-icon
           margin-left: auto

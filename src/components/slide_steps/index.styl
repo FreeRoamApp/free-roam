@@ -18,30 +18,35 @@
     box-sizing: border-box
     // background: getColor('$tertiary0')
 
-    > .icon, > .text
-      width: 48px
-      cursor: pointer
-
-    > .text
-      font-button()
-      color: getColor('$primaryMain')
-      // text-transform: lowercase
-      text-align: center
-      padding: 8px
-
-    > .step-counter
+    > .g-grid
       flex1()
       display: flex
-      justify-content: center
-      width: 100%
-      margin: 16px 0
 
-      > .step-dot
-        width: 6px
-        height: 6px
-        border-radius: 50%
-        margin-right: 4px
-        background: getColor('$bgText26')
+      > .icon
+        width: 48px
+        cursor: pointer
 
-        &.is-active
-          background: getColor('$primaryMain')
+      > .text
+        font-button()
+        cursor: pointer
+        color: getColor('$primaryMain')
+        // text-transform: lowercase
+        text-align: center
+        padding: 8px
+
+      > .step-counter
+        flex1()
+        display: flex
+        justify-content: center
+        width: 100%
+        margin: 16px 0
+
+        > .step-dot
+          width: 6px
+          height: 6px
+          border-radius: 50%
+          margin-right: 4px
+          background: getColor('$bgText26')
+
+          &.is-active
+            background: getColor('$primaryMain')

@@ -40,6 +40,8 @@ module.exports = class GroupList extends Base
             e.stopPropagation()
         },
           _map groups, ({group, $forumButton, $chatButton}) =>
+            unless group
+              return
             group.type ?= 'general'
             url = "#{config.CDN_URL}/groups/#{group?.slug}.jpg"
             z '.group',

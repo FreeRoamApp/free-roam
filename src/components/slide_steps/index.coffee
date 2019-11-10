@@ -40,39 +40,42 @@ module.exports = class SlideSteps
         #       color: colors.$bgText
         #       onclick: =>
         #         @selectedIndex.next Math.max(selectedIndex - 1, 0)
-        if selectedIndex is 0 and onSkip
-          z '.text', {
-            onclick: onSkip
-          },
-            @model.l.get 'general.skip'
-        else if selectedIndex
-          z '.text', {
-            onclick: =>
-              @selectedIndex.next Math.max(selectedIndex - 1, 0)
-          },
-            @model.l.get 'general.back'
-        z '.step-counter',
-          _map steps, (step, i) ->
-            isActive = i is selectedIndex
-            z '.step-dot',
-              className: z.classKebab {isActive}
-        # z '.icon',
-        #   if selectedIndex < steps?.length - 1
-        #     z @$forwardIcon,
-        #       icon: 'arrow-right'
-        #       color: colors.$bgText
-        #       onclick: =>
-        #         @selectedIndex.next \
-        #           Math.min(selectedIndex + 1, steps?.length - 1)
-        if selectedIndex < steps?.length - 1
-          z '.text', {
-            onclick: =>
-              @selectedIndex.next \
-                Math.min(selectedIndex + 1, steps?.length - 1)
-          },
-            @model.l.get 'general.next'
-        else
-          z '.text', {
-            onclick: onDone
-          },
-            doneText or @model.l.get 'general.gotIt'
+        z '.g-grid',
+          if selectedIndex is 0 and onSkip
+            z '.text', {
+              onclick: onSkip
+            },
+              @model.l.get 'general.skip'
+          else if selectedIndex
+            z '.text', {
+              onclick: =>
+                @selectedIndex.next Math.max(selectedIndex - 1, 0)
+            },
+              @model.l.get 'general.back'
+          else
+            z '.text'
+          z '.step-counter',
+            _map steps, (step, i) ->
+              isActive = i is selectedIndex
+              z '.step-dot',
+                className: z.classKebab {isActive}
+          # z '.icon',
+          #   if selectedIndex < steps?.length - 1
+          #     z @$forwardIcon,
+          #       icon: 'arrow-right'
+          #       color: colors.$bgText
+          #       onclick: =>
+          #         @selectedIndex.next \
+          #           Math.min(selectedIndex + 1, steps?.length - 1)
+          if selectedIndex < steps?.length - 1
+            z '.text', {
+              onclick: =>
+                @selectedIndex.next \
+                  Math.min(selectedIndex + 1, steps?.length - 1)
+            },
+              @model.l.get 'general.next'
+          else
+            z '.text', {
+              onclick: onDone
+            },
+              doneText or @model.l.get 'general.gotIt'

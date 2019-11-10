@@ -86,7 +86,8 @@ module.exports = class CoordinateInfoDialog
                          else @model.l.get 'general.unknown'
                 z '.feature',
                   z '.layer', 'BLM'
-                  z '.office', features?[i]
+                  if features?[i]
+                    z '.office', features?[i]
                   z '.region',
                     "#{area}"
                   z '.access',
@@ -100,7 +101,8 @@ module.exports = class CoordinateInfoDialog
                          else @model.l.get 'general.unknown'
                 z '.feature',
                   z '.layer', 'USFS'
-                  z '.office', features?[i]
+                  if features?[i]
+                    z '.office', features?[i]
                   z '.region',
                     "Forest: #{area}"
                   z '.access',
@@ -142,13 +144,13 @@ module.exports = class CoordinateInfoDialog
                             z $downloadIcon,
                               icon: 'download'
                               isTouchTarget: false
-                              color: colors.$primaryMain
+                              color: colors.$primary700
                           if me?.username in ['austin', 'big_boxtruck']
                             z '.map-icon',
                               z $deleteIcon,
                                 icon: 'delete'
                                 isTouchTarget: false
-                                color: colors.$primaryMain
+                                color: colors.$primary700
                                 onclick: (e) =>
                                   e.stopPropagation()
                                   if confirm @model.l.get 'general.confirm'
@@ -157,7 +159,7 @@ module.exports = class CoordinateInfoDialog
                             z $mapIcon,
                               icon: 'map-add'
                               isTouchTarget: false
-                              color: colors.$primaryMain
+                              color: colors.$primary700
 
         cancelButton:
           text: @model.l.get 'general.close'

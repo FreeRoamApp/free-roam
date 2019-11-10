@@ -93,7 +93,7 @@ module.exports = class PlacesMapContainer
       places = places.concat (addPlaces or []) # addPlaces should "under" places on map
 
       {places, visible, total}
-    .share() # otherwise map setsData twice (subscribe called twice)
+    .publishReplay(1).refCount()
 
     places = placesWithCounts
             .map ({places}) ->
@@ -111,9 +111,10 @@ module.exports = class PlacesMapContainer
     @$fab = new Fab()
     @$layersIcon = new Icon()
     @$layerSettingsIcon = new Icon()
-    @$tooltip = new TooltipPositioner {
+    @$layersTooltip = new TooltipPositioner {
       @model
       key: 'mapLayers'
+      zIndex: 97
       offset:
         left: 60
     }
@@ -204,7 +205,6 @@ module.exports = class PlacesMapContainer
 
   beforeUnmount: =>
     @disposable?.unsubscribe()
-    @place.next null
 
   getDataTypesStreams: (dataTypes) =>
     persistentCookie = "#{@persistentCookiePrefix}_savedDataTypes"
@@ -498,9 +498,9 @@ module.exports = class PlacesMapContainer
                 onclick: =>
                   ga? 'send', 'event', 'map', 'showLayers'
                   @state.set isLayersPickerVisible: true
-                  @$tooltip.close()
+                  @$layersTooltip.close()
 
-              z @$tooltip
+              z @$layersTooltip
 
 
           z '.layers', {

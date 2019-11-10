@@ -31,7 +31,7 @@ module.exports = class Input
 
     colors = _defaults colors, {
       c500: allColors.$tertiary0
-      background: allColors.$bgText12
+      background: allColors.$tertiary0
       underline: allColors.$primaryMain
     }
     hintText ?= ''

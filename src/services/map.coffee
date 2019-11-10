@@ -751,7 +751,7 @@ class MapService
                       }
                       {
                         range:
-                          "#{field}.#{carrier.replace('_lte', '')}.signal":
+                          "#{field}.#{carrier}_lte.signal":
                             gte: value
                       }
                     ]

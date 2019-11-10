@@ -6,6 +6,7 @@ _mapValues = require 'lodash/mapValues'
 _orderBy = require 'lodash/orderBy'
 
 FilterSheet = require '../filter_sheet'
+TooltipPositioner = require '../tooltip_positioner'
 Icon = require '../icon'
 colors = require '../../colors'
 
@@ -20,6 +21,14 @@ module.exports = class PlacesFilterBar
       @isPlaceFiltersVisible} = options
 
     @$filterIcon = new Icon()
+    @$filtersTooltip = new TooltipPositioner {
+      @model
+      key: 'mapFilters'
+      anchor: 'top-left'
+      offset:
+        left: -2
+        top: 40
+    }
 
     @state = z.state {
       @isFilterTypesVisible
@@ -43,16 +52,19 @@ module.exports = class PlacesFilterBar
 
     z '.z-places-filter-bar',
       z '.bar',
+        @$filtersTooltip
         z '.show', {
           onclick: =>
             unless isFilterTypesVisible
               ga? 'send', 'event', 'map', 'showTypes'
             @isFilterTypesVisible.next not isFilterTypesVisible
+            @$filtersTooltip.close()
         },
           z @$filterIcon,
             icon: 'filter'
             color: colors.$bgText54
             isTouchTarget: false
+
         z '.filters', {
           className: z.classKebab {"#{currentDataType}": true}
         },
@@ -69,7 +81,7 @@ module.exports = class PlacesFilterBar
               z '.filter', {
                 className: z.classKebab {
                   hasMore: not filter.isBoolean
-                  hasValue: filter.value?
+                  hasValue: filter.value? and filter.value isnt ''
                 }
                 onclick: =>
                   ga? 'send', 'event', 'map', 'filterClick', filter.field

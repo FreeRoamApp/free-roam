@@ -13,7 +13,8 @@ Icon = require '../icon'
 
 module.exports = class SearchInput
   constructor: (options) ->
-    {@model, @searchValue, @searchValueStreams, @router, @isFocused} = options
+    {@model, @searchValue, @searchValueStreams, @router,
+      @isFocused, @onFocus} = options
     @$backIcon = new Icon()
     @$clearIcon = new Icon()
     @$buttonMenu = new ButtonMenu {@model, @router}
@@ -27,6 +28,7 @@ module.exports = class SearchInput
   afterMount: (@$$el) => null
 
   open: =>
+    @onFocus?()
     @isFocused.next true
 
   close: =>
@@ -54,7 +56,9 @@ module.exports = class SearchInput
     placeholder ?= @model.l.get 'searchInput.placeholder'
 
     z '.z-search-input', {
-      className: z.classKebab {isFocused, isSearchOnSubmit}
+      className: z.classKebab {
+        isFocused, isSearchOnSubmit, isServerSide: not window?
+      }
       onclick: (e) ->
         if onclick
           e?.preventDefault()

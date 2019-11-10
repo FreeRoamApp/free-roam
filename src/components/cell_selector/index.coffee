@@ -38,9 +38,14 @@ module.exports = class CellSelector
     updateValue = new RxBehaviorSubject null
     isInitial = true
     @disposable = valueStreams.switch().subscribe (cellSignal) =>
+      console.warn 'cellsig', cellSignal
       if isInitial
         isInitial = false
         updateValue.next {initial: cellSignal}
+        console.warn '-______________', _map cellSignal, (val, key) -> key.replace '_lte', ''
+        @selectedCarriersStreams.next RxObservable.of(
+          _map cellSignal, (val, key) -> key.replace '_lte', ''
+        )
       else if cellSignal is null
         @selectedCarriersStreams.next RxObservable.of []
 
@@ -51,7 +56,7 @@ module.exports = class CellSelector
       (vals...) -> vals
     )
 
-    signals = carriersAndInitialValue.map ([carriers, {initial, reset} = {}]) =>
+    signals = carriersAndInitialValue.map ([carriers, {initial} = {}]) =>
       initial ?= {}
 
       localStorage?['selectedCellCarriers'] = JSON.stringify carriers
@@ -61,12 +66,12 @@ module.exports = class CellSelector
           return @carrierCache[carrier]
 
         barsValueSubject = new RxBehaviorSubject(
-          initial["#{carrier}_lte"] or null
+          initial["#{carrier}_lte"] or initial[carrier] or null
         )
         lteValueSubject = new RxBehaviorSubject(
           Boolean (
-            initial["#{carrier}"] and not initial["#{carrier}_lte"]
-          ) or not initial["#{carrier}"]
+            not initial[carrier] and initial["#{carrier}_lte"]
+          ) or not initial[carrier]
         )
 
         @carrierCache[carrier] = {

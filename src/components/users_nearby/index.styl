@@ -21,11 +21,11 @@
 
         > .helper-arrow
           position: absolute
-          top: 36px
-          left: 12px
-          width: 18px
-          height: 47px
-          background: url($cdnUrl + '/enable_location_arrow.svg')
+          top: 28px
+          left: -56px
+          width: 80px
+          height: 88px
+          background: url($cdnUrl + '/illustrations/arrow.svg')
           background-size: 100%
 
     > .empty
@@ -34,20 +34,19 @@
       margin: 24px auto 0 auto
 
       > .image
-        width: 238px
-        height: 160px
+        width: 170px
+        height: 171px
         margin: 0 auto
-        background: url($cdnUrl + '/empty_state/nearby.svg')
+        background: url($cdnUrl + '/illustrations/empty_state_location_off.svg')
         background-size: 100%
 
       > .title
-        font-subtitle1()
-        color: getColor('$primaryMain')
-        margin-top: 16px
-        margin-bottom: 8px
+        font-h5(true, medium)
+        margin-top: 24px
+        margin-bottom: 4px
 
       > .description
-        font-body1(true, medium)
+        font-body2(true, medium)
 
     > .users
       margin-top: 8px
@@ -58,20 +57,19 @@
         margin: 24px auto 0 auto
 
         > .image
-          width: 191px
-          height: 100px
+          width: 170px
+          height: 152px
           margin: 0 auto
-          background: url($cdnUrl + '/empty_state/roamers.svg')
+          background: url($cdnUrl + '/illustrations/no_one_nearby.svg')
           background-size: 100%
 
         > .title
-          font-subtitle1()
-          color: getColor('$primaryMain')
-          margin-top: 16px
-          margin-bottom: 8px
+          font-h5(true, medium)
+          margin-top: 24px
+          margin-bottom: 4px
 
         > .description
-          font-body1(true, medium)
+          font-body2(true, medium)
 
       > .user
         display: flex

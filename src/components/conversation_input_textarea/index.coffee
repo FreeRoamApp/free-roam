@@ -11,7 +11,7 @@ config = require '../../config'
 if window?
   require './index.styl'
 
-DEFAULT_TEXTAREA_HEIGHT = 50
+DEFAULT_TEXTAREA_HEIGHT = 52
 
 module.exports = class ConversationInputTextarea
   constructor: (options) ->
@@ -25,6 +25,7 @@ module.exports = class ConversationInputTextarea
 
     @state = z.state
       isPostLoading: isPostLoading
+      isTextareaFocused: @isTextareaFocused
       textareaHeight: @textareaHeight
       hasText: @hasText
 
@@ -95,7 +96,8 @@ module.exports = class ConversationInputTextarea
       Math.min height, 150 # max height in css
 
   render: =>
-    {hasText, textareaHeight, isPostLoading} = @state.getValue()
+    {hasText, textareaHeight, isPostLoading,
+      isTextareaFocused} = @state.getValue()
 
     z '.z-conversation-input-textarea',
         z 'textarea.textarea',
@@ -150,7 +152,9 @@ module.exports = class ConversationInputTextarea
             , 0
 
 
-        z '.right-icons',
+        z '.right-icons', {
+          className: z.classKebab {isVisible: isTextareaFocused}
+        },
           z '.send-icon', {
             onclick: @postMessage
           },

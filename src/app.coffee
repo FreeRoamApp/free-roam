@@ -200,7 +200,8 @@ module.exports = class App
           @model.cookie.set 'lastAddToHomePromptTime', Date.now()
       , TIME_UNTIL_ADD_TO_HOME_PROMPT_MS
 
-    if window? and true # FIXME (window? and not @model.cookie.get 'hasSeenWelcome')
+    # TODO: a/b w/ dialog
+    if (window? and not @model.cookie.get 'hasSeenWelcome')
       @model.cookie.set 'hasSeenWelcome', 1
       @model.overlay.open new WelcomeOverlay {@model, @router}
       # @model.overlay.open new WelcomeDialog {@model, @router}

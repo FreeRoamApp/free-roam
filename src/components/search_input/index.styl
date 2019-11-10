@@ -14,6 +14,10 @@ $zIndexForm = 1
     > .form > .input
       border: 1px solid rgba(0, 0, 0, 0)
 
+  &.is-server-side
+    > .form > .input
+      transition: none
+
   > .search-overlay
     position: absolute
     z-index: $zIndexSearchOverlay

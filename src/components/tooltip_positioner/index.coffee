@@ -21,6 +21,10 @@ module.exports = class TooltipPositioner extends Base
       prereqs: null
     mapLayers:
       prereqs: ['placeSearch']
+    mapTypes:
+      prereqs: ['mapLayers']
+    mapFilters:
+      prereqs: ['mapTypes']
     placeTooltip:
       prereqs: null
     itemGuides:

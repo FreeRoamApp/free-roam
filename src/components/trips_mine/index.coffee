@@ -21,21 +21,23 @@ module.exports = class TripsMine
     @$infoCard = new UiCard()
 
     @state = z.state {
-      trips: trips
+      trips: trips.map (trips) ->
+        if _isEmpty trips
+          return false
+        trips
       hasSeenInfoCard: @model.cookie.get 'hasSeenTripsCard'
     }
 
   render: =>
     {trips, hasSeenInfoCard} = @state.getValue()
 
+    console.log 'trips', trips
+
     z '.z-trips-mine',
-      if @model.experiment.get('tripsOnboard') is 'visible' and _isEmpty trips
+      if @model.experiment.get('tripsOnboard') is 'visible' and trips is false
         z '.trip-onboard',
           z '.placeholder',
-            z '.icon',
-              style:
-                backgroundImage:
-                  "url(#{config.CDN_URL}/empty_state/trip_mine_empty.svg)"
+            z '.icon'
           z '.title', @model.l.get 'tripsMine.onboardTitle'
           z 'ul.features',
             z 'li', @model.l.get 'tripsMine.bullet1'

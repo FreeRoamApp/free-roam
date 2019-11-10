@@ -28,7 +28,6 @@ module.exports = class TripList extends Base
       me: me
       selectedTripId: @selectedTripIdStreams?.switch()
       $trips: trips.map (trips) =>
-        console.log 'trips', trips, JSON.stringify(trips).length
         if _isEmpty trips
           return false
         _map trips, (trip) =>
@@ -53,10 +52,7 @@ module.exports = class TripList extends Base
         @$spinner
       else if $trips is false
         z '.placeholder',
-          z '.icon',
-            style:
-              backgroundImage:
-                "url(#{config.CDN_URL}/empty_state/#{emptyIcon}.svg)"
+          z '.icon'
           z '.title', emptyTitle
           z '.description', emptyDescription
       else

@@ -48,16 +48,22 @@ module.exports = class PlacesSearch
 
     @isOpen = new RxBehaviorSubject false
     @$searchInput = new SearchInput {
-      @model, @router, @searchValueStreams, isFocused: @isOpen
+      @model, @router, @searchValueStreams, onFocus: => @isOpen.next true
     }
     @$eyeIcon = new Icon()
     @$doneButton = new FlatButton()
-    @$tooltip = new TooltipPositioner {
+    @$searchTooltip = new TooltipPositioner {
       @model
       key: 'placeSearch'
       anchor: 'top-left'
       offset:
         left: 48
+    }
+    @$typesTooltip = new TooltipPositioner {
+      @model
+      key: 'mapTypes'
+      offset:
+        left: 58
     }
 
     @state = z.state {
@@ -74,7 +80,7 @@ module.exports = class PlacesSearch
     locationsTitle ?= @model.l.get 'placesSearch.locationsTitle'
 
     z '.z-places-search', {
-      className: z.classKebab {isOpen}
+      className: z.classKebab {isOpen, isServerSide: not window?}
     },
       z '.input-container',
         z '.input',
@@ -92,13 +98,15 @@ module.exports = class PlacesSearch
                     @model.overlay.open new DataTypesSheet({
                       @model, @dataTypesStream, id: 'dataTypes'
                     }), {id: 'dataTypes'}
+                    @$typesTooltip.close()
+                z @$typesTooltip
             placeholder: if isOpen \
                          then @model.l.get 'placesSearch.openPlaceholder'
                          else @model.l.get 'placesSearch.placeholder'
             onfocus: (e) =>
               ga? 'send', 'event', 'mapSearch', 'open'
               @isOpen.next true
-              @$tooltip.close()
+              @$searchTooltip.close()
             ontouchstart: =>
               # reduce jank in map
               # (doesn't need to resize for kb when overlay is up)
@@ -112,7 +120,7 @@ module.exports = class PlacesSearch
               @isOpen.next false
           }
 
-      z @$tooltip
+      z @$searchTooltip
 
       z '.overlay', {
         # without this, when switching to this tab a dom element is recycled for

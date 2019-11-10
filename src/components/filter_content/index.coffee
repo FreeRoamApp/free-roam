@@ -90,6 +90,8 @@ module.exports = class FilterContent
           if feet or inches
             {feet, inches}
       when 'cellSignal'
+        console.log 'fffffffffffffffffffffffffffffffffffffffffff', @filter?.value
+        # @filter.valueStreams.next RxObservable.of
         @$cellSelector = new CellSelector {
           @model
           carriers: RxObservable.of ['verizon', 'att', 'tmobile', 'sprint']
@@ -213,7 +215,7 @@ module.exports = class FilterContent
         , {}
 
         @timeValue = new RxBehaviorSubject filterValue?.time or '30'
-        @$timeInput = new PrimaryInput {value: @timeValue}
+        @$timeInput = new Input {value: @timeValue}
 
         @filter.valueStreams.next RxObservable.combineLatest(
           RxObservable.combineLatest(
@@ -255,6 +257,7 @@ module.exports = class FilterContent
                 @filter.inputPrefix
                 z @$input, {
                   type: 'number'
+                  height: '30px'
                   # hintText:
                   #   @model.l.get "campground.#{@filter.key}"
                 }
@@ -415,12 +418,13 @@ module.exports = class FilterContent
                   z '.text', @model.l.get "amenities.#{facilityType}"
                   z '.input',
                     $checkbox
-              z 'label.checkbox-label',
+              z 'label.checkbox-label.distance-to-time',
                 z '.text',
                   @model.l.get 'filterSheet.timeLabel'
-                z '.input-short',
+                z '.small-input',
                   z @$timeInput, {
                     type: 'number'
+                    height: '30px'
                     hintText:
                       @model.l.get 'filterSheet.time'
                   }

@@ -74,7 +74,7 @@ module.exports = class PlacesFiltersOverlay
       # this and occasionally is 100% visible for a split second when it
       # should be opacity 0
       key: 'places-filters-overlay'
-      className: z.classKebab {isVisible}
+      className: z.classKebab {isVisible, isServerSide: not window?}
     },
       z @$appBar, {
         title: @model.l.get 'placesFiltersOverlay.title'

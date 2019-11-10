@@ -69,8 +69,6 @@ module.exports = class DropdownMultiple
 
     isDisabled ?= false
 
-    console.log 'opt', options
-
     z '.z-dropdown-multiple', {
       # vdom doesn't key defaultValue correctly if elements are switched
       # key: _kebabCase hintText
