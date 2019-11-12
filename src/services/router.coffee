@@ -29,7 +29,8 @@ class RouterService
     @requests = null
     @onBackFn = null
 
-  goPath: (path, {ignoreHistory, reset, keepPreserved, keepOverlay} = {}) =>
+  goPath: (path, options = {}) =>
+    {ignoreHistory, reset, keepPreserved, keepOverlay, skipBlur} = options
     if @preservedRequest and not keepPreserved
       @model.overlay.close()
       @removeOverlay()
@@ -37,7 +38,7 @@ class RouterService
     unless keepOverlay
       @model.overlay.close() # if any are open...
 
-    if Environment.isIos()
+    if Environment.isIos() and not skipBlur
       document.activeElement.blur()
 
     unless ignoreHistory

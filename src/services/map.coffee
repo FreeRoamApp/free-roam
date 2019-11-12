@@ -283,6 +283,14 @@ class MapService
         ]
         name: model.l.get 'filterSheet.features'
       }
+      # {
+      #   field: 'nearbyActivities'
+      #   type: 'iconListBooleanAnd'
+      #   items: [
+      #     {key: 'horseBackRiding', label: model.l.get 'feature.horseBackRiding'}
+      #   ]
+      #   name: model.l.get 'filterSheet.features'
+      # }
       {
         field: 'rating'
         type: 'reviews'

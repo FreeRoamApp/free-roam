@@ -55,13 +55,12 @@ module.exports = class GroupList extends Base
               },
                 z '.name', group.name or @model.l.get 'general.anonymous'
               z '.actions',
-                # z '.action',
-                #   z $forumButton,
-                #     text: @model.l.get 'general.forum'
-                #     onclick: =>
-                #       @model.group.goPath group, 'groupForum', {@router}
-                # z '.action.chat',
                 z '.action',
+                  z $forumButton,
+                    text: @model.l.get 'general.forum'
+                    onclick: =>
+                      @model.group.goPath group, 'groupForum', {@router}
+                z '.action.chat',
                   z $chatButton,
                     text: @model.l.get 'general.chat'
                     onclick: =>

@@ -1,5 +1,9 @@
 @require '../../vars'
 
+.is-ios .z-icon > svg > path
+  // fill transitions on ios are wonky
+  transition: none
+
 .z-icon
   text-align: center
   display: flex

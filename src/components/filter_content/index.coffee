@@ -90,8 +90,6 @@ module.exports = class FilterContent
           if feet or inches
             {feet, inches}
       when 'cellSignal'
-        console.log 'fffffffffffffffffffffffffffffffffffffffffff', @filter?.value
-        # @filter.valueStreams.next RxObservable.of
         @$cellSelector = new CellSelector {
           @model
           carriers: RxObservable.of ['verizon', 'att', 'tmobile', 'sprint']

@@ -6,6 +6,7 @@ require 'rxjs/add/observable/of'
 _map = require 'lodash/map'
 _pick = require 'lodash/pick'
 _isEmpty = require 'lodash/isEmpty'
+_isEqual = require 'lodash/isEqual'
 _reduce = require 'lodash/reduce'
 
 CellBars = require '../cell_bars'
@@ -21,7 +22,7 @@ MAX_BARS = 5
 # FIXME: initial value when editing review
 module.exports = class CellSelector
   # set isInteractive to true if tapping on a star should fill up to that star
-  constructor: ({@model, carriers, valueStreams, useLocalStorage}) ->
+  constructor: ({@model, carriers, @valueStreams, useLocalStorage}) ->
     @carrierCache = []
 
     @selectedCarriersStreams = new RxReplaySubject 1
@@ -33,22 +34,17 @@ module.exports = class CellSelector
     else
       @selectedCarriersStreams.next RxObservable.of []
 
-    # HACK: infinite loop with other approaches
-    # (using valueStreams directly)
-    updateValue = new RxBehaviorSubject null
-    isInitial = true
-    @disposable = valueStreams.switch().subscribe (cellSignal) =>
-      console.warn 'cellsig', cellSignal
-      if isInitial
-        isInitial = false
-        updateValue.next {initial: cellSignal}
-        console.warn '-______________', _map cellSignal, (val, key) -> key.replace '_lte', ''
-        @selectedCarriersStreams.next RxObservable.of(
-          _map cellSignal, (val, key) -> key.replace '_lte', ''
-        )
-      else if cellSignal is null
-        @selectedCarriersStreams.next RxObservable.of []
+    @signalsStreams = new RxReplaySubject 1
 
+    @state = z.state {
+      carriers: carriers
+      selectedCarriers: @selectedCarriersStreams.switch()
+      value: @valueStreams.switch()
+      signals: @signalsStreams.switch()
+    }
+
+  afterMount: =>
+    updateValue = new RxBehaviorSubject null
 
     carriersAndInitialValue = RxObservable.combineLatest(
       @selectedCarriersStreams.switch()
@@ -56,8 +52,24 @@ module.exports = class CellSelector
       (vals...) -> vals
     )
 
-    signals = carriersAndInitialValue.map ([carriers, {initial} = {}]) =>
-      initial ?= {}
+    isInitial = true
+    # HACK: infinite loop with other approaches
+    # (using @valueStreams directly)
+    currentValue = null
+    @disposable = @valueStreams.switch().subscribe (cellSignal) =>
+      console.warn 'cell selector subscription call', cellSignal
+      if not _isEqual cellSignal, currentValue
+        currentValue = cellSignal
+        updateValue.next cellSignal
+        @selectedCarriersStreams.next RxObservable.of(
+          _map cellSignal, (val, key) -> key.replace '_lte', ''
+        )
+      # else if cellSignal is null
+      #   @selectedCarriersStreams.next RxObservable.of []
+
+
+    signals = carriersAndInitialValue.map ([carriers, updateValue]) =>
+      updateValue ?= {}
 
       localStorage?['selectedCellCarriers'] = JSON.stringify carriers
 
@@ -66,12 +78,12 @@ module.exports = class CellSelector
           return @carrierCache[carrier]
 
         barsValueSubject = new RxBehaviorSubject(
-          initial["#{carrier}_lte"] or initial[carrier] or null
+          updateValue["#{carrier}_lte"] or updateValue[carrier] or 3
         )
         lteValueSubject = new RxBehaviorSubject(
           Boolean (
-            not initial[carrier] and initial["#{carrier}_lte"]
-          ) or not initial[carrier]
+            not updateValue[carrier] and updateValue["#{carrier}_lte"]
+          ) or not updateValue[carrier]
         )
 
         @carrierCache[carrier] = {
@@ -85,9 +97,9 @@ module.exports = class CellSelector
           }
         }
 
+    @signalsStreams.next signals
 
-
-    valueStreams.next(
+    @valueStreams.next(
       signals.switchMap (signals) ->
         if _isEmpty signals
           return RxObservable.of undefined # HACK: needs to be undefined so subscription above doesn't infinite loop
@@ -117,12 +129,7 @@ module.exports = class CellSelector
 
     )
 
-    @state = z.state {
-      carriers: carriers
-      selectedCarriers: @selectedCarriersStreams.switch()
-      signals: signals
-      value: valueStreams.switch()
-    }
+
 
   beforeUnmount: =>
     @disposable?.unsubscribe()

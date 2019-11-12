@@ -108,7 +108,8 @@ module.exports = class BottomBar
             # before showing ripple. seems better to start ripple animation
             # first
             setTimeout =>
-              @router.goPath route
+              # skipBlur for iOS so ripple animation works
+              @router.goPath route, {skipBlur: true}
             , 0
           # ontouchstart: (e) =>
           #   e?.stopPropagation()

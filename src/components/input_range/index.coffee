@@ -46,6 +46,8 @@ module.exports = class InputRange
             max: "#{@maxValue}"
             step: "#{step or 1}"
             value: "#{value}"
+            ontouchstart: (e) ->
+              e.stopPropagation()
             onclick: (e) =>
               @setValue parseInt(e.currentTarget.value)
             oninput: (e) =>
