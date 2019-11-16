@@ -116,6 +116,7 @@ module.exports = class NewPlace
       isLoading: false
       nameValue: @initialInfoFields.name.valueStreams.switch()
       detailsValue: @initialInfoFields.details.valueStreams.switch()
+      websiteValue: @initialInfoFields.website.valueStreams.switch()
       locationValue: @initialInfoFields.location.valueStreams.switch()
       subTypeValue: @initialInfoFields.subType?.valueStreams.switch()
       agencyValue: @initialInfoFields.agency?.valueStreams.switch()
@@ -131,7 +132,7 @@ module.exports = class NewPlace
 
   upsert: =>
     {me, nameValue, detailsValue, locationValue, subTypeValue, agencyValue,
-      regionValue, officeValue, attachmentsValue,
+      regionValue, officeValue, attachmentsValue, websiteValue
       featuresValue} = @state.getValue()
 
     @state.set isLoading: true
@@ -153,6 +154,8 @@ module.exports = class NewPlace
           regionSlug: regionValue
           officeSlug: officeValue
           features: featuresValue
+          contact:
+            website: websiteValue
         }
         .then @upsertReview
         .catch (err) =>
@@ -229,6 +232,9 @@ module.exports = class NewPlace
     )
     @initialInfoFields.details.valueStreams.next(
       RxObservable.of autosave['initialInfo.details'] or ''
+    )
+    @initialInfoFields.website.valueStreams.next(
+      RxObservable.of autosave['initialInfo.websiteUrl'] or ''
     )
     if @initialInfoFields.subType
       @initialInfoFields.subType?.valueStreams.next(
@@ -312,7 +318,11 @@ module.exports = class NewPlace
         $topLeftButton: z @$buttonBack
       }
 
-      z @$steps[step]
+      z '.step', {
+        # if DOM el is reused, page stays scrolled down when switching steps
+        key: "new-place-#{step}"
+      },
+        z @$steps[step]
 
       z @$stepBar, {
         isSaving: false

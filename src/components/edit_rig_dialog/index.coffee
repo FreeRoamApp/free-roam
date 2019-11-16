@@ -74,7 +74,7 @@ module.exports = class EditRigDialog
                   {value: 'van', text: @model.l.get 'rigs.van'}
                   {value: 'motorhome', text: @model.l.get 'rigs.motorhome'}
                   # {value: 'bus', text: @model.l.get 'rigs.bus'}
-                  # {value: 'truckCamper', text: @model.l.get 'rigs.truckCamper'}
+                  {value: 'truckCamper', text: @model.l.get 'rigs.truckCamper'}
                   {value: 'tent', text: @model.l.get 'rigs.tent'}
                   {value: 'car', text: @model.l.get 'rigs.car'}
                   # {value: 'boxTruck', text: @model.l.get 'rigs.boxTruck'}

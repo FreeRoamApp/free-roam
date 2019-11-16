@@ -17,6 +17,9 @@ module.exports = class EditPlace extends EditPlace
       details:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null
+      website:
+        valueStreams: new RxReplaySubject 1
+        errorSubject: new RxBehaviorSubject null
       location:
         valueStreams: new RxReplaySubject 1
         errorSubject: new RxBehaviorSubject null

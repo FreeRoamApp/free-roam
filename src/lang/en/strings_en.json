@@ -416,6 +416,8 @@
   "newPlaceInitialInfo.office": "Office",
   "newPlaceInitialInfo.details": "Extra info",
   "newPlaceInitialInfo.placeDetails": "Any factual info that you think is important about this campground (seasonal closings, # of sites, better route than google maps, etc). You'll be able to leave a review in the next step.",
+  "newPlaceInitialInfo.websiteUrl": "Website URL",
+  "newPlaceInitialInfo.websiteUrlHint": "URL",
   "newPlaceInitialInfo.coordinates": "{prettyType}'s coordinates",
   "newPlaceInitialInfo.coordinatesFromMap": "Find on map",
   "newPlaceInitialInfo.selectLandType": "Select a type",
@@ -831,6 +833,7 @@
   "feature.flushToilet": "Flush toilets",
   "feature.toilet": "Toilets",
   "feature.petsAllowed": "Pets allowed",
+  "feature.bearBox": "Bear box",
   "feature.firePit": "Fire pits",
   "feature.wifi": "Wifi",
 

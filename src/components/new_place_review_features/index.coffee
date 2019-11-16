@@ -23,6 +23,7 @@ FEATURES = [
   'petsAllowed'
   'wifi'
   'firePit'
+  'bearBox'
   # 'firewood'
   # 'alcohol'
 

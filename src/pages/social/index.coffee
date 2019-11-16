@@ -70,6 +70,7 @@ module.exports = class SocialPage
 
   render: =>
     {hasUnreadMessages, selectedIndex, unreadNotifications} = @state.getValue()
+    console.warn 'unread', hasUnreadMessages, unreadNotifications
     z '.p-social',
       z @$appBar, {
         title: @model.l.get 'socialPage.title'

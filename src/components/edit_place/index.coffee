@@ -39,13 +39,14 @@ module.exports = class EditPlace
       place: @place
       nameValue: @initialInfoFields.name.valueStreams.switch()
       detailsValue: @initialInfoFields.details.valueStreams.switch()
+      websiteValue: @initialInfoFields.website.valueStreams.switch()
       locationValue: @initialInfoFields.location.valueStreams.switch()
       subTypeValue: @initialInfoFields.subType?.valueStreams.switch()
       priceValue: @priceValueStreams.switch()
     }
 
   upsert: =>
-    {me, place, nameValue, detailsValue, locationValue,
+    {me, place, nameValue, detailsValue, websiteValue, locationValue,
       subTypeValue, priceValue} = @state.getValue()
 
     @state.set isLoading: true
@@ -61,6 +62,8 @@ module.exports = class EditPlace
         slug: place.slug
         name: nameValue
         details: detailsValue
+        contact:
+          website: websiteValue
         location: locationValue
         subType: subTypeValue
         prices:
@@ -91,6 +94,8 @@ module.exports = class EditPlace
       place.name or ''
     @initialInfoFields.details.valueStreams.next @place.map (place) ->
       place.details or ''
+    @initialInfoFields.website.valueStreams.next @place.map (place) ->
+      place.contact.website or ''
     @initialInfoFields.location.valueStreams.next @place.map (place) ->
       location = "#{Math.round(place.location.lat * 10000) / 10000}, " +
       "#{Math.round(place.location.lon * 10000) / 10000}"

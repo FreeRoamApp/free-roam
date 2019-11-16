@@ -37,6 +37,10 @@ module.exports = class NewPlaceInitialInfo
       valueStreams: @fields.details.valueStreams
     }
 
+    @$websiteInput = new PrimaryInput
+      valueStreams: @fields.website.valueStreams
+      error: @fields.website.errorSubject
+
     if @fields.subType and not @fields.agency
       @$subTypeDropdown = new Dropdown {
         valueStreams: @fields.subType.valueStreams
@@ -246,3 +250,8 @@ module.exports = class NewPlaceInitialInfo
           z '.name', @model.l.get 'newPlaceInitialInfo.details'
           z @$detailsTextarea,
             hintText: @model.l.get 'newPlaceInitialInfo.placeDetails'
+
+        z 'label.field.details',
+          z '.name', @model.l.get 'newPlaceInitialInfo.websiteUrl'
+          z @$websiteInput,
+            hintText: @model.l.get 'newPlaceInitialInfo.websiteUrlHint'

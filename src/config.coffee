@@ -134,7 +134,7 @@ isomorphic =
     # if not specified, it's kebab-case
     dumpStation: 'dump'
 
-  RIG_TYPES: ['tent', 'car', 'van', 'motorhome', 'travelTrailer', 'fifthWheel']
+  RIG_TYPES: ['tent', 'car', 'van', 'motorhome', 'travelTrailer', 'fifthWheel', 'truckCamper']
   EXPERIENCE_TYPES: ['none', 'little', 'some', 'lots']
   HOOKUP_PREFERENCES: ['none', 'some', 'all']
 

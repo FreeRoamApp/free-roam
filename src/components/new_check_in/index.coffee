@@ -127,8 +127,10 @@ module.exports = class NewCheckIn
     @fields.source.valueStreams.next @checkInAndPlace.map ([checkIn, place]) ->
       if checkIn
         {sourceId: checkIn.sourceId, sourceType: checkIn.sourceType}
-      else
+      else if place
         {sourceId: place.id, sourceType: place.type}
+      else
+        {}
 
   upsert: =>
     {checkIn, trip, tripIdValue, attachmentsValue, nameValue, sourceValue,
