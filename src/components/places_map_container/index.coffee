@@ -40,7 +40,7 @@ if window?
 
 module.exports = class PlacesMapContainer
   constructor: (options) ->
-    {@model, @router, isShell, @trip, @tripRoute, isEditingRoute,
+    {@model, @router, isShell, @trip, @tripRoute, @place, isEditingRoute,
       editRouteWaypointsStreams, @dataTypes, showScale, destinations, @routes,
       mapBoundsStreams, @persistentCookiePrefix, @addPlacesStreams,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataTypes,
@@ -104,7 +104,7 @@ module.exports = class PlacesMapContainer
       places, @isLegendVisible, (vals...) -> vals
     )
 
-    @place = new RxBehaviorSubject null
+    @place ?= new RxBehaviorSubject null
     @coordinate = new RxBehaviorSubject null
     @placePosition = new RxBehaviorSubject null
     @mapSize = new RxBehaviorSubject null

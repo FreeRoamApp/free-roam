@@ -28,7 +28,7 @@ if window?
 module.exports = class EditTripRouteInfo
   constructor: (options) ->
     {@model, @router, trip, tripRoute, tripAndTripRoute, @waypointsStreams
-      routesStreams, destinationsStreams, @isEditingRoute,
+      routesStreams, destinationsStreams, @isEditingRoute, @place
       @selectedRoute, routeFocus} = options
     # for changing route
     @waypointsStreams ?= new RxReplaySubject 1
@@ -103,6 +103,7 @@ module.exports = class EditTripRouteInfo
     @state = z.state {
       trip
       tripRoute
+      @place
       @isEditingRoute
       waypoints: @waypointsStreams.switch()
       @isOpen
@@ -121,11 +122,10 @@ module.exports = class EditTripRouteInfo
 
   render: =>
     {start, end, isEditingRoute, trip, tripRoute, routes, isOpen, isSaving
-      avoidHighways, useTruckRoute, waypoints} = @state.getValue()
+      place, avoidHighways, useTruckRoute, waypoints} = @state.getValue()
 
+    isOpen = isOpen and not place
     stops = trip?.stops[tripRoute?.routeId]
-
-    console.log 'stops', stops
 
     places = _filter [start?.place].concat stops, [end?.place]
 
@@ -142,6 +142,7 @@ module.exports = class EditTripRouteInfo
       },
         z '.header', {
           onclick: =>
+            @place.next null
             @isOpen.next not isOpen
         },
           z '.text',
@@ -170,6 +171,7 @@ module.exports = class EditTripRouteInfo
           [
             z @$tabs,
               isBarFixed: false
+              barTabHeight: 36
               tabs: [
                 {
                   $menuText: @model.l.get 'editTripRouteInfo.info'

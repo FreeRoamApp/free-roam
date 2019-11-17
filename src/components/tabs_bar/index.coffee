@@ -29,7 +29,7 @@ module.exports = class TabsBar
 
   render: (props) =>
     {items, bgColor, color, isPrimary, inactiveColor, underlineColor, isFixed,
-      isFlat, isArrow, tabWidth} = props
+      isFlat, isArrow, tabWidth, tabHeight} = props
     {selectedIndex} = @state.getValue()
 
     bgColor ?= if isPrimary then colors.$primaryMain else colors.$tertiary0
@@ -54,6 +54,7 @@ module.exports = class TabsBar
         z '.bar', {
           style:
             background: bgColor
+            height: if tabHeight then "#{tabHeight}px"
             width: if isFullWidth \
                    then '100%'
                    else "#{tabWidth * items.length}px"

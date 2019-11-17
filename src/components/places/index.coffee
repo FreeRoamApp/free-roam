@@ -23,7 +23,7 @@ module.exports = class Places
   constructor: (options) ->
     {@model, @router, isShell, types, subType, donut, persistentCookiePrefix
       trip, tripRoute, isEditingRoute, editRouteWaypointsStreams, destinations,
-      routes, selectedRoute, addPlacesStreams, mapBoundsStreams,
+      place, routes, selectedRoute, addPlacesStreams, mapBoundsStreams,
       searchQuery} = options
 
     persistentCookiePrefix ?= 'home'
@@ -49,6 +49,7 @@ module.exports = class Places
       destinations
       addPlacesStreams
       routes
+      place
       selectedRoute
       donut: donut
       currentDataType: @currentDataType

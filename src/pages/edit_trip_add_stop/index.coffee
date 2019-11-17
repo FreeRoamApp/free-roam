@@ -60,6 +60,7 @@ module.exports = class EditTripAddStopPage
     @editRouteWaypointsStreams = new RxReplaySubject 1
 
     routeFocus = new RxBehaviorSubject null
+    place = new RxBehaviorSubject null
 
     routeInfoRoutesStreams = new RxReplaySubject 1
     routes = RxObservable.combineLatest(
@@ -109,12 +110,11 @@ module.exports = class EditTripAddStopPage
 
       routeFocus
       (vals...) ->
-        console.log 'vvvvv', vals
         _filter [].concat vals...
     )
 
     @$editTripRouteInfo = new EditTripRouteInfo {
-      @model, @router, trip, tripRoute, @tripAndTripRoute, routeFocus
+      @model, @router, trip, tripRoute, @tripAndTripRoute, routeFocus, place
       routesStreams: routeInfoRoutesStreams
       destinationsStreams: routeInfoDestinationsStreams
       isEditingRoute, @selectedRoute
@@ -127,7 +127,7 @@ module.exports = class EditTripAddStopPage
       tripRoute?.bounds or trip.bounds
 
     @$places = new Places {
-      @model, @router, trip, tripRoute, mapBoundsStreams, isEditingRoute,
+      @model, @router, trip, tripRoute, place, mapBoundsStreams, isEditingRoute,
       @editRouteWaypointsStreams, addPlacesStreams, @selectedRoute
       persistentCookiePrefix: 'trip'
       destinations: destinationsStreams.switch()
@@ -159,12 +159,7 @@ module.exports = class EditTripAddStopPage
   afterMount: =>
     @editRouteWaypointsStreams.next @tripAndTripRoute.map ([trip, tripRoute]) =>
       stops = trip?.stops[tripRoute?.routeId]
-      stops = _filter stops, {isWaypoint: true}
-      stops = _map stops, (stop) ->
-        stop.place = {type: 'waypoint', hasDot: true}
-        stop
-      console.log 'AAAAAAAAAA', stops
-      stops
+      _filter stops, {isWaypoint: true}
 
   beforeUnmount: =>
     @selectedRoute.next null
@@ -178,7 +173,9 @@ module.exports = class EditTripAddStopPage
   render: =>
     {trip, routeId, tripRoute} = @state.getValue()
 
-    z '.p-edit-trip-add-stop',
+    z '.p-edit-trip-add-stop', {
+      className: z.classKebab {hasTripRoute: Boolean tripRoute}
+    },
       z @$appBar, {
         title:
           if routeId

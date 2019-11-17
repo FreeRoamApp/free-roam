@@ -72,7 +72,7 @@ module.exports = class ElevationChart
         height - (padding + ((elevation - minElevation) / rangeElevation) * (height - padding * 2))
       ]
 
-  render: ({heightRatio}) =>
+  render: =>
     {routes, size} = @state.getValue()
 
     {width, height, padding} = size or {}

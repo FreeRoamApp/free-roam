@@ -25,7 +25,8 @@ module.exports = class EditTripRouteInfoElevation
       routes
       routeFocus
       size: @model.window.getSize().map ({width}) ->
-        {width}
+        # {width}
+        {height: 120}
     }
 
     @state = z.state {
@@ -79,7 +80,8 @@ module.exports = class EditTripRouteInfoElevation
                   "#{altRoute?.elevationStats.lost} "
                   @model.l.get 'abbr.imperial.foot'
 
-          @$elevationChart
+          z '.chart',
+            @$elevationChart
         ]
       else
         @$spinner
