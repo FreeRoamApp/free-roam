@@ -109,7 +109,7 @@ module.exports = class PlaceSheet extends Base
               loadedText: @model.l.get 'general.saved'
               onclick: =>
                 wp = waypoints
-                index = parseInt(place.name.match /\((.*)\)?[1]/)
+                index = parseInt(place.name.match(/\((.*)\)/)?[1])
                 wp.splice wp.length - index, 1
                 editRouteWaypointsStreams.next RxObservable.of wp
                 @place.next null
