@@ -1,12 +1,23 @@
 TODOS:
 
+- Place tagging/search in forum/chat
+
+- forum improvements:
+  - subscribe all responders/likers to a thread
+    - button up top to unsub/mute
+  - push when someone replies to your comment
+    - shouldn't overlap with push from overall thread subscription
+  - new activity indicator on forum button on social page?
+
+- social giveaway
+  - social onboard
+
+
 - search icon should be tappable for trips / add to trip
 - donate only from web (not apps)
 - desktop login page is ugly
 x campground place sheet should fade in (coords do)
 - search placeholder / recent
-
-- notif for comment on thread
 
 - new tooltips
 

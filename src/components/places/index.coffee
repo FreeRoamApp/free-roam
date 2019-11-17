@@ -22,8 +22,9 @@ if window?
 module.exports = class Places
   constructor: (options) ->
     {@model, @router, isShell, types, subType, donut, persistentCookiePrefix
-      trip, tripRoute, isEditingRoute, editRouteWaypoints, destinations, routes,
-      selectedRoute, addPlacesStreams, mapBoundsStreams, searchQuery} = options
+      trip, tripRoute, isEditingRoute, editRouteWaypointsStreams, destinations,
+      routes, selectedRoute, addPlacesStreams, mapBoundsStreams,
+      searchQuery} = options
 
     persistentCookiePrefix ?= 'home'
 
@@ -41,7 +42,7 @@ module.exports = class Places
 
     @$placesMapContainer = new PlacesMapContainer {
       @model, @router, isShell, trip, tripRoute, isEditingRoute
-      editRouteWaypoints
+      editRouteWaypointsStreams
       persistentCookiePrefix
       searchQuery
       mapBoundsStreams

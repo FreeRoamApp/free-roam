@@ -28,7 +28,7 @@ if window?
 module.exports = class PlaceSheet extends Base
   constructor: (options) ->
     {@model, @router, @place, trip, tripRoute, isEditingRoute,
-      editRouteWaypoints, @layersVisible,
+      editRouteWaypointsStreams, @layersVisible,
       @addOptionalLayer, @addLayerById, @removeLayerById} = options
 
     @$directionsIcon = new Icon()
@@ -46,6 +46,7 @@ module.exports = class PlaceSheet extends Base
       trip or RxObservable.of null
       tripRoute or RxObservable.of null
       isEditingRoute or RxObservable.of null
+      editRouteWaypointsStreams?.switch() or RxObservable.of null
     )
 
     @state = z.state {
@@ -54,7 +55,8 @@ module.exports = class PlaceSheet extends Base
       isEditingRoute
       isLoadingButtons: []
       isLoadedButtons: []
-      info: sheetData.switchMap ([place, checkIns, trip, tripRoute, isEditingRoute]) =>
+      info: sheetData.switchMap (data) =>
+        [place, checkIns, trip, tripRoute, isEditingRoute] = data
         if place?.type and not isEditingRoute
           # @model.geocoder.getCoordinateInfoFromLocation place.location
           @model.placeBase.getSheetInfo {
@@ -76,10 +78,12 @@ module.exports = class PlaceSheet extends Base
             }, info
         else
           RxObservable.of false
-      buttons: sheetData.map ([place, checkIns, trip, tripRoute, isEditingRoute]) =>
+      buttons: sheetData.map (data) =>
+        [place, checkIns, trip, tripRoute, isEditingRoute, waypoints] = data
         isSaved = place and checkIns and _find(checkIns, {
           status: 'planned', sourceId: place.id
         }) or false
+
 
         _filter [
           if isEditingRoute and place?.type is 'coordinate'
@@ -90,8 +94,8 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
-                editRouteWaypoints.next(
-                  editRouteWaypoints.getValue().concat [place.location]
+                editRouteWaypointsStreams.next(
+                  RxObservable.of (waypoints or []).concat [place.location]
                 )
                 @place.next null
                 Promise.resolve null
@@ -104,10 +108,10 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
-                wp = editRouteWaypoints.getValue()
+                wp = waypoints
                 index = parseInt(place.name.match /\((.*)\)?[1]/)
                 wp.splice wp.length - index, 1
-                editRouteWaypoints.next wp
+                editRouteWaypointsStreams.next RxObservable.of wp
                 @place.next null
                 Promise.resolve null
             }

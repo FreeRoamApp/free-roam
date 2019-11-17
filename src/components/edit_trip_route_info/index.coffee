@@ -27,11 +27,11 @@ if window?
 
 module.exports = class EditTripRouteInfo
   constructor: (options) ->
-    {@model, @router, trip, tripRoute, tripAndTripRoute, waypoints
+    {@model, @router, trip, tripRoute, tripAndTripRoute, @waypointsStreams
       routesStreams, destinationsStreams, @isEditingRoute,
       @selectedRoute, routeFocus} = options
     # for changing route
-    waypoints ?= new RxBehaviorSubject []
+    @waypointsStreams ?= new RxReplaySubject 1
 
     avoidHighwaysStreams = new RxReplaySubject 1
     avoidHighwaysStreams.next tripRoute.map (tripRoute) ->
@@ -41,7 +41,7 @@ module.exports = class EditTripRouteInfo
       tripRoute?.settings?.useTruckRoute
 
     tripAndTripRouteAndWaypointsAndSettings = RxObservable.combineLatest(
-      trip, tripRoute, waypoints, avoidHighwaysStreams.switch()
+      trip, tripRoute, @waypointsStreams.switch(), avoidHighwaysStreams.switch()
       useTruckRouteStreams.switch(), @isEditingRoute, (vals...) -> vals
     )
 
@@ -70,12 +70,13 @@ module.exports = class EditTripRouteInfo
       routes.reverse()
       routes
 
-    destinationsStreams.next waypoints.map (wp) ->
+    destinationsStreams.next @waypointsStreams.switch().map (wp) ->
       _map wp, (point, i) ->
         {
           name: "Stop (#{i})" # index used to remove when tapped again
           location: point
           number: ''
+          hasDot: true
           icon: 'drop_pin'
           anchor: 'center'
           type: 'waypoint'
@@ -103,7 +104,7 @@ module.exports = class EditTripRouteInfo
       trip
       tripRoute
       @isEditingRoute
-      waypoints
+      waypoints: @waypointsStreams.switch()
       @isOpen
       isSaving: false
       avoidHighways: avoidHighwaysStreams.switch()
@@ -123,6 +124,8 @@ module.exports = class EditTripRouteInfo
       avoidHighways, useTruckRoute, waypoints} = @state.getValue()
 
     stops = trip?.stops[tripRoute?.routeId]
+
+    console.log 'stops', stops
 
     places = _filter [start?.place].concat stops, [end?.place]
 

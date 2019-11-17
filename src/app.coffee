@@ -239,9 +239,9 @@ module.exports = class App
     }
 
     # FIXME: rm
-    if window?
-      @state.subscribe (state) ->
-        console.log 'app state change', state
+    # if window?
+    #   @state.subscribe (state) ->
+    #     console.log 'app state change', state
 
   getRoutes: (breakpoint) =>
     # can have breakpoint (mobile/desktop) specific routes
@@ -360,7 +360,7 @@ module.exports = class App
     {request, $backupPage, me, hideDrawer, statusBarData, windowSize,
       $overlays, $tooltip} = @state.getValue()
 
-    console.log '======== RENDER =========='
+    # console.log '======== RENDER =========='
 
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isIos {userAgent}
@@ -448,5 +448,5 @@ module.exports = class App
                   display: 'none'
                   backgroundColor: 'var(--test-color)'
 
-    console.log '$app render time:', Date.now() - start
+    # console.log '$app render time:', Date.now() - start
     a

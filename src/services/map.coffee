@@ -774,7 +774,6 @@ class MapService
                       "#{operator}": parseFloat(value)
                 }
           else
-            console.log filter.value.month, config.MONTHS[filter.value.month]
             month = config.MONTHS[filter.value.month]
             bool:
               must: _map filter.value.metrics, ({operator, value}, metric) ->
@@ -809,7 +808,6 @@ class MapService
 
             }
 
-    console.log 'filter', filter
     filter.push {
       geo_bounding_box:
         location:

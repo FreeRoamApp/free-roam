@@ -49,21 +49,21 @@ module.exports = class EditTripAddStopPage
       trip, routeId, (vals...) -> vals
     )
     tripRoute = tripAndRouteId.map ([trip, routeId]) ->
-      _find(trip.routes, {routeId}) or null
+      _find(trip?.routes, {routeId}) or null
 
-    tripAndTripRoute = RxObservable.combineLatest(
+    @tripAndTripRoute = RxObservable.combineLatest(
       trip, tripRoute, (vals...) -> vals
     )
 
     destinationsStreams = new RxReplaySubject 1
     isEditingRoute = new RxBehaviorSubject false
-    @editRouteWaypoints = new RxBehaviorSubject []
+    @editRouteWaypointsStreams = new RxReplaySubject 1
 
     routeFocus = new RxBehaviorSubject null
 
     routeInfoRoutesStreams = new RxReplaySubject 1
     routes = RxObservable.combineLatest(
-      tripAndTripRoute?.map ([trip, tripRoute]) ->
+      @tripAndTripRoute?.map ([trip, tripRoute]) ->
         TripService.getRouteGeoJson trip, tripRoute
 
       routeInfoRoutesStreams.switch()
@@ -74,7 +74,7 @@ module.exports = class EditTripAddStopPage
     routeInfoDestinationsStreams = new RxReplaySubject 1
     addPlacesStreams = new RxReplaySubject 1
     addPlacesStreams.next RxObservable.combineLatest(
-      tripAndTripRoute.switchMap ([trip, tripRoute]) =>
+      @tripAndTripRoute.switchMap ([trip, tripRoute]) =>
         (if tripRoute?.routeId
           @model.trip.getRouteStopsByTripIdAndRouteIds trip.id, [
             tripRoute.routeId
@@ -82,6 +82,7 @@ module.exports = class EditTripAddStopPage
         else
           RxObservable.of null
         ).map (stops) ->
+          console.log 'STOPSS', stops
           places = _filter _map _flatten(_values(stops)), ({place}, i) ->
             if place
               _defaults {
@@ -108,25 +109,26 @@ module.exports = class EditTripAddStopPage
 
       routeFocus
       (vals...) ->
+        console.log 'vvvvv', vals
         _filter [].concat vals...
     )
 
     @$editTripRouteInfo = new EditTripRouteInfo {
-      @model, @router, trip, tripRoute, tripAndTripRoute, routeFocus
+      @model, @router, trip, tripRoute, @tripAndTripRoute, routeFocus
       routesStreams: routeInfoRoutesStreams
       destinationsStreams: routeInfoDestinationsStreams
       isEditingRoute, @selectedRoute
-      waypoints: @editRouteWaypoints
+      waypointsStreams: @editRouteWaypointsStreams
     }
 
     mapBoundsStreams = new RxReplaySubject 1
     # take(1) so it doesn't update any time exoid is cleared
-    mapBoundsStreams.next tripAndTripRoute.take(1).map ([trip, tripRoute]) =>
+    mapBoundsStreams.next @tripAndTripRoute.take(1).map ([trip, tripRoute]) =>
       tripRoute?.bounds or trip.bounds
 
     @$places = new Places {
       @model, @router, trip, tripRoute, mapBoundsStreams, isEditingRoute,
-      @editRouteWaypoints, addPlacesStreams, @selectedRoute
+      @editRouteWaypointsStreams, addPlacesStreams, @selectedRoute
       persistentCookiePrefix: 'trip'
       destinations: destinationsStreams.switch()
       routes: routes
@@ -154,9 +156,19 @@ module.exports = class EditTripAddStopPage
       routeId: routeId
       tripRoute: tripRoute
 
+  afterMount: =>
+    @editRouteWaypointsStreams.next @tripAndTripRoute.map ([trip, tripRoute]) =>
+      stops = trip?.stops[tripRoute?.routeId]
+      stops = _filter stops, {isWaypoint: true}
+      stops = _map stops, (stop) ->
+        stop.place = {type: 'waypoint', hasDot: true}
+        stop
+      console.log 'AAAAAAAAAA', stops
+      stops
+
   beforeUnmount: =>
     @selectedRoute.next null
-    @editRouteWaypoints.next []
+    @editRouteWaypointsStreams.next RxObservable.of []
 
   getMeta: =>
     {

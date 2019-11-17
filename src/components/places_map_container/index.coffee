@@ -41,7 +41,7 @@ if window?
 module.exports = class PlacesMapContainer
   constructor: (options) ->
     {@model, @router, isShell, @trip, @tripRoute, isEditingRoute,
-      editRouteWaypoints, @dataTypes, showScale, destinations, @routes,
+      editRouteWaypointsStreams, @dataTypes, showScale, destinations, @routes,
       mapBoundsStreams, @persistentCookiePrefix, @addPlacesStreams,
       @limit, @sort, defaultOpacity, @currentDataType, @initialDataTypes,
       @initialFilters, initialCenter, center, initialZoom, zoom, donut,
@@ -146,7 +146,7 @@ module.exports = class PlacesMapContainer
     }
     @$placeSheet = new PlaceSheet {
       @model, @router, @place, @trip, @tripRoute, isEditingRoute,
-      editRouteWaypoints, @coordinate, @addOptionalLayer, @layersVisible
+      editRouteWaypointsStreams, @coordinate, @addOptionalLayer, @layersVisible
       @addLayerById, @removeLayerById
     }
     @isPlaceFiltersVisible = new RxBehaviorSubject false
