@@ -21,6 +21,16 @@ module.exports = class Experiment
 
     ga? 'send', 'event', 'exp', "guidesOnboard:#{expGuidesOnboard}"
 
+    expWelcomeOverlay = @cookie.get 'exp:welcomeOverlay'
+    unless expWelcomeOverlay
+      rand = Math.random()
+      expWelcomeOverlay = if rand > 0.5 \
+                         then 'visible'
+                         else 'control'
+      @cookie.set 'exp:welcomeOverlay', expWelcomeOverlay
+
+    ga? 'send', 'event', 'exp', "welcomeOverlay:#{expWelcomeOverlay}"
+
     expTripsOnboard = @cookie.get 'exp:tripsOnboard'
     unless expTripsOnboard
       rand = Math.random()
@@ -35,6 +45,7 @@ module.exports = class Experiment
       default: expDefault
       guidesOnboard: expGuidesOnboard # seems to be doing worse, but leaving
       tripsOnboard: expTripsOnboard
+      welcomeOverlay: expWelcomeOverlay
 
 
   get: (key) =>

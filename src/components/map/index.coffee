@@ -69,7 +69,7 @@ module.exports = class Map
     if layer
       if layer.type is 'fill'
         @map.setPaintProperty id, 'fill-opacity', opacity
-      else
+      else if layer.type is 'raster'
         @map.setPaintProperty id, 'raster-opacity', opacity
 
   addLayer: (optionalLayer) =>
@@ -730,10 +730,12 @@ module.exports = class Map
   # update tooltip pos
   onMapMove: =>
     {place} = @state.getValue()
-    if place?.location
+    if place?.location and @map
       @placePosition.next @map.project place.location
 
   updateMapLocation: =>
+    unless @map
+      return
     mapBounds = {
       bounds: @map.getBounds()
       center: @map.getCenter()

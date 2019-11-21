@@ -400,7 +400,7 @@ module.exports = class PlacesMapContainer
     layerSettings = JSON.parse localStorage?.layerSettings or '{}'
     if optionalLayer.layer.type is 'fill' and typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
       optionalLayer.layer.paint['fill-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
-    else if typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
+    else if optionalLayer.layer.type is 'raster' and typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
       optionalLayer.layer.paint['raster-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
     optionalLayer
 

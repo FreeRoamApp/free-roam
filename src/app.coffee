@@ -20,7 +20,7 @@ Head = require './components/head'
 NavDrawer = require './components/nav_drawer'
 BottomBar = require './components/bottom_bar'
 AddToHomeScreenSheet = require './components/add_to_home_sheet'
-# WelcomeDialog = require './components/welcome_dialog'
+WelcomeDialog = require './components/welcome_dialog'
 WelcomeOverlay = require './components/welcome_overlay'
 StatusBar = require './components/status_bar'
 SnackBar = require './components/snack_bar'
@@ -203,8 +203,10 @@ module.exports = class App
     # TODO: a/b w/ dialog
     if (window? and not @model.cookie.get 'hasSeenWelcome')
       @model.cookie.set 'hasSeenWelcome', 1
-      @model.overlay.open new WelcomeOverlay {@model, @router}
-      # @model.overlay.open new WelcomeDialog {@model, @router}
+      if @model.experiment.get('welcomeOverlay') is 'visible'
+        @model.overlay.open new WelcomeOverlay {@model, @router}
+      else
+        @model.overlay.open new WelcomeDialog {@model, @router}
 
     # used if state / requests fails to work
     $backupPage = if @serverData?
