@@ -17,7 +17,8 @@ module.exports = class LayerSettingsOverlay
     @$appBar = new AppBar {@model}
 
     @optionalLayers = _map optionalLayers, (optionalLayer) =>
-      layerId = optionalLayer.layer.id
+      layer = optionalLayer.layer or optionalLayer.layers[0]
+      layerId = layer.id
 
       layerSettings = JSON.parse localStorage?.layerSettings or '{}'
       valueSubject = new RxBehaviorSubject Math.round(100 * (
@@ -64,7 +65,8 @@ module.exports = class LayerSettingsOverlay
         z '.title', @model.l.get 'layerSettingsOverlay.layerTransparencies'
         z '.layers',
           _map @optionalLayers, ({optionalLayer, valueSubject, $range}) ->
-            if optionalLayer.layer.id is 'smoke'
+            layer = optionalLayer.layer or optionalLayer.layers[0]
+            if layer.id is 'smoke'
               return
             z '.layer',
               z '.icon',

@@ -619,6 +619,54 @@ class MapService
           placePosition.next e.point
       }
 
+      'na-contours': {
+        name: model.l.get 'placesMapContainer.layerElevation'
+        thumb: "#{config.CDN_URL}/maps/elevation_overlay.png"
+        defaultOpacity: 1#0.4
+        sourceId: 'na-contours'
+        source:
+          type: 'vector'
+          url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?1'
+        layers: [
+          {
+            id: 'na-contours'
+            type: 'line'
+            source: 'na-contours'
+            'source-layer': 'contour'
+            minzoom: 9
+            # layout:
+            paint:
+              'line-color': '#000000'
+              'line-opacity':
+                stops: [
+                  [9, 0.1]
+                  [14, 1]
+                ]
+              'line-width': 1
+            metadata:
+              zIndex: 2
+          }
+          {
+            id: 'na-contours-labels'
+            type: 'symbol'
+            source: 'na-contours'
+            'source-layer': 'contour'
+            minzoom: 10
+            layout:
+              'symbol-placement': 'line'
+              'text-field': ['concat', ['to-string', ['round', ['*', ['get', 'ele'], 3.2808399]]], "'"]
+              'text-font': ['Open Sans Regular']
+              'text-size': 14
+            paint:
+              'text-color': '#000000',
+              'text-halo-width': 0
+            metadata:
+              zIndex: 2
+          }
+        ]
+        insertBeneathLabels: true
+      }
+
       satellite: {
         name: model.l.get 'placesMapContainer.layerSatellite'
         thumb: "#{config.CDN_URL}/maps/satellite_overlay.png"

@@ -390,18 +390,20 @@ module.exports = class PlacesMapContainer
         }
 
   addOptionalLayer: (optionalLayer) =>
+    layer = optionalLayer.layer or optionalLayer.layers?[0]
     if optionalLayer
-      @optionalLayers[optionalLayer.layer.id] = optionalLayer
+      @optionalLayers[layer.id] = optionalLayer
 
   setOpacityByOptionalLayer: (optionalLayer) ->
     unless optionalLayer # for temporary layers like mvums
       return
-    layerId = optionalLayer.layer.id
+    layer = optionalLayer.layer or optionalLayer.layers?[0]
+    layerId = layer.id
     layerSettings = JSON.parse localStorage?.layerSettings or '{}'
-    if optionalLayer.layer.type is 'fill' and typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
-      optionalLayer.layer.paint['fill-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
-    else if optionalLayer.layer.type is 'raster' and typeof optionalLayer.layer.paint['fill-opacity'] isnt 'object'
-      optionalLayer.layer.paint['raster-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
+    if layer.type is 'fill' and typeof layer.paint['fill-opacity'] isnt 'object'
+      layer.paint['fill-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
+    else if layer.type is 'raster' and typeof layer.paint['fill-opacity'] isnt 'object'
+      layer.paint['raster-opacity'] = layerSettings[layerId]?.opacity or optionalLayer.defaultOpacity or 1
     optionalLayer
 
 
@@ -423,7 +425,11 @@ module.exports = class PlacesMapContainer
 
   removeLayerById: (layerId) =>
     optionalLayer = @optionalLayers[layerId]
-    @$map.removeLayerById layerId
+    if optionalLayer.layers
+      _map optionalLayer.layers, (layer) =>
+        @$map.removeLayerById layer.id
+    else
+      @$map.removeLayerById layerId
 
     {layersVisible} = @state.getValue()
     index = layersVisible.indexOf(layerId)
@@ -527,7 +533,8 @@ module.exports = class PlacesMapContainer
                   z '.g-cols',
                     if isLayersPickerVisible
                       _map @optionalLayers, (optionalLayer) =>
-                        {name, layer} = optionalLayer
+                        {name, layer, layers} = optionalLayer
+                        layer ?= layers[0]
                         index = layersVisible.indexOf(layer.id)
                         isVisible = index isnt -1
                         z ".layer-icon.g-col.g-xs-4.g-md-4", {

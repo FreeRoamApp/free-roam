@@ -73,7 +73,9 @@ module.exports = class Map
         @map.setPaintProperty id, 'raster-opacity', opacity
 
   addLayer: (optionalLayer) =>
-    {layer, source, sourceId, insertBeneathLabels, onclick} = optionalLayer
+    {layer, layers, source, sourceId, insertBeneathLabels, onclick} = optionalLayer
+
+    layer ?= layers[0]
 
     if @getLayerIndexById(layer.id) is -1
       @visibleLayers.push optionalLayer
@@ -82,10 +84,17 @@ module.exports = class Map
         @map.addSource sourceId or layer.id, source
       catch err
         console.log 'source exists...', err
-      @map.addLayer layer, layerId
+      if layers
+        _map layers, (layer) =>
+          @map.addLayer layer, layerId
+      else
+        @map.addLayer layer, layerId
 
   getLayerIndexById: (id) ->
-    _findIndex(@visibleLayers, ({layer}) -> layer.id is id)
+    _findIndex(@visibleLayers, ({layer, layers}) ->
+      layer ?= layers[0]
+      layer.id is id
+    )
 
   removeLayerById: (id) =>
     index = @getLayerIndexById id
