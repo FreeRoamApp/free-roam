@@ -101,7 +101,7 @@ module.exports = class EditPlace
       "#{Math.round(place.location.lon * 10000) / 10000}"
       location or ''
     @priceValueStreams.next @place.map (place) ->
-      place.prices?.all?.mode or 0
+      place.prices?.all?.mode or ''
 
     @initialInfoFields.subType?.valueStreams.next @place.map (place) ->
       place.subType or ''

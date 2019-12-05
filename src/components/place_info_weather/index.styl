@@ -7,22 +7,9 @@
     font-subtitle2()
     margin-bottom: 8px
 
-  > .tabs
-    display: flex
-    background: getColor('$tertiary0')
-    border: 1px solid getColor('$tertiary200')
-    border-radius: 4px
-    margin-bottom: 8px
-
-    > .tab
-      cursor: pointer
-      flex1()
-      text-align: center
-      padding: 8px 20px
-
-      &.is-selected
-        background: getColor('$tertiary200')
-        font-subtitle1()
+  > .tap-tabs
+    tapTabs()
+    margin-bottom: 24px
 
   > .graph
     width: 100%
@@ -45,6 +32,7 @@
           margin-bottom: 8px
 
         > .precip
+          font-caption(false, high)
           display: flex
           padding-bottom: 32px
 
@@ -54,13 +42,14 @@
 
           > .bar
             flex1()
-            background: getColor('$precipBlue')
+            background: getColor('$bgText26')
             width: 20px
             height: 100%
             border-radius: 10px
             margin: 0 auto
 
           > .high, > .low
+            font-caption(false, high)
             position: absolute
             width: 100%
 
@@ -111,6 +100,7 @@
             margin: 0 4px
 
         > .high-low
+          font-caption(false, high)
           > .high
             font-subtitle2()
             color: getColor('$red500')
@@ -120,9 +110,11 @@
             color: getColor('$blue500')
 
         > .rain
+          font-caption(false, high)
           color: getColor('$blue500')
 
         > .wind
+          font-caption(false, high)
           align-items: flex-start
           > .info
             > .speed, > .gust

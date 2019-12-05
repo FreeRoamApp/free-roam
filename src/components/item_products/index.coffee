@@ -21,7 +21,7 @@ module.exports = class ItemProducts
 
     @state = z.state
       item: item
-      partner: @model.user.getPartner()
+      partner: @model.user.getReferrer()
       products: item.switchMap (item) =>
         unless item?.slug
           return RxObservable.of []

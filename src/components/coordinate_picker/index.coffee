@@ -138,7 +138,7 @@ module.exports = class CoordinatePicker
 
     layers = MapService.getOptionalLayers {@model}
     optionalLayer = _find layers, (layer) ->
-      layer.layer.id is 'satellite'
+      layer.layer?.id is 'satellite'
 
     @state.set isSatelliteVisible: not isSatelliteVisible
     @$map.toggleLayer optionalLayer

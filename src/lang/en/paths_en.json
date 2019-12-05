@@ -51,6 +51,7 @@
   "editOvernightReview": "/overnight/:slug/review/:reviewId/edit",
   "events": "/events",
   "event": "/event/:slug",
+  "giveaway": "/giveaway",
   "guide": "/guide/:slug",
   "guides": "/guides",
   "item": "/item/:slug",
@@ -82,6 +83,7 @@
   "placesWithLocation": "/places/location/:country/:state/:city",
   "placesWithLocationAndType": "/places/location/:country/:state/:city/:type",
   "placesWithLocationAndTypeAndSubType": "/places/location/:country/:state/:city/:type/:subType",
+  "placeMapScreenshot": "/place-map-screenshot/:type/:slug",
 
   "policies": "/policies",
   "privacy": "/privacy",

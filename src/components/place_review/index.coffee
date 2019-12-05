@@ -57,16 +57,19 @@ module.exports = class PlaceReview
       @openDialog {user, review, parent}
 
     z '.z-place-review',
-      z '.avatar', {
-        onclick
-        style:
-          width: avatarSize
-      },
-        z @$avatar, {
-          user
-          size: avatarSize
-          bgColor: colors.$grey200
-        }
+      z '.top-info',
+        z '.avatar', {
+          onclick
+          style:
+            width: avatarSize
+        },
+          z @$avatar, {
+            user
+            size: avatarSize
+            bgColor: colors.$grey200
+          }
+        z '.author',
+          z @$author, {user, time, onclick, isFullDate: true}
+
       z '.content',
-        z @$author, {user, time, onclick}
         z @$review

@@ -13,6 +13,9 @@ module.exports = class PlaceBase
   getBySlug: (slug) =>
     @auth.stream "#{@namespace}.getBySlug", {slug}
 
+  getByTypeAndSlug: (type, slug) =>
+    @auth.stream "#{@namespace}.getByTypeAndSlug", {type, slug}
+
   # socket.io compresses responses, so a 50kb response is more like 10kb
   search: ({query, tripId, tripRouteId, tripAltRouteSlug, sort, limit, includeId}) =>
     # this isn't cached, so make sure it's not sending same req twice

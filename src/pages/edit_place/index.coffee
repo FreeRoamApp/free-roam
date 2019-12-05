@@ -13,6 +13,7 @@ module.exports = class EditPlacePage
 
   constructor: ({@model, requests, @router, serverData, parent}) ->
     place = requests.switchMap ({route}) =>
+      console.log 'place', route.params.slug
       @placeModel.getBySlug route.params.slug
 
     @$appBar = new AppBar {@model}

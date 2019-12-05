@@ -163,8 +163,11 @@ font-caption(scale = yes, state = disabled) // primary, disabled, italic
   if state is italic
     font-style: italic
 
-  if style is disabled
+  if state is disabled
     color: getColor('$bgText38')
+
+  if state is high
+    color: getColor('$bgText87')
 
   if scale is yes
     @media (min-width: $breakPointLarge)
@@ -298,6 +301,22 @@ card()
   border-radius: 4px
   display: block
   background: getColor('$tertiary0')
+
+tapTabs()
+  border: 1px solid getColor('$secondary50')
+  border-radius: 4px
+  display: flex
+
+  > .tap-tab
+    flex1()
+    font-body2()
+    padding: 8px 16px
+    border-radius: 4px
+    text-align: center
+    cursor: pointer
+
+    &.is-selected
+      background: getColor('$secondary50')
 
 imageFadeIn()
   opacity: 0

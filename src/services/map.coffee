@@ -267,6 +267,11 @@ class MapService
         name: model.l.get 'general.weather'
       }
       {
+        field: 'elevation'
+        type: 'gtlt'
+        name: model.l.get 'general.elevation'
+      }
+      {
         field: 'distanceTo'
         type: 'distanceTo'
         name: model.l.get 'filterSheet.facilitiesNearby'
@@ -626,22 +631,24 @@ class MapService
         sourceId: 'na-contours'
         source:
           type: 'vector'
-          url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?1'
+          # url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?1'
+          url: 'http://142.93.240.113:8080/data/v3.json'
         layers: [
           {
             id: 'na-contours'
             type: 'line'
             source: 'na-contours'
             'source-layer': 'contour'
-            minzoom: 9
+            # minzoom: 9
             # layout:
             paint:
               'line-color': '#000000'
-              'line-opacity':
-                stops: [
-                  [9, 0.1]
-                  [14, 1]
-                ]
+              'line-opacity': 0.5
+              # 'line-opacity':
+              #   stops: [
+              #     [9, 0.1]
+              #     [14, 1]
+              #   ]
               'line-width': 1
             metadata:
               zIndex: 2
@@ -654,7 +661,8 @@ class MapService
             minzoom: 10
             layout:
               'symbol-placement': 'line'
-              'text-field': ['concat', ['to-string', ['round', ['*', ['get', 'ele'], 3.2808399]]], "'"]
+              # 'text-field': ['concat', ['to-string', ['round', ['*', ['get', 'ele'], 3.2808399]]], "'"]
+              'text-field': ['concat', ['to-string', ['get', 'ele']], "'"]
               'text-font': ['Open Sans Regular']
               'text-size': 14
             paint:
@@ -710,6 +718,13 @@ class MapService
               "#{field}":
                 gte: filter.value
           }
+        when 'gtlt'
+          if filter.value.operator and filter.value.value
+            {
+              range:
+                "#{field}":
+                  "#{filter.value.operator}": filter.value.value
+            }
         when 'maxIntSeasonal'
           {
             range:
@@ -856,6 +871,7 @@ class MapService
 
             }
 
+    console.log 'fff', filter
     filter.push {
       geo_bounding_box:
         location:

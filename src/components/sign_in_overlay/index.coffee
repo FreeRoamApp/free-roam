@@ -219,6 +219,7 @@ module.exports = class SignInOverlay
                   e.preventDefault()
                   @model.portal.call 'browser.openWindow', {
                     url: "https://#{config.HOST}/policies"
+                    target: '_system'
                   }
               }, 'TOS'
           z '.actions',

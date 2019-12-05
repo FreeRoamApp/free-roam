@@ -9,7 +9,7 @@ module.exports = class InfoLevel
   constructor: ({@model, @router, key}) ->
     @state = z.state {key}
 
-  render: ({value, min, max, isReversed}) =>
+  render: ({value, min, max, isReversed, hideNumbers}) =>
     {key} = @state.getValue()
 
     min ?= 1
@@ -23,14 +23,15 @@ module.exports = class InfoLevel
     # TODO: just 1 flavor text. can either have in lang, or returned from db with embed...
 
     z '.z-info-level',
+      z '.flavor-text', @model.l.get "levelText.#{key}#{Math.round value}"
       z '.bar',
         z ".fill.has-#{value}",
           className: z.classKebab {isReversed}
           style:
             width: "#{fillWidth}%"
-      z '.bottom',
-        z '.min',
-          "#{min}"
-        z '.max',
-          "#{max}"
-      z '.flavor-text', @model.l.get "levelText.#{key}#{Math.round value}"
+      unless hideNumbers
+        z '.bottom',
+          z '.min',
+            "#{min}"
+          z '.max',
+            "#{max}"

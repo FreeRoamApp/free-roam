@@ -4,6 +4,9 @@ $zIndexTextarea = 2
 
 // overflow:auto; display:flex; flex-direction:column-reverse;
 
+.is-firefox .z-conversation > .messages > .messages-inner
+  min-height: 0 // for firefox scrolling to work
+
 .z-conversation
   display: flex
   flex1()

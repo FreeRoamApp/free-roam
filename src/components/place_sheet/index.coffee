@@ -94,6 +94,7 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
+                ga? 'send', 'event', 'trip', 'addWaypoint', trip?.id
                 editRouteWaypointsStreams.next(
                   RxObservable.of (waypoints or []).concat [place.location]
                 )
@@ -123,6 +124,7 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
+                ga? 'send', 'event', 'trip', 'removeStop', trip.id
                 @model.trip.deleteStopByIdAndRouteId(
                   trip.id
                   tripRoute.routeId
@@ -137,6 +139,7 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
+                ga? 'send', 'event', 'trip', 'addStop', trip?.id
                 @saveCheckIn()
                 .then (checkIn) =>
                   @model.trip.upsertStopByIdAndRouteId(
@@ -153,6 +156,7 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
+                ga? 'send', 'event', 'trip', 'removeDestination', trip.id
                 @model.trip.deleteDestinationById trip.id, place.checkInId
             }
           else if trip?.id
@@ -163,6 +167,7 @@ module.exports = class PlaceSheet extends Base
               loadingText: @model.l.get 'general.saving'
               loadedText: @model.l.get 'general.saved'
               onclick: =>
+                ga? 'send', 'event', 'trip', 'addDestinationOverlay', trip?.id
                 @model.overlay.open new NewCheckIn {
                   @model, @router, @place, isOverlay: true
                   trip: RxObservable.of(trip), skipChooseTrip: true

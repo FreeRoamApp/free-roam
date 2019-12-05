@@ -1,0 +1,33 @@
+@require '../../vars'
+
+.z-giveaway
+  flex1()
+  overflow: auto
+  -webkit-overflow-scrolling: touch
+  padding: 16px
+
+  > .title
+    font-subtitle1()
+
+  > .description
+    > .time-left
+      font-subtitle1()
+
+  > .entries
+    margin-top: 24px
+
+    > .title
+      margin-bottom: 8px
+
+    > .entry
+      display: flex
+      max-width: 250px
+
+      &.total
+        font-subtitle1()
+
+      // > .action
+      //   font-subtitle1()
+
+      > .count
+        margin-left: auto

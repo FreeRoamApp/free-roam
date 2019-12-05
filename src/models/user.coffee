@@ -24,11 +24,11 @@ module.exports = class User
   search: ({query, limit}) =>
     @auth.stream "#{@namespace}.search", {query, limit}
 
-  getPartner: =>
-    @auth.stream "#{@namespace}.getPartner", {}
+  getReferrer: =>
+    @auth.stream "#{@namespace}.getReferrer", {}
 
-  setPartner: (partner) =>
-    @auth.call "#{@namespace}.setPartner", {partner}
+  setReferrer: (referrer) =>
+    @auth.call "#{@namespace}.setReferrer", {referrer}
 
   unsubscribeEmail: ({userId, token}) =>
     @auth.call "#{@namespace}.unsubscribeEmail", {userId, token}

@@ -29,7 +29,7 @@ module.exports = class Map
       @initialCenter, @initialBounds, @routes, @fill, @initialLayers, @center,
       @defaultOpacity, @onclick, @preserveDrawingBuffer, @onContentReady,
       @hideLabels, @hideControls, @usePlaceNumbers, @selectedRoute
-      @beforeMapClickFn} = options
+      @isLargeFocal, @beforeMapClickFn} = options
 
     @place ?= new RxBehaviorSubject null
     @placePosition ?= new RxBehaviorSubject null
@@ -216,12 +216,12 @@ module.exports = class Map
       type: 'circle'
       source: 'place'
       paint:
-        'circle-radius': 20
-        'circle-color': ['get', 'color']
-        'circle-opacity': 0.3
-        'circle-stroke-width': 2
-        'circle-stroke-color': ['get', 'color']
-        'circle-translate': [0, -10]
+        'circle-radius': if @isLargeFocal then 30 else 20
+        'circle-color': ['get', 'fillColor']
+        'circle-opacity': if @isLargeFocal then 0.5 else 0.3
+        'circle-stroke-width': if @isLargeFocal then 3 else 2
+        'circle-stroke-color': ['get', 'strokeColor']
+        'circle-translate': if @isLargeFocal then [0, -17] else [0, -10]
         # 'circle-anchor': ['get', 'anchor']
       filter:
         ['has', 'color']
@@ -659,7 +659,9 @@ module.exports = class Map
                 anchor: place.anchor
                 number: place.number
                 size: place.size
-                color: place.color
+                color: place.fillColor or place.color
+                fillColor: place.fillColor or place.color
+                strokeColor: place.strokeColor or place.color
               geometry:
                 type: 'Point'
                 coordinates: [ # reverse of typical lat, lon

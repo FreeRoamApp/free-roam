@@ -80,7 +80,7 @@ module.exports = class Review
       className: z.classKebab {isMe}
     },
       z '.rating',
-        z @$rating, {size: '16px'}
+        z @$rating, {size: '18px', color: colors.$secondaryMain}
       z '.title', title
       z '.body',
         @$body

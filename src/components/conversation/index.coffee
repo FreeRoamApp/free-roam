@@ -102,11 +102,11 @@ module.exports = class Conversation extends Base
         @state.set isLoaded: true
         @iScrollContainer?.refresh()
 
-        if (minId or @useIscroll) and @isFirstLoad
+        if (minId or @useIscroll or @isFirefox) and @isFirstLoad
           @isFirstLoad = false
           # scroll to top
           setTimeout =>
-            if @useIscroll
+            if @useIscroll or @isFirefox
               @$$messages.scrollTop = @$$messages.scrollHeight + @$$messages.offsetHeight - 1
             else
               @$$messages.scrollTop = 1 # if it's 0, it'll load more msgs
@@ -174,6 +174,7 @@ module.exports = class Conversation extends Base
     isOldChrome = chromeVersion and chromeVersion < 50
     # ios and old chrome don't do well with flex-direction: column-reverse
     @useIscroll = Environment.isIos({userAgent}) or isOldChrome
+    @isFirefox = userAgent.indexOf('Firefox') isnt -1
 
     @state = z.state
       me: me
@@ -456,12 +457,20 @@ module.exports = class Conversation extends Base
     messagesStream = @getMessagesStream {maxId}
     @prependMessagesStream messagesStream
 
+    previousScrollHeight = @$$messages.scrollHeight
+
     messagesStream.take(1).toPromise()
     .then (messages) =>
       unless _isEmpty messages
         setTimeout (=> @canLoadOlder = true), DELAY_BETWEEN_LOAD_MORE_MS
 
       @$$loadingSpinner.style.display = 'none'
+
+      if @isFirefox
+        # scroll to previous point
+        window.requestAnimationFrame =>
+          @$$messages.scrollTop = (@$$messages.scrollHeight - previousScrollHeight)
+
 
   loadNewer: (isStreamed) =>
     @canLoadNewer = false

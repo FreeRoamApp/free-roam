@@ -29,10 +29,10 @@ module.exports = class Cache
       sprites: {
         version: 3 # bump when changing
         files: [
-          'https://fdn.uno/d/images/maps/sprite_2019_08_24.json'
-          'https://fdn.uno/d/images/maps/sprite_2019_08_24.png'
-          'https://fdn.uno/d/images/maps/sprite_2019_08_24@2x.json'
-          'https://fdn.uno/d/images/maps/sprite_2019_08_24@2x.png'
+          'https://fdn.uno/d/images/maps/sprite_2019_12_04.json'
+          'https://fdn.uno/d/images/maps/sprite_2019_12_04.png'
+          'https://fdn.uno/d/images/maps/sprite_2019_12_04@2x.json'
+          'https://fdn.uno/d/images/maps/sprite_2019_12_04@2x.png'
         ]
       }
       mapbox: {

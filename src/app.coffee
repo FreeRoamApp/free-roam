@@ -53,6 +53,7 @@ Pages =
   EditThreadPage: require './pages/edit_thread'
   EventPage: require './pages/event'
   EventsPage: require './pages/events'
+  GiveawayPage: require './pages/giveaway'
   GroupAddChannelPage: require './pages/group_add_channel'
   GroupAppPage: require './pages/group_app'
   GroupAuditLogPage: require './pages/group_audit_log'
@@ -84,6 +85,7 @@ Pages =
   NotificationsPage: require './pages/notifications'
   OvernightPage: require './pages/overnight'
   OvernightAttachmentsPage: require './pages/overnight_attachments'
+  PlaceMapScreenshotPage: require './pages/place_map_screenshot'
   PlacesPage: require './pages/places'
   PreservationPage: require './pages/preservation'
   ProfilePage: require './pages/profile'
@@ -125,8 +127,8 @@ module.exports = class App
 
     isFirstRequest = true
     @requests = requestsAndRoutes.map ([req, routes]) =>
-      if window? and isFirstRequest and req.query.partner
-        @model.user.setPartner req.query.partner
+      if window? and isFirstRequest and req.query.referrer
+        @model.user.setReferrer req.query.referrer
 
       if isFirstRequest and isNativeApp
         path = @model.cookie.get('routerLastPath') or req.path
@@ -298,6 +300,7 @@ module.exports = class App
     route 'editProfile', 'EditProfilePage'
     route 'event', 'EventPage'
     route 'events', 'EventsPage'
+    route 'giveaway', 'GiveawayPage'
     route 'groupAdminBannedUsers', 'GroupBannedUsersPage'
     route 'groupAdminAuditLog', 'GroupAuditLogPage'
     route ['group', 'groupIfno'], 'GroupInfoPage'
@@ -330,6 +333,7 @@ module.exports = class App
     route 'notifications', 'NotificationsPage'
     route ['overnight', 'overnightWithTab'], 'OvernightPage'
     route 'overnightAttachments', 'OvernightAttachmentsPage'
+    route 'placeMapScreenshot', 'PlaceMapScreenshotPage'
     route [
       'places', 'home', 'placesWithType', 'placesWithTypeAndSubType'
       'placesWithLocation', 'placesWithLocationAndType'
@@ -367,6 +371,7 @@ module.exports = class App
     userAgent = @model.window.getUserAgent()
     isIos = Environment.isIos {userAgent}
     isAndroid = Environment.isAndroid {userAgent}
+    isFirefox = userAgent?.indexOf('Firefox') isnt -1
     isNative = Environment.isNativeApp 'freeroam', {userAgent}
     isStatusBarVisible = Boolean statusBarData
 
@@ -389,7 +394,7 @@ module.exports = class App
       z @$head, {isPlain: $page?.isPlain, meta: $page?.getMeta?()}
       z 'body',
         z '#zorium-root', {
-          className: z.classKebab {isIos, isAndroid, hasOverlayPage}
+          className: z.classKebab {isIos, isAndroid, isFirefox, hasOverlayPage}
           onclick: if Environment.isIos()
             (e) ->
               focusTag = document.activeElement.tagName

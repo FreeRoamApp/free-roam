@@ -103,11 +103,11 @@ module.exports = class Button
         onmousedown: z.ev (e, $$el) =>
           @state.set isActive: true
         style:
-          backgroundColor: if isDisabled or isOutline \
+          backgroundColor: if isDisabled or (isOutline and not isActive) \
                            then null
                            else backgroundColor
-          border: if isOutline then "1px solid #{backgroundColor}"
-          color: if isOutline then backgroundColor \
+          border: if (isOutline) then "1px solid #{backgroundColor}"
+          color: if (isOutline and not isActive) then backgroundColor \
                  else if isDisabled
                  then null
                  else colors.cText

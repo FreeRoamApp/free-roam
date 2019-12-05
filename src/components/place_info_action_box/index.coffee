@@ -59,6 +59,7 @@ module.exports = class PlaceInfoActionBox
     @resetValueStreams()
 
   addToTrip: =>
+    ga? 'send', 'event', 'trip', 'addDestinationOverlayFromPlacePage', trip?.id
     @model.overlay.open new NewCheckIn {
       @model, @router, @place, @trip, isOverlay: true
     }
@@ -116,7 +117,7 @@ module.exports = class PlaceInfoActionBox
             z @$directionsIcon,
               icon: 'directions'
               isTouchTarget: false
-              color: colors.$primaryMain
+              color: colors.$secondary700
           z '.text', @model.l.get 'general.directions'
 
         z '.action', {
@@ -133,7 +134,7 @@ module.exports = class PlaceInfoActionBox
             z @$shareIcon,
               icon: 'share'
               isTouchTarget: false
-              color: colors.$primaryMain
+              color: colors.$secondary700
           z '.text', @model.l.get 'general.share'
 
         if place?.type isnt 'amenity'
@@ -151,8 +152,8 @@ module.exports = class PlaceInfoActionBox
                   icon: 'add'
                   isTouchTarget: false
                   color: if visitedCheckIn \
-                         then colors.$primaryMainText
-                         else colors.$primaryMain
+                         then colors.$secondary700Text
+                         else colors.$secondary700
               z '.text',
                 if visitedSaving then @model.l.get 'general.saving'
                 else if visitedCheckIn then @model.l.get 'placeInfo.checkedIn'
@@ -170,8 +171,8 @@ module.exports = class PlaceInfoActionBox
         #       icon: 'star'
         #       isTouchTarget: false
         #       color: if plannedCheckIn \
-        #              then colors.$primaryMainText
-        #              else colors.$primaryMain
+        #              then colors.$secondary700Text
+        #              else colors.$secondary700
         #   z '.text',
         #     if plannedSaving then @model.l.get 'general.saving'
         #     else if plannedCheckIn then @model.l.get 'general.saved'

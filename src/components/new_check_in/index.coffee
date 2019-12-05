@@ -155,6 +155,10 @@ module.exports = class NewCheckIn
       else
         Promise.resolve {id: sourceValue.sourceId}
       ).then ({id}) =>
+        if checkIn?
+          ga? 'send', 'event', 'trip', 'updateDestination', trip?.id
+        else
+          ga? 'send', 'event', 'trip', 'addDestination', trip?.id
         @model.checkIn.upsert {
           tripIds: if tripId then [tripId] else checkIn?.tripIds
           setUserLocation: false # trip?.type is 'past'

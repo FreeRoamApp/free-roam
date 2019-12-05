@@ -62,20 +62,7 @@
               top: 6px
 
       > .tap-tabs
-        border: 1px solid getColor('$secondary50')
-        border-radius: 4px
-        display: flex
-
-        > .tap-tab
-          flex1()
-          font-body2()
-          padding: 8px 16px
-          border-radius: 4px
-          text-align: center
-          cursor: pointer
-
-          &.is-selected
-            background: getColor('$secondary50')
+        tapTabs()
 
       > .carrier, > .amenity
         margin-bottom: 16px
@@ -109,6 +96,9 @@
 
         > .operator-input
           width: 30px
+
+        > .operator-input-wide
+          width: 50px
 
         > .small-input
           width: 50px

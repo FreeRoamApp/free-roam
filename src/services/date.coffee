@@ -13,6 +13,8 @@ class DateService
   setL: (@l) => null
 
   format: (date, format) ->
+    unless date instanceof Date
+      date = new Date date
     # TODO: only thing that uses this so far uses yyyy-mm-dd format and MMM Do
     if format is 'MMM D'
       MMM = @l.get("months.#{date.getMonth()}").substring(0, 3)
@@ -22,6 +24,10 @@ class DateService
       MMMM = @l.get("months.#{date.getMonth()}")
       yyyy = date.getFullYear()
       "#{MMMM} #{yyyy}"
+    else if format is 'MMM yyyy'
+      MMM = @l.get("months.#{date.getMonth()}").substring(0, 3)
+      yyyy = date.getFullYear()
+      "#{MMM} #{yyyy}"
     else
       yyyy = date.getFullYear()
       mm = date.getMonth() + 1

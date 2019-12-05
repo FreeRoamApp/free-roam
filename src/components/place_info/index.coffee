@@ -173,44 +173,39 @@ module.exports = class PlaceInfo extends Base
                 color: colors.$red500Text
             z '.text', @model.l.get 'placeInfo.fireWarning'
       z '.g-grid',
-        z '.top-info',
-          z '.left',
-            # z '.location',
-            #   if place?.address?.locality
-            #     "#{place.address.locality}, #{place.address.administrativeArea}"
-            z '.rating',
-              z @$rating, {size: '20px', color: colors.$secondaryMain}
-              z '.rating-text',
-                if place?.rating
-                  "#{place?.rating.toFixed(1)}"
-                z 'span.rating-count',
-                  ' ('
-                  @model.l.get 'place.reviewCount', {
-                    replacements:
-                      count: place?.ratingCount or 0
-                  }
-                  ')'
-          if place?.type is 'campground'
-            z '.right',
-              z '.price',
-                if place?.prices?.all?.mode is 0
-                  @model.l.get 'general.free'
-                else if place?.prices?.all?.mode
-                  [
-                    @model.l.get 'placeInfo.approx'
-                    " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
-                  ]
-                else
-                  "$ #{@model.l.get 'general.unknown'}"
+        if place?.type is 'campground'
+          z '.price',
+            if place?.prices?.all?.mode is 0
+              @model.l.get 'general.free'
+            else if place?.prices?.all?.mode
+              [
+                @model.l.get 'placeInfo.approx'
+                " $#{place?.prices?.all?.mode} / #{@model.l.get 'general.day'}"
+              ]
+            else
+              "$ #{@model.l.get 'general.unknown'}"
 
         z '.name',
           place?.name
 
-        z '.actions',
-          z '.action',
-            z @$contact
-          z '.action',
-            z @$actionBox
+        # z '.location',
+        #   if place?.address?.locality
+        #     "#{place.address.locality}, #{place.address.administrativeArea}"
+        z '.rating',
+          z @$rating, {size: '20px', color: colors.$secondaryMain}
+          z '.rating-text',
+            if place?.rating
+              "#{place?.rating.toFixed(1)}"
+            z 'span.rating-count',
+              ' ('
+              @model.l.get 'place.reviewCount', {
+                replacements:
+                  count: place?.ratingCount or 0
+              }
+              ')'
+
+        z '.action-box',
+          z @$actionBox
 
         if place?.type is 'campground' and not hasSeenRespectCard
           z '.card',
@@ -254,18 +249,6 @@ module.exports = class PlaceInfo extends Base
           z '.card',
             z @$walmartInfoCard
 
-        if place?.type is 'amenity'
-          _map amenities, ({amenity, $icon}) =>
-            z '.amenity',
-              z '.icon',
-                z $icon,
-                  icon: amenity
-                  isTouchTarget: false
-                  size: '16px'
-                  color: colors["$icon#{amenity}"]
-
-              z '.name', @model.l.get "amenities.#{amenity}"
-
         z '.masonry',
           z @$masonryGrid,
             columnCounts:
@@ -278,6 +261,18 @@ module.exports = class PlaceInfo extends Base
                   z '.title', @model.l.get 'place.details'
                   @$details
 
+              # z '.section',
+              #   z '.title', @model.l.get 'placeInfo.location'
+              #   z '.map',
+              #     style:
+              #       backgroundImage:
+              #         if place
+              #           "url(#{config.USER_CDN_URL}/places/#{place.type}/#{place.id}_map.large.png)"
+
+              z '.section',
+                z '.title', @model.l.get 'placeInfo.contact'
+                z @$contact
+
               if place?.type is 'amenity' and place.amenities?.indexOf('gas') isnt -1
                 z '.section',
                   z 'img.image',
@@ -288,23 +283,32 @@ module.exports = class PlaceInfo extends Base
                         '0.00/320x320@2x?access_token=' +
                         "#{config.MAPBOX_ACCESS_TOKEN}"
 
-              unless _isEmpty cellCarriers
-                [
-                  z '.section',
-                    z '.h2', @model.l.get 'placeInfo.logistics'
+              if place?.type is 'amenity'
+                z '.section',
+                  z '.title', @model.l.get 'placeInfo.features'
+                  _map amenities, ({amenity, $icon}) =>
+                    z '.amenity',
+                      z '.icon',
+                        z $icon,
+                          icon: amenity
+                          isTouchTarget: false
+                          size: '16px'
+                          color: colors["$icon#{amenity}"]
 
-                  z '.section',
-                    z '.title', @model.l.get 'campground.cellSignal'
-                    z '.carriers', {
-                      ontouchstart: (e) ->
-                        e.stopPropagation()
-                    },
-                      _map cellCarriers, ({$bars, carrier}) =>
-                        z '.carrier',
-                          z '.bars',
-                            z $bars, widthPx: cellBarsWidthPx
-                          z '.name', @model.l.get "carriers.#{carrier}"
-                ]
+                      z '.name', @model.l.get "amenities.#{amenity}"
+
+              unless _isEmpty cellCarriers
+                z '.section',
+                  z '.title', @model.l.get 'campground.cellSignal'
+                  z '.carriers', {
+                    ontouchstart: (e) ->
+                      e.stopPropagation()
+                  },
+                    _map cellCarriers, ({$bars, carrier}) =>
+                      z '.carrier',
+                        z '.bars',
+                          z $bars, widthPx: cellBarsWidthPx
+                        z '.name', @model.l.get "carriers.#{carrier}"
 
               if place?.weather
                 z '.section',
@@ -312,71 +316,77 @@ module.exports = class PlaceInfo extends Base
 
               if place?.crowds?[season]?.value or place?.safety?.value
                 z '.section',
-                  z '.h2', @model.l.get 'placeInfo.seasonalScales'
+                  z '.title', @model.l.get 'placeInfo.seasonalScales'
 
-              if place?.crowds?[season] or place?.fullness?[season]
-                z '.section',
-                  z '.seasons',
-                     _map @seasons, ({key, text}) =>
-                       isSelected = season is key
-                       z '.season', {
-                         className: z.classKebab {isSelected}
-                         onclick: =>
-                           @state.set {season: key}
-                       },
-                         text
+                  if place?.crowds?[season] or place?.fullness?[season]
+                    z '.seasons',
+                       _map @seasons, ({key, text}) =>
+                         isSelected = season is key
+                         z '.tap-tab', {
+                           className: z.classKebab {isSelected}
+                           onclick: =>
+                             @state.set {season: key}
+                         },
+                           text
 
-              if place?.crowds?[season]
-                z '.section',
-                  z '.title', @model.l.get 'campground.crowds'
-                  z @$crowdsInfoLevel, {
-                    value: place?.crowds[season]
-                  }
-              if place?.fullness?[season]
-                z '.section',
-                  z '.title', @model.l.get 'campground.fullness'
-                  z @$fullnessInfoLevel, {
-                    value: place?.fullness[season]
-                  }
-              if place?.noise?['day']
-                z '.section',
-                  z '.title', @model.l.get 'campground.noise'
-                  z @$noiseInfoLevel, {
-                    value: place?.noise['day']
-                  }
-              if place?.shade?.value
-                z '.section',
-                  z '.title', @model.l.get 'campground.shade'
-                  z @$shadeInfoLevel, {
-                    value: place?.shade
-                  }
-              if place?.cleanliness?.value
-                z '.section',
-                  z '.title', @model.l.get 'campground.cleanliness'
-                  z @$cleanlinessInfoLevel, {
-                    value: place?.cleanliness
-                    isReversed: true # 5 is bad 1 is good
-                  }
-              if place?.safety?.value
-                z '.section',
-                  z '.title', @model.l.get 'campground.safety'
-                  z @$safetyInfoLevel, {
-                    value: place?.safety
-                    isReversed: true # 5 is bad 1 is good
-                  }
-              if place?.roadDifficulty?.value
-                z '.section',
-                  z '.title', @model.l.get 'campground.roadDifficulty'
-                  z @$roadDifficultyInfoLevel, {
-                    value: place?.roadDifficulty
-                  }
+                  if place?.crowds?[season]
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.crowds'
+                      z @$crowdsInfoLevel, {
+                        value: place?.crowds[season]
+                        hideNumbers: true
+                      }
+                  if place?.fullness?[season]
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.fullness'
+                      z @$fullnessInfoLevel, {
+                        value: place?.fullness[season]
+                        hideNumbers: true
+                      }
+                  if place?.noise?['day']
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.noise'
+                      z @$noiseInfoLevel, {
+                        value: place?.noise['day']
+                        hideNumbers: true
+                      }
+                  if place?.shade?.value
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.shade'
+                      z @$shadeInfoLevel, {
+                        value: place?.shade
+                        hideNumbers: true
+                      }
+                  if place?.cleanliness?.value
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.cleanliness'
+                      z @$cleanlinessInfoLevel, {
+                        value: place?.cleanliness
+                        hideNumbers: true
+                        isReversed: true # 5 is bad 1 is good
+                      }
+                  if place?.safety?.value
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.safety'
+                      z @$safetyInfoLevel, {
+                        value: place?.safety
+                        hideNumbers: true
+                        isReversed: true # 5 is bad 1 is good
+                      }
+                  if place?.roadDifficulty?.value
+                    z '.scale',
+                      z '.title', @model.l.get 'campground.roadDifficulty'
+                      z @$roadDifficultyInfoLevel, {
+                        value: place?.roadDifficulty
+                        hideNumbers: true
+                      }
 
-                # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
-                # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
+                    # TODO: icons for pets (paw), padSurface (road), entryType (car-brake-parking), allowedTypes, maxDays?,
+                    # hasFreshWater (water), hasSewage (poop), has30Amp (power-plug), has50Amp, maxLength (rule), restrooms (toilet)?
 
               unless _isEmpty features
                 z '.section',
-                  z '.h2', @model.l.get 'placeInfo.features'
+                  z '.title', @model.l.get 'placeInfo.features'
                   z '.features.g-grid',
                     z '.g-cols',
                       _map features, ({feature, icon, $icon}) =>

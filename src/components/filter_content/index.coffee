@@ -41,6 +41,17 @@ module.exports = class FilterContent
     switch @filter.type
       when 'maxIntCustom', 'minIntCustom'
         @$input = new Input {valueStreams: @filter.valueStreams}
+      when 'gtlt'
+        @$gt = new Icon()
+        @$lt = new Icon()
+        @operatorSubject = new RxBehaviorSubject filterValue?.operator
+        valueSubject = new RxBehaviorSubject filterValue?.value or ''
+        @$input = new Input {value: valueSubject}
+        @filter.valueStreams.next RxObservable.combineLatest(
+          @operatorSubject, valueSubject, (vals...) -> vals
+        ).map ([operator, value]) ->
+          if operator or value
+            {operator, value}
       when 'maxInt'
         @$inputRange = new InputRange {
           @model
@@ -331,6 +342,47 @@ module.exports = class FilterContent
               z '.text', @model.l.get 'filterSheet.hasPhotos'
               z '.input',
                 z @$hasPhotosCheckbox
+
+      when 'gtlt'
+        operator = filterValue?.operator
+        $content =
+          z '.content',
+            z '.metric.checkbox-label',
+              z '.text', @model.l.get "filterSheet.elevation"
+              z '.operators',
+                z '.operator', {
+                  className: z.classKebab {
+                    isSelected: operator is 'gt'
+                  }
+                  onclick: =>
+                    @operatorSubject.next 'gt'
+                },
+                  z @$gt,
+                    icon: 'chevron-right'
+                    isTouchTarget: false
+                    size: '20px'
+                    color: if operator is 'gt' \
+                           then colors.$secondaryMainText
+                           else colors.$bgText38
+                z '.operator', {
+                  className: z.classKebab {
+                    isSelected: operator is 'lt'
+                  }
+                  onclick: =>
+                    @operatorSubject.next 'lt'
+                },
+                  z @$lt,
+                    icon: 'chevron-left'
+                    isTouchTarget: false
+                    size: '20px'
+                    color: if operator is 'lt' \
+                           then colors.$secondaryMainText
+                           else colors.$bgText38
+              z '.operator-input-wide',
+                z @$input, {
+                  type: 'number'
+                  height: '24px'
+                }
 
       when 'weather'
         metric = filterValue?.metric

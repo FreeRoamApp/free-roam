@@ -10,8 +10,11 @@ _map = require 'lodash/map'
 ActionBar = require '../action_bar'
 PrimaryInput = require '../primary_input'
 PrimaryButton = require '../primary_button'
+SecondaryButton = require '../secondary_button'
 Checkbox = require '../checkbox'
 CoordinatePickerOverlay = require '../coordinate_picker_overlay'
+ChangePlaceTypeDialog = require '../change_place_type_dialog'
+DuplicatePlaceDialog = require '../duplicate_place_dialog'
 Icon = require '../icon'
 colors = require '../../colors'
 config = require '../../config'
@@ -19,8 +22,9 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+# TODO: revamp this whole thing for editing
 module.exports = class NewAmenity
-  constructor: ({@model, @router, center, location}) ->
+  constructor: ({@model, @router, center, location, place}) ->
     me = @model.user.getMe()
 
     @$actionBar = new ActionBar {@model}
@@ -32,13 +36,15 @@ module.exports = class NewAmenity
       error: @nameError
 
     @locationValueStreams = new RxReplaySubject 1
-    @locationValueStreams.next location
+    @locationValueStreams.next location or RxObservable.of ''
     @locationError = new RxBehaviorSubject null
     @$locationInput = new PrimaryInput
       valueStreams: @locationValueStreams
       error: @locationError
 
     @$mapButton = new PrimaryButton()
+    @$duplicateButton = new SecondaryButton()
+    @$changeTypeButton = new SecondaryButton()
 
     amenities = [
       {amenity: 'dump', hasPrice: true}
@@ -66,8 +72,10 @@ module.exports = class NewAmenity
       }
 
     @state = z.state {
+      me: @model.user.getMe()
       isLoading: false
       center: center
+      place: place
       locationValue: @locationValueStreams.switch()
     }
 
@@ -109,62 +117,83 @@ module.exports = class NewAmenity
         @state.set isLoading: false
 
   render: =>
-    {isLoading, center} = @state.getValue()
+    {me, isLoading, center, place} = @state.getValue()
+
+    console.log 'place', place
 
     z '.z-new-amenity',
-      z @$actionBar, {
-        isSaving: isLoading
-        cancel:
-          text: @model.l.get 'general.discard'
-          onclick: =>
-            @router.back()
-        save:
-          text: @model.l.get 'general.done'
-          onclick: @upsert
-      }
-      z '.g-grid',
-        z 'label.field',
-          z '.name', @model.l.get 'newAmenity.name'
-          z @$nameInput,
-            hintText: @model.l.get 'newAmenity.name'
-
-        z 'label.field.where',
-          z '.name', @model.l.get 'newPlaceInitialInfo.where'
-          z @$locationInput,
-            hintText: @model.l.get 'newPlaceInitialInfo.coordinates', {
-              replacements:
-                prettyType: 'Amenity'
-            }
-
-        z '.or', @model.l.get 'general.or'
-
-        z '.button',
-          z @$mapButton,
-            text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
+      if place and me?.username in ['austin', 'roadpickle', 'big_boxtruck', 'vanwldr']
+        z '.actions',
+          z @$duplicateButton,
+            text: @model.l.get 'editPlace.markAsDupe'
+            isOutline: true
             onclick: =>
-              @model.overlay.open new CoordinatePickerOverlay {
-                @model, @router, center
-                onPick: (location) =>
-                  @locationValueStreams.next RxObservable.of (
-                    "#{Math.round(location.location.lat * 10000) / 10000}, " +
-                    "#{Math.round(location.location.lon * 10000) / 10000}"
-                  )
-                  Promise.resolve null
-                initialZoom: 9
+              @model.overlay.open new DuplicatePlaceDialog {
+                @model, @router, place
               }
+          z @$changeTypeButton,
+            text: @model.l.get 'editPlace.changeType'
+            isOutline: true
+            onclick: =>
+              @model.overlay.open new ChangePlaceTypeDialog {
+                @model, @router, place
+              }
+      else if not place
+        [
+          z @$actionBar, {
+            isSaving: isLoading
+            cancel:
+              text: @model.l.get 'general.discard'
+              onclick: =>
+                @router.back()
+            save:
+              text: @model.l.get 'general.done'
+              onclick: @upsert
+          }
+          z '.g-grid',
+            z 'label.field',
+              z '.name', @model.l.get 'newAmenity.name'
+              z @$nameInput,
+                hintText: @model.l.get 'newAmenity.name'
 
-        z '.field.amenities',
-          z '.name', @model.l.get 'newAmenity.amenities'
-          _map @amenities, (amenity) =>
-            {amenity, valueSubject, hasPrice, $checkbox, $priceInput} = amenity
-            isPriceInputVisible = hasPrice and valueSubject.getValue()
-            z '.amenity',
-              z 'label.label',
-                z '.checkbox', z $checkbox
-                z '.name', @model.l.get "amenities.#{amenity}"
-              z '.price-input', {
-                className: z.classKebab {isVisible: isPriceInputVisible}
-              },
-                z $priceInput,
-                  hintText: @model.l.get 'general.price'
-                  type: 'number'
+            z 'label.field.where',
+              z '.name', @model.l.get 'newPlaceInitialInfo.where'
+              z @$locationInput,
+                hintText: @model.l.get 'newPlaceInitialInfo.coordinates', {
+                  replacements:
+                    prettyType: 'Amenity'
+                }
+
+            z '.or', @model.l.get 'general.or'
+
+            z '.button',
+              z @$mapButton,
+                text: @model.l.get 'newPlaceInitialInfo.coordinatesFromMap'
+                onclick: =>
+                  @model.overlay.open new CoordinatePickerOverlay {
+                    @model, @router, center
+                    onPick: (location) =>
+                      @locationValueStreams.next RxObservable.of (
+                        "#{Math.round(location.location.lat * 10000) / 10000}, " +
+                        "#{Math.round(location.location.lon * 10000) / 10000}"
+                      )
+                      Promise.resolve null
+                    initialZoom: 9
+                  }
+
+            z '.field.amenities',
+              z '.name', @model.l.get 'newAmenity.amenities'
+              _map @amenities, (amenity) =>
+                {amenity, valueSubject, hasPrice, $checkbox, $priceInput} = amenity
+                isPriceInputVisible = hasPrice and valueSubject.getValue()
+                z '.amenity',
+                  z 'label.label',
+                    z '.checkbox', z $checkbox
+                    z '.name', @model.l.get "amenities.#{amenity}"
+                  z '.price-input', {
+                    className: z.classKebab {isVisible: isPriceInputVisible}
+                  },
+                    z $priceInput,
+                      hintText: @model.l.get 'general.price'
+                      type: 'number'
+        ]

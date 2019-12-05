@@ -84,9 +84,9 @@ module.exports = class PlaceInfoWeather
     z '.z-place-info-weather',
       z '.title', @model.l.get 'placeInfo.weather'
 
-      z '.tabs',
+      z '.tap-tabs',
         _map tabs, (tab) =>
-          z '.tab', {
+          z '.tap-tab', {
             className: z.classKebab {isSelected: currentTab is tab}
             onclick: =>
               @state.set {currentTab: tab}
@@ -104,9 +104,9 @@ module.exports = class PlaceInfoWeather
                 z '.precip',
                   z '.icon',
                     z $precipIcon,
-                      icon: 'water'
+                      icon: 'water-outline'
                       size: '16px'
-                      color: colors.$precipBlue
+                      color: colors.$bgText54
                       isTouchTarget: false
                   z '.text', "#{month.precip}\""
                 z '.bar-wrapper', {

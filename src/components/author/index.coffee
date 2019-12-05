@@ -16,7 +16,7 @@ module.exports = class Author
     @$karmaIcon = new Icon()
     @$supporterIcon = new Icon()
 
-  render: ({user, groupUser, time, isTimeAlignedLeft, onclick}) =>
+  render: ({user, groupUser, time, isTimeAlignedLeft, onclick, isFullDate}) =>
     isModerator = groupUser?.roleNames and
                   (
                     groupUser.roleNames.indexOf('mod') isnt -1 or
@@ -60,6 +60,8 @@ module.exports = class Author
       z '.time', {
         className: z.classKebab {isAlignedLeft: isTimeAlignedLeft}
       },
-        if time
+        if time and isFullDate
+        then DateService.format time, 'MMM yyyy'
+        else if time
         then DateService.fromNow time
         else '...'

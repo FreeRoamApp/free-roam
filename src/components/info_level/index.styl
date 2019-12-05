@@ -2,21 +2,22 @@
 
 .z-info-level
   > .flavor-text
-    margin: 8px 0
+    font-body2(false, medium)
+    margin-bottom: 32px
 
   > .bar
     position: relative
     margin: 8px 0
-    height: 8px
+    height: 3px
     width: 100%
     border-radius: 4px
-    background: getColor('$tertiary200')
+    background: getColor('$bgText12')
 
     > .fill
       position: absolute
       height: 100%
       border-radius: 4px
-      background: getColor('$primaryMain')
+      background: getColor('$secondary700')
       transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1)
 
       // transition transform should be faster, but has weird quirks
@@ -25,36 +26,36 @@
       // transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)
       // transform-origin: left
 
-      &.has-1
-        background: getColor('$green500')
-
-      &.has-2
-        background: getColor('$green500')
-
-      &.has-3
-        background: getColor('$yellow500')
-
-      &.has-4
-        background: getColor('$red300')
-
-      &.has-5
-        background: getColor('$red300')
-
-      &.is-reversed
-        &.has-1
-          background: getColor('$red300')
-
-        &.has-2
-          background: getColor('$red300')
-
-        &.has-3
-          background: getColor('$yellow500')
-
-        &.has-4
-          background: getColor('$green500')
-
-        &.has-5
-          background: getColor('$green500')
+      // &.has-1
+      //   background: getColor('$green500')
+      //
+      // &.has-2
+      //   background: getColor('$green500')
+      //
+      // &.has-3
+      //   background: getColor('$yellow500')
+      //
+      // &.has-4
+      //   background: getColor('$red300')
+      //
+      // &.has-5
+      //   background: getColor('$red300')
+      //
+      // &.is-reversed
+      //   &.has-1
+      //     background: getColor('$red300')
+      //
+      //   &.has-2
+      //     background: getColor('$red300')
+      //
+      //   &.has-3
+      //     background: getColor('$yellow500')
+      //
+      //   &.has-4
+      //     background: getColor('$green500')
+      //
+      //   &.has-5
+      //     background: getColor('$green500')
 
   > .bottom
     display: flex
