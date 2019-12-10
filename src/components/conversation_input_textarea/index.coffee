@@ -67,8 +67,11 @@ module.exports = class ConversationInputTextarea
 
       $$textarea?.style.height = "#{DEFAULT_TEXTAREA_HEIGHT}px"
       @textareaHeight.next DEFAULT_TEXTAREA_HEIGHT
+      cachedMessage = @message.getValue()
       $$textarea?.value = ''
       @onPost?()
+      .catch ->
+        $$textarea?.value = cachedMessage
       .then (response) =>
         if response?.rewards
           if e?.clientX
@@ -148,17 +151,16 @@ module.exports = class ConversationInputTextarea
                   , 100
                 setTimeout =>
                   @isTextareaFocused.next false
-                , 0
+                , 200 # give time for clicks on send icon to go through
             , 0
 
 
         z '.right-icons', {
           className: z.classKebab {isVisible: isTextareaFocused}
         },
-          z '.send-icon', {
-            onclick: @postMessage
-          },
+          z '.send-icon',
             z @$sendIcon,
+              onclick: @postMessage
               icon: 'send'
               hasRipple: true
               color: if hasText and not isPostLoading \

@@ -34,7 +34,6 @@ module.exports = class PlaceMap
     }
     if prepScreenshot
       mapOptions = _defaults {
-        preserveDrawingBuffer: true
         hideControls: true
         # initialBounds: [[-133, 18], [-58, 58]]
         onContentReady: ->

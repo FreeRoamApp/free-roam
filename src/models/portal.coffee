@@ -41,6 +41,9 @@ module.exports = class Portal
       # throw new Error 'Portal called server-side'
       return console.log 'Portal called server-side'
 
+    if Environment.isScreenshotter()
+      return
+
     @portal.call args...
     .catch (err) ->
       # if we don't catch, zorium freaks out if a portal call is in state

@@ -73,7 +73,6 @@ module.exports = class TravelMap
     }
     if prepScreenshot
       mapOptions = _defaults {
-        preserveDrawingBuffer: true
         hideLabels: true
         # initialBounds: [[-133, 18], [-58, 58]]
         onContentReady: ->

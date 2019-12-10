@@ -7,6 +7,9 @@ Environment = require './environment'
 
 class ServiceWorkerService
   register: ({model}) =>
+    if Environment.isScreenshotter()
+      console.log 'SKIP SERVICE WORKER' # don't need for screenshotter
+      return
     try
       console.log 'registering service worker...'
       navigator.serviceWorker?.register '/service_worker.js'

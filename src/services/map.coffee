@@ -631,8 +631,8 @@ class MapService
         sourceId: 'na-contours'
         source:
           type: 'vector'
-          # url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?1'
-          url: 'http://142.93.240.113:8080/data/v3.json'
+          url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?1'
+          # url: 'http://142.93.240.113:8080/data/v3.json'
         layers: [
           {
             id: 'na-contours'

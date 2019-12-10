@@ -20,6 +20,8 @@ config = require '../../config'
 if window?
   require './index.styl'
 
+MAP_LOAD_TIMEOUT_MS = 10000
+
 module.exports = class Map
   type: 'Widget'
 
@@ -350,57 +352,66 @@ module.exports = class Map
         'fill-opacity': 0.1
     }
 
+  _onMapLoad: =>
+    console.log 'map loaded'
+    clearTimeout @loadTimeout
+
+    @subscribeToResize()
+
+    if @hideLabels
+      @_hideLabels()
+
+    if @fill
+      @addFillLayer()
+      @subscribeToFill()
+
+    @addPlacesSources()
+
+    if @routes
+      @addRouteLayers()
+      @subscribeToRoutes()
+
+      @addDotsLayer()
+
+    @addPlacesLayers()
+
+    if @donut
+      @addDonutLayer()
+      @subscribeToDonut()
+
+    @addSavedLayers()
+
+    @updateMapLocation()
+    if @mapBoundsStreams
+      @subscribeToMapBounds()
+    @subscribeToPlaces()
+    @subscribeToCenter()
+    @subscribeToZoom()
+    @state.set isLoading: false
+
+    if @onContentReady
+      Promise.all [
+        @places?.take(1).toPromise() or Promise.resolve null
+        @routes?.take(1).toPromise() or Promise.resolve null
+      ]
+      .then =>
+        # @map.once 'idle', =>
+        setTimeout =>
+          console.log 'READY'
+          @onContentReady()
+        , 1000
+
   afterMount: ($$el) =>
     @state.set isLoading: true
     @initializeMap $$el
     .then =>
-      @map.on 'load', =>
-        console.log 'map loaded'
-
-        @subscribeToResize()
-
-        if @hideLabels
-          @_hideLabels()
-
-        if @fill
-          @addFillLayer()
-          @subscribeToFill()
-
-        @addPlacesSources()
-
-        if @routes
-          @addRouteLayers()
-          @subscribeToRoutes()
-
-          @addDotsLayer()
-
-        @addPlacesLayers()
-
-        if @donut
-          @addDonutLayer()
-          @subscribeToDonut()
-
-        @addSavedLayers()
-
-        @updateMapLocation()
-        if @mapBoundsStreams
-          @subscribeToMapBounds()
-        @subscribeToPlaces()
-        @subscribeToCenter()
-        @subscribeToZoom()
-        @state.set isLoading: false
-
-
-
-        if @onContentReady
-          Promise.all [
-            @places?.take(1).toPromise() or Promise.resolve null
-            @routes?.take(1).toPromise() or Promise.resolve null
-          ]
-          .then =>
-            # give it a second to draw. better solution is:
-            # https://github.com/mapbox/mapbox-gl-js/issues/4904
-            setTimeout @onContentReady, 1000
+      console.log 'map initialized...'
+      # note than on('load') doesn't always work in puppeteer (screenshotter)
+      # for some reason. style.load does
+      @map.on 'load', @_onMapLoad
+      # i'm not sure why this is needed, but sometimes in puppeteer,
+      # on('load') never fires...
+      @loadTimeout = setTimeout @_onMapLoad, MAP_LOAD_TIMEOUT_MS
 
       @map.on 'move', @onMapMove
       @map.on 'moveend', @updateMapLocation
@@ -550,6 +561,7 @@ module.exports = class Map
 
   beforeUnmount: =>
     console.log 'rm subscription'
+    clearTimeout @loadTimeout
     @disposable?.unsubscribe()
     @routesDisposable?.unsubscribe()
     @fillDisposable?.unsubscribe()

@@ -25,6 +25,9 @@ module.exports = class Ripple
   ripple: ({$$el, color, isCenter, mouseX, mouseY, onComplete, fadeIn} = {}) =>
     $$el ?= @$$el
 
+    unless @$$wave
+      return
+
     {width, height, top, left} = $$el.getBoundingClientRect()
 
     if isCenter
