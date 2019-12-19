@@ -94,7 +94,7 @@ module.exports = class PlacePage extends BasePage
                  else colors.$header500Icon
         }
         $topRightButton:
-          if me?.karma >= 25 or me?.username in ['austin', 'rachel', 'macdevotee', 'bobfromohio'] or isCreator
+          if me?.karma >= 25 or me?.username in ['austin', 'rachel', 'macdevotee', 'bobfromohio', 'blueflame'] or isCreator
             z '.p-place_top-right',
               z @$editIcon,
                 icon: 'edit'

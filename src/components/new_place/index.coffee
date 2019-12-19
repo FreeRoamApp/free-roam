@@ -21,6 +21,7 @@ _zipObject = require 'lodash/zipObject'
 AppBar = require '../../components/app_bar'
 ButtonBack = require '../../components/button_back'
 NewReviewCompose = require '../new_review_compose'
+Environment = require '../../services/environment'
 
 StepBar = require '../step_bar'
 colors = require '../../colors'
@@ -212,11 +213,16 @@ module.exports = class NewPlace
       , 200
 
   afterMount: =>
+    # since ios keyboard covers step bar, give an easy way to close ("Done")
+    if Environment.isNativeApp('freeroam') and Environment.isIos()
+      @model.portal.call 'keyboard.showAccessoryBar'
     changesStream = @getAllChangesStream()
     @disposable = changesStream.auditTime(AUTOSAVE_FREQ_MS).subscribe (fields) ->
       localStorage[LOCAL_STORAGE_AUTOSAVE] = JSON.stringify fields
 
   beforeUnmount: =>
+    if Environment.isNativeApp('freeroam') and Environment.isIos()
+      @model.portal.call 'keyboard.hideAccessoryBar'
     @step.next 0
     @resetValueStreams()
     @disposable.unsubscribe()
@@ -267,7 +273,10 @@ module.exports = class NewPlace
         agencyInfo?.slug or autosave['initialInfo.office'] or ''
 
 
-
+    @reviewFeaturesFields?.features.valueStreams.next(
+      # RxObservable.of autosave['initialInfo.name'] or ''
+      [] # TODO: autosave
+    )
 
     @reviewFields.title.valueStreams.next(
       RxObservable.of autosave['review.title'] or ''

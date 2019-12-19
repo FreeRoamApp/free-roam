@@ -631,8 +631,8 @@ class MapService
         sourceId: 'na-contours'
         source:
           type: 'vector'
-          url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?1'
-          # url: 'http://142.93.240.113:8080/data/v3.json'
+          url: 'https://tileserver.freeroam.app/data/free-roam-na-contours.json?2'
+          # url: 'http://142.93.240.113:8080/data/v2.json'
         layers: [
           {
             id: 'na-contours'
@@ -644,11 +644,11 @@ class MapService
             paint:
               'line-color': '#000000'
               'line-opacity': 0.5
-              # 'line-opacity':
-              #   stops: [
-              #     [9, 0.1]
-              #     [14, 1]
-              #   ]
+              'line-opacity':
+                stops: [
+                  [0, 0.3]
+                  [14, 1]
+                ]
               'line-width': 1
             metadata:
               zIndex: 2

@@ -104,7 +104,7 @@ module.exports = class Cache
     request = event.request
     # console.log 'fetch'
     # console.log event.request.url
-    if event.request.url.match /\/campground\/[a-zA-Z0-9-_]/
+    if event.request.url.match /(:\/\/freeroam.app|localhost:50340)\/campground\/[a-zA-Z0-9-_]/
       request = 'https://freeroam.app/campground/cache-shell'
       # request = 'https://staging.freeroam.app/campground/cache-shell'
       # request = 'http://localhost:50340/campground/cache-shell'

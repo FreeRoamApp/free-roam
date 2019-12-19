@@ -261,13 +261,13 @@ module.exports = class PlaceInfo extends Base
                   z '.title', @model.l.get 'place.details'
                   @$details
 
-              # z '.section',
-              #   z '.title', @model.l.get 'placeInfo.location'
-              #   z '.map',
-              #     style:
-              #       backgroundImage:
-              #         if place
-              #           "url(#{config.USER_CDN_URL}/places/#{place.type}/#{place.id}_map.large.png)"
+              z '.section',
+                z '.title', @model.l.get 'placeInfo.location'
+                z '.map',
+                  style:
+                    backgroundImage:
+                      if place
+                        "url(#{config.USER_CDN_URL}/places/#{place.type}/#{place.id}_map.large.png)"
 
               z '.section',
                 z '.title', @model.l.get 'placeInfo.contact'
