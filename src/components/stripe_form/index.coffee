@@ -127,7 +127,7 @@ module.exports = class StripeForm
         z 'form.form', {
           onsubmit: (e) =>
             e.preventDefault()
-            @onNewStripe()
+            @purchase()
         },
           if error
             z 'span.payment-errors', error

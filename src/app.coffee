@@ -205,10 +205,7 @@ module.exports = class App
     # TODO: a/b w/ dialog
     if (window? and not @model.cookie.get 'hasSeenWelcome')
       @model.cookie.set 'hasSeenWelcome', 1
-      if @model.experiment.get('welcomeOverlay') is 'visible'
-        @model.overlay.open new WelcomeOverlay {@model, @router}
-      else
-        @model.overlay.open new WelcomeDialog {@model, @router}
+      @model.overlay.open new WelcomeOverlay {@model, @router}
 
     # used if state / requests fails to work
     $backupPage = if @serverData?

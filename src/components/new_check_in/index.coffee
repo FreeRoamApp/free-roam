@@ -27,7 +27,7 @@ STEPS =
 module.exports = class NewCheckIn
   constructor: (options) ->
     {@model, @router, @checkIn, @trip, @place, @step, @isOverlay
-    skipChooseTrip} = options
+    skipChooseTrip, @onComplete} = options
 
     @checkIn ?= RxObservable.of null
     @trip ?= RxObservable.of null
@@ -174,6 +174,7 @@ module.exports = class NewCheckIn
       .then (newCheckIn) =>
         @state.set isLoading: false
         @resetValueStreams()
+        @onComplete?()
         # TODO: not sure why timeout is necessary
         # w/o, map reloads
         if @isOverlay

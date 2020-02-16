@@ -24,6 +24,7 @@ class PushService
 
   setFirebaseServiceWorker: (registration) =>
     if @isFirebaseImported
+      # @firebaseMessaging?.useServiceWorker registration
       @isFirebaseImported.then =>
         @resolveReady?()
 

@@ -4,6 +4,7 @@ _map = require 'lodash/map'
 _filter = require 'lodash/filter'
 _take = require 'lodash/take'
 _unionBy = require 'lodash/unionBy'
+_isEmpty = require 'lodash/isEmpty'
 Environment = require '../../services/environment'
 RxReplaySubject = require('rxjs/ReplaySubject').ReplaySubject
 RxObservable = require('rxjs/Observable').Observable
@@ -64,11 +65,14 @@ module.exports = class Groups
 
     language = @model.l.getLanguage()
 
+    events = @model.event.getAll()
+
     @state = z.state
       me: me
       language: language
       groups: myGroupsAndPublicGroups
-      events: @model.event.getAll().map (events) ->
+      events: events
+      events: events.map (events) ->
         _map events, (event) ->
           _defaults {
             startTime: DateService.format new Date(event.startTime), 'MMM D'
@@ -118,8 +122,10 @@ module.exports = class Groups
 
       z '.title',
         z '.g-grid', @model.l.get 'general.meetups'
-      z '.events',
-        @$eventList
+      if false # FIXME (events from phil are getting added here)
+        z '.events',
+          unless _isEmpty events
+            @$eventList
 
         @router.link z 'a.see-all', {
           href: @router.get 'events'

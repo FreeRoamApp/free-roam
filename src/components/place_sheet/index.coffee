@@ -130,6 +130,8 @@ module.exports = class PlaceSheet extends Base
                   tripRoute.routeId
                   place
                 )
+                .then =>
+                  @place.next null
             }
           else if tripRoute?.routeId
             {
@@ -147,6 +149,8 @@ module.exports = class PlaceSheet extends Base
                     tripRoute?.routeId
                     checkIn
                   )
+                .then =>
+                  @place.next null
             }
           else if trip?.id and place?.number
             {
@@ -158,6 +162,8 @@ module.exports = class PlaceSheet extends Base
               onclick: =>
                 ga? 'send', 'event', 'trip', 'removeDestination', trip.id
                 @model.trip.deleteDestinationById trip.id, place.checkInId
+                .then =>
+                  @place.next null
             }
           else if trip?.id
             {
@@ -171,6 +177,8 @@ module.exports = class PlaceSheet extends Base
                 @model.overlay.open new NewCheckIn {
                   @model, @router, @place, isOverlay: true
                   trip: RxObservable.of(trip), skipChooseTrip: true
+                  onComplete: =>
+                    @place.next null
                 }
                 Promise.resolve true
             }
@@ -183,6 +191,7 @@ module.exports = class PlaceSheet extends Base
               # loadedText: @model.l.get 'general.saved'
               onclick: =>
                 @router.goOverlay 'editCheckIn', {id: place.checkInId}
+                Promise.resolve null
             }
           if place?.type is 'coordinate'
             {
