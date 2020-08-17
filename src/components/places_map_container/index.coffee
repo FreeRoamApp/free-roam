@@ -478,11 +478,11 @@ module.exports = class PlacesMapContainer
           z @$map
           z @$placeSheet
 
-          z '.legend-fab', {
-            onclick: =>
-              @isLegendVisible.next true
-          },
-            @model.l.get 'placesMapContainer.legend'
+          # z '.legend-fab', {
+          #   onclick: =>
+          #     @isLegendVisible.next true
+          # },
+          #   @model.l.get 'placesMapContainer.legend'
 
           z '.legend', {
             className: z.classKebab {isVisible: isLegendVisible}
@@ -494,19 +494,19 @@ module.exports = class PlacesMapContainer
                        then "#{config.CDN_URL}/maps/sprite_svgs/#{icon}.svg"
                 z '.name', @model.l.get "mapLegend.#{icon}"
 
-          unless _isEmpty @optionalLayers
-            z '.layers-fab',
-              z @$fab,
-                icon: 'layers'
-                colors:
-                  cText: colors.$bgText54
-                isImmediate: true
-                onclick: =>
-                  ga? 'send', 'event', 'map', 'showLayers'
-                  @state.set isLayersPickerVisible: true
-                  @$layersTooltip.close()
+          # unless _isEmpty @optionalLayers
+          #   z '.layers-fab',
+          #     z @$fab,
+          #       icon: 'layers'
+          #       colors:
+          #         cText: colors.$bgText54
+          #       isImmediate: true
+          #       onclick: =>
+          #         ga? 'send', 'event', 'map', 'showLayers'
+          #         @state.set isLayersPickerVisible: true
+          #         @$layersTooltip.close()
 
-              z @$layersTooltip
+          #     z @$layersTooltip
 
 
           z '.layers', {

@@ -109,7 +109,7 @@ module.exports = class SearchInput
         z 'input.input',
           type: 'text'
           placeholder: placeholder
-          value: if window? then searchValue
+          value: if window? then searchValue?.replace 'geocode:', '' # HACK
           onfocus: (e) =>
             @open e
             onfocus? e

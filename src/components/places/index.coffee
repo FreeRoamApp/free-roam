@@ -51,6 +51,7 @@ module.exports = class Places
       routes
       place
       selectedRoute
+      limit: RxObservable.of 1000
       donut: donut
       currentDataType: @currentDataType
       initialDataTypes: types # from url

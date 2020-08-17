@@ -30,11 +30,24 @@ module.exports = class PlacesSearch
     @searchValueStreams = new RxReplaySubject 1
     @searchValueStreams.next searchQuery or (new RxBehaviorSubject '')
 
+    geocodeTimeout = null
     locations = @searchValueStreams.switch()
+    .do ->
+      # HACK: 
+      clearTimeout geocodeTimeout
     .debounceTime(SEARCH_DEBOUNCE).switchMap (query) =>
       if query
         ga? 'send', 'event', 'mapSearch', 'search', query
-        @model.geocoder.autocomplete {query}
+        if query?.indexOf('geocode:') isnt -1
+          @model.geocoder.autocomplete {
+            query: query.replace('geocode:', ''), includeGeocode: true
+          }
+        else
+          # HACK
+          geocodeTimeout = setTimeout =>
+            @searchValueStreams.next RxObservable.of "geocode:#{query}"
+          , 1200
+          @model.geocoder.autocomplete {query}
       else
         RxObservable.of []
     .map (locations) ->

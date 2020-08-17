@@ -4,8 +4,8 @@ module.exports = class Geocoder
 
   constructor: ({@auth}) -> null
 
-  autocomplete: ({query}) =>
-    @auth.stream "#{@namespace}.autocomplete", {query}
+  autocomplete: ({query, includeGeocode}) =>
+    @auth.stream "#{@namespace}.autocomplete", {query, includeGeocode}
 
   getBoundingFromRegion: ({country, state, city}) ->
     @auth.stream "#{@namespace}.getBoundingFromRegion", {

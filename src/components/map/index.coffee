@@ -184,33 +184,38 @@ module.exports = class Map
     }
     @map.addLayer {
       id: 'places'
-      type: 'symbol'
+      type: 'circle'
       source: 'places'
-      layout:
-        'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
 
-        # one of these needs to be on or all icons won't show.
-        # if icon-allow-overlap is true, fading in/out doesn't work
-        # 'icon-allow-overlap': true
-        'icon-ignore-placement': true
-
-        'icon-size': ['get', 'size']
-        'icon-anchor': ['get', 'anchor']
-
-        # don't need this since we ca ncontrol where in array
-        # places go (at end so they're on top)
-        # 'symbol-sort-key': ['get', 'number']
-        'symbol-z-order': 'source'
-        'text-field': '{number}'
-        'text-anchor': ['get', 'anchor']
-        'text-size': 14
-        'text-font': ['Open Sans Bold'] # must exist in tilejson
-        'text-allow-overlap': true
-        'text-ignore-placement': true
       paint:
-        # 'text-translate': [0, -9]
-        'text-color': '#ffffff'
-        'icon-opacity': ['get', 'iconOpacity']
+        'circle-radius': 4
+        'circle-color': ['get', 'icon'] # colors.$black
+        'circle-opacity': 0.8
+      # layout:
+      #   'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+
+      #   # one of these needs to be on or all icons won't show.
+      #   # if icon-allow-overlap is true, fading in/out doesn't work
+      #   # 'icon-allow-overlap': true
+      #   'icon-ignore-placement': true
+
+      #   'icon-size': ['get', 'size']
+      #   'icon-anchor': ['get', 'anchor']
+
+      #   # don't need this since we ca ncontrol where in array
+      #   # places go (at end so they're on top)
+      #   # 'symbol-sort-key': ['get', 'number']
+      #   'symbol-z-order': 'source'
+      #   'text-field': '{number}'
+      #   'text-anchor': ['get', 'anchor']
+      #   'text-size': 14
+      #   'text-font': ['Open Sans Bold'] # must exist in tilejson
+      #   'text-allow-overlap': true
+      #   'text-ignore-placement': true
+      # paint:
+      #   # 'text-translate': [0, -9]
+      #   'text-color': '#ffffff'
+      #   'icon-opacity': ['get', 'iconOpacity']
     }
 
     @map.addLayer {
@@ -230,31 +235,31 @@ module.exports = class Map
     }
 
 
-    @map.addLayer {
-      id: 'place'
-      type: 'symbol'
-      source: 'place'
-      layout:
-        'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
+    # @map.addLayer {
+    #   id: 'place'
+    #   type: 'symbol'
+    #   source: 'place'
+    #   layout:
+    #     'icon-image': '{icon}' # uses spritesheet defined in tilejson.coffee
 
-        # this gets rid of fade in
-        'icon-allow-overlap': true
-        'icon-ignore-placement': true
+    #     # this gets rid of fade in
+    #     'icon-allow-overlap': true
+    #     'icon-ignore-placement': true
 
-        'icon-size': ['get', 'size']
-        'icon-anchor': ['get', 'anchor']
+    #     'icon-size': ['get', 'size']
+    #     'icon-anchor': ['get', 'anchor']
 
-        'text-field': '{number}'
-        'text-anchor': ['get', 'anchor']
-        'text-size': 14
-        'text-font': ['Open Sans Bold'] # must exist in tilejson
-        'text-allow-overlap': true
-        'text-ignore-placement': true
-      paint:
-        'text-color': '#ffffff'
-      # filter:
-      #   ['has', 'color']
-    }
+    #     'text-field': '{number}'
+    #     'text-anchor': ['get', 'anchor']
+    #     'text-size': 14
+    #     'text-font': ['Open Sans Bold'] # must exist in tilejson
+    #     'text-allow-overlap': true
+    #     'text-ignore-placement': true
+    #   paint:
+    #     'text-color': '#ffffff'
+    #   # filter:
+    #   #   ['has', 'color']
+    # }
 
   addDotsLayer: =>
     @map.addLayer {
@@ -423,10 +428,10 @@ module.exports = class Map
           trackUserLocation: true
         }), 'bottom-left'
 
-        if @model.window.getBreakpointVal() is 'desktop'
-          @map.addControl new mapboxgl.NavigationControl({
-            showCompass: false
-          }), 'bottom-right'
+        # if @model.window.getBreakpointVal() is 'desktop'
+        #   @map.addControl new mapboxgl.NavigationControl({
+        #     showCompass: false
+        #   }), 'bottom-right'
 
       if @showScale
         @map.addControl new mapboxgl.ScaleControl {
@@ -660,6 +665,9 @@ module.exports = class Map
       @places, @place, (vals...) -> vals
     )
     @disposable = placesAndPlace.subscribe ([places, place]) =>
+      console.log 'p', places
+      console.log 'allowed', _filter(places, ({isAllowedScore}) -> isAllowedScore >= 0.5)?.length
+      console.log 'notallowed', _filter(places, ({isAllowedScore}) -> isAllowedScore < 0.5)?.length
       @map.getSource('place')?.setData {
         type: 'FeatureCollection'
         features: _filter [
@@ -692,7 +700,7 @@ module.exports = class Map
             properties:
               name: place.name
               number: place.number
-              size: place.size or 1
+              size: place.size
               anchor: place.anchor or 'bottom'
               id: place.id
               slug: place.slug

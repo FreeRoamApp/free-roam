@@ -387,6 +387,12 @@ class MapService
     [
       {
         field: 'subType'
+        type: 'walmart'
+        isBoolean: true
+        name: model.l.get 'overnight.walmart'
+      },
+      {
+        field: 'subType'
         type: 'booleanArray'
         isBoolean: true
         arrayValue: 'walmart'
@@ -712,6 +718,19 @@ class MapService
               "#{field}":
                 lte: filter.value
           }
+        when 'walmart'
+          {
+            bool:
+              must: [
+                bool:
+                  should: [
+                    {range: 'isAllowedCount': gte: 1}
+                    {range: 'isNotAllowedCount': gte: 1}
+                  ]
+                # {range: 'isAllowedScore': gte: 0.5}
+                {match: subType: 'walmart'}
+              ]
+          }
         when 'minInt', 'minIntCustom'
           {
             range:
@@ -909,7 +928,11 @@ class MapService
 
   overnightIconGetFn: (filters) ->
     (overnight) ->
-      if overnight.subType in ['walmart', 'restArea', 'casino', 'truckStop', 'crackerBarrel', 'cabelas'] \
+      if overnight.subType is 'walmart' and overnight.isAllowedScore < 0.5
+      then '#e64c3e'
+      else if overnight.subType is 'walmart' and overnight.isAllowedScore >= 0.5
+      then '#47ba66'
+      else if overnight.subType in ['walmart', 'restArea', 'casino', 'truckStop', 'crackerBarrel', 'cabelas'] \
       then _snakeCase overnight.subType
       else 'default'
 
