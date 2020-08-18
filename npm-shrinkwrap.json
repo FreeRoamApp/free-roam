@@ -2915,8 +2915,7 @@
       "version": "git://github.com/claydotio/exoid.git#4dc5e8f9ebffbd3319de4a78844e3b4a10c65943",
       "from": "git://github.com/claydotio/exoid.git",
       "requires": {
-        "clay-request": "git://github.com/claydotio/clay-request.git#f4680bfbca45a58b073b698ea7338587bf7fd5c1",
-        "coffee-script": "^1.9.3",
+        "clay-request": "git://github.com/claydotio/clay-request.git",
         "json-stable-stringify": "^1.0.0",
         "lodash": "^4.17.2",
         "loga": "^0.1.1",
@@ -3553,7 +3552,8 @@
         "ansi-regex": {
           "version": "2.1.1",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "aproba": {
           "version": "1.2.0",
@@ -3574,12 +3574,14 @@
         "balanced-match": {
           "version": "1.0.0",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "brace-expansion": {
           "version": "1.1.11",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "balanced-match": "^1.0.0",
             "concat-map": "0.0.1"
@@ -3594,17 +3596,20 @@
         "code-point-at": {
           "version": "1.1.0",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "concat-map": {
           "version": "0.0.1",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "console-control-strings": {
           "version": "1.1.0",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "core-util-is": {
           "version": "1.0.2",
@@ -3721,7 +3726,8 @@
         "inherits": {
           "version": "2.0.3",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "ini": {
           "version": "1.3.5",
@@ -3733,6 +3739,7 @@
           "version": "1.0.0",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "number-is-nan": "^1.0.0"
           }
@@ -3747,6 +3754,7 @@
           "version": "3.0.4",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "brace-expansion": "^1.1.7"
           }
@@ -3754,12 +3762,14 @@
         "minimist": {
           "version": "0.0.8",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "minipass": {
           "version": "2.3.5",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "safe-buffer": "^5.1.2",
             "yallist": "^3.0.0"
@@ -3778,6 +3788,7 @@
           "version": "0.5.1",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "minimist": "0.0.8"
           }
@@ -3858,7 +3869,8 @@
         "number-is-nan": {
           "version": "1.0.1",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "object-assign": {
           "version": "4.1.1",
@@ -3870,6 +3882,7 @@
           "version": "1.4.0",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "wrappy": "1"
           }
@@ -3955,7 +3968,8 @@
         "safe-buffer": {
           "version": "5.1.2",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "safer-buffer": {
           "version": "2.1.2",
@@ -3991,6 +4005,7 @@
           "version": "1.0.2",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "code-point-at": "^1.0.0",
             "is-fullwidth-code-point": "^1.0.0",
@@ -4010,6 +4025,7 @@
           "version": "3.0.1",
           "bundled": true,
           "dev": true,
+          "optional": true,
           "requires": {
             "ansi-regex": "^2.0.0"
           }
@@ -4053,12 +4069,14 @@
         "wrappy": {
           "version": "1.0.2",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         },
         "yallist": {
           "version": "3.0.3",
           "bundled": true,
-          "dev": true
+          "dev": true,
+          "optional": true
         }
       }
     },
@@ -11798,8 +11816,7 @@
         "qs": "^2.4.2",
         "rxjs": "^5.4.3",
         "vdom-parser": "^1.2.1",
-        "vdom-to-html": "^2.0.0",
-        "virtual-dom": "git://github.com/claydotio/virtual-dom.git#67b042a9fb5e40d3222c4d86eba94726103ace78"
+        "vdom-to-html": "^2.0.0"
       },
       "dependencies": {
         "qs": {
@@ -11809,7 +11826,7 @@
         },
         "virtual-dom": {
           "version": "git://github.com/claydotio/virtual-dom.git#67b042a9fb5e40d3222c4d86eba94726103ace78",
-          "from": "git://github.com/claydotio/virtual-dom.git",
+          "from": "git://github.com/claydotio/virtual-dom.git#67b042a9fb5e40d3222c4d86eba94726103ace78",
           "requires": {
             "error": "^4.3.0",
             "ev-store": "^7.0.0",

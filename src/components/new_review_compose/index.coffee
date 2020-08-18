@@ -42,7 +42,7 @@ module.exports = class NewReviewCompose
 
   isCompleted: =>
     {title, body, rating, me} = @state.getValue()
-    me?.username is 'austin' or (title and body and rating)
+    me?.username in ['austin', 'roadpickle'] or (title and body and rating)
 
   getTitle: =>
     @model.l.get 'newReviewPage.title'
