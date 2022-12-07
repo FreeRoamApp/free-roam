@@ -75,7 +75,7 @@
     "normalize-styl": "^4.1.1",
     "portal-gun": "git://github.com/claydotio/portal-gun.git",
     "promiz": "^1.0.4",
-    "qs": "^5.2.0",
+    "qs": "^6.2.4",
     "remark-parse": "^6.0.3",
     "remark-vdom": "^5.0.0",
     "rxjs": "^5.4.3",
